@@ -1,0 +1,101 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/component-tokens' as component;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+@use '@carbon/react/scss/type';
+
+// Los tokens button-* son la TERCERA capa de la plantilla, que index.scss registra
+// a mano. Que Carbon ya no emita su boton no los invalida: son nombres de token de
+// componente, y el componente que los consume ahora es este. Entran por el puente
+// _component-tokens.scss, que valida el nombre contra los mapas de Carbon.
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: spacing.$spacing-02;
+  border: 1px solid transparent;
+  // Pildora, como la barra de la cabecera. El radio lo aporta la marca: Carbon v11
+  // es de esquina recta y no define ninguno.
+  border-radius: brand.$radius-full;
+  text-decoration: none;
+  cursor: pointer;
+  // El cuarto de la escala expresiva, no el registro productivo de Carbon. Un
+  // hover tiene que ser corto, pero con la MISMA curva que el resto: dos curvas
+  // conviviendo son dos sensaciones distintas, y eso se nota aunque no se sepa
+  // nombrar.
+  transition:
+    background-color brand.$duration-quarter brand.$ease-default,
+    border-color brand.$duration-quarter brand.$ease-default,
+    color brand.$duration-quarter brand.$ease-default;
+}
+
+.root:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+}
+
+.root:disabled {
+  background-color: component.get('button-disabled');
+  border-color: transparent;
+  color: theme.$text-on-color-disabled;
+  cursor: not-allowed;
+}
+
+.emphasisPrimary {
+  background-color: component.get('button-primary');
+  color: theme.$text-on-color;
+}
+
+.emphasisPrimary:hover:not(:disabled) {
+  background-color: component.get('button-primary-hover');
+}
+
+.emphasisPrimary:active:not(:disabled) {
+  background-color: component.get('button-primary-active');
+}
+
+.emphasisSecondary {
+  background-color: transparent;
+  border-color: component.get('button-tertiary');
+  color: component.get('button-tertiary');
+}
+
+.emphasisSecondary:hover:not(:disabled) {
+  background-color: component.get('button-tertiary');
+  color: theme.$text-inverse;
+}
+
+.emphasisGhost {
+  background-color: transparent;
+  color: theme.$link-primary;
+}
+
+.emphasisGhost:hover:not(:disabled) {
+  background-color: theme.$background-hover;
+}
+
+.sizeSm {
+  @include type.type-style('body-compact-01');
+
+  padding: spacing.$spacing-02 spacing.$spacing-04;
+}
+
+.sizeMd {
+  @include type.type-style('body-compact-01');
+
+  padding: spacing.$spacing-03 spacing.$spacing-05;
+}
+
+.sizeLg {
+  @include type.type-style('body-compact-02');
+
+  padding: spacing.$spacing-04 spacing.$spacing-06;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none;
+  }
+}

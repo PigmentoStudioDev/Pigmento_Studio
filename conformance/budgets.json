@@ -1,11 +1,17 @@
 {
   "$comment": "Peso de lo que viaja al navegador. Subir un budget es un cambio consciente de ESTE archivo, no un efecto colateral de anadir una dependencia. Medido sobre la salida de `next build`; si no hay build, la seccion avisa y no falla.",
-  "$note": "Emitimos Carbon entero porque el CSS no tiene tree-shaking. Para un sitio de cinco paginas es mayormente peso muerto: cuando estos numeros duelan, la alternativa es importar componentes de Carbon granularmente, a costa de romper el patron de entry unico.",
+  "$note": "Los limites se pusieron midiendo el build real tras degradar Carbon a plantilla de tokens: 129kb/12kb de CSS y 611kb/188kb de JS. Antes eran 938kb/96kb y 1226kb/358kb — el CSS de sus componentes y el barrel de @carbon/react, que entraba entero por importar <Theme>. El margen es corto a proposito: con un techo holgado, una regresion que vuelva a arrastrar Carbon cabria dentro y nadie se enteraria.",
   "artifacts": {
     "css": {
       "glob": ".next/static/**/*.css",
-      "maxRawKb": 1200,
-      "maxGzipKb": 110
+      "maxRawKb": 200,
+      "maxGzipKb": 20
+    },
+    "js": {
+      "$why": "GSAP + ScrollTrigger no caben en este margen, y es deliberado: cuando entren en la fase de motion habra que subir este numero a mano y eso se vera en el diff",
+      "glob": ".next/static/**/*.js",
+      "maxRawKb": 700,
+      "maxGzipKb": 210
     }
   }
 }
