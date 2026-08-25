@@ -10,10 +10,34 @@
 @use '@carbon/react/scss/theme';
 @use '@carbon/react/scss/type';
 
-// La cabecera es fija: sin este hueco el contenido de cualquier ruta arranca
-// debajo de la barra. Va en body y no en cada clase de pagina porque la cabecera
-// la monta el layout raiz, o sea todas.
+// Sin esto el padding y el borde se SUMAN al tamano declarado en vez de
+// repartirse dentro de el — content-box es el valor inicial de CSS. Lo delata
+// cualquier caja que mezcle aspect-ratio con padding, como la tarjeta del mega
+// menu: aspect-ratio se calcula sobre la content-box por defecto, asi que su
+// padding desproporciona la caja renderizada en cuanto la columna cambia de
+// ancho, y el cuadrado deja de serlo justo en los anchos donde mas se nota.
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// La familia BASE del sitio.
+//
+// La ponia el reset de Carbon, y desde que index.scss dejo de emitir el CSS de sus
+// componentes ya no la pone nadie: sus tokens de tipo llevan tamano, peso e
+// interlineado, pero NO familia — heading-04 no emite font-family. Sin una familia
+// base, todo lo que no sea mono o serif cae al valor inicial del navegador, que es
+// una serif. El sitio entero salio en Times y el fallo no rompe nada.
+//
+// Va en body y no en :root para no pisar la familia de los tokens que si traen la
+// suya, que heredan desde aqui igual.
 body {
+  font-family: type.font-family('sans');
+
+  // La cabecera es fija: sin este hueco el contenido de cualquier ruta arranca
+  // debajo de la barra. Va aqui porque la cabecera la monta el layout raiz, o sea
+  // todas las rutas.
   padding-block-start: brand.$header-block-size;
 }
 

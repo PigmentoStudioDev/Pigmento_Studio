@@ -234,12 +234,37 @@ describe('todos los entries de Sass heredan la configuracion de fuentes', () => 
 
   const entries = sassEntries(DS);
 
+  /**
+   * Y que ALGUIEN fije la familia base.
+   *
+   * Los tokens de tipo de Carbon llevan tamano, peso e interlineado pero NO
+   * familia: `heading-04` no emite font-family. La ponia su reset, y desde que
+   * index.scss dejo de emitir el CSS de sus componentes no la pone nadie — todo lo
+   * que no fuera mono o serif caia al valor inicial del navegador, que es una
+   * serif. El sitio entero salio en Times y ningun gate lo vio: no hay literal, no
+   * hay error, solo una pagina que parece de otro proyecto.
+   */
+  it('alguien fija la familia base del sitio', () => {
+    const css = compile(join(STYLES, 'index.scss'), SASS).css;
+    const families: string[] = [];
+
+    postcss.parse(css).walkRules((rule) => {
+      if (!/^(html|body)$/.test(rule.selector.trim())) return;
+      rule.walkDecls('font-family', (decl) => {
+        families.push(decl.value.trim());
+      });
+    });
+
+    expect(families).not.toEqual([]);
+    expect(families.every((value) => value.includes('var(--font-'))).toBe(true);
+  });
+
   it.each(entries)('%s no emite familias literales', (entry) => {
     const literals: string[] = [];
 
     postcss.parse(compile(entry, SASS).css).walkDecls('font-family', (decl) => {
       const value = decl.value.trim();
-      if (!value.includes('var(--font-plex') && value !== 'inherit') literals.push(value);
+      if (!value.includes('var(--font-') && value !== 'inherit') literals.push(value);
     });
 
     expect(literals).toEqual([]);
