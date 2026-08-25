@@ -34,7 +34,7 @@ describe("Logo", () => {
     ({ compact }) => {
       const { container } = render(<Logo compact={compact} />);
 
-      expect(container.textContent).toContain("Pigmento");
+      expect(container.querySelector("img")).toBeInTheDocument();
       expect(container.querySelector("svg")).toBeInTheDocument();
     },
   );

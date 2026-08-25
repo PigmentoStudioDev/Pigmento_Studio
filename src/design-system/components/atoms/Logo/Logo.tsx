@@ -1,3 +1,5 @@
+import Image from "next/image";
+import wordmark from "./pigmento-studio.webp";
 import styles from "./Logo.module.scss";
 
 /**
@@ -23,11 +25,15 @@ export function Logo({ compact = false }: LogoProps) {
       aria-hidden="true"
       className={[styles.root, compact ? styles.isCompact : styles.isFull].join(" ")}
     >
-      {/* TODO(brand): logotipo real de Pigmento. Hoy es el nombre compuesto con
-          los tokens tipograficos de Carbon, no un SVG: un logotipo falso seria
-          mas dificil de sustituir que un texto que ya se lee bien. */}
-      <span className={styles.wordmark}>Pigmento</span>
+      {/* Import estatico: Next lee el tamano del archivo y reserva el hueco solo,
+          sin que haya que repetir 400x75 aqui y que se quede mintiendo el dia que
+          cambie el logotipo. `priority` porque esta sobre la linea de flotacion en
+          todas las rutas — la cabecera la monta el layout raiz. */}
+      <Image src={wordmark} alt="" priority className={styles.wordmark} />
 
+      {/* TODO(brand): isotipo real. La marca solo trae logotipo, asi que la forma
+          compacta sigue siendo un placeholder. Va en currentColor, no en mapa de
+          bits, y por eso no necesita el filtro de inversion. */}
       <svg className={styles.mark} viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path
           d="M4 20V7a3 3 0 0 1 3-3h6a6 6 0 0 1 0 12H9"
