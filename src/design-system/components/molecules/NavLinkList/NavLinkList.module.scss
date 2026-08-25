@@ -1,13 +1,19 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
-@use '@carbon/react/scss/type';
 
 .root {
   display: flex;
   flex-direction: column;
+  // El UA stylesheet le pone a todo <ul> un padding-inline-start de 40px para el
+  // hueco del marcador. list-style: none quita el marcador pero no ese padding
+  // — son dos reglas distintas — y sin este reset la lista entera queda
+  // sangrada a la izquierda aunque no haya ningun bullet que lo justifique.
+  padding-inline-start: 0;
+  margin-block: 0;
   list-style: none;
 }
 
@@ -17,9 +23,17 @@
 
 .link {
   display: flex;
-  gap: spacing.$spacing-03;
+  // Full width sobre .item: el enlace es el area de clic entera, no solo lo que
+  // mide su texto. Sin esto el hueco a la derecha del texto no responde al clic
+  // ni empuja el distintivo al borde.
+  inline-size: 100%;
+  // La separacion del distintivo respecto al texto. En la referencia son 10px, que
+  // no es un escalon de Carbon; el de al lado son 12 y la diferencia no se ve.
+  gap: spacing.$spacing-04;
   align-items: center;
-  padding-block: spacing.$spacing-04;
+  // Con el enlace a ancho completo, el distintivo se va al borde opuesto en vez de
+  // pegarse al texto — es la fila entera la que reparte el espacio, no el texto.
+  justify-content: space-between;
   color: theme.$text-primary;
   text-decoration: none;
 }
@@ -34,12 +48,23 @@
   cursor: not-allowed;
 }
 
+// El tamano cambia DENSIDAD y tipo, no solo tipo. Es lo que separa una lista
+// principal de una secundaria: la primera respira y la segunda se compacta. Con el
+// mismo padding en las dos, la secundaria parece una lista principal mal escalada.
+.sizeLarge .link {
+  padding-block: spacing.$spacing-05;
+}
+
 .sizeLarge .text {
-  @include type.type-style('heading-04');
+  @include brandtype.style('heading-m');
+}
+
+.sizeSmall .link {
+  padding-block: spacing.$spacing-02;
 }
 
 .sizeSmall .text {
-  @include type.type-style('body-compact-01');
+  @include brandtype.style('body-l');
 }
 
 // Subrayado que crece desde la izquierda al pasar por encima. El texto no se

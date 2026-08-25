@@ -1,9 +1,10 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
-@use '@carbon/react/scss/type';
 
 // La cabecera ocupa solo lo que mide: la barra, y la barra mas el panel cuando
 // esta abierto. NO cubre la ventana.
@@ -69,8 +70,12 @@
   transition: max-inline-size brand.$duration-onehalf brand.$ease-default;
 }
 
+// 100% hasta que ese 100% pase de $container-mega: sin el min(), en un monitor muy
+// grande la placa seguia creciendo con la ventana aunque su contenido ya se
+// hubiera parado en $container-full, y el hueco entre los dos se leia como un
+// borde vacio cada vez mas ancho.
 .isOpen .nav {
-  max-inline-size: 100%;
+  max-inline-size: min(100%, brand.$container-mega);
 }
 
 // Cerrada es una pildora exacta — $radius-header, que es la mitad de su alto — y
@@ -78,7 +83,7 @@
 //
 // No es el mismo valor en los dos estados a proposito. Un radio de pildora en una
 // caja alta deja de leerse como pildora y se convierte en una esquina blanda
-// enorme: misma declaracion, dos formas que no se parecen. En OSMO las pildoras son
+// enorme: misma declaracion, dos formas que no se parecen. En la referencia las pildoras son
 // de los CONTROLES y las superficies llevan un escalon de la escala — su propia
 // barra usa 4/16, el radio mas pequeno que tienen.
 //
@@ -110,15 +115,18 @@
   display: flex;
   gap: spacing.$spacing-03;
   align-items: center;
-  // Con la pildora, el aire lateral tiene que salvar la curva o el primer control
-  // se monta encima del redondeo.
-  padding-inline: spacing.$spacing-06;
+  // El aire lateral tiene que SALVAR LA CURVA, y ahi no vale copiar el numero de la
+  // referencia: su barra lleva 7px de padding porque su radio son 4px. La nuestra
+  // es una pildora de 32 de radio, y con 7px el primer control se monta encima del
+  // redondeo. La regla es que el padding cubra el radio del estado, y por eso
+  // cambia al abrir: la placa pasa de pildora (32) a superficie (24).
+  padding-inline: spacing.$spacing-07;
   block-size: brand.$header-block-size;
   transition: padding-inline brand.$duration-base brand.$ease-default;
 }
 
 .isOpen .bar {
-  padding-inline: spacing.$spacing-05;
+  padding-inline: spacing.$spacing-06;
 }
 
 // Crece de dentro hacia fuera. Que aparezca con opacity delataria que el panel ya
@@ -183,11 +191,26 @@
   overflow: hidden;
 }
 
+// El contenido se centra en un contenedor y no se estira con la ventana: el panel
+// va a sangre, pero su contenido no — a 2000px de ancho tres columnas estiradas
+// dejan de leerse como columnas.
 .panelContent {
   display: flex;
-  flex-wrap: wrap;
-  gap: spacing.$spacing-07;
-  padding: spacing.$spacing-05 spacing.$spacing-05 spacing.$spacing-07;
+  flex-direction: column;
+  align-items: center;
+  margin-inline: auto;
+  inline-size: 100%;
+  // El escalon FULL, no el de pagina. Un mega menu no es una columna de lectura:
+  // no se para en 1584 para proteger la linea de texto, se para donde deja de
+  // parecer un panel. Con el ancho de pagina quedaban dos franjas muertas a los
+  // lados en cuanto la pantalla pasaba de 1600.
+  //
+  // Sin restar un escalon: las tres columnas de .panelRow reparten este ancho a
+  // partes iguales (flex: 1 1 0 cada una), y con el escalon restado el conjunto se
+  // quedaba corto del borde real del panel — el padding de abajo ya es el aire, no
+  // hace falta duplicarlo recortando el contenedor.
+  max-inline-size: brand.$container-full;
+  padding: spacing.$spacing-06;
   overflow-y: auto;
   // Sin esto, llegar al final del panel encadena el scroll a la pagina — y como la
   // pagina al desplazarse cierra el panel, desplazarse DENTRO del panel acabaria
@@ -206,7 +229,7 @@
 // Va con nth-child y no con un indice inyectado desde React porque el orden ya lo
 // sabe el DOM: un numero pasado por prop seria una segunda fuente de verdad del
 // mismo orden.
-.panelContent > * {
+.panelRow > * {
   opacity: 0;
   transform: translateY(spacing.$spacing-05);
   transition:
@@ -214,41 +237,91 @@
     transform brand.$duration-half brand.$ease-default;
 }
 
-.isOpen .panelContent > * {
+.isOpen .panelRow > * {
   opacity: 1;
   transform: none;
   transition-duration: brand.$duration-base;
   transition-delay: brand.$duration-quarter;
 }
 
-.isOpen .panelContent > *:nth-child(2) {
+.isOpen .panelRow > *:nth-child(2) {
   transition-delay: calc(#{brand.$duration-quarter} * 2);
 }
 
-.isOpen .panelContent > *:nth-child(3) {
+.isOpen .panelRow > *:nth-child(3) {
   transition-delay: calc(#{brand.$duration-quarter} * 3);
 }
 
-.isOpen .panelContent > *:nth-child(n + 4) {
+.isOpen .panelRow > *:nth-child(n + 4) {
   transition-delay: calc(#{brand.$duration-quarter} * 4);
+}
+
+// Columnas de ancho IGUAL, no proporcional a su contenido: `flex: 1` con base 0.
+// Con `flex: 1 1 auto` una columna de cinco enlaces se comería a una de dos, y la
+// fila dejaria de tener retmica.
+.panelRow {
+  display: flex;
+  gap: spacing.$spacing-06;
+  inline-size: 100%;
 }
 
 .group {
   display: flex;
-  flex: 1 1 16rem;
+  flex: 1 1 0;
   flex-direction: column;
-  gap: spacing.$spacing-04;
+  gap: spacing.$spacing-06;
+  padding: spacing.$spacing-08;
+}
+
+// Una columna destacada, con fondo propio. Es una superficie, asi que lleva un
+// escalon de la escala y no una pildora.
+.groupFeatured {
+  background-color: theme.$layer-02;
+  border-radius: brand.$radius-07;
+}
+
+// Al PIE de la columna, no debajo de la lista principal. Es lo que hace que las
+// columnas cierren a la misma altura teniendo listas de distinto largo.
+.groupSecondary {
+  margin-block-start: auto;
+  padding-block-start: spacing.$spacing-05;
 }
 
 .groupLabel {
-  @include type.type-style('label-01');
+  @include brandtype.style('eyebrow');
 
   color: theme.$text-secondary;
-  text-transform: uppercase;
 }
 
 .banner {
-  flex: 1 1 20rem;
+  flex: 1 1 0;
+}
+
+@include breakpoint.breakpoint-down('lg') {
+  .panelRow {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .group {
+    padding: spacing.$spacing-05 spacing.$spacing-06;
+  }
+
+  // En una sola columna la lista secundaria ya no equilibra nada: anclarla al pie
+  // la mandaria al final de todo el panel, lejos del grupo al que pertenece.
+  .groupSecondary {
+    margin-block-start: 0;
+  }
+
+  // La tarjeta destacada se cae con el resto: apilada ya no destaca a nadie, solo
+  // mete una caja de color en medio de una lista.
+  .groupFeatured {
+    background-color: transparent;
+  }
+
+  .banner {
+    display: none;
+  }
 }
 
 // Se apaga TODO el motion, no se acorta. Una coreografia de 1.2s reducida a 0.2s
@@ -260,11 +333,11 @@
   .plate,
   .line,
   .panel,
-  .panelContent > * {
+  .panelRow > * {
     transition: none;
   }
 
-  .panelContent > * {
+  .panelRow > * {
     transform: none;
   }
 }

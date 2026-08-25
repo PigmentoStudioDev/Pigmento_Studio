@@ -4,8 +4,11 @@
 // vienen de @carbon/colors, @carbon/layout, @carbon/type y @carbon/motion:
 // duplicarlos crea una segunda fuente de verdad.
 
+@use 'sass:map';
 @use 'sass:math';
 @use '@carbon/colors';
+@use '@carbon/grid/scss/config' as grid;
+@use '@carbon/react/scss/spacing';
 
 // TODO(brand): reemplazar por la paleta real de Pigmento.
 // Placeholders tomados de la propia paleta de Carbon para no inventar identidad.
@@ -16,14 +19,15 @@ $accent-70: colors.$blue-70;
 // Radios. Carbon v11 no define ninguno — su lenguaje visual es de esquina recta —
 // asi que esta es la unica fuente de verdad.
 //
-// La escala esta calcada de OSMO, que no tiene tokens pero si sistema: sus radios
+// La escala esta calcada de la referencia de diseno, que no tiene tokens pero si
+// sistema: sus radios
 // van en dieciseisavos, 2/16 3/16 4/16 6/16 8/16 12/16 16/16 24/16. Aqui en REM y
 // no en em, que es la unica desviacion deliberada: el spacing de Carbon es rem, y
 // un radio que escala con la tipografia junto a un padding que no rompe la
 // concentricidad en cuanto alguien cambia un font-size.
 //
 // Y la leccion que costo una iteracion: una pildora NO es un escalon de la escala.
-// En OSMO las pildoras son de los CONTROLES — botones, tags — y las superficies
+// En la referencia las pildoras son de los CONTROLES — botones, tags — y las superficies
 // llevan un escalon: su propia barra de navegacion usa 4/16, el radio mas pequeno
 // del sistema, no una pildora. Un mismo valor grande aplicado a una caja baja y a
 // una alta da dos formas distintas, y eso es lo que se lee como incoherente.
@@ -44,17 +48,57 @@ $radius-full: 100rem;
 
 
 
-// Carbon tampoco define anchos de contenedor: su grid es de 16 columnas fluidas y
-// deja el limite de linea a quien lo consume. Section es el unico que los lee, y
-// los lee de aqui para que un cambio de medida sea un cambio en la capa de marca y
-// no una edicion en cada modulo de componente.
-$container-content: 60rem;
-$container-wide: 90rem;
+// Anchos de contenedor.
+//
+// Carbon no expone tokens de contenedor, pero SI define los anchos de su reticula,
+// y son exactamente los numeros que habria que inventar. Se LEEN de ahi en vez de
+// escribirse: un ancho suelto no dice de donde sale, y si Carbon reafina la
+// reticula el nuestro se queda descolgado sin que nadie lo note.
+//
+// La referencia usa un contenedor fluido, clamp(992px, 100vw, 1920px), atado a un
+// font-size que escala con la ventana. Esa segunda mitad no la portamos — vamos en
+// rem, decision escrita mas abajo — asi que se mapean los anchos y no el mecanismo:
+// su minimo de 992 cae en lg (1056) y su tope no tiene equivalente, porque Carbon
+// se detiene en 1584.
+$container-content: map.get(grid.$grid-breakpoints, 'lg', 'width');
+$container-wide: map.get(grid.$grid-breakpoints, 'max', 'width');
+
+/// El tercer escalon, y el unico que NO sale de la reticula: Carbon se detiene en
+/// 1584 y la referencia llega a 1920.
+///
+/// La diferencia son 336px, que en una pantalla de 2200 es la distancia entre que
+/// el mega menu ocupe el 87% del ancho o el 70%. Al 70% deja dos franjas muertas a
+/// los lados y dejar de parecer un panel para parecer una caja centrada — que es
+/// exactamente lo que pasaba.
+///
+/// Va aqui y no en la reticula porque no es un ancho de LECTURA: una pagina se
+/// para en 1584 para que la linea de texto no se haga ilegible, y un menu que
+/// cubre la ventana no tiene ese problema. Son dos medidas distintas que hasta
+/// ahora compartian numero por accidente.
+$container-full: 120rem;
+
+/// Techo duro de la PLACA del mega menu — la barra entera, no su contenido — en
+/// pantallas muy grandes. Sin este tope `.isOpen .nav` iba a 100% y la placa
+/// (fondo, borde, radio) seguia creciendo con la ventana sin limite.
+///
+/// Va por DEBAJO de $container-full (1920px) a proposito: aqui el tope de la
+/// placa es el que manda, y $container-full deja de alcanzarse — el contenido ya
+/// no llega a su propio limite porque el padre lo corta antes. No es un error,
+/// es que ahora hay un solo techo real y $container-full queda de reserva para
+/// el dia que la placa vuelva a permitir mas que su contenido.
+///
+/// 1800px y no un escalon de reticula: no es un ancho de lectura ni de panel, es
+/// el punto en el que dejar de crecer se pidio a ojo para una pantalla concreta.
+$container-mega: 112.5rem;
 
 // La barra de la cabecera es fija, asi que su altura la necesitan dos sitios: el
 // propio componente y el chrome de pagina, que tiene que dejarle el hueco. Si cada
 // uno la escribe por su cuenta, el dia que cambie una el contenido se mete debajo.
-$header-block-size: 4rem;
+// Alto de la barra. La referencia usa 4.625em (74px), que no cae en ningun escalon:
+// entre spacing-10 (64) y spacing-11 (80). Se toma el de abajo — una barra mas alta
+// come pantalla en movil, y el escalon existe justo para no tener que decidir esto
+// a ojo cada vez.
+$header-block-size: spacing.$spacing-10;
 
 /// Pildora EXACTA de la barra compacta: aqui la altura SI se conoce, asi que el
 /// radio se deriva de ella en vez de dejar que lo recorte el navegador. Un radio
@@ -62,11 +106,12 @@ $header-block-size: 4rem;
 /// declarado baja del recorte, y entonces salta de golpe.
 $radius-header: math.div($header-block-size, 2);
 
-/// Ancho de la barra CERRADA. No es un ancho de contenedor: es una medida propia
-/// de la cabecera, la de una pildora compacta que al abrirse se suelta hasta el
-/// borde de la ventana. Si fuera $container-content la barra cerrada ya ocuparia
-/// casi todo y expandirse no se leeria como gesto. El original de OSMO usa 38em.
-$header-compact-inline-size: 38rem;
+/// Ancho de la barra CERRADA: una pildora compacta que al abrirse se suelta.
+/// La referencia usa 38em (608px) y el escalon de reticula mas cercano es md, 672.
+/// Sale de la reticula y no del ojo por lo mismo que los contenedores — y no de
+/// $container-content, porque con ese ancho la barra cerrada ya ocuparia casi todo
+/// y expandirse dejaria de leerse como gesto.
+$header-compact-inline-size: map.get(grid.$grid-breakpoints, 'md', 'width');
 
 // Motion.
 //
@@ -79,7 +124,7 @@ $header-compact-inline-size: 38rem;
 // de pasos con nombre: media, una y media y doble se leen como relaciones entre si,
 // que es como se coreografia un desfase.
 //
-// TODO(brand): la curva es la de OSMO, igual que los azules son los de Carbon.
+// TODO(brand): la curva es la de la referencia, igual que los azules son los de Carbon.
 // Placeholder honesto hasta que Pigmento tenga la suya — una curva ES identidad.
 $duration-quarter: 0.15s;
 $duration-half: 0.3s;
