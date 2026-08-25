@@ -1,65 +1,70 @@
 # Pigmento Studio
 
-Rediseño y reconstrucción de **[pigmentostudio.com.mx](https://pigmentostudio.com.mx/)**.
+Redesign and rebuild of **[pigmentostudio.com.mx](https://pigmentostudio.com.mx/)**.
 
-Pigmento Studio es un estudio de diseño y crecimiento de marca en Santa Fe, Ciudad de
-México. Trabaja branding, marketing digital, programación web y motion graphics, y se
-define como «más que una agencia, un estudio de diseño y crecimiento de marca».
+Pigmento Studio is a brand design and growth studio based in Santa Fe, Mexico City.
+It works across branding, digital marketing, web development and motion graphics, and
+describes itself as «más que una agencia, un estudio de diseño y crecimiento de marca».
 
-Este repositorio es el sitio nuevo, construido desde cero.
+This repository is the new site, built from scratch. The site itself ships in Spanish;
+this documentation is in English.
 
 ## Stack
 
 | | |
 |---|---|
 | Framework | Next.js 16 (App Router, Turbopack) · React 19 |
-| Design system | IBM Carbon v11 con una capa de marca propia encima |
-| Estilos | Sass |
-| Tests | Vitest · Testing Library · jest-axe |
+| Design system | IBM Carbon v11 with a thin brand layer on top |
+| Styling | Sass |
+| Testing | Vitest · Testing Library · jest-axe |
 
-**Carbon es el pipeline de tokens.** No autoramos primitivas: Carbon ya aporta las
-tres capas — primitivas, 235 tokens semánticos y 76 de componente — y encima va una
-capa de marca fina que se construye token a token. Los valores de marca de hoy son
-placeholders marcados con `TODO(brand)`.
+**Carbon is the token pipeline.** We author no primitives of our own: Carbon already
+ships all three layers — primitives, 235 semantic tokens and 76 component tokens — and
+the brand layer on top is built one token at a time. Today's brand values are
+placeholders, flagged with `TODO(brand)`.
 
-Sin Tailwind: Carbon ya es el sistema de tokens y superponerlo crearía una segunda
-fuente de verdad para spacing y color.
+No Tailwind: Carbon is already the token system, and layering Tailwind on top would
+create a second source of truth for spacing and color.
 
-## Empezar
+## Getting started
 
 ```bash
 pnpm install
 pnpm dev          # localhost:3000
 ```
 
-El preview del design system vive en **`/ds`**: explorador de tokens semánticos leídos
-en runtime, fundamentos (tipografía, espaciado, motion) y galería de componentes. Es
-herramienta de desarrollo, no una página del sitio.
+The design system preview lives at **`/ds`**: a token explorer that reads the semantic
+tokens from the live element, foundations (type scale, spacing, motion) and a component
+gallery. It is a development tool, not a page of the site.
 
-## Verificar
+## Verifying
 
 ```bash
-./scripts/gates.sh   # build · estático · contrato · tests
+./scripts/gates.sh   # build · static · contract · tests
 ```
 
-Un solo entrypoint, el mismo que corre en CI. Los cuatro gates están descritos en
-[`CLAUDE.md`](./CLAUDE.md); el contrato ejecutable, en
+One entrypoint, the same one CI runs. The four gates are described in
+[`CLAUDE.md`](./CLAUDE.md); the executable contract, in
 [`conformance/README.md`](./conformance/README.md).
 
-Por separado:
+Individually:
 
 ```bash
 pnpm lint
-pnpm test              # contrato del tema, sobre el Sass real
-pnpm conformance       # o: pnpm conformance <style|tsx|react|structure|modularity|budgets>
+pnpm test              # theme contract, asserted against the real compiled Sass
+pnpm conformance       # or: pnpm conformance <style|tsx|react|structure|modularity|budgets>
 pnpm build
-pnpm gen:tokens        # regenera la lista de tokens del preview desde Carbon
+pnpm gen:tokens        # regenerate the preview's token list from Carbon
 ```
 
-## Contribuir
+## Contributing
 
-`main` está protegida: todo entra por pull request con el check `ci` en verde,
-historia lineal y sin force push.
+`main` is protected: everything lands through a pull request with the `ci` check
+green, linear history and no force pushes.
 
-Antes de tocar Sass o el tema, lee las reglas duras de [`CLAUDE.md`](./CLAUDE.md).
-Cada una existe porque su fallo ya ocurrió y ninguno produjo error de build.
+Before touching Sass or the theme, read the hard rules in [`CLAUDE.md`](./CLAUDE.md).
+Each one exists because its failure already happened, and none of them produced a
+build error.
+
+> Project docs are written in English; `CLAUDE.md`, `CHANGELOG.md` and code comments
+> are in Spanish, and the site's user-facing copy is Spanish.
