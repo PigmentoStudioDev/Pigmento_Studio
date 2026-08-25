@@ -4,6 +4,7 @@
 // vienen de @carbon/colors, @carbon/layout, @carbon/type y @carbon/motion:
 // duplicarlos crea una segunda fuente de verdad.
 
+@use 'sass:math';
 @use '@carbon/colors';
 
 // TODO(brand): reemplazar por la paleta real de Pigmento.
@@ -12,8 +13,79 @@ $accent-40: colors.$blue-40;
 $accent-60: colors.$blue-60;
 $accent-70: colors.$blue-70;
 
-// Carbon v11 no define ningun token de radio: su lenguaje visual es de esquina
-// recta. Si Pigmento quiere esquinas suaves, esta es la unica fuente de verdad.
+// Radios. Carbon v11 no define ninguno — su lenguaje visual es de esquina recta —
+// asi que esta es la unica fuente de verdad.
+//
+// La escala esta calcada de OSMO, que no tiene tokens pero si sistema: sus radios
+// van en dieciseisavos, 2/16 3/16 4/16 6/16 8/16 12/16 16/16 24/16. Aqui en REM y
+// no en em, que es la unica desviacion deliberada: el spacing de Carbon es rem, y
+// un radio que escala con la tipografia junto a un padding que no rompe la
+// concentricidad en cuanto alguien cambia un font-size.
+//
+// Y la leccion que costo una iteracion: una pildora NO es un escalon de la escala.
+// En OSMO las pildoras son de los CONTROLES — botones, tags — y las superficies
+// llevan un escalon: su propia barra de navegacion usa 4/16, el radio mas pequeno
+// del sistema, no una pildora. Un mismo valor grande aplicado a una caja baja y a
+// una alta da dos formas distintas, y eso es lo que se lee como incoherente.
 $radius-00: 0;
 $radius-01: 0.125rem;
-$radius-02: 0.25rem;
+$radius-02: 0.1875rem;
+$radius-03: 0.25rem;
+$radius-04: 0.375rem;
+$radius-05: 0.5rem;
+$radius-06: 0.75rem;
+$radius-07: 1rem;
+$radius-08: 1.5rem;
+
+/// Pildora para cajas cuya altura no conoce el CSS — un boton crece con su texto.
+/// Un valor mayor que cualquier medida razonable: el navegador lo recorta a la
+/// mitad del lado corto. NO es 50%, que deforma en cuanto la caja no es cuadrada.
+$radius-full: 100rem;
+
+
+
+// Carbon tampoco define anchos de contenedor: su grid es de 16 columnas fluidas y
+// deja el limite de linea a quien lo consume. Section es el unico que los lee, y
+// los lee de aqui para que un cambio de medida sea un cambio en la capa de marca y
+// no una edicion en cada modulo de componente.
+$container-content: 60rem;
+$container-wide: 90rem;
+
+// La barra de la cabecera es fija, asi que su altura la necesitan dos sitios: el
+// propio componente y el chrome de pagina, que tiene que dejarle el hueco. Si cada
+// uno la escribe por su cuenta, el dia que cambie una el contenido se mete debajo.
+$header-block-size: 4rem;
+
+/// Pildora EXACTA de la barra compacta: aqui la altura SI se conoce, asi que el
+/// radio se deriva de ella en vez de dejar que lo recorte el navegador. Un radio
+/// recortado no se puede interpolar — la transicion no se ve hasta que el valor
+/// declarado baja del recorte, y entonces salta de golpe.
+$radius-header: math.div($header-block-size, 2);
+
+/// Ancho de la barra CERRADA. No es un ancho de contenedor: es una medida propia
+/// de la cabecera, la de una pildora compacta que al abrirse se suelta hasta el
+/// borde de la ventana. Si fuera $container-content la barra cerrada ya ocuparia
+/// casi todo y expandirse no se leeria como gesto. El original de OSMO usa 38em.
+$header-compact-inline-size: 38rem;
+
+// Motion.
+//
+// Carbon cubre el registro PRODUCTIVO: 70-700ms y cuatro curvas discretas, hechas
+// para que un control responda sin llamar la atencion. Sirve para un hover o un
+// foco y se queda corto para todo lo demas — un panel que se despliega en 240ms no
+// se lee como un gesto, se lee como un salto.
+//
+// Esta es la escala expresiva, y es de RATIO sobre una duracion base, no una lista
+// de pasos con nombre: media, una y media y doble se leen como relaciones entre si,
+// que es como se coreografia un desfase.
+//
+// TODO(brand): la curva es la de OSMO, igual que los azules son los de Carbon.
+// Placeholder honesto hasta que Pigmento tenga la suya — una curva ES identidad.
+$duration-quarter: 0.15s;
+$duration-half: 0.3s;
+$duration-base: 0.6s;
+$duration-onehalf: 0.9s;
+$duration-double: 1.2s;
+
+/// Entrada y salida con caracter: arranca decidida y frena largo.
+$ease-default: cubic-bezier(0.625, 0.05, 0, 1);
