@@ -2,8 +2,14 @@
   "$comment": "Contrato de modularidad: no mira valores, mira el GRAFO. Que cada modulo dependa solo de lo que le toca y que ningun archivo crezca hasta dejar de ser legible. Es el gate que llega antes que budgets.json: cuando el bundle engorda, budgets lo nota tarde y sin decir por que; esto lo nota en el import que lo causo.",
   "fileLength": {
     "why": "regla de la casa: 200-400 lineas tipico, 800 tope duro. Un archivo largo no es un problema de estilo, es cohesion perdida — deja de tener UN motivo para cambiar y cada edicion arrastra contexto que no le importa a quien la hace",
-    "scanDirs": ["src"],
-    "exts": [".tsx", ".ts", ".scss"],
+    "scanDirs": [
+      "src"
+    ],
+    "exts": [
+      ".tsx",
+      ".ts",
+      ".scss"
+    ],
     "warn": 400,
     "max": 800,
     "exemptFiles": {
@@ -11,26 +17,71 @@
     }
   },
   "imports": {
-    "scanDirs": ["src"],
-    "exts": [".tsx", ".ts"],
+    "scanDirs": [
+      "src"
+    ],
+    "exts": [
+      ".tsx",
+      ".ts"
+    ],
     "aliasPrefix": "@/",
     "crossModuleRelative": {
       "why": "dentro de un modulo el import es relativo; cruzando modulos es '@/'. Un '../..' que sale del modulo esconde el acoplamiento — se lee como si fuera local y no lo es — y rompe al mover el archivo"
     },
     "boundaries": [
       {
+        "from": "design-system/components/layout/",
+        "mayNotImport": [
+          "design-system/components/atoms/",
+          "design-system/components/molecules/",
+          "design-system/components/organisms/"
+        ],
+        "why": "layout/ son primitivas de COMPOSICION (ritmo vertical, ancho, zona de tema), no de contenido: van al fondo del grafo junto a los atomos. Un Section que importe un organismo deja de poder envolverlo — la capa que ordena la pagina no puede conocer lo que ordena"
+      },
+      {
+        "from": "design-system/components/atoms/",
+        "mayNotImport": [
+          "design-system/components/molecules/",
+          "design-system/components/organisms/"
+        ],
+        "why": "un atomo que conoce a su molecula deja de ser reutilizable: se lleva la composicion entera consigo. La direccion de la dependencia es lo unico que distingue un modelo atomico de una convencion de nombres de carpeta"
+      },
+      {
+        "from": "design-system/components/molecules/",
+        "mayNotImport": [
+          "design-system/components/organisms/"
+        ],
+        "why": "la misma ley un nivel arriba. Una molecula que importa el organismo que la contiene invierte la jerarquia y crea un ciclo que ningun bundler puede partir"
+      },
+      {
+        "to": "design-system/components/organisms/",
+        "importableFrom": [
+          "app/",
+          "design-system/components/organisms/",
+          "design-system/preview/"
+        ],
+        "why": "un organismo ES una seccion de pagina: lo monta una ruta, y cuando entre Payload lo montara el renderer de bloques desde cms/ — que tendra que anadirse aqui a proposito, en un diff que se vea. Si lo importa una molecula, la jerarquia se invirtio"
+      },
+      {
         "from": "design-system/",
-        "mayNotImport": ["app/"],
+        "mayNotImport": [
+          "app/"
+        ],
         "why": "la dependencia va en un solo sentido. El design system tiene que poder salir de este repo entero; si conoce las rutas de la app, deja de ser un design system y pasa a ser la app con otro nombre"
       },
       {
         "to": "design-system/preview/",
-        "importableFrom": ["app/ds/", "design-system/preview/"],
+        "importableFrom": [
+          "app/ds/",
+          "design-system/preview/"
+        ],
         "why": "preview/ es herramienta de desarrollo, no una pagina del sitio (decision escrita en CLAUDE.md y hasta hoy sin nada que la vigilara). Si el sitio importa ComponentGallery, los 263 exports de Carbon entran al bundle de produccion: el que lo nota es budgets, tarde y sin nombrar la causa"
       },
       {
         "to": "design-system/preview/tokens.generated",
-        "importableFrom": ["design-system/preview/"],
+        "importableFrom": [
+          "design-system/preview/"
+        ],
         "why": "es un artefacto generado, no una API. Quien lo importe queda atado a la forma que escupe el generador y se rompe en el siguiente 'pnpm gen:tokens'"
       }
     ]

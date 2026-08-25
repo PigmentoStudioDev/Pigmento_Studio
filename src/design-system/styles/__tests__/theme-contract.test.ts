@@ -15,7 +15,7 @@ import { compile, compileString, type Options } from 'sass';
 import { describe, expect, it } from 'vitest';
 
 const STYLES = join(process.cwd(), 'src/design-system/styles');
-const PREVIEW = join(process.cwd(), 'src/design-system/preview');
+const DS = join(process.cwd(), 'src/design-system');
 const SASS: Options<'sync'> = { loadPaths: ['node_modules'], quietDeps: true };
 
 /**
@@ -75,6 +75,17 @@ function stockTheme(name: 'white' | 'g10' | 'g90' | 'g100'): Map<string, string>
 }
 
 const COMPONENT_TOKEN = /^(notification|tag|button|status|content-switcher)-/;
+
+/**
+ * Las dos familias que la referencia trae y nosotros ya NO emitimos, a proposito.
+ *
+ * No salen del mapa de tema: las declaran sueltas las utilidades de grid y layout
+ * de Carbon, que viajan pegadas al CSS de sus componentes. Desde que index.scss
+ * dejo de emitir ese CSS — Carbon es plantilla de tokens, los atomos son nuestros —
+ * estas quince custom properties no existen. Compararlas mediria una decision que
+ * ya esta tomada, no un fallo.
+ */
+const STANDALONE_TOKEN = /^(grid|layout)-/;
 
 const ZONES = [
   { selector: ':root', theme: 'g100', brand: 'dark' },
@@ -136,13 +147,30 @@ describe('index.scss emite las cuatro zonas de Carbon con la marca encima', () =
   }
 
   /**
+   * Que la plantilla siga entera. Es el gate de la migracion a emision delgada:
+   * los tokens de componente los registra ahora index.scss a mano con
+   * add-component-tokens(), y olvidar una de esas cinco llamadas no rompe el
+   * build — deja setenta y siete custom properties sin emitir y los atomos que
+   * las consumen caen a su valor de respaldo, en silencio.
+   */
+  it('emitimos todos los tokens de tema que trae la plantilla', () => {
+    const emitted = cascade(source, ':root');
+    const stock = stockTheme('g100');
+
+    const expected = [...stock.keys()].filter((k) => !STANDALONE_TOKEN.test(k));
+
+    expect(expected.length).toBeGreaterThan(300);
+    expect(expected.filter((k) => !emitted.has(k))).toEqual([]);
+  });
+
+  /**
    * La marca no puede tener efectos colaterales: si cambia un token que no declaro,
    * es que algo se colo. Al reves si vale — declarar un token cuyo valor coincide
    * con el de fabrica es intencion explicita, no un fallo.
    *
-   * Se ignoran los valores `var(...)`: son los alias de capa que Carbon emite una
-   * sola vez en :root y cuyo fallback depende del $fallback configurado, no de la
-   * marca. Compararlos mediria la configuracion, no el override.
+   * Se compara solo sobre lo que EMITIMOS, y quien vigila que no falte nada es el
+   * test de arriba. Aqui la pregunta es otra: de lo que sale, cuanto lo cambio la
+   * marca sin decirlo.
    */
   it('la marca no cambia ningun token que no haya declarado', () => {
     const declared = declaredOverrides('dark');
@@ -150,7 +178,10 @@ describe('index.scss emite las cuatro zonas de Carbon con la marca encima', () =
     const stock = stockTheme('g100');
 
     const changed = [...stock.keys()].filter(
-      (k) => !stock.get(k)!.startsWith('var(') && emitted.get(k) !== stock.get(k),
+      (k) =>
+        emitted.has(k) &&
+        !stock.get(k)!.startsWith('var(') &&
+        emitted.get(k) !== stock.get(k),
     );
 
     expect(changed.filter((k) => !declared.includes(k))).toEqual([]);
@@ -186,12 +217,22 @@ describe('index.scss emite las cuatro zonas de Carbon con la marca encima', () =
  * cae solo, sin que nadie tenga que acordarse de anadirlo aqui.
  */
 describe('todos los entries de Sass heredan la configuracion de fuentes', () => {
-  const entries = [
-    join(STYLES, 'index.scss'),
-    ...readdirSync(PREVIEW)
-      .filter((f) => f.endsWith('.scss') && !f.startsWith('_'))
-      .map((f) => join(PREVIEW, f)),
-  ];
+  /**
+   * Recorre design-system/ ENTERO, no una lista de directorios. Los .module.scss
+   * de los componentes son entries igual que index.scss — cada uno es su propia
+   * unidad de compilacion — y hasta que este walk existio quedaban fuera del gate:
+   * un Section.module.scss sin el partial se perdia la tipografia en silencio.
+   */
+  function sassEntries(dir: string): string[] {
+    return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const full = join(dir, entry.name);
+      if (entry.isDirectory()) return sassEntries(full);
+      // Los partials (_x.scss) no son entries: los configura quien los carga.
+      return entry.name.endsWith('.scss') && !entry.name.startsWith('_') ? [full] : [];
+    });
+  }
+
+  const entries = sassEntries(DS);
 
   it.each(entries)('%s no emite familias literales', (entry) => {
     const literals: string[] = [];
