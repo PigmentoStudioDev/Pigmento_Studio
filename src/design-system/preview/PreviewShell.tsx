@@ -7,16 +7,16 @@ import { Foundations } from "./Foundations";
 import { TokenExplorer } from "./TokenExplorer";
 import "./preview.scss";
 
-// 'pigmento' es nuestro tema real: el g100 de Carbon con los overrides de
-// _theme.scss aplicados en :root. Los otros cuatro son los temas de fabrica,
-// utiles para comparar contra el nuestro sin salir de la pagina. Carbon los
-// aplica con <Theme>, que solo pone la clase .cds--<tema> en un contenedor.
+// Los cuatro temas de Carbon. Las cuatro clases ya llevan la capa de marca
+// encima (ver design-system/styles/index.scss), asi que no hay un quinto tema
+// "el nuestro": el nuestro ES cada uno de estos con los overrides aplicados.
+// <Theme> solo pone la clase .cds--<tema> en un contenedor; es el mecanismo de
+// Carbon, el mismo que lee useTheme().
 const THEMES = [
-  { id: "pigmento", label: "Pigmento (g100 + overrides)" },
-  { id: "g100", label: "g100 de fabrica" },
-  { id: "g90", label: "g90" },
-  { id: "g10", label: "g10" },
-  { id: "white", label: "white" },
+  { id: "g100", label: "g100 — oscuro (por defecto)" },
+  { id: "g90", label: "g90 — oscuro suave" },
+  { id: "g10", label: "g10 — claro suave" },
+  { id: "white", label: "white — claro" },
 ] as const;
 
 type ThemeId = (typeof THEMES)[number]["id"];
@@ -28,7 +28,7 @@ const SECTIONS = [
 ] as const;
 
 export function PreviewShell() {
-  const [theme, setTheme] = useState<ThemeId>("pigmento");
+  const [theme, setTheme] = useState<ThemeId>("g100");
 
   const body = (
     <>
@@ -83,7 +83,7 @@ export function PreviewShell() {
         </div>
       </header>
 
-      {theme === "pigmento" ? body : <Theme theme={theme}>{body}</Theme>}
+      <Theme theme={theme}>{body}</Theme>
     </div>
   );
 }

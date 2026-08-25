@@ -1,20 +1,27 @@
-// Capa semantica de Pigmento: reasigna tokens de rol de Carbon.
+// Capa semantica de Pigmento: el delta de marca sobre los temas de Carbon.
 //
-// Solo el delta respecto al tema base. Lista completa de los 235 tokens:
+// Aqui NO se elige tema ni se emite nada: solo se declara que tokens cambia la
+// marca. Quien los aplica es index.scss, sobre las cuatro zonas de Carbon.
+//
+// Un token que no exista en el contrato de Carbon no rompe el build: se emite
+// como custom property huerfana que ningun componente lee. El test
+// __tests__/theme-contract.test.ts lo caza.
+//
+// Lista completa de los 235 tokens semanticos:
 // https://github.com/carbon-design-system/carbon/blob/main/packages/themes/docs/sass.md#tokens
-//
-// OJO: estos overrides NO se pueden mezclar dentro del mapa que se le pasa al
-// mixin theme(). Ver la explicacion en index.scss.
 
 @use './brand';
 
-$overrides: (
+/// Delta para los temas oscuros (g90, g100).
+$overrides-dark: (
   link-primary: brand.$accent-40,
   link-primary-hover: brand.$accent-40,
   focus: brand.$accent-40,
 );
 
-// TODO(brand): el tema claro es el white de fabrica sin tocar. El acento de
-// marca actual (blue-40) no tiene contraste suficiente sobre fondo claro, asi
-// que no se hereda a proposito.
+/// Delta para los temas claros (white, g10).
+///
+/// TODO(brand): vacio a proposito. El acento actual (blue-40) no llega a 4.5:1
+/// sobre fondo claro, asi que heredarlo seria romper WCAG AA en silencio. Se
+/// rellena cuando exista la paleta real de Pigmento.
 $overrides-light: ();

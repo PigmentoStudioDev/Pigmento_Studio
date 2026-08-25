@@ -19,7 +19,7 @@
 // La emision real la controlan los @include de abajo.
 @use '@carbon/react/scss/theme' with (
   $fallback: themes.$g100,
-  $theme: pigmento.$overrides
+  $theme: pigmento.$overrides-dark
 );
 
 @use '@carbon/react';
@@ -27,19 +27,31 @@
 // Chrome de pagina. Al final: necesita a Carbon ya cargado.
 @use './app';
 
-:root {
-  // Hay que pasarle el tema de fabrica SIN mezclar. Carbon resuelve sus 76
-  // tokens de componente (button, tag, notification, status, content-switcher)
-  // con matches(), que exige igualdad exacta contra un tema de fabrica. Con el
-  // tema ya mezclado con nuestros overrides el match falla y los 76 caen al
-  // fallback del tema white: fondos claros con texto claro, ilegibles.
-  // theme() acepta grupos de overrides como varargs y los emite DESPUES del tema
-  // base, dentro del mismo bloque. Usar su API en vez de construir el nombre de
-  // la custom property a mano nos quita el acoplamiento al prefijo y garantiza
-  // el orden sin depender de que nuestro bloque quede el ultimo del archivo.
-  @include theme.theme(themes.$g100, pigmento.$overrides);
+// Las CUATRO zonas de Carbon, re-emitidas con la capa de marca encima.
+//
+// Carbon ya emite .cds--white/.g10/.g90/.g100 con valores de fabrica; estas
+// reglas van despues y ganan por orden. Asi el mecanismo de tema sigue siendo el
+// de Carbon — la clase que pone <Theme theme="g10">, que useTheme() entiende — y
+// no un atributo inventado por nosotros que ningun componente de Carbon lee.
+//
+// A theme() se le pasa SIEMPRE el tema de fabrica sin mezclar y la marca como
+// segundo argumento. Carbon resuelve sus 76 tokens de componente con matches(),
+// que exige igualdad exacta contra un tema de fabrica: con el tema ya mezclado el
+// match falla y los 76 caen al fallback del tema white, dando fondos claros con
+// texto claro. Un solo override basta para tirarlos todos.
+:root,
+.cds--g100 {
+  @include theme.theme(themes.$g100, pigmento.$overrides-dark);
 }
 
-[data-theme='light'] {
+.cds--g90 {
+  @include theme.theme(themes.$g90, pigmento.$overrides-dark);
+}
+
+.cds--g10 {
+  @include theme.theme(themes.$g10, pigmento.$overrides-light);
+}
+
+.cds--white {
   @include theme.theme(themes.$white, pigmento.$overrides-light);
 }
