@@ -5,9 +5,17 @@
 // asi que renderizaba sin estilo y sin ningun error. Regla: si una clase la usa
 // algo fuera de preview/, va en este archivo.
 
+@use './brand' as brand;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 @use '@carbon/react/scss/type';
+
+// La cabecera es fija: sin este hueco el contenido de cualquier ruta arranca
+// debajo de la barra. Va en body y no en cada clase de pagina porque la cabecera
+// la monta el layout raiz, o sea todas.
+body {
+  padding-block-start: brand.$header-block-size;
+}
 
 .pg-landing,
 .pg-status {

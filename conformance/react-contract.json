@@ -1,7 +1,12 @@
 {
   "$comment": "Contrato de React/TSX. Vigila lo que ESLint NO puede o no trae: reglas de la casa sobre tipos y ruido, y la frontera servidor/cliente del App Router. Las reglas de hooks (rules-of-hooks, exhaustive-deps, jsx-key) NO se reimplementan aqui: necesitan AST y ya las cubre eslint-config-next/core-web-vitals, que corre en el Gate 2 de scripts/gates.sh. Un gate de regex que finge entender scope es un gate que miente.",
-  "scanDirs": ["src"],
-  "ext": [".tsx", ".ts"],
+  "scanDirs": [
+    "src"
+  ],
+  "ext": [
+    ".tsx",
+    ".ts"
+  ],
   "rules": {
     "react-fc": {
       "why": "React.FC no aporta tipado util y estorba a los genericos; las props se declaran con una interface o type con nombre. Regla de la casa",
@@ -25,11 +30,12 @@
     "directive": "use client"
   },
   "clientBoundary": {
-    "why": "cada 'use client' nuevo mueve arbol al bundle del navegador. El sitio es server-first y la frontera se declara AQUI, no se descubre en el budget de CSS/JS cuando ya duele. preview/ es herramienta de desarrollo y solo la carga /ds; los dos error boundaries necesitan estado de cliente por definicion",
+    "why": "cada 'use client' nuevo mueve arbol al bundle del navegador. El sitio es server-first y la frontera se declara AQUI, no se descubre en el budget de CSS/JS cuando ya duele. preview/ es herramienta de desarrollo y solo la carga /ds; los dos error boundaries necesitan estado de cliente por definicion. Los componentes del DS entran de UNO EN UNO, con su ruta completa y nunca por directorio: un permiso a design-system/components/ dejaria de contar cuantos componentes se han mudado al navegador, que es justo lo que esta lista mide. SiteHeader lo esta porque es interactiva de arriba abajo — estado de apertura, Escape, scroll y observador de tema.",
     "allow": [
       "app/error.tsx",
       "app/global-error.tsx",
-      "design-system/preview/"
+      "design-system/preview/",
+      "design-system/components/organisms/SiteHeader/SiteHeader.tsx"
     ]
   },
   "routeExports": {

@@ -1,0 +1,65 @@
+// Ritmo vertical, ancho de contenedor y zona de tema de UNA seccion de pagina.
+//
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.root {
+  // El fondo se pinta AQUI y no en el organismo: con `theme` puesto, .root lleva
+  // la clase .cds--g100 y compania, que solo REDECLARAN las custom properties —
+  // no pintan nada. Sin esta linea el cambio de tema por seccion no se veria.
+  //
+  // Este modulo carga scss/theme sin configurar (index.scss es quien lo configura,
+  // y solo dentro de SU unidad de compilacion), asi que el valor sale como
+  // `var(--cds-background, #ffffff)`: fallback del tema white. Ese respaldo es
+  // codigo muerto — index.scss define --cds-background en :root y viaja en el
+  // mismo build. Configurarlo aqui duplicaria la eleccion de tema en cada modulo;
+  // moverla a _carbon-config obligaria a index.scss a dejar de configurar el suyo
+  // y cambiaria la referencia sin marca de theme-contract.test.ts.
+  background: theme.$background;
+  inline-size: 100%;
+}
+
+.inner {
+  margin-inline: auto;
+  // El aire lateral es del contenedor, no del organismo: asi todas las secciones
+  // de una pagina alinean su contenido en la misma linea vertical.
+  padding-inline: spacing.$spacing-05;
+}
+
+.widthContent .inner {
+  max-inline-size: brand.$container-content;
+}
+
+.widthWide .inner {
+  max-inline-size: brand.$container-wide;
+}
+
+.widthFull .inner {
+  max-inline-size: none;
+  padding-inline: 0;
+}
+
+// El ritmo vertical es de la seccion, nunca del organismo. Un organismo que trae
+// su propio margin-block deja de poder colocarse en cualquier orden: el hueco
+// entre dos bloques pasaria a depender de cuales sean, no de la pagina.
+.spacingNone {
+  padding-block: 0;
+}
+
+.spacingCompact {
+  padding-block: spacing.$spacing-07;
+}
+
+.spacingDefault {
+  padding-block: spacing.$spacing-09;
+}
+
+.spacingLoose {
+  padding-block: spacing.$spacing-11;
+}

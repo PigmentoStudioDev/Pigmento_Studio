@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Button } from "@carbon/react";
+import { Button } from "@/design-system/components/atoms/Button/Button";
 
 // El mensaje crudo del error NUNCA llega a la UI: puede filtrar rutas internas o
 // datos. Se registra el digest, que es lo que permite cruzarlo con los logs del

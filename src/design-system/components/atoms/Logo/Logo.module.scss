@@ -1,0 +1,53 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/type';
+
+.root {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  block-size: spacing.$spacing-06;
+}
+
+// Las dos formas se cruzan en el mismo sitio: el isotipo va absoluto sobre el
+// logotipo. El ancho de la caja lo marca SIEMPRE el logotipo, tambien mientras
+// esta oculto — si el isotipo entrase en el flujo, la fila de la barra reflowaria
+// a mitad del scroll, que es justo lo que la transicion trata de disimular.
+.wordmark,
+.mark {
+  transition:
+    opacity brand.$duration-half brand.$ease-default,
+    transform brand.$duration-base brand.$ease-default;
+}
+
+.wordmark {
+  @include type.type-style('heading-03');
+
+  white-space: nowrap;
+}
+
+.mark {
+  position: absolute;
+  inline-size: spacing.$spacing-06;
+  block-size: spacing.$spacing-06;
+}
+
+.isFull .mark {
+  opacity: 0;
+  transform: translateY(spacing.$spacing-03);
+}
+
+.isCompact .wordmark {
+  opacity: 0;
+  transform: translateY(calc(#{spacing.$spacing-03} * -1));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wordmark,
+  .mark {
+    transition: none;
+    transform: none;
+  }
+}

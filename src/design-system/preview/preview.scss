@@ -215,3 +215,41 @@ $durations: (
   block-size: spacing.$spacing-05;
   background: theme.$background-brand;
 }
+
+// Controles nativos de la pagina de preview. No son componentes del DS: /ds es
+// herramienta de desarrollo y su buscador y su selector de tema no forman parte
+// del sitio. Se estilan lo justo para no desentonar con los tokens.
+.pg-field {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-02;
+}
+
+.pg-input {
+  padding: spacing.$spacing-03;
+  border: 1px solid theme.$border-strong-01;
+  background-color: theme.$field-01;
+  color: theme.$text-primary;
+}
+
+.pg-input:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+.pg-notice {
+  padding: spacing.$spacing-04;
+  border-inline-start: 2px solid theme.$support-info;
+  background-color: theme.$layer-01;
+}
+
+.pg-block {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-04;
+}
+
+.pg-row--wrap {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}

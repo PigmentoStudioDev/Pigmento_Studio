@@ -1,10 +1,15 @@
-// Punto de configuracion UNICO de Carbon.
+// Punto de configuracion y de emision UNICO de Carbon.
 //
 // Un modulo de Sass solo admite configuracion en su PRIMERA carga: si cualquier
 // otro archivo hace `@use` de un submodulo de Carbon antes que este, el build
 // muere con "This module was already loaded, so it can't be configured".
 // Por eso todo override vive aqui y el orden de abajo no es negociable.
-// Patron tomado de examples/custom-theme del repo de Carbon.
+//
+// AQUI NO SE EMITE NI UNA REGLA DE COMPONENTE DE CARBON. Carbon es la plantilla
+// de tokens por capas que consumimos — primitivas, 235 semanticos y 77 de
+// componente — y nada mas: los atomos son nuestros. Emitir sus componentes
+// costaba 938kb raw / 96kb gzip para renderizar dos de ellos, y ademas habria que
+// pelear su CSS cada vez que un atomo nuestro lleve la identidad de Pigmento.
 
 // La configuracion de Carbon (fuentes, familias) vive en _carbon-config.scss
 // porque cada entry de Sass la necesita por separado. Va PRIMERO: configura los
@@ -22,22 +27,38 @@
   $theme: pigmento.$overrides-dark
 );
 
-@use '@carbon/react';
+// La TERCERA capa de la plantilla. Estos cinco modulos solo DEFINEN los mapas; es
+// add-component-tokens() quien los registra, y en Carbon esa llamada vive dentro
+// del modulo del componente — junto a su CSS. Llamandola aqui nos quedamos con la
+// capa entera sin arrastrar una sola regla suya.
+//
+// Van DESPUES del `with` de arriba a la fuerza: por dentro cargan scss/theme, y
+// un modulo ya cargado no se puede configurar.
+@use '@carbon/styles/scss/components/button/tokens' as token-button;
+@use '@carbon/styles/scss/components/tag/tokens' as token-tag;
+@use '@carbon/styles/scss/components/notification/tokens' as token-notification;
+@use '@carbon/styles/scss/components/content-switcher/tokens' as token-content-switcher;
+@use '@carbon/styles/scss/components/icon-indicator/tokens' as token-icon-indicator;
 
-// Chrome de pagina. Al final: necesita a Carbon ya cargado.
+// Chrome de pagina. Al final: necesita los modulos de token ya cargados.
 @use './app';
 
-// Las CUATRO zonas de Carbon, re-emitidas con la capa de marca encima.
+@include theme.add-component-tokens(token-button.$button-tokens);
+@include theme.add-component-tokens(token-tag.$tag-tokens);
+@include theme.add-component-tokens(token-notification.$notification-tokens);
+@include theme.add-component-tokens(token-content-switcher.$content-switcher-tokens);
+@include theme.add-component-tokens(token-icon-indicator.$status-tokens);
+
+// Las CUATRO zonas de Carbon, con la capa de marca encima.
 //
-// Carbon ya emite .cds--white/.g10/.g90/.g100 con valores de fabrica; estas
-// reglas van despues y ganan por orden. Asi el mecanismo de tema sigue siendo el
-// de Carbon — la clase que pone <Theme theme="g10">, que useTheme() entiende — y
-// no un atributo inventado por nosotros que ningun componente de Carbon lee.
+// Las clases siguen siendo las de Carbon porque el mecanismo de tema sigue siendo
+// el suyo: <Theme> las pone y useTheme() las lee. Lo que ya no emitimos es el CSS
+// de sus componentes, no su forma de tematizar.
 //
 // A theme() se le pasa SIEMPRE el tema de fabrica sin mezclar y la marca como
-// segundo argumento. Carbon resuelve sus 76 tokens de componente con matches(),
-// que exige igualdad exacta contra un tema de fabrica: con el tema ya mezclado el
-// match falla y los 76 caen al fallback del tema white, dando fondos claros con
+// segundo argumento. Carbon resuelve los tokens de componente con matches(), que
+// exige igualdad exacta contra un tema de fabrica: con el tema ya mezclado el
+// match falla y los 77 caen al fallback del tema white, dando fondos claros con
 // texto claro. Un solo override basta para tirarlos todos.
 :root,
 .cds--g100 {
