@@ -1,7 +1,7 @@
 {
   "name": "pigmento-studio",
   "version": "0.1.0",
-  "description": "Redesign and rebuild of pigmentostudio.com.mx, a brand design and growth studio in Santa Fe, Mexico City.",
+
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
