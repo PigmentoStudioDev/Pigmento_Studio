@@ -1,0 +1,72 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+@use '@carbon/react/scss/type';
+
+.root {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  // Superficie grande: el mismo escalon que el banner del original.
+  border-radius: brand.$radius-07;
+  min-block-size: 20rem;
+  padding: spacing.$spacing-07;
+  background-color: theme.$layer-02;
+  color: theme.$text-primary;
+  text-decoration: none;
+  transition: background-color brand.$duration-quarter brand.$ease-default;
+}
+
+.root:hover {
+  background-color: theme.$layer-hover-02;
+}
+
+.root:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+.image {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: spacing.$spacing-04;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.tags {
+  display: flex;
+  gap: spacing.$spacing-02;
+}
+
+.title {
+  @include type.type-style('heading-04');
+}
+
+// Aspecto de boton, pero no es un boton: la tarjeta entera ya es el enlace y un
+// control dentro de un enlace no es HTML valido.
+.cta {
+  @include type.type-style('body-compact-01');
+
+  padding: spacing.$spacing-03 spacing.$spacing-05;
+  border: 1px solid currentcolor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none;
+  }
+}
