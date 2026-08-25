@@ -18,14 +18,18 @@
   $css--font-face: false
 );
 
-// next/font genera nombres de familia con hash, no el literal 'IBM Plex Sans' que
-// Carbon trae incrustado. Hay que apuntar cada familia a su variable CSS o Carbon
-// cae al fallback del sistema. Las tres familias son las que Carbon referencia:
-// sans y mono en casi todo, serif en quotation-01/02 y fluid-paragraph-01.
+// next/font genera nombres de familia con hash. Hay que apuntar cada familia a su
+// variable CSS o Carbon cae al fallback del sistema. Las tres son las que Carbon
+// referencia: sans en casi todo, mono en code-01/02, serif en quotation-01/02 y
+// fluid-paragraph-01.
+//
+// Los nombres ya no dicen 'plex' porque la sans ya no lo es: la de Pigmento se
+// declara en app/layout.tsx. Un nombre de variable que miente sobre su contenido
+// es peor que uno generico.
 @forward '@carbon/react/scss/type' with (
   $font-families: (
-    'sans': (var(--font-plex-sans), system-ui, sans-serif),
-    'mono': (var(--font-plex-mono), ui-monospace, monospace),
-    'serif': (var(--font-plex-serif), Georgia, serif),
+    'sans': (var(--font-sans), system-ui, sans-serif),
+    'mono': (var(--font-mono), ui-monospace, monospace),
+    'serif': (var(--font-serif), Georgia, serif),
   )
 );
