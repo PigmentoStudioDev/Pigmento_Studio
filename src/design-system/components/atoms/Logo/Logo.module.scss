@@ -2,7 +2,6 @@
 
 @use '../../../styles/brand' as brand;
 @use '@carbon/react/scss/spacing';
-@use '@carbon/react/scss/type';
 
 .root {
   display: inline-flex;
@@ -22,10 +21,20 @@
     transform brand.$duration-base brand.$ease-default;
 }
 
+// El logotipo es un mapa de bits negro sobre transparente, asi que no puede tomar
+// su color de currentColor como el resto: la unica via es invertirlo.
+//
+// La bandera la pone index.scss, que es quien sabe que zona es oscura. Con el
+// fallback a 0 el filtro es identidad, asi que fuera de una zona declarada el
+// logotipo sale como viene en vez de salir en negativo.
+//
+// OJO si algun dia el logotipo lleva color: invert() gira el tono entero, no solo
+// el negro. Mientras sea monocromo esto vale; en cuanto no lo sea, hacen falta dos
+// archivos.
 .wordmark {
-  @include type.type-style('heading-03');
-
-  white-space: nowrap;
+  block-size: 100%;
+  inline-size: auto;
+  filter: invert(var(--pg-on-dark, 0));
 }
 
 .mark {

@@ -55,6 +55,11 @@
 // el suyo: <Theme> las pone y useTheme() las lee. Lo que ya no emitimos es el CSS
 // de sus componentes, no su forma de tematizar.
 //
+// --pg-on-dark no es un token de tema: es una BANDERA derivada, 1 en las dos zonas
+// oscuras y 0 en las dos claras. Vive aqui porque este es el unico archivo que sabe
+// cual zona es cual, y la necesita cualquier pieza que no pueda tomar su color de
+// currentColor — un logotipo en mapa de bits, por ejemplo, que solo puede invertirse.
+//
 // A theme() se le pasa SIEMPRE el tema de fabrica sin mezclar y la marca como
 // segundo argumento. Carbon resuelve los tokens de componente con matches(), que
 // exige igualdad exacta contra un tema de fabrica: con el tema ya mezclado el
@@ -63,16 +68,24 @@
 :root,
 .cds--g100 {
   @include theme.theme(themes.$g100, pigmento.$overrides-dark);
+
+  --pg-on-dark: 1;
 }
 
 .cds--g90 {
   @include theme.theme(themes.$g90, pigmento.$overrides-dark);
+
+  --pg-on-dark: 1;
 }
 
 .cds--g10 {
   @include theme.theme(themes.$g10, pigmento.$overrides-light);
+
+  --pg-on-dark: 0;
 }
 
 .cds--white {
   @include theme.theme(themes.$white, pigmento.$overrides-light);
+
+  --pg-on-dark: 0;
 }
