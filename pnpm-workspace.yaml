@@ -1,3 +1,28 @@
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+  # Los postinstall de @carbon/* y @ibm/* son @ibm/telemetry-js. Segun su doc solo
+  # recolecta en CI (nunca en local) y manda URL de repo y hashes de-identificados
+  # mas los nombres de componentes y props que importas. Se bloquean a proposito:
+  # decision explicita, no un descuido de `pnpm approve-builds`.
+  - '@carbon/colors'
+  - '@carbon/feature-flags'
+  - '@carbon/grid'
+  - '@carbon/icon-helpers'
+  - '@carbon/icons-react'
+  - '@carbon/layout'
+  - '@carbon/motion'
+  - '@carbon/react'
+  - '@carbon/styles'
+  - '@carbon/themes'
+  - '@carbon/type'
+  - '@carbon/utilities'
+  - '@ibm/plex'
+  - '@ibm/plex-mono'
+  - '@ibm/plex-sans'
+  - '@ibm/plex-sans-arabic'
+  - '@ibm/plex-sans-devanagari'
+  - '@ibm/plex-sans-hebrew'
+  - '@ibm/plex-sans-thai'
+  - '@ibm/plex-sans-thai-looped'
+  - '@ibm/plex-serif'

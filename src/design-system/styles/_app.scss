@@ -1,0 +1,29 @@
+// Chrome global de pagina: lo que necesita CUALQUIER ruta.
+//
+// Vive aqui y no en preview/preview.scss porque esa hoja solo se carga en /ds.
+// Precedente: .pg-landing se definio alli y la home la usaba sin que existiera,
+// asi que renderizaba sin estilo y sin ningun error. Regla: si una clase la usa
+// algo fuera de preview/, va en este archivo.
+
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+@use '@carbon/react/scss/type';
+
+.pg-landing,
+.pg-status {
+  padding: spacing.$spacing-09;
+  max-inline-size: 42rem;
+}
+
+.pg-status h1 {
+  @include type.type-style('heading-04');
+
+  margin-block-end: spacing.$spacing-05;
+}
+
+.pg-status p {
+  @include type.type-style('body-01');
+
+  margin-block-end: spacing.$spacing-05;
+  color: theme.$text-secondary;
+}

@@ -6,23 +6,10 @@
 // Por eso todo override vive aqui y el orden de abajo no es negociable.
 // Patron tomado de examples/custom-theme del repo de Carbon.
 
-// Carbon self-hostea IBM Plex desde '~@ibm/plex'. Ese prefijo tilde es sintaxis
-// de webpack, y aunque se quite, resolve-url-loader reescribe el url() relativo
-// al .scss de origen (dentro de node_modules) y lo rompe igual. Cargamos Plex
-// con next/font en su lugar: ver src/app/layout.tsx.
-@use '@carbon/react/scss/config' with (
-  $css--font-face: false
-);
-
-// next/font genera nombres de familia con hash, no el literal 'IBM Plex Sans'
-// que Carbon trae incrustado en 57 reglas. Hay que apuntarlo a las variables CSS
-// o Plex no se aplica en ningun sitio.
-@use '@carbon/react/scss/type' with (
-  $font-families: (
-    'sans': (var(--font-plex-sans), system-ui, sans-serif),
-    'mono': (var(--font-plex-mono), ui-monospace, monospace),
-  )
-);
+// La configuracion de Carbon (fuentes, familias) vive en _carbon-config.scss
+// porque cada entry de Sass la necesita por separado. Va PRIMERO: configura los
+// modulos antes de que nadie los cargue.
+@use './carbon-config';
 
 @use '@carbon/react/scss/themes';
 @use './theme' as pigmento;
@@ -37,12 +24,8 @@
 
 @use '@carbon/react';
 
-// Emite los overrides como custom properties sueltas, DESPUES del tema base.
-@mixin brand-overrides($tokens) {
-  @each $token, $value in $tokens {
-    --#{config.$prefix}-#{$token}: #{$value};
-  }
-}
+// Chrome de pagina. Al final: necesita a Carbon ya cargado.
+@use './app';
 
 :root {
   // Hay que pasarle el tema de fabrica SIN mezclar. Carbon resuelve sus 76
@@ -50,11 +33,13 @@
   // con matches(), que exige igualdad exacta contra un tema de fabrica. Con el
   // tema ya mezclado con nuestros overrides el match falla y los 76 caen al
   // fallback del tema white: fondos claros con texto claro, ilegibles.
-  @include theme.theme(themes.$g100);
-  @include brand-overrides(pigmento.$overrides);
+  // theme() acepta grupos de overrides como varargs y los emite DESPUES del tema
+  // base, dentro del mismo bloque. Usar su API en vez de construir el nombre de
+  // la custom property a mano nos quita el acoplamiento al prefijo y garantiza
+  // el orden sin depender de que nuestro bloque quede el ultimo del archivo.
+  @include theme.theme(themes.$g100, pigmento.$overrides);
 }
 
 [data-theme='light'] {
-  @include theme.theme(themes.$white);
-  @include brand-overrides(pigmento.$overrides-light);
+  @include theme.theme(themes.$white, pigmento.$overrides-light);
 }

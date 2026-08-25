@@ -1,0 +1,31 @@
+// Configuracion de Carbon compartida por TODOS los entry points de Sass.
+//
+// Cada archivo .scss que Next compila es una unidad de compilacion independiente:
+// lo que configura index.scss NO aplica a preview.scss. Sin este partial, un
+// segundo entry carga Carbon con sus defaults y emite el literal 'IBM Plex Sans'
+// que next/font no registra bajo ese nombre — la tipografia se pierde en silencio,
+// sin error de build. Paso real: ocurrio en preview.scss.
+//
+// `@forward ... with` es el mecanismo de Sass para compartir configuracion: aplica
+// al cargarse este partial, asi que cualquier entry que lo ponga PRIMERO hereda la
+// misma configuracion. Un `@use ... with` en el entry no se puede compartir.
+
+@forward '@carbon/react/scss/config' with (
+  // Carbon self-hostea IBM Plex desde '~@ibm/plex'. El prefijo tilde es sintaxis de
+  // webpack, y aun quitandolo, resolve-url-loader reescribe el url() relativo al
+  // .scss de origen dentro de node_modules y lo rompe igual. Plex entra por
+  // next/font: ver src/app/layout.tsx.
+  $css--font-face: false
+);
+
+// next/font genera nombres de familia con hash, no el literal 'IBM Plex Sans' que
+// Carbon trae incrustado. Hay que apuntar cada familia a su variable CSS o Carbon
+// cae al fallback del sistema. Las tres familias son las que Carbon referencia:
+// sans y mono en casi todo, serif en quotation-01/02 y fluid-paragraph-01.
+@forward '@carbon/react/scss/type' with (
+  $font-families: (
+    'sans': (var(--font-plex-sans), system-ui, sans-serif),
+    'mono': (var(--font-plex-mono), ui-monospace, monospace),
+    'serif': (var(--font-plex-serif), Georgia, serif),
+  )
+);

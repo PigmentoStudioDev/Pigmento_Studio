@@ -7,6 +7,11 @@
 // Este archivo no configura Carbon (nada de `with (...)`): solo lo consume.
 // La configuracion vive en ../styles/index.scss.
 
+// PRIMERO: sin esto, este entry carga Carbon sin configurar y emite el literal
+// 'IBM Plex Sans' en vez de las variables de next/font. Bug real, encontrado en
+// auditoria: los 4 estilos serif y los 2 de code caian al fallback del sistema.
+@use '../styles/carbon-config';
+
 @use 'sass:map';
 @use '@carbon/react/scss/type';
 @use '@carbon/react/scss/spacing';
@@ -209,8 +214,4 @@ $durations: (
   inline-size: spacing.$spacing-05;
   block-size: spacing.$spacing-05;
   background: theme.$background-brand;
-}
-
-.pg-landing {
-  padding: spacing.$spacing-09;
 }
