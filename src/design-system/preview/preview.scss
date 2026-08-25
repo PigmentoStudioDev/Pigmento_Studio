@@ -1,0 +1,216 @@
+// Estilos de la pagina de preview del design system.
+//
+// Las clases de tipografia y espaciado se GENERAN iterando los propios mapas de
+// Carbon: si una version futura anade o quita un estilo, esta pagina se entera
+// sola en vez de quedarse mintiendo con una lista hardcodeada.
+//
+// Este archivo no configura Carbon (nada de `with (...)`): solo lo consume.
+// La configuracion vive en ../styles/index.scss.
+
+@use 'sass:map';
+@use '@carbon/react/scss/type';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+@use '@carbon/react/scss/motion';
+
+@each $name, $token in type.$tokens {
+  .pg-type--#{$name} {
+    // $fluid: true solo actua sobre los tokens que traen breakpoints; el resto
+    // cae al camino normal. Sin esto, los 8 estilos fluid-* revientan el build.
+    @include type.type-style($name, $fluid: true);
+  }
+}
+
+@each $name, $value in spacing.$spacing {
+  .pg-spacing--#{$name} {
+    inline-size: $value;
+  }
+}
+
+.pg-page {
+  padding: spacing.$spacing-07;
+  max-inline-size: 100rem;
+  margin-inline: auto;
+}
+
+.pg-section {
+  margin-block-end: spacing.$spacing-10;
+}
+
+.pg-section__title {
+  @include type.type-style('heading-04');
+
+  padding-block-end: spacing.$spacing-03;
+  border-block-end: 1px solid theme.$border-subtle-01;
+  margin-block-end: spacing.$spacing-06;
+}
+
+.pg-grid {
+  display: grid;
+  gap: spacing.$spacing-05;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+}
+
+.pg-row {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-05;
+  flex-wrap: wrap;
+}
+
+.pg-stack {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+}
+
+// Duraciones de motion. @carbon/motion no expone un mapa, solo variables sueltas:
+// esta lista se mantiene en paralelo con scripts/generate-preview-tokens.mjs.
+$durations: (
+  'fast-01': motion.$duration-fast-01,
+  'fast-02': motion.$duration-fast-02,
+  'moderate-01': motion.$duration-moderate-01,
+  'moderate-02': motion.$duration-moderate-02,
+  'slow-01': motion.$duration-slow-01,
+  'slow-02': motion.$duration-slow-02,
+);
+
+@each $name, $value in $durations {
+  .pg-motion--#{$name} .pg-motion__dot {
+    transition: transform $value motion.motion(standard, productive);
+  }
+}
+
+.pg-stack--tight {
+  gap: spacing.$spacing-03;
+}
+
+.pg-muted {
+  color: theme.$text-secondary;
+}
+
+.pg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: spacing.$spacing-06;
+  flex-wrap: wrap;
+  margin-block-end: spacing.$spacing-09;
+}
+
+.pg-header__control {
+  min-inline-size: 18rem;
+}
+
+.pg-nav {
+  margin-block-start: spacing.$spacing-05;
+
+  a {
+    text-decoration: none;
+  }
+}
+
+.pg-group-title {
+  margin-block: spacing.$spacing-06 spacing.$spacing-04;
+}
+
+.pg-block {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+  padding-block-end: spacing.$spacing-07;
+}
+
+.pg-token {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-04;
+  padding: spacing.$spacing-03;
+  background: theme.$layer-01;
+  min-inline-size: 0;
+}
+
+.pg-token__swatch {
+  inline-size: 2rem;
+  block-size: 2rem;
+  flex: 0 0 auto;
+  border: 1px solid theme.$border-subtle-01;
+}
+
+.pg-token__swatch--empty {
+  background: repeating-linear-gradient(
+    45deg,
+    theme.$layer-02,
+    theme.$layer-02 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.pg-token__body {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+
+  > * {
+    overflow-wrap: anywhere;
+  }
+}
+
+.pg-specimen {
+  display: grid;
+  grid-template-columns: 14rem 1fr;
+  gap: spacing.$spacing-05;
+  align-items: baseline;
+  padding-block: spacing.$spacing-03;
+  border-block-end: 1px solid theme.$border-subtle-01;
+}
+
+.pg-specimen__name {
+  color: theme.$text-secondary;
+}
+
+.pg-specimen__sample {
+  margin: 0;
+}
+
+.pg-specimen__bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-04;
+}
+
+.pg-bar {
+  display: block;
+  block-size: spacing.$spacing-05;
+  background: theme.$background-brand;
+}
+
+.pg-motion {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-03;
+  padding: spacing.$spacing-05;
+  background: theme.$layer-01;
+
+  &:hover .pg-motion__dot {
+    transform: translateX(calc(100% * 6));
+  }
+}
+
+.pg-motion__track {
+  display: block;
+  block-size: spacing.$spacing-05;
+  background: theme.$layer-02;
+}
+
+.pg-motion__dot {
+  display: block;
+  inline-size: spacing.$spacing-05;
+  block-size: spacing.$spacing-05;
+  background: theme.$background-brand;
+}
+
+.pg-landing {
+  padding: spacing.$spacing-09;
+}

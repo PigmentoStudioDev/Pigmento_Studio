@@ -1,0 +1,19 @@
+// Primitivas propias de Pigmento.
+//
+// Aqui va SOLO lo que Carbon no cubre. Color, spacing, tipografia y motion ya
+// vienen de @carbon/colors, @carbon/layout, @carbon/type y @carbon/motion:
+// duplicarlos crea una segunda fuente de verdad.
+
+@use '@carbon/colors';
+
+// TODO(brand): reemplazar por la paleta real de Pigmento.
+// Placeholders tomados de la propia paleta de Carbon para no inventar identidad.
+$accent-40: colors.$blue-40;
+$accent-60: colors.$blue-60;
+$accent-70: colors.$blue-70;
+
+// Carbon v11 no define ningun token de radio: su lenguaje visual es de esquina
+// recta. Si Pigmento quiere esquinas suaves, esta es la unica fuente de verdad.
+$radius-00: 0;
+$radius-01: 0.125rem;
+$radius-02: 0.25rem;

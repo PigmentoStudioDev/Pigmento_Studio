@@ -1,0 +1,20 @@
+// Capa semantica de Pigmento: reasigna tokens de rol de Carbon.
+//
+// Solo el delta respecto al tema base. Lista completa de los 235 tokens:
+// https://github.com/carbon-design-system/carbon/blob/main/packages/themes/docs/sass.md#tokens
+//
+// OJO: estos overrides NO se pueden mezclar dentro del mapa que se le pasa al
+// mixin theme(). Ver la explicacion en index.scss.
+
+@use './brand';
+
+$overrides: (
+  link-primary: brand.$accent-40,
+  link-primary-hover: brand.$accent-40,
+  focus: brand.$accent-40,
+);
+
+// TODO(brand): el tema claro es el white de fabrica sin tocar. El acento de
+// marca actual (blue-40) no tiene contraste suficiente sobre fondo claro, asi
+// que no se hereda a proposito.
+$overrides-light: ();

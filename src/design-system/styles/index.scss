@@ -1,0 +1,60 @@
+// Punto de configuracion UNICO de Carbon.
+//
+// Un modulo de Sass solo admite configuracion en su PRIMERA carga: si cualquier
+// otro archivo hace `@use` de un submodulo de Carbon antes que este, el build
+// muere con "This module was already loaded, so it can't be configured".
+// Por eso todo override vive aqui y el orden de abajo no es negociable.
+// Patron tomado de examples/custom-theme del repo de Carbon.
+
+// Carbon self-hostea IBM Plex desde '~@ibm/plex'. Ese prefijo tilde es sintaxis
+// de webpack, y aunque se quite, resolve-url-loader reescribe el url() relativo
+// al .scss de origen (dentro de node_modules) y lo rompe igual. Cargamos Plex
+// con next/font en su lugar: ver src/app/layout.tsx.
+@use '@carbon/react/scss/config' with (
+  $css--font-face: false
+);
+
+// next/font genera nombres de familia con hash, no el literal 'IBM Plex Sans'
+// que Carbon trae incrustado en 57 reglas. Hay que apuntarlo a las variables CSS
+// o Plex no se aplica en ningun sitio.
+@use '@carbon/react/scss/type' with (
+  $font-families: (
+    'sans': (var(--font-plex-sans), system-ui, sans-serif),
+    'mono': (var(--font-plex-mono), ui-monospace, monospace),
+  )
+);
+
+@use '@carbon/react/scss/themes';
+@use './theme' as pigmento;
+
+// Configurar $theme aqui solo afecta a los valores de respaldo que Carbon
+// incrusta en cada `var(--cds-x, <fallback>)` y a lo que devuelve theme.get().
+// La emision real la controlan los @include de abajo.
+@use '@carbon/react/scss/theme' with (
+  $fallback: themes.$g100,
+  $theme: pigmento.$overrides
+);
+
+@use '@carbon/react';
+
+// Emite los overrides como custom properties sueltas, DESPUES del tema base.
+@mixin brand-overrides($tokens) {
+  @each $token, $value in $tokens {
+    --#{config.$prefix}-#{$token}: #{$value};
+  }
+}
+
+:root {
+  // Hay que pasarle el tema de fabrica SIN mezclar. Carbon resuelve sus 76
+  // tokens de componente (button, tag, notification, status, content-switcher)
+  // con matches(), que exige igualdad exacta contra un tema de fabrica. Con el
+  // tema ya mezclado con nuestros overrides el match falla y los 76 caen al
+  // fallback del tema white: fondos claros con texto claro, ilegibles.
+  @include theme.theme(themes.$g100);
+  @include brand-overrides(pigmento.$overrides);
+}
+
+[data-theme='light'] {
+  @include theme.theme(themes.$white);
+  @include brand-overrides(pigmento.$overrides-light);
+}
