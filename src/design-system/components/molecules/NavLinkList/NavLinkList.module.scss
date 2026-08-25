@@ -1,0 +1,73 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+@use '@carbon/react/scss/type';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.item + .item {
+  border-block-start: 1px solid theme.$border-subtle-01;
+}
+
+.link {
+  display: flex;
+  gap: spacing.$spacing-03;
+  align-items: center;
+  padding-block: spacing.$spacing-04;
+  color: theme.$text-primary;
+  text-decoration: none;
+}
+
+.link:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+.isDisabled {
+  color: theme.$text-disabled;
+  cursor: not-allowed;
+}
+
+.sizeLarge .text {
+  @include type.type-style('heading-04');
+}
+
+.sizeSmall .text {
+  @include type.type-style('body-compact-01');
+}
+
+// Subrayado que crece desde la izquierda al pasar por encima. El texto no se
+// mueve: un border-bottom en :hover empujaria la linea base media pixel.
+.text {
+  position: relative;
+}
+
+.link:not(.isDisabled) .text::after {
+  content: '';
+  position: absolute;
+  inset-block-end: calc(#{spacing.$spacing-01} * -1);
+  inset-inline-start: 0;
+  inline-size: 100%;
+  block-size: 1px;
+  background-color: currentcolor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform brand.$duration-half brand.$ease-default;
+}
+
+.link:not(.isDisabled):hover .text::after,
+.link:not(.isDisabled):focus-visible .text::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link:not(.isDisabled) .text::after {
+    transition: none;
+  }
+}
