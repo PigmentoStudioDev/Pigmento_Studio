@@ -27,8 +27,15 @@ import styles from "./SiteHeader.module.scss";
 export interface SiteHeaderGroup {
   label: string;
   items: NavLinkItem[];
-  /** Segunda lista, mas pequena, bajo la principal. */
+  /**
+   * Segunda lista, mas pequena. Se ancla al PIE de la columna, no debajo de la
+   * primera: asi las columnas cierran a la misma altura aunque sus listas midan
+   * distinto, que es lo que hace que la fila se lea como una retmica y no como
+   * tres bloques sueltos.
+   */
   secondary?: NavLinkItem[];
+  /** Destaca la columna como tarjeta con fondo propio. Solo una por fila. */
+  featured?: boolean;
 }
 
 export interface SiteHeaderAction {
@@ -242,26 +249,36 @@ export function SiteHeader({
               ocupando alto y empujaba la placa por debajo de la barra. */}
           <div className={styles.panelInner}>
             <div className={styles.panelContent}>
-            {groups.map((group) => (
-              <div key={group.label} className={styles.group}>
-                <h2 className={styles.groupLabel}>{group.label}</h2>
-                <NavLinkList items={group.items} onNavigate={close} />
-                {group.secondary?.length ? (
-                  <NavLinkList
-                    items={group.secondary}
-                    size="small"
-                    label={group.label}
-                    onNavigate={close}
-                  />
+              <div className={styles.panelRow}>
+                {groups.map((group) => (
+                  <div
+                    key={group.label}
+                    className={[styles.group, group.featured ? styles.groupFeatured : undefined]
+                      .filter(Boolean)
+                      .join(" ")}
+                  >
+                    <h2 className={styles.groupLabel}>{group.label}</h2>
+                    <NavLinkList items={group.items} onNavigate={close} />
+
+                    {group.secondary?.length ? (
+                      <div className={styles.groupSecondary}>
+                        <NavLinkList
+                          items={group.secondary}
+                          size="small"
+                          label={group.label}
+                          onNavigate={close}
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                ))}
+
+                {banner ? (
+                  <div className={styles.banner}>
+                    <NavBanner {...banner} onNavigate={close} />
+                  </div>
                 ) : null}
               </div>
-            ))}
-
-            {banner ? (
-              <div className={styles.banner}>
-                <NavBanner {...banner} onNavigate={close} />
-              </div>
-            ) : null}
             </div>
           </div>
         </div>

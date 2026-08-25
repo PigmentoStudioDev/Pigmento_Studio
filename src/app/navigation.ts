@@ -17,6 +17,7 @@ export const NAVIGATION: SiteHeaderProps = {
   groups: [
     {
       label: "Estudio",
+      featured: true,
       items: [
         { label: "Trabajo", href: "/trabajo" },
         { label: "Servicios", href: "/servicios" },
@@ -33,4 +34,14 @@ export const NAVIGATION: SiteHeaderProps = {
     },
   ],
   actions: [{ label: "Hablemos", href: "/contacto", emphasis: "primary" }],
+
+  // La tercera columna del panel. En la referencia es una pieza promocional fija —
+  // no una lista mas — y por eso el componente es otro: no tiene enlaces sueltos,
+  // toda la tarjeta lleva a un solo sitio.
+  banner: {
+    href: "/trabajo",
+    title: "Ultimo caso publicado",
+    cta: "Ver el trabajo",
+    tags: ["Destacado"],
+  },
 };
