@@ -1,9 +1,9 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
-@use '@carbon/react/scss/type';
 
 .root {
   display: inline-flex;
@@ -41,7 +41,7 @@
 }
 
 .label {
-  @include type.type-style('body-compact-01');
+  @include brandtype.style('control');
 }
 
 .bars {
