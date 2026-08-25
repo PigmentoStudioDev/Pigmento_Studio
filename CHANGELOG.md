@@ -7,6 +7,59 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
 
 ### Added
 
+- **Modelo atomico de componentes.** `layout/` (primitivas de composicion),
+  `atoms/`, `molecules/`, `organisms/`. La correspondencia organismo ↔ bloque de
+  Payload es la regla central: por eso las props son serializables. El grafo entre
+  capas va en un solo sentido y es una regla ejecutable, no un acuerdo verbal.
+- **`layout/Section`**, que pone el ritmo vertical, el ancho y la zona de tema. Los
+  organismos no llevan margenes externos: si los llevaran, el hueco entre dos bloques
+  dependeria de cuales sean y no del orden que arme la pagina.
+- **Navbar completa** portada de la referencia: `atoms/Logo`, `molecules/NavToggle`,
+  `NavLinkList`, `NavBanner` y `organisms/SiteHeader`, montada en el layout raiz.
+  Panel expandible, cierre por Escape, por fondo y por scroll, e `inert` para que la
+  tabulacion no se pierda en un panel invisible.
+- **Atomos propios**: `atoms/Button` y `atoms/Tag`, sobre la tercera capa de tokens
+  de Carbon. Carbon deja de ser la capa de atomos.
+- **Escala de motion de marca** en `_brand.scss` (ratio sobre una base) y **escala de
+  radios** en dieciseisavos, ambas calcadas del sistema de la referencia.
+- **Cuatro contratos nuevos**, todos sobre el CSS compilado y verificados en rojo:
+  `motion-contract` (reduced-motion obligatorio y duraciones de la escala),
+  `radius-contract` (escalones de la escala; la pildora solo para controles),
+  `module-contract` (cada `styles.x` existe y cada clase se usa) y las reglas
+  `motion-literal` y `gsap-import` del contrato de TSX.
+- **Budget de JS**, que no existia. Los limites salen del build real y el margen es
+  corto a proposito.
+
+### Changed
+
+- **Carbon deja de emitir el CSS de sus componentes.** `index.scss` registra a mano
+  los cinco grupos de tokens de componente con `add-component-tokens()`, asi que la
+  plantilla sigue entera — primitivas, 235 semanticos y 77 de componente — sin una
+  sola regla suya. **938kb raw / 96kb gzip → 129kb / 12kb.**
+- **Ni un import de `@carbon/react` en JS.** Pedir `<Theme>` metia el barrel completo
+  en el bundle: aparecian `flatpickr`, `TreeView` y `MultiSelect` por un componente
+  que concatena un string. `design-system/theme/zone.ts` lo sustituye por lo que era.
+  **1226kb raw / 358kb gzip → 611kb / 188kb.**
+- El gate de fuentes recorre `design-system/` entero en vez de dos directorios fijos:
+  un `.module.scss` que olvide `carbon-config` ya se cae solo.
+- El contrato de tema se parte en dos afirmaciones: que la plantilla siga completa y
+  que la marca no toque nada que no haya declarado.
+
+### Fixed
+
+- `SiteHeader` referenciaba `styles.isClosed`, que nunca se declaro. `join()` no
+  escribe "undefined" sino cadena vacia, asi que la clase no salia rota: salia
+  ausente. El estado cerrado se quedo sin su clase sin que nada avisara.
+- El panel cerrado ocupaba alto y empujaba la placa por debajo de la barra. El
+  `padding` estaba en el item del grid, y `min-block-size: 0` solo pone a cero la
+  caja de contenido: el padding se seguia sumando y la fila de `0fr` nunca colapsaba.
+- Una capa a pantalla completa con `pointer-events: none` devolviendo el puntero
+  pieza a pieza dejaba elementos que se pintan y no responden. La cabecera ocupa
+  ahora solo lo que mide.
+- `aria-controls` apuntaba a un panel ausente en el test aislado, y el nombre
+  accesible de `NavBanner` dependia del layout — separado en el navegador y pegado en
+  jsdom. Los dos los destapo `jest-axe`.
+
 - Scaffold inicial: Next 16.3.2 (App Router, Turbopack), React 19.2.8, IBM Carbon v11
   y Sass. Sin Tailwind — Carbon ya es el sistema de tokens y superponerlo crearia una
   segunda fuente de verdad para spacing y color.
