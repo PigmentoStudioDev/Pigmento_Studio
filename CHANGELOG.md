@@ -7,6 +7,27 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
 
 ### Added
 
+- **Birken Nue como la sans del sitio**, los nueve pesos. `next/font` emite un
+  `@font-face` por peso y el navegador solo descarga los que algun texto usa: recortar
+  la lista quitaria opciones al diseno sin ahorrar un byte a quien visita.
+- **Escala tipografica de marca** (`_type.scss`), junto a la de Carbon y no en su
+  lugar. Carbon cubre el registro de UI de producto — tracking cero e interlineados de
+  1.19 a 1.4 — y lo que se calca de la referencia son las dos curvas que le faltan: el
+  tracking que se aprieta segun crece el cuerpo (-0.01em a -0.06em) y el interlineado
+  que baja de 1 en display. `type-contract` exige que todo tamano y tracking de un
+  componente sea miembro de UNA de las dos escalas.
+- **El logotipo real**, invertido en las zonas oscuras con `--pg-on-dark`: una bandera
+  derivada, no un token de tema, para lo que no puede tomar color de `currentColor`.
+- **La tercera columna del mega menu**, que faltaba entera. `NavBanner` existia y
+  nadie lo montaba porque la navegacion no traia el dato.
+- **`$container-mega`**, techo de la PLACA del mega menu — otra medida que el techo de
+  su contenido. Sin el, en un monitor muy grande el fondo seguia creciendo con la
+  ventana con lo de dentro ya parado, y el hueco se lee como un borde vacio.
+- **Regla `reference-name`** en los tres contratos: la referencia de diseno se cita
+  sin nombrarla. El runner gana `includeComments` — las reglas que van SOBRE el
+  comentario necesitan la vista que el escaner descartaba — y exenciones por regla, no
+  por archivo entero.
+
 - **Modelo atomico de componentes.** `layout/` (primitivas de composicion),
   `atoms/`, `molecules/`, `organisms/`. La correspondencia organismo ↔ bloque de
   Payload es la regla central: por eso las props son serializables. El grafo entre
@@ -32,6 +53,13 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
 
 ### Changed
 
+- **Los anchos de contenedor salen de la reticula**, por `map.get()` sobre
+  `$grid-breakpoints`, en vez de escribirse a ojo. La excepcion es `$container-full` y
+  esta escrita: un mega menu no es una columna de LECTURA, y las dos medidas
+  compartian numero por accidente.
+- Los enlaces del panel ocupan el ancho de su `<li>`: el area de clic es la fila
+  entera y no lo que mide el texto.
+
 - **Carbon deja de emitir el CSS de sus componentes.** `index.scss` registra a mano
   los cinco grupos de tokens de componente con `add-component-tokens()`, asi que la
   plantilla sigue entera — primitivas, 235 semanticos y 77 de componente — sin una
@@ -46,6 +74,23 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
   que la marca no toque nada que no haya declarado.
 
 ### Fixed
+
+- **El sitio entero llevaba renderizando en Times.** La familia base la ponia el reset
+  de Carbon, y desde que dejamos de emitir el CSS de sus componentes no la ponia nadie:
+  sus tokens de tipo llevan tamano, peso e interlineado pero no familia. Sin literal
+  que detectar ni build que romper, el unico gate posible es exigir que `html` o `body`
+  traigan una familia salida de una variable.
+- **Faltaba el `box-sizing: border-box`**, del mismo reset. `content-box` suma padding
+  y borde al tamano declarado, y lo delata cualquier caja que mezcle `aspect-ratio` con
+  `padding`: la proporcion se calcula sobre la caja de contenido y la pieza deja de
+  mantenerla justo en los anchos donde mas se nota.
+- **`list-style: none` no quita el sangrado.** El navegador le pone a todo `<ul>` un
+  `padding-inline-start` de 40px para el marcador, y son dos reglas distintas: la lista
+  quedaba sangrada sin un bullet que lo justificara.
+- El import estatico de `next/image` no sobrevivia a Vitest: Next lo resuelve a
+  `{src, width, height}` y Vite a una URL pelada, asi que `<Image>` moria por falta de
+  `width`. El plugin lee las medidas de los BYTES del archivo (IHDR en png, VP8X en
+  webp) y lanza un error con el nombre si no puede — un limite declarado, no un hueco.
 
 - `SiteHeader` referenciaba `styles.isClosed`, que nunca se declaro. `join()` no
   escribe "undefined" sino cadena vacia, asi que la clase no salia rota: salia
