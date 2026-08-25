@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Dropdown, Tag, Theme } from "@carbon/react";
+import { themeZoneClass, type ThemeZone } from "../theme/zone";
+import { Tag } from "../components/atoms/Tag/Tag";
 import { ComponentGallery } from "./ComponentGallery";
 import { Foundations } from "./Foundations";
 import { TokenExplorer } from "./TokenExplorer";
@@ -19,7 +20,7 @@ const THEMES = [
   { id: "white", label: "white — claro" },
 ] as const;
 
-type ThemeId = (typeof THEMES)[number]["id"];
+type ThemeId = ThemeZone;
 
 const SECTIONS = [
   { id: "tokens", label: "Tokens semanticos" },
@@ -60,30 +61,34 @@ export function PreviewShell() {
           <nav className="pg-row pg-nav">
             {SECTIONS.map((section) => (
               <a key={section.id} href={`#${section.id}`}>
-                <Tag type="outline">{section.label}</Tag>
+                <Tag>{section.label}</Tag>
               </a>
             ))}
           </nav>
         </div>
 
         <div className="pg-header__control">
-          <Dropdown
-            id="pg-theme"
-            titleText="Tema"
-            label="Tema"
-            items={[...THEMES]}
-            selectedItem={THEMES.find((item) => item.id === theme)}
-            itemToString={(item) => item?.label ?? ""}
-            onChange={({ selectedItem }) => {
-              if (selectedItem) {
-                setTheme(selectedItem.id);
-              }
-            }}
-          />
+          {/* Select nativo: /ds es herramienta de desarrollo. Un conmutador de
+              tema con teclado y lector de pantalla resueltos de fabrica vale mas
+              aqui que un componente propio que habria que mantener. */}
+          <label className="pg-field">
+            <span className="pg-type--label-01">Tema</span>
+            <select
+              className="pg-input"
+              value={theme}
+              onChange={(event) => setTheme(event.target.value as ThemeId)}
+            >
+              {THEMES.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
       </header>
 
-      <Theme theme={theme}>{body}</Theme>
+      <div className={themeZoneClass(theme)}>{body}</div>
     </div>
   );
 }

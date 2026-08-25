@@ -1,0 +1,43 @@
+// Puente a la TERCERA capa de la plantilla de Carbon.
+//
+// Los tokens de componente solo existen como variable de Sass dentro de la unidad
+// de compilacion que llamo a add-component-tokens(), y esa es index.scss. Cada
+// .module.scss es su propia unidad: sin este puente, un atomo nuestro no puede
+// nombrar `button-primary` ni `tag-background-gray`.
+//
+// No es una lista escrita a mano. Resuelve contra los mismos mapas que Carbon usa
+// para registrarlos, asi que un nombre inventado es un ERROR DE COMPILACION y no
+// una custom property huerfana que no pinta nada y no avisa — que es exactamente
+// como fallan los tokens mal escritos.
+//
+// Se devuelve la referencia sin respaldo: index.scss define las custom properties
+// en :root y viaja en el mismo build, asi que un fallback aqui seria valor muerto
+// que ademas habria que mantener sincronizado en dos sitios.
+
+@use 'sass:map';
+@use '@carbon/styles/scss/components/button/tokens' as button;
+@use '@carbon/styles/scss/components/tag/tokens' as tag;
+@use '@carbon/styles/scss/components/notification/tokens' as notification;
+@use '@carbon/styles/scss/components/content-switcher/tokens' as content-switcher;
+@use '@carbon/styles/scss/components/icon-indicator/tokens' as icon-indicator;
+
+$-tokens: map.merge(
+  map.merge(
+    map.merge(
+      map.merge(button.$button-tokens, tag.$tag-tokens),
+      notification.$notification-tokens
+    ),
+    content-switcher.$content-switcher-tokens
+  ),
+  icon-indicator.$status-tokens
+);
+
+/// Referencia a un token de componente de la plantilla.
+/// @param {String} $name — nombre del token, sin el prefijo --cds-
+@function get($name) {
+  @if not map.has-key($-tokens, $name) {
+    @error 'Token de componente desconocido: "#{$name}". Los que registra index.scss son #{map.keys($-tokens)}.';
+  }
+
+  @return var(--cds-#{$name});
+}
