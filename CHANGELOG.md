@@ -26,6 +26,33 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
 - `metadataBase`, sin el cual las URLs relativas de Open Graph no resuelven.
 - IBM Plex Serif via `next/font`. Carbon lo usa en `quotation-01/02` y
   `fluid-paragraph-01`, no era decorativo.
+- **`scripts/gates.sh`: un unico entrypoint para el compliance completo** — build,
+  estatico (secretos + ESLint), contrato y tests. El build va PRIMERO a proposito: la
+  seccion `budgets` mide sobre `.next/`, asi que sin build se saltaba con una nota en
+  vez de medir.
+- **Seccion `react` del contrato** (`conformance/react-contract.json`): `React.FC`,
+  `any`, `console.log|info|debug` y `dangerouslySetInnerHTML` como patrones; y tres
+  reglas posicionales que ninguna regex de una linea puede ver — que `'use client'`
+  sea la PRIMERA sentencia (si algo que no es comentario lo precede deja de ser
+  directiva, el archivo se queda en el servidor y no hay error de build), que la
+  frontera de cliente este declarada en el contrato y no se descubra en el budget, y
+  que el `export default` este en los archivos de ruta y solo en ellos.
+  `console.error` queda fuera de la regla: es el canal deliberado de los error
+  boundaries.
+- **Seccion `modularity` del contrato** (`conformance/modularity-contract.json`):
+  longitud de archivo (400 aviso, 800 tope) y grafo de imports — el design system no
+  depende de `app/`, `preview/` solo lo importa `/ds` y `tokens.generated` solo
+  `preview/`. Es el gate que llega antes que `budgets`: si el sitio importara
+  `ComponentGallery`, los 263 exports de Carbon entran al bundle de produccion y el
+  peso lo delata tarde y sin nombrar la causa.
+- **Valvula `// conformance-exempt: <por que>`** en el runner. Las reglas de TSX son
+  mas grises que las de Sass y `exemptFiles` exime el archivo entero. Sin motivo
+  escrito detras de los dos puntos no cuenta como exencion.
+- Las reglas de hooks (`rules-of-hooks`, `exhaustive-deps`, `jsx-key`) **no** se
+  reimplementan en el contrato: necesitan AST y ya las cubre
+  `eslint-config-next/core-web-vitals`. Por eso `pnpm lint` es un gate y no un
+  comando suelto. Un gate de regex que finge entender scope cierra en verde sin
+  cubrir la forma real del codigo.
 
 ### Changed
 

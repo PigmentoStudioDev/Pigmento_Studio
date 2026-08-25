@@ -1,0 +1,19 @@
+{
+  "$comment": "Contrato del TSX. Vigila que el markup no se salte el design system por la puerta de atras.",
+  "scanDirs": ["src"],
+  "ext": ".tsx",
+  "rules": {
+    "inline-style-literal": {
+      "why": "un style={{ color: '#fff' }} no re-tematiza y es invisible para el gate del Sass. Los valores dinamicos (style={{ background: token.value }}) SI pasan: no son literales",
+      "pattern": "style=\\{\\{[^}]*:\\s*[\"'`][^\"'`]+[\"'`]"
+    },
+    "handwritten-cds-class": {
+      "why": "escribir 'cds--btn' a mano acopla a las clases internas de Carbon, que son suyas y pueden cambiar en cualquier minor. Se usa el componente",
+      "pattern": "[\"'`][^\"'`]*\\bcds--[a-z]"
+    }
+  },
+  "exemptFiles": {
+    "app/global-error.tsx": "Se dispara cuando falla el propio root layout, asi que no puede depender de la hoja de estilos — que podria ser justo lo que fallo. Sus literales son el fallback de ultimo recurso, deliberado"
+  },
+  "baseline": {}
+}

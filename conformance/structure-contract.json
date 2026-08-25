@@ -1,0 +1,14 @@
+{
+  "$comment": "Reglas de estructura: no miran valores, miran que cada pieza este donde el sistema asume que esta. Las dos existen porque su fallo ya ocurrio y ninguno produjo error de build.",
+  "sassConfigPartial": {
+    "why": "cada .scss que Next compila es una unidad de compilacion independiente: la configuracion de index.scss no alcanza a los demas entries. Un entry sin este partial carga Carbon con sus defaults y emite el literal 'IBM Plex Sans' que next/font no registra. Paso en preview.scss: los 4 estilos serif y los 2 de code cayeron al fallback del sistema y nadie se entero",
+    "scanDir": "src",
+    "partial": "carbon-config"
+  },
+  "globalClasses": {
+    "why": "preview/preview.scss solo se carga en /ds. Una clase usada fuera de preview/ tiene que estar definida en la hoja global o renderiza sin estilo, sin error. Paso con .pg-landing, que vivia en preview.scss y la usaba la home",
+    "prefix": "pg-",
+    "globalSheet": "src/design-system/styles/_app.scss",
+    "scopedDir": "src/design-system/preview"
+  }
+}

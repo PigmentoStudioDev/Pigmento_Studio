@@ -1,0 +1,35 @@
+{
+  "$comment": "Contrato del Sass propio. El proyecto nacio sin deuda, asi que el baseline es CERO de verdad: no hay nada que perdonar. Anadir una entrada a 'baseline' para hacer pasar un cambio propio es una decision consciente y visible en el diff — un literal enterrado en un .scss no lo es.",
+  "scanDirs": ["src"],
+  "ext": ".scss",
+  "rules": {
+    "color-literal": {
+      "why": "los colores entran por tokens semanticos de Carbon; un literal no re-tematiza entre las cuatro zonas ni sobrevive a la capa de marca",
+      "pattern": "#[0-9a-fA-F]{3,8}\\b|\\brgba?\\(|\\bhsla?\\(|\\boklch\\("
+    },
+    "important": {
+      "why": "rompe la cascada; el patron de Carbon es especificidad baja y custom properties",
+      "pattern": "!important"
+    },
+    "font-family-literal": {
+      "why": "next/font genera nombres con hash: un literal 'IBM Plex Sans' no lo registra nadie y la tipografia se pierde sin error de build. Solo var() o inherit",
+      "declaration": "font-family"
+    },
+    "spacing-literal": {
+      "why": "el espaciado sale de spacing.$spacing-01..13; un valor suelto se sale de la reticula de Carbon. Los tamanos (inline-size, border-width, tracks de grid) SI pueden ser literales: no son espaciado",
+      "pattern": "(?:padding|margin|gap|row-gap|column-gap|inset)(?:-[a-z-]+)?:\\s*[^;{}]*[0-9]+(?:\\.[0-9]+)?(?:px|rem|em)"
+    },
+    "easing-literal": {
+      "why": "las curvas son lenguaje de marca. Carbon ya expone sus easings como tokens; una cubic-bezier() escrita a mano es motion inventado. Leccion del DS de Atom, donde 11 de 17 modulos acumularon literales antes de existir este gate",
+      "pattern": "cubic-bezier\\("
+    },
+    "duration-literal": {
+      "why": "las duraciones salen de los tokens de @carbon/motion. 0s/0ms queda excluido: apagar motion en reduced-motion siempre es legitimo",
+      "pattern": "(?:transition|animation)[^;{}]*?[\\s,(](?!0+(?:\\.0+)?m?s\\b)[0-9]+(?:\\.[0-9]+)?m?s\\b"
+    }
+  },
+  "exemptFiles": {
+    "design-system/styles/_brand.scss": "ES la capa de primitivas: es el unico sitio donde un valor literal es la definicion y no una fuga. Todo lo demas lo consume desde aqui"
+  },
+  "baseline": {}
+}

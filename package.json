@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "gen:tokens": "node scripts/generate-preview-tokens.mjs"
+    "gen:tokens": "node scripts/generate-preview-tokens.mjs",
+    "conformance": "node scripts/conformance.mjs"
   },
   "dependencies": {
     "@carbon/react": "^1.114.0",

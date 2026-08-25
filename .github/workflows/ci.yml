@@ -1,0 +1,49 @@
+name: CI
+
+# Sin filtros de path a proposito. Un required check con paths solo se dispara
+# cuando el PR toca esas rutas; en los demas queda "expected" para siempre y el PR
+# se cuelga sin poder mergear. Corre siempre, aunque sea para decir que si.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Los postinstall de @carbon/* y @ibm/* son telemetria de IBM, que solo recolecta
+  # en CI. pnpm ya los bloquea via ignoredBuiltDependencies; esto es el cinturon.
+  IBM_TELEMETRY_DISABLED: 'true'
+
+jobs:
+  # El nombre de este job es el contexto que exige la proteccion de main. Cambiarlo
+  # sin actualizar la regla deja main sin gate.
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Instalar
+        run: pnpm install --frozen-lockfile
+
+      # Un solo entrypoint, el mismo que en local (CLAUDE.md > Como se verifica).
+      # Si CI corriera sus propios pasos, "verde en mi maquina" y "verde en CI"
+      # podrian divergir sin que nadie lo note.
+      - name: Gates
+        run: ./scripts/gates.sh

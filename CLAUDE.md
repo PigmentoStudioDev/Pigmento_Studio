@@ -62,14 +62,56 @@ Los nombres de estilos y espaciados se **generan** desde los mapas de Carbon
 (`scripts/generate-preview-tokens.mjs`), no se escriben a mano. Tras subir Carbon:
 `pnpm gen:tokens`.
 
+## Como se verifica
+
+Un solo entrypoint: **`./scripts/gates.sh`**. Cuatro gates, y falla el conjunto si
+falla uno.
+
+| Gate | Que | Por que ahi |
+| --- | --- | --- |
+| 1 build | `pnpm build` | va primero porque `budgets` mide sobre `.next/`; sin build no mide, solo avisa |
+| 2 estatico | secretos + `pnpm lint` | ESLint es quien entiende AST: hooks y core-web-vitals |
+| 3 contrato | `node scripts/conformance.mjs` | las reglas de la casa |
+| 4 tests | `pnpm test` | contrato del tema y de las fuentes, sobre el Sass real |
+
+El contrato del gate 3 **es data**: las reglas viven en `conformance/*.json` y el
+runner es tonto. Relajar una ley obliga a editar ese directorio, y eso se ve en el
+diff; un literal enterrado en un `.scss` no se ve. Seis secciones, ejecutables por
+separado con `pnpm conformance <seccion>`:
+
+- `style` / `tsx` — cero literales de color, spacing, tipografia y motion.
+- `react` — `any`, `console`, `React.FC`, `dangerouslySetInnerHTML`; que
+  `'use client'` sea la primera sentencia; que la frontera de cliente este declarada;
+  que el `export default` este en los archivos de ruta y solo ahi.
+- `structure` — cada entry de Sass carga `carbon-config`; las clases usadas fuera de
+  `preview/` estan en `_app.scss`.
+- `modularity` — longitud (400 aviso, 800 tope) y grafo de imports: el DS no depende
+  de `app/`, `preview/` solo lo importa `/ds`, `tokens.generated` solo `preview/`.
+- `budgets` — peso del CSS que viaja al navegador.
+
+**Las reglas de hooks no estan en el contrato** y no se van a meter: necesitan AST y
+ya las cubre `eslint-config-next/core-web-vitals` en el gate 2. Un gate de regex que
+finge entender scope cierra en verde sin cubrir la forma real del codigo.
+
+Valvulas, en orden de menos a mas grueso: `// conformance-exempt: <por que>` en la
+linea, `exemptFiles` en el contrato, `baseline` para deuda medida. Ninguna cuenta sin
+el motivo escrito. **El baseline de este repo esta vacio a proposito**: el proyecto
+nacio sin deuda, asi que anadir una entrada para hacer pasar un cambio propio es una
+decision consciente y visible en el diff.
+
+Regla para reglas nuevas: **se verifica en ROJO reintroduciendo su bug**, y en verde
+al quitarlo. Un gate que no falla contra su bug conocido no es un gate.
+
 ## Comandos
 
 ```bash
-pnpm dev            # localhost:3000 · el preview del DS en /ds
-pnpm test           # contrato del tema y de las fuentes
-pnpm build          # Turbopack
+pnpm dev              # localhost:3000 · el preview del DS en /ds
+pnpm test             # contrato del tema y de las fuentes
+pnpm build            # Turbopack
 pnpm lint
-pnpm gen:tokens     # regenera la lista de tokens del preview desde Carbon
+pnpm conformance      # el contrato entero (o una seccion: style|tsx|react|structure|modularity|budgets)
+pnpm gen:tokens       # regenera la lista de tokens del preview desde Carbon
+./scripts/gates.sh    # compliance completo: los cuatro gates
 ```
 
 ## Cosas del stack que sorprenden

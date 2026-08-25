@@ -1,0 +1,52 @@
+{
+  "$comment": "Contrato de React/TSX. Vigila lo que ESLint NO puede o no trae: reglas de la casa sobre tipos y ruido, y la frontera servidor/cliente del App Router. Las reglas de hooks (rules-of-hooks, exhaustive-deps, jsx-key) NO se reimplementan aqui: necesitan AST y ya las cubre eslint-config-next/core-web-vitals, que corre en el Gate 2 de scripts/gates.sh. Un gate de regex que finge entender scope es un gate que miente.",
+  "scanDirs": ["src"],
+  "ext": [".tsx", ".ts"],
+  "rules": {
+    "react-fc": {
+      "why": "React.FC no aporta tipado util y estorba a los genericos; las props se declaran con una interface o type con nombre. Regla de la casa",
+      "pattern": "React\\.(?:FC|FunctionComponent)\\b"
+    },
+    "any-type": {
+      "why": "any apaga el compilador justo en la frontera donde hace falta. Lo externo entra como unknown y se estrecha antes de usarlo",
+      "pattern": ":\\s*any\\b|\\bas\\s+any\\b|<\\s*any\\s*>|,\\s*any\\b"
+    },
+    "console-noise": {
+      "why": "console.log/info/debug es salida de depuracion que sobrevive al commit y acaba en produccion. console.error queda FUERA de la regla a proposito: es el canal deliberado de los error boundaries (app/error.tsx, app/global-error.tsx), que registran el digest para cruzarlo con los logs del servidor",
+      "pattern": "\\bconsole\\.(?:log|info|debug|trace)\\("
+    },
+    "dangerous-html": {
+      "why": "dangerouslySetInnerHTML es XSS por defecto salvo que alguien haya escrito y revisado el saneado. Si hace falta de verdad, se exime por archivo con el motivo",
+      "pattern": "dangerouslySetInnerHTML"
+    }
+  },
+  "directiveFirst": {
+    "why": "'use client' es un directive prologue: si algo que no sea un comentario lo precede, deja de ser una directiva y pasa a ser una expresion string sin efecto. El archivo se queda en server component SIN error de build, y el fallo aparece en runtime como un hook llamado en el servidor",
+    "directive": "use client"
+  },
+  "clientBoundary": {
+    "why": "cada 'use client' nuevo mueve arbol al bundle del navegador. El sitio es server-first y la frontera se declara AQUI, no se descubre en el budget de CSS/JS cuando ya duele. preview/ es herramienta de desarrollo y solo la carga /ds; los dos error boundaries necesitan estado de cliente por definicion",
+    "allow": [
+      "app/error.tsx",
+      "app/global-error.tsx",
+      "design-system/preview/"
+    ]
+  },
+  "routeExports": {
+    "why": "en el App Router el default export ES el contrato con el router: si falta en un archivo de ruta, Next da un error que no nombra la causa. Fuera de una ruta, un default rompe el rename-safety y hace que el import elija el nombre. Solo se miran .tsx: los route handlers (.ts) exportan GET/POST con nombre y no llevan default",
+    "ext": ".tsx",
+    "routeDir": "app",
+    "routeFiles": [
+      "page",
+      "layout",
+      "template",
+      "loading",
+      "error",
+      "global-error",
+      "not-found",
+      "default"
+    ]
+  },
+  "exemptFiles": {},
+  "baseline": {}
+}
