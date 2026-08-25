@@ -71,10 +71,14 @@ function* walk(dir, ext) {
 function countRule(src, rule) {
   if (rule.pattern) return (src.match(new RegExp(rule.pattern, 'g')) ?? []).length;
 
+  // Lo que la regla persigue es un LITERAL, no una forma concreta de escribirlo. Un
+  // `var(...)` vale y una funcion del propio sistema de tokens tambien: las dos
+  // dicen de donde sale el valor. La lista es del contrato, no del runner.
+  const allow = rule.allow ?? ['var(', 'inherit'];
   let n = 0;
   for (const m of src.matchAll(new RegExp(`${rule.declaration}:\\s*([^;}]+)`, 'g'))) {
     const value = m[1].trim();
-    if (!value.startsWith('var(') && value !== 'inherit') n += 1;
+    if (!allow.some((prefix) => value.startsWith(prefix))) n += 1;
   }
   return n;
 }
@@ -87,14 +91,34 @@ function literalSection(section, contractFile) {
   for (const dir of contract.scanDirs) {
     for (const file of walk(join(ROOT, dir), contract.ext)) {
       const rel = relative(join(ROOT, dir), file);
-      if (contract.exemptFiles[rel]) continue;
 
-      const src = scannable(readFileSync(file, 'utf8'));
+      // La exencion por archivo admite dos formas. Un string exime de TODO el
+      // contrato — la forma corta de siempre. Un objeto con `rules` exime solo de
+      // las que nombra, y esa es la que hay que preferir: un archivo suele tener
+      // permiso para una cosa concreta, no para todas. _brand.scss puede llevar
+      // literales porque ES la capa de primitivas; eso no le da barra libre con
+      // reglas que no van de literales.
+      const exemption = contract.exemptFiles[rel];
+      if (typeof exemption === 'string') continue;
+      const exemptRules = new Set(exemption?.rules ?? []);
+
+      // Dos vistas del mismo archivo. La normal no ve los comentarios, que es lo
+      // correcto para un literal: codigo comentado no viaja al navegador. Pero hay
+      // reglas que son SOBRE el comentario — lo que se escribe ahi tambien se
+      // publica — y esas piden `includeComments`. En las dos vistas se quitan
+      // antes las lineas con la valvula, o exponerla dejaria de funcionar.
+      const filtered = readFileSync(file, 'utf8')
+        .split('\n')
+        .filter((line) => !line.includes(EXEMPT))
+        .join('\n');
+      const src = stripComments(filtered);
       const baseline = contract.baseline[rel] ?? {};
       let dirty = false;
 
       for (const [name, rule] of Object.entries(contract.rules)) {
-        const found = countRule(src, rule);
+        if (exemptRules.has(name)) continue;
+
+        const found = countRule(rule.includeComments ? filtered : src, rule);
         const allowed = baseline[name] ?? 0;
 
         if (found > allowed) {

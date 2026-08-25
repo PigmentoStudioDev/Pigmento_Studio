@@ -18,7 +18,7 @@
       "pattern": "cubic-bezier\\(|CustomEase\\.|\\bduration:\\s*[0-9]|\\bease(?:In|Out|InOut)?:\\s*[\"'`]"
     },
     "gsap-import": {
-      "why": "gsap solo se importa desde design-system/motion/. Un tween suelto en un componente se salta el contexto que lo limpia y la rama de reduced-motion, y ninguna de las dos se echa de menos hasta que el bug ya esta en produccion. El navbar no lo necesita — el de OSMO tampoco usa gsap — asi que la frontera se declara antes de que exista la tentacion",
+      "why": "gsap solo se importa desde design-system/motion/. Un tween suelto en un componente se salta el contexto que lo limpia y la rama de reduced-motion, y ninguna de las dos se echa de menos hasta que el bug ya esta en produccion. El navbar no lo necesita — el de la referencia de diseno tampoco usa gsap — asi que la frontera se declara antes de que exista la tentacion",
       "pattern": "from\\s+[\"'`]gsap"
     }
   },

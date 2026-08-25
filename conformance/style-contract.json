@@ -1,6 +1,8 @@
 {
   "$comment": "Contrato del Sass propio. El proyecto nacio sin deuda, asi que el baseline es CERO de verdad: no hay nada que perdonar. Anadir una entrada a 'baseline' para hacer pasar un cambio propio es una decision consciente y visible en el diff — un literal enterrado en un .scss no lo es.",
-  "scanDirs": ["src"],
+  "scanDirs": [
+    "src"
+  ],
   "ext": ".scss",
   "rules": {
     "color-literal": {
@@ -12,8 +14,13 @@
       "pattern": "!important"
     },
     "font-family-literal": {
-      "why": "next/font genera nombres con hash: un literal 'IBM Plex Sans' no lo registra nadie y la tipografia se pierde sin error de build. Solo var() o inherit",
-      "declaration": "font-family"
+      "why": "next/font genera nombres con hash: un literal 'IBM Plex Sans' no lo registra nadie y la tipografia se pierde sin error de build. El valor tiene que venir de un token — una custom property o la funcion font-family() de Carbon, que resuelve a una — y nunca de un nombre escrito a mano",
+      "declaration": "font-family",
+      "allow": [
+        "var(",
+        "inherit",
+        "type.font-family("
+      ]
     },
     "spacing-literal": {
       "why": "el espaciado sale de spacing.$spacing-01..13; un valor suelto se sale de la reticula de Carbon. Los tamanos (inline-size, border-width, tracks de grid) SI pueden ser literales: no son espaciado",
@@ -26,10 +33,21 @@
     "duration-literal": {
       "why": "las duraciones salen de los tokens de @carbon/motion. 0s/0ms queda excluido: apagar motion en reduced-motion siempre es legitimo",
       "pattern": "(?:transition|animation)[^;{}]*?[\\s,(](?!0+(?:\\.0+)?m?s\\b)[0-9]+(?:\\.[0-9]+)?m?s\\b"
+    },
+    "reference-name": {
+      "why": "la referencia de diseno se cita como 'la referencia', nunca por su nombre. Es una decision de Karen y no cosmetica: un comentario que nombra a otro estudio convierte 'nos inspiramos en su sistema' en 'copiamos su navbar', y eso viaja en el repo de una agencia de marca. El nombre vive en la conversacion, no en el codigo. El patron va en clases de caracter y no con una bandera de mayusculas porque las regex de JS no admiten (?i) en linea: el runner las compila solo con 'g'. Lleva includeComments porque el nombre vive justamente en los comentarios, y la vista normal del escaner los quita",
+      "pattern": "\\b[Oo][Ss][Mm][Oo]\\b",
+      "includeComments": true
     }
   },
   "exemptFiles": {
-    "design-system/styles/_brand.scss": "ES la capa de primitivas: es el unico sitio donde un valor literal es la definicion y no una fuga. Todo lo demas lo consume desde aqui"
+    "design-system/styles/_brand.scss": {
+      "why": "ES la capa de primitivas: el unico sitio donde un valor literal es la definicion y no una fuga. Todo lo demas lo consume desde aqui. La exencion se limita a las dos reglas que de verdad necesita — un color y una curva — para que no le de barra libre con las que no van de literales, como el nombre de la referencia",
+      "rules": [
+        "color-literal",
+        "easing-literal"
+      ]
+    }
   },
   "baseline": {}
 }

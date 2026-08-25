@@ -23,6 +23,11 @@
     "dangerous-html": {
       "why": "dangerouslySetInnerHTML es XSS por defecto salvo que alguien haya escrito y revisado el saneado. Si hace falta de verdad, se exime por archivo con el motivo",
       "pattern": "dangerouslySetInnerHTML"
+    },
+    "reference-name": {
+      "why": "la referencia de diseno se cita como 'la referencia', nunca por su nombre. Es una decision de Karen y no cosmetica: un comentario que nombra a otro estudio convierte 'nos inspiramos en su sistema' en 'copiamos su navbar', y eso viaja en el repo de una agencia de marca. El nombre vive en la conversacion, no en el codigo. El patron va en clases de caracter y no con una bandera de mayusculas porque las regex de JS no admiten (?i) en linea: el runner las compila solo con 'g'. Lleva includeComments porque el nombre vive justamente en los comentarios, y la vista normal del escaner los quita",
+      "pattern": "\\b[Oo][Ss][Mm][Oo]\\b",
+      "includeComments": true
     }
   },
   "directiveFirst": {

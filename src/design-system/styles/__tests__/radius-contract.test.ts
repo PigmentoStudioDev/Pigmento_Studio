@@ -5,7 +5,8 @@
  * pieza se pinta, y lo unico que pasa es que el conjunto deja de parecer del mismo
  * sistema. Es el fallo mas caro de detectar a ojo y el mas barato de detectar aqui.
  *
- * La escala esta calcada de OSMO — dieciseisavos, 2/16 a 24/16 — y la leccion que
+ * La escala esta calcada de la referencia de diseno — dieciseisavos, 2/16 a 24/16 —
+ * y la leccion que
  * costo una iteracion esta en el segundo test: una pildora no es un escalon. En una
  * caja baja se lee como pildora y en una alta como una esquina blanda enorme, y esa
  * misma declaracion produciendo dos formas distintas es justo lo que se lee como
