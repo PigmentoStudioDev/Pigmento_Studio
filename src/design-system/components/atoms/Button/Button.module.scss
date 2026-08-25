@@ -1,10 +1,10 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
 @use '../../../styles/component-tokens' as component;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
-@use '@carbon/react/scss/type';
 
 // Los tokens button-* son la TERCERA capa de la plantilla, que index.scss registra
 // a mano. Que Carbon ya no emita su boton no los invalida: son nombres de token de
@@ -77,19 +77,19 @@
 }
 
 .sizeSm {
-  @include type.type-style('body-compact-01');
+  @include brandtype.style('body-m');
 
   padding: spacing.$spacing-02 spacing.$spacing-04;
 }
 
 .sizeMd {
-  @include type.type-style('body-compact-01');
+  @include brandtype.style('control');
 
   padding: spacing.$spacing-03 spacing.$spacing-05;
 }
 
 .sizeLg {
-  @include type.type-style('body-compact-02');
+  @include brandtype.style('body-l');
 
   padding: spacing.$spacing-04 spacing.$spacing-06;
 }

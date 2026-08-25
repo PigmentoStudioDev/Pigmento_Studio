@@ -1,16 +1,16 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
 @use '../../../styles/component-tokens' as component;
 @use '@carbon/react/scss/spacing';
-@use '@carbon/react/scss/type';
 
 // Los tokens tag-* son la tercera capa de la plantilla. Los tonos NO son los diez
 // colores de Carbon: son tres intenciones de la marca, y cada una elige que token
 // consume. Un distintivo por color deja la decision al que escribe el markup;
 // por intencion, la deja en el design system.
 .root {
-  @include type.type-style('label-01');
+  @include brandtype.style('eyebrow');
 
   display: inline-flex;
   align-items: center;
