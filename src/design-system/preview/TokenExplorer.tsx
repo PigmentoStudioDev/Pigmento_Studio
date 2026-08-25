@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { InlineNotification, Search } from "@carbon/react";
 
 interface Token {
   readonly name: string;
@@ -75,22 +74,25 @@ export function TokenExplorer({ themeKey }: TokenExplorerProps) {
 
   return (
     <div ref={rootRef} className="pg-stack">
-      <Search
-        labelText="Filtrar tokens"
-        placeholder="Filtrar por nombre o valor (layer, #161616, support...)"
-        size="lg"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-      />
+      {/* Input nativo: /ds es herramienta de desarrollo y su buscador no necesita
+          un componente del DS. Lo que si necesita es label asociada — un
+          placeholder no es nombre accesible. */}
+      <label className="pg-field">
+        <span className="pg-type--label-01">Filtrar tokens</span>
+        <input
+          type="search"
+          className="pg-input"
+          placeholder="Filtrar por nombre o valor (layer, support...)"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
+      </label>
 
       {tokens.length === 0 ? (
-        <InlineNotification
-          kind="info"
-          lowContrast
-          hideCloseButton
-          title="Sin lectura de tokens"
-          subtitle="Este navegador no enumera custom properties. Los tokens siguen aplicados: solo no se pueden listar aqui."
-        />
+        <p role="status" className="pg-notice pg-type--body-01">
+          <strong>Sin lectura de tokens.</strong> Este navegador no enumera custom
+          properties. Los tokens siguen aplicados: solo no se pueden listar aqui.
+        </p>
       ) : (
         <p className="pg-type--body-01 pg-muted">
           {visible.length} de {tokens.length} tokens · {groups.size} familias

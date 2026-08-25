@@ -1,7 +1,7 @@
 {
   "name": "pigmento-studio",
   "version": "0.1.0",
-  "description": "Redise\u00f1o y reconstrucci\u00f3n del sitio de Pigmento Studio, estudio de dise\u00f1o y crecimiento de marca en Santa Fe, CDMX.",
+
   "license": "UNLICENSED",
   "private": true,
   "scripts": {

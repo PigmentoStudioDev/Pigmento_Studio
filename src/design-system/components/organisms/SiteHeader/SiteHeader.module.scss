@@ -1,0 +1,270 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+@use '@carbon/react/scss/type';
+
+// La cabecera ocupa solo lo que mide: la barra, y la barra mas el panel cuando
+// esta abierto. NO cubre la ventana.
+//
+// El origen si la cubria — inset: 0 con pointer-events: none — y devolvia el
+// puntero pieza a pieza mas adentro. Eso convierte cada hijo nuevo en un candidato
+// a quedarse sin clics, y el fallo no se ve: el elemento esta, se pinta, y no
+// responde. Aqui el unico que cubre la ventana es el fondo oscuro, y solo existe
+// mientras el panel esta abierto.
+.root {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 100;
+  // El aire exterior vive AQUI: es externo a la pieza, no padding de la barra. En
+  // la barra separaria los controles del borde de la placa; aqui separa la placa
+  // entera del borde de la ventana, que es otra cosa.
+  //
+  // No cambia entre estados. La cabecera nunca toca el borde — ni cerrada ni
+  // extendida — y el mismo valor arriba que a los lados: un aire que solo aparece
+  // en un estado se lee como un fallo de alineacion, no como una decision.
+  padding-inline: spacing.$spacing-06;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: theme.$overlay;
+  opacity: 0;
+  // visibility, y no solo opacity: un fondo transparente pero visible seguiria
+  // comiendose los clics de toda la pagina con el panel cerrado.
+  visibility: hidden;
+  transition:
+    opacity brand.$duration-half brand.$ease-default,
+    visibility brand.$duration-half brand.$ease-default;
+}
+
+.isOpen .backdrop {
+  opacity: 1;
+  visibility: visible;
+}
+
+// La barra se ENSANCHA al abrir, y el modo extendido va a sangre: de borde a borde
+// de la ventana, sin contenedor. Es el gesto que da la sensacion de que el panel
+// empuja — primero crece el continente, luego cae el contenido.
+//
+// Cerrada vive dentro del contenedor y con margen lateral, que es lo que la deja
+// leerse como una pieza flotante y no como una franja pegada al navegador.
+// Cerrada es una pildora compacta y centrada; abierta se suelta hasta el borde de
+// la ventana. Ese salto de ancho ES el gesto: primero crece el continente, luego
+// cae el contenido. Con la barra cerrada ya casi tan ancha como la ventana,
+// expandirse no se notaria.
+//
+// El limite de ancho lo pone el gutter de .root: cerrada la pildora se clava en
+// 38rem y abierta ocupa el 100% de lo que el gutter deja libre — que es el ancho de
+// la ventana menos el aire exterior, nunca el borde.
+.nav {
+  position: relative;
+  margin-inline: auto;
+  max-inline-size: brand.$header-compact-inline-size;
+  color: theme.$text-primary;
+  margin-block-start: spacing.$spacing-06;
+  transition: max-inline-size brand.$duration-onehalf brand.$ease-default;
+}
+
+.isOpen .nav {
+  max-inline-size: 100%;
+}
+
+// Cerrada es una pildora exacta — $radius-header, que es la mitad de su alto — y
+// abierta baja al escalon de superficie grande.
+//
+// No es el mismo valor en los dos estados a proposito. Un radio de pildora en una
+// caja alta deja de leerse como pildora y se convierte en una esquina blanda
+// enorme: misma declaracion, dos formas que no se parecen. En OSMO las pildoras son
+// de los CONTROLES y las superficies llevan un escalon de la escala — su propia
+// barra usa 4/16, el radio mas pequeno que tienen.
+//
+// Y va derivado del alto en vez de dejar que lo recorte el navegador: un radio
+// recortado no interpola. La transicion no se veria hasta que el valor declarado
+// bajase del recorte, y entonces saltaria.
+.plate {
+  position: absolute;
+  inset: 0;
+  background-color: theme.$layer-01;
+  border: 1px solid theme.$border-subtle-01;
+  border-radius: brand.$radius-header;
+  transition:
+    inset brand.$duration-base brand.$ease-default,
+    border-radius brand.$duration-base brand.$ease-default;
+}
+
+.isScrolled .plate {
+  inset: spacing.$spacing-02;
+}
+
+.isOpen .plate {
+  inset: 0;
+  border-radius: brand.$radius-08;
+}
+
+.bar {
+  position: relative;
+  display: flex;
+  gap: spacing.$spacing-03;
+  align-items: center;
+  // Con la pildora, el aire lateral tiene que salvar la curva o el primer control
+  // se monta encima del redondeo.
+  padding-inline: spacing.$spacing-06;
+  block-size: brand.$header-block-size;
+  transition: padding-inline brand.$duration-base brand.$ease-default;
+}
+
+.isOpen .bar {
+  padding-inline: spacing.$spacing-05;
+}
+
+// Crece de dentro hacia fuera. Que aparezca con opacity delataria que el panel ya
+// estaba montado debajo esperando.
+.line {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 50%;
+  block-size: 1px;
+  background-color: theme.$border-subtle-01;
+  opacity: 0;
+  transition:
+    inset-inline brand.$duration-base brand.$ease-default,
+    opacity brand.$duration-quarter brand.$ease-default;
+}
+
+.isOpen .line {
+  inset-inline: 0;
+  opacity: 1;
+}
+
+.home {
+  display: inline-flex;
+  align-items: center;
+  margin-inline: auto;
+  padding-inline: spacing.$spacing-03;
+  color: inherit;
+  text-decoration: none;
+}
+
+.home:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+.actions {
+  display: flex;
+  gap: spacing.$spacing-02;
+}
+
+// El panel se abre con grid-template-rows de 0fr a 1fr: es la unica forma de
+// animar hasta la altura real del contenido sin medirla en JS ni fijar un maximo
+// que se quede corto cuando la navegacion crezca.
+.panel {
+  position: relative;
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  transition: grid-template-rows brand.$duration-base brand.$ease-default;
+}
+
+.isOpen .panel {
+  grid-template-rows: 1fr;
+}
+
+// El item del grid, y nada mas. Sin padding, sin borde: `min-block-size: 0` solo
+// pone a cero la caja de CONTENIDO, asi que cualquier padding aqui se sigue sumando
+// a la altura del item y la fila de 0fr no llega a colapsar. Fue exactamente eso:
+// el panel cerrado media 48px de padding y estiraba la placa por debajo de la barra.
+.panelInner {
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.panelContent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: spacing.$spacing-07;
+  padding: spacing.$spacing-05 spacing.$spacing-05 spacing.$spacing-07;
+  overflow-y: auto;
+  // Sin esto, llegar al final del panel encadena el scroll a la pagina — y como la
+  // pagina al desplazarse cierra el panel, desplazarse DENTRO del panel acabaria
+  // cerrandolo. El gesto se comeria a si mismo.
+  overscroll-behavior: contain;
+  max-block-size: calc(100dvh - #{brand.$header-block-size});
+}
+
+// El desfase: las columnas no entran a la vez.
+//
+// El PASO es $duration-quarter y los retrasos son multiplos suyos, escritos como
+// multiplos. Se puede sumar half + quarter y da lo mismo, pero entonces el tercero
+// no se lee como "el tercero" — y en cuanto haya que reafinar el desfase habria que
+// recalcular cada suma a mano en vez de tocar el paso.
+//
+// Va con nth-child y no con un indice inyectado desde React porque el orden ya lo
+// sabe el DOM: un numero pasado por prop seria una segunda fuente de verdad del
+// mismo orden.
+.panelContent > * {
+  opacity: 0;
+  transform: translateY(spacing.$spacing-05);
+  transition:
+    opacity brand.$duration-half brand.$ease-default,
+    transform brand.$duration-half brand.$ease-default;
+}
+
+.isOpen .panelContent > * {
+  opacity: 1;
+  transform: none;
+  transition-duration: brand.$duration-base;
+  transition-delay: brand.$duration-quarter;
+}
+
+.isOpen .panelContent > *:nth-child(2) {
+  transition-delay: calc(#{brand.$duration-quarter} * 2);
+}
+
+.isOpen .panelContent > *:nth-child(3) {
+  transition-delay: calc(#{brand.$duration-quarter} * 3);
+}
+
+.isOpen .panelContent > *:nth-child(n + 4) {
+  transition-delay: calc(#{brand.$duration-quarter} * 4);
+}
+
+.group {
+  display: flex;
+  flex: 1 1 16rem;
+  flex-direction: column;
+  gap: spacing.$spacing-04;
+}
+
+.groupLabel {
+  @include type.type-style('label-01');
+
+  color: theme.$text-secondary;
+  text-transform: uppercase;
+}
+
+.banner {
+  flex: 1 1 20rem;
+}
+
+// Se apaga TODO el motion, no se acorta. Una coreografia de 1.2s reducida a 0.2s
+// sigue siendo movimiento, y quien pide reduced-motion no esta pidiendo prisa.
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .nav,
+  .bar,
+  .plate,
+  .line,
+  .panel,
+  .panelContent > * {
+    transition: none;
+  }
+
+  .panelContent > * {
+    transform: none;
+  }
+}

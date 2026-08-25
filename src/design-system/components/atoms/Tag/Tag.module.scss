@@ -1,0 +1,35 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/component-tokens' as component;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/type';
+
+// Los tokens tag-* son la tercera capa de la plantilla. Los tonos NO son los diez
+// colores de Carbon: son tres intenciones de la marca, y cada una elige que token
+// consume. Un distintivo por color deja la decision al que escribe el markup;
+// por intencion, la deja en el design system.
+.root {
+  @include type.type-style('label-01');
+
+  display: inline-flex;
+  align-items: center;
+  padding-inline: spacing.$spacing-02;
+  border-radius: brand.$radius-01;
+  white-space: nowrap;
+}
+
+.toneNeutral {
+  background-color: component.get('tag-background-gray');
+  color: component.get('tag-color-gray');
+}
+
+.toneInfo {
+  background-color: component.get('tag-background-blue');
+  color: component.get('tag-color-blue');
+}
+
+.toneProgress {
+  background-color: component.get('tag-background-purple');
+  color: component.get('tag-color-purple');
+}

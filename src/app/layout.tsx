@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { SiteHeader } from "@/design-system/components/organisms/SiteHeader/SiteHeader";
+import { NAVIGATION } from "./navigation";
 import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
 import "@/design-system/styles/index.scss";
 
@@ -44,7 +46,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${plexSans.variable} ${plexMono.variable} ${plexSerif.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <SiteHeader {...NAVIGATION} />
+        {children}
+      </body>
     </html>
   );
 }

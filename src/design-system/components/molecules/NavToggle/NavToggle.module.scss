@@ -1,0 +1,83 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+@use '@carbon/react/scss/type';
+
+.root {
+  display: inline-flex;
+  gap: spacing.$spacing-03;
+  align-items: center;
+  padding-inline: spacing.$spacing-03;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  // El escalon minimo, como el .nav-menu del original: un control dentro de una
+  // superficie ya redondeada no compite con ella.
+  border-radius: brand.$radius-01;
+  block-size: 100%;
+  transition:
+    background-color brand.$duration-quarter brand.$ease-default,
+    gap brand.$duration-half brand.$ease-default;
+}
+
+.root:hover {
+  background-color: theme.$layer-hover-01;
+}
+
+// El foco es de Carbon: mismo grosor y mismo token que cualquier control suyo, o
+// la cabecera seria el unico sitio del sitio con otro anillo de foco.
+.root:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+// El hueco entre aspa y etiqueta se cierra al abrir. Es un detalle de un pixel que
+// nadie nombra y que hace que el boton se sienta pulsado, no conmutado.
+.isOpen {
+  gap: spacing.$spacing-01;
+}
+
+.label {
+  @include type.type-style('body-compact-01');
+}
+
+.bars {
+  position: relative;
+  display: block;
+  inline-size: spacing.$spacing-05;
+  block-size: spacing.$spacing-03;
+}
+
+.bar {
+  position: absolute;
+  inset-inline: 0;
+  block-size: 1px;
+  background-color: currentcolor;
+  transition: transform brand.$duration-half brand.$ease-default;
+}
+
+.isClosed .bar:first-child {
+  transform: translateY(2px);
+}
+
+.isClosed .bar:last-child {
+  transform: translateY(6px);
+}
+
+// En aspa: las dos barras se juntan en el centro y giran en sentidos opuestos.
+.isOpen .bar {
+  transform: translateY(4px) rotate(-45deg) scaleX(0.75);
+}
+
+.isOpen .bar:last-child {
+  transform: translateY(4px) rotate(45deg) scaleX(0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: none;
+  }
+}
