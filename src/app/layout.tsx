@@ -34,7 +34,8 @@ export const metadata: Metadata = {
     default: "Pigmento Studio",
     template: "%s · Pigmento Studio",
   },
-  description: "Estudio de diseno y desarrollo",
+  description:
+    "Estudio de diseño y crecimiento de marca en Santa Fe, Ciudad de México. Branding, marketing digital, programación web y motion graphics.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
