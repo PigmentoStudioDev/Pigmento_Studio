@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pigmento Studio
 
-## Getting Started
+Rediseño y reconstrucción de **[pigmentostudio.com.mx](https://pigmentostudio.com.mx/)**.
 
-First, run the development server:
+Pigmento Studio es un estudio de diseño y crecimiento de marca en Santa Fe, Ciudad de
+México. Trabaja branding, marketing digital, programación web y motion graphics, y se
+define como «más que una agencia, un estudio de diseño y crecimiento de marca».
+
+Este repositorio es el sitio nuevo, construido desde cero.
+
+## Stack
+
+| | |
+|---|---|
+| Framework | Next.js 16 (App Router, Turbopack) · React 19 |
+| Design system | IBM Carbon v11 con una capa de marca propia encima |
+| Estilos | Sass |
+| Tests | Vitest · Testing Library · jest-axe |
+
+**Carbon es el pipeline de tokens.** No autoramos primitivas: Carbon ya aporta las
+tres capas — primitivas, 235 tokens semánticos y 76 de componente — y encima va una
+capa de marca fina que se construye token a token. Los valores de marca de hoy son
+placeholders marcados con `TODO(brand)`.
+
+Sin Tailwind: Carbon ya es el sistema de tokens y superponerlo crearía una segunda
+fuente de verdad para spacing y color.
+
+## Empezar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev          # localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+El preview del design system vive en **`/ds`**: explorador de tokens semánticos leídos
+en runtime, fundamentos (tipografía, espaciado, motion) y galería de componentes. Es
+herramienta de desarrollo, no una página del sitio.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Verificar
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+./scripts/gates.sh   # build · estático · contrato · tests
+```
 
-## Learn More
+Un solo entrypoint, el mismo que corre en CI. Los cuatro gates están descritos en
+[`CLAUDE.md`](./CLAUDE.md); el contrato ejecutable, en
+[`conformance/README.md`](./conformance/README.md).
 
-To learn more about Next.js, take a look at the following resources:
+Por separado:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm lint
+pnpm test              # contrato del tema, sobre el Sass real
+pnpm conformance       # o: pnpm conformance <style|tsx|react|structure|modularity|budgets>
+pnpm build
+pnpm gen:tokens        # regenera la lista de tokens del preview desde Carbon
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Contribuir
 
-## Deploy on Vercel
+`main` está protegida: todo entra por pull request con el check `ci` en verde,
+historia lineal y sin force push.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Antes de tocar Sass o el tema, lee las reglas duras de [`CLAUDE.md`](./CLAUDE.md).
+Cada una existe porque su fallo ya ocurrió y ninguno produjo error de build.
