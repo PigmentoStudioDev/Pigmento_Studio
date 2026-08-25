@@ -188,7 +188,8 @@ tarde entera de trabajo sobre ese mismo componente.
 
 ### Radios
 
-La escala esta **calcada de OSMO**, que no tiene tokens pero si sistema: sus radios
+La escala esta **calcada de la referencia de diseno**, que no tiene tokens pero si
+sistema: sus radios
 van en dieciseisavos — 2/16, 3/16, 4/16, 6/16, 8/16, 12/16, 16/16, 24/16. Vive en
 `_brand.scss` porque Carbon v11 no define ninguno: su lenguaje visual es de esquina
 recta.
@@ -198,7 +199,8 @@ es rem, y un radio que escala con la tipografia junto a un padding que no rompe 
 concentricidad en cuanto alguien toca un `font-size`.
 
 **Una pildora no es un escalon de la escala.** Es la leccion que costo una iteracion:
-en OSMO las pildoras son de los CONTROLES — botones, tags — y las superficies llevan
+en la referencia las pildoras son de los CONTROLES — botones, tags — y las superficies
+llevan
 un escalon; su propia barra de navegacion usa 4/16, el radio mas pequeno que tienen.
 Un mismo valor grande aplicado a una caja baja y a una alta da dos formas que no se
 parecen, y eso es exactamente lo que se lee como incoherente.
@@ -221,7 +223,8 @@ parecer del mismo sistema.
 
 ### Motion
 
-**El navbar de OSMO no toca GSAP.** Se comprobo en su fuente: su coreografia es CSS
+**El navbar de la referencia no toca GSAP.** Se comprobo en su fuente: su coreografia
+es CSS
 puro sobre atributos de estado, y GSAP se reserva para el motion de PAGINA — reveals,
 cursor, slider, marquee. Copiar su navbar no necesita una dependencia; ese es el orden
 correcto y no al reves.
