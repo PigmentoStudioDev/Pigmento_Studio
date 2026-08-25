@@ -1,6 +1,8 @@
 {
   "$comment": "Contrato del TSX. Vigila que el markup no se salte el design system por la puerta de atras.",
-  "scanDirs": ["src"],
+  "scanDirs": [
+    "src"
+  ],
   "ext": ".tsx",
   "rules": {
     "inline-style-literal": {
@@ -10,10 +12,19 @@
     "handwritten-cds-class": {
       "why": "escribir 'cds--btn' a mano acopla a las clases internas de Carbon, que son suyas y pueden cambiar en cualquier minor. Se usa el componente",
       "pattern": "[\"'`][^\"'`]*\\bcds--[a-z]"
+    },
+    "motion-literal": {
+      "why": "una duracion o una curva escrita a mano en TS es motion inventado, igual que en Sass — y ahi el gate ya existe (easing-literal, duration-literal). El motion sale de la escala de _brand.scss, y el que se anima desde JS entra por design-system/motion/. Sin esta regla, un gsap.to(el, { duration: 0.6, ease: 'power2.out' }) pasa los cuatro gates sin despeinarse",
+      "pattern": "cubic-bezier\\(|CustomEase\\.|\\bduration:\\s*[0-9]|\\bease(?:In|Out|InOut)?:\\s*[\"'`]"
+    },
+    "gsap-import": {
+      "why": "gsap solo se importa desde design-system/motion/. Un tween suelto en un componente se salta el contexto que lo limpia y la rama de reduced-motion, y ninguna de las dos se echa de menos hasta que el bug ya esta en produccion. El navbar no lo necesita — el de OSMO tampoco usa gsap — asi que la frontera se declara antes de que exista la tentacion",
+      "pattern": "from\\s+[\"'`]gsap"
     }
   },
   "exemptFiles": {
-    "app/global-error.tsx": "Se dispara cuando falla el propio root layout, asi que no puede depender de la hoja de estilos — que podria ser justo lo que fallo. Sus literales son el fallback de ultimo recurso, deliberado"
+    "app/global-error.tsx": "Se dispara cuando falla el propio root layout, asi que no puede depender de la hoja de estilos — que podria ser justo lo que fallo. Sus literales son el fallback de ultimo recurso, deliberado",
+    "design-system/theme/zone.ts": "ES la frontera con la convencion de clases de tema de Carbon: alguien tiene que escribir 'cds--' una vez para que nadie mas tenga que hacerlo. Fuera de aqui la regla sigue entera"
   },
   "baseline": {}
 }
