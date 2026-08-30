@@ -1,13 +1,19 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { themeZoneClass, type ThemeZone } from "../../../theme/zone";
-import { Button } from "../../atoms/Button/Button";
+import { getServerThemeMode, getThemeMode, subscribeThemeMode } from "../../../theme/mode";
+import { resolveZone, themeZoneClass, type ThemeRole } from "../../../theme/zone";
+import { Button, type ButtonEmphasis } from "../../atoms/Button/Button";
+import { IconButton } from "../../atoms/IconButton/IconButton";
+import type { IconName } from "../../atoms/Icon/Icon";
+import { GlassSurface } from "../../atoms/GlassSurface/GlassSurface";
 import { Logo } from "../../atoms/Logo/Logo";
 import { NavBanner, type NavBannerProps } from "../../molecules/NavBanner/NavBanner";
 import { NavLinkList, type NavLinkItem } from "../../molecules/NavLinkList/NavLinkList";
 import { NavToggle } from "../../molecules/NavToggle/NavToggle";
+import { LanguageToggle } from "../../molecules/LanguageToggle/LanguageToggle";
+import { ThemeToggle } from "../../molecules/ThemeToggle/ThemeToggle";
 import styles from "./SiteHeader.module.scss";
 
 /**
@@ -36,12 +42,56 @@ export interface SiteHeaderGroup {
   secondary?: NavLinkItem[];
   /** Destaca la columna como tarjeta con fondo propio. Solo una por fila. */
   featured?: boolean;
+  /**
+   * Fila de iconos al PIE de la columna. Mismo anclaje que `secondary` y por el
+   * mismo motivo: las columnas cierran a la misma altura sea cual sea el largo de
+   * sus listas, que es lo que hace que la fila se lea como una retmica.
+   *
+   * Va en el grupo y no en la cabecera entera porque quien decide donde cuelga es
+   * la navegacion, no el componente — el dia que el CMS mueva las redes a otra
+   * columna, no hay nada que tocar aqui.
+   */
+  socials?: SiteHeaderSocial[];
+  /**
+   * Muestra el conmutador de modo al pie de esta columna, junto a las redes.
+   *
+   * Bandera explicita y no "donde haya redes": son dos cosas distintas que hoy
+   * comparten fila, y atarlas obligaria a mover una para mover la otra.
+   */
+  themeToggle?: SiteHeaderThemeToggle;
+  /** Conmutador de idioma, al lado del de tema. */
+  languageToggle?: SiteHeaderThemeToggle;
+}
+
+export interface SiteHeaderThemeToggle {
+  /**
+   * Nombre accesible. Dice la ACCION y no el estado — "cambiar entre claro y
+   * oscuro", no "cambiar a oscuro": un nombre que depende del modo no coincidiria
+   * entre servidor y cliente, porque el servidor no conoce la preferencia.
+   */
+  label: string;
+}
+
+export interface SiteHeaderSocial {
+  /** Nombre del icono. Una cadena y no un SVG: esto sale de una global del CMS. */
+  icon: IconName;
+  href: string;
+  /** Nombre accesible del enlace. Un icono no tiene texto del que sacarlo. */
+  label: string;
 }
 
 export interface SiteHeaderAction {
   label: string;
   href: string;
-  emphasis: "primary" | "secondary";
+  /**
+   * Se pasa TAL CUAL al boton. Antes se traducia — 'secondary' salia renderizado
+   * como ghost — y el tipo mentia: pedir un secundario daba un control sin borde ni
+   * fondo. Nadie lo vio porque la navegacion solo usa 'primary'.
+   *
+   * Es el subconjunto de ButtonEmphasis que tiene sentido en la barra: un ghost
+   * junto a la marca no se distingue de un enlace mas.
+   */
+  emphasis: Extract<ButtonEmphasis, "primary" | "secondary">;
 }
 
 export interface SiteHeaderProps {
@@ -67,6 +117,22 @@ const SCROLL_THRESHOLD = 50;
  */
 const CLOSE_ON_SCROLL_THRESHOLD = 4;
 
+/**
+ * Altura de scroll por debajo de la cual la barra NUNCA se esconde.
+ *
+ * Sobre el hero la barra tiene que estar: esconderla al primer gesto se lee como un
+ * parpadeo, no como una decision. Y al volver arriba del todo reaparece sola, sin
+ * depender de que alguien suba lo suficiente para disparar la direccion.
+ */
+const HIDE_THRESHOLD = 100;
+
+/**
+ * Movimiento minimo para que un gesto cuente como direccion. Mismo motivo que
+ * CLOSE_ON_SCROLL_THRESHOLD: el rebote elastico de movil emite scroll sin que nadie
+ * se haya movido, y sin margen la barra parpadearia sola al llegar a los topes.
+ */
+const DIRECTION_THRESHOLD = 4;
+
 export function SiteHeader({
   label,
   homeHref,
@@ -80,7 +146,15 @@ export function SiteHeader({
   const barRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [zone, setZone] = useState<ThemeZone | undefined>(undefined);
+  const [hidden, setHidden] = useState(false);
+  const [role, setRole] = useState<ThemeRole | undefined>(undefined);
+
+  // El modo se lee del store y no de un estado propio: lo cambia tambien el
+  // sistema operativo y el conmutador, que estan en otras ramas del arbol. La
+  // cabecera adopta el ROL de la seccion que tiene debajo, y el rol solo se
+  // convierte en una zona una vez que se sabe el modo — la misma seccion es g10
+  // en claro y g90 en oscuro.
+  const mode = useSyncExternalStore(subscribeThemeMode, getThemeMode, getServerThemeMode);
 
   // Escape cierra. Va en el documento y no en el panel porque el foco puede estar
   // en cualquier sitio cuando alguien decide salir — incluido el fondo oscuro.
@@ -129,12 +203,28 @@ export function SiteHeader({
   // un frame: el del origen se disparaba en cada evento de scroll.
   useEffect(() => {
     let pending = false;
+    let lastY = window.scrollY;
 
     const onScroll = () => {
       if (pending) return;
       pending = true;
       requestAnimationFrame(() => {
-        setScrolled(window.scrollY > SCROLL_THRESHOLD);
+        const y = window.scrollY;
+        setScrolled(y > SCROLL_THRESHOLD);
+
+        // La barra se va al bajar y vuelve al subir, para devolverle el alto de la
+        // ventana al contenido. Un solo listener para los dos estados: son la misma
+        // lectura del mismo scroll, y separarlos duplicaria el trabajo por frame.
+        const delta = y - lastY;
+
+        // lastY solo avanza cuando el gesto ha contado. Asi un arrastre lento va
+        // acumulando hasta cruzar el margen en vez de descartarse frame a frame,
+        // que es lo que dejaria la barra sorda a los desplazamientos suaves.
+        if (Math.abs(delta) > DIRECTION_THRESHOLD) {
+          setHidden(delta > 0 && y > HIDE_THRESHOLD);
+          lastY = y;
+        }
+
         pending = false;
       });
     };
@@ -167,8 +257,8 @@ export function SiteHeader({
       (entries) => {
         const hit = entries.find((entry) => entry.isIntersecting);
         if (!hit) return;
-        setZone(
-          (hit.target.getAttribute("data-theme-section") as ThemeZone | null) ?? undefined,
+        setRole(
+          (hit.target.getAttribute("data-theme-section") as ThemeRole | null) ?? undefined,
         );
       },
       // Franja de un pixel justo bajo la barra: la seccion que la cruza es la que
@@ -188,7 +278,7 @@ export function SiteHeader({
         styles.root,
         open ? styles.isOpen : undefined,
         scrolled ? styles.isScrolled : undefined,
-        zone ? themeZoneClass(zone) : undefined,
+        role ? themeZoneClass(resolveZone(mode, role)) : undefined,
       ]
         .filter(Boolean)
         .join(" ")}
@@ -197,18 +287,41 @@ export function SiteHeader({
           y el propio boton, que ya estan. */}
       <span aria-hidden="true" className={styles.backdrop} onClick={close} />
 
-      <nav aria-label={label} className={styles.nav}>
+      {/* La clase va en el <nav> y no en el <header>, y no es indiferente: un
+          transform convierte a su elemento en bloque contenedor de los descendientes
+          `position: fixed`, y el fondo oscuro del panel es justo eso. Colgado del
+          header, el fondo dejaria de medir la ventana para medir la barra.
+
+          Sin guarda para el panel abierto, y se probo que sobra: el mismo gesto que
+          retira la barra ya cierra el panel, y React agrupa los dos cambios en el
+          mismo render — no existe un frame en el que la barra se vaya llevandoselo. */}
+      <nav
+        aria-label={label}
+        className={[styles.nav, hidden ? styles.isHidden : undefined]
+          .filter(Boolean)
+          .join(" ")}
+      >
         {/* La placa: fondo, borde y radio de la barra, en su propia capa. Separada
             del <nav> porque su geometria se mueve — se mete hacia dentro al hacer
             scroll y se abre al desplegar el panel — y si llevara el contenido, cada
             uno de esos gestos reflowaria la fila entera. */}
-        <span aria-hidden="true" className={styles.plate} />
+        {/* <div> y no <span>: la lamina de cristal son divs, y un <span> solo admite
+            contenido de frase. La placa ya no pinta su propio fondo — lo pone el
+            cristal, que ES la superficie. Con un fondo opaco debajo, su
+            backdrop-filter difuminaria un color plano y no se veria nada. */}
+        <div aria-hidden="true" className={styles.plate}>
+          <GlassSurface />
+        </div>
 
         <div ref={barRef} className={styles.bar}>
           <NavToggle open={open} controls={panelId} label={toggleLabel} onToggle={() => setOpen(!open)} />
 
           <Link href={homeHref} aria-label={homeLabel} className={styles.home} onClick={close}>
-            <Logo compact={scrolled} />
+            {/* Sin `compact`: la marca no cambia de forma al desplazarse. La barra si
+                se compacta — eso lo sigue haciendo `scrolled` — pero el logotipo se
+                queda como esta. El atomo conserva su forma compacta para quien la
+                necesite; lo que se retira es que la dispare el scroll. */}
+            <Logo />
           </Link>
 
           {actions?.length ? (
@@ -217,8 +330,8 @@ export function SiteHeader({
                 <Button
                   key={action.href}
                   href={action.href}
-                  size="sm"
-                  emphasis={action.emphasis === "primary" ? "primary" : "ghost"}
+                  size="md"
+                  emphasis={action.emphasis}
                   onClick={close}
                 >
                   {action.label}
@@ -268,6 +381,38 @@ export function SiteHeader({
                           label={group.label}
                           onNavigate={close}
                         />
+                      </div>
+                    ) : null}
+
+                    {group.socials?.length || group.themeToggle || group.languageToggle ? (
+                      <div className={styles.utilities}>
+                        {group.socials?.length ? (
+                          // <ul> y no una fila de enlaces sueltos: son una
+                          // coleccion, y el arbol de accesibilidad anuncia cuantos
+                          // hay antes de que alguien los recorra uno a uno. El
+                          // conmutador se queda FUERA de la lista: no es una red.
+                          <ul aria-label={group.label} className={styles.socials}>
+                            {group.socials.map((social) => (
+                              <li key={social.href}>
+                                <IconButton
+                                  href={social.href}
+                                  external
+                                  icon={social.icon}
+                                  label={social.label}
+                                  onClick={close}
+                                />
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+
+                        {group.themeToggle ? (
+                          <ThemeToggle label={group.themeToggle.label} />
+                        ) : null}
+
+                        {group.languageToggle ? (
+                          <LanguageToggle label={group.languageToggle.label} />
+                        ) : null}
                       </div>
                     ) : null}
                   </div>

@@ -18,13 +18,19 @@
       "pattern": "cubic-bezier\\(|CustomEase\\.|\\bduration:\\s*[0-9]|\\bease(?:In|Out|InOut)?:\\s*[\"'`]"
     },
     "gsap-import": {
-      "why": "gsap solo se importa desde design-system/motion/. Un tween suelto en un componente se salta el contexto que lo limpia y la rama de reduced-motion, y ninguna de las dos se echa de menos hasta que el bug ya esta en produccion. El navbar no lo necesita — el de la referencia de diseno tampoco usa gsap — asi que la frontera se declara antes de que exista la tentacion",
+      "why": "gsap solo se importa desde design-system/motion/. Un tween suelto en un componente se salta el contexto que lo limpia y la rama de reduced-motion, y ninguna de las dos se echa de menos hasta que el bug ya esta en produccion. La frontera se declaro antes de que gsap existiera en el repo, y por eso al llegar aterrizo en UN archivo (design-system/motion/gsap.ts) y no en veinte: registrar un plugin es un efecto global y hacerlo desde cada componente deja el orden de registro a merced del bundler",
       "pattern": "from\\s+[\"'`]gsap"
     }
   },
   "exemptFiles": {
     "app/global-error.tsx": "Se dispara cuando falla el propio root layout, asi que no puede depender de la hoja de estilos — que podria ser justo lo que fallo. Sus literales son el fallback de ultimo recurso, deliberado",
-    "design-system/theme/zone.ts": "ES la frontera con la convencion de clases de tema de Carbon: alguien tiene que escribir 'cds--' una vez para que nadie mas tenga que hacerlo. Fuera de aqui la regla sigue entera"
+    "design-system/theme/zone.ts": "ES la frontera con la convencion de clases de tema de Carbon: alguien tiene que escribir 'cds--' una vez para que nadie mas tenga que hacerlo. Fuera de aqui la regla sigue entera",
+    "design-system/motion/gsap.ts": {
+      "why": "ES la puerta. El unico archivo que puede importar gsap, que es justo lo que la regla protege: sin una excepcion declarada, la regla se cumpliria no usando gsap en ningun sitio",
+      "rules": [
+        "gsap-import"
+      ]
+    }
   },
   "baseline": {}
 }

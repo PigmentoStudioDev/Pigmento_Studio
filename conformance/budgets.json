@@ -1,5 +1,5 @@
 {
-  "$comment": "Peso de lo que viaja al navegador. Subir un budget es un cambio consciente de ESTE archivo, no un efecto colateral de anadir una dependencia. Medido sobre la salida de `next build`; si no hay build, la seccion avisa y no falla.",
+  "$comment": "Peso de lo que DESCARGA UNA VISITA. Subir un budget es un cambio consciente de ESTE archivo, no un efecto colateral de anadir una dependencia. Medido sobre la salida de `next build`; si no hay build, la seccion avisa y no falla.",
   "$note": "Los limites se pusieron midiendo el build real tras degradar Carbon a plantilla de tokens: 129kb/12kb de CSS y 611kb/188kb de JS. Antes eran 938kb/96kb y 1226kb/358kb — el CSS de sus componentes y el barrel de @carbon/react, que entraba entero por importar <Theme>. El margen es corto a proposito: con un techo holgado, una regresion que vuelva a arrastrar Carbon cabria dentro y nadie se enteraria.",
   "artifacts": {
     "css": {
@@ -8,10 +8,10 @@
       "maxGzipKb": 20
     },
     "js": {
-      "$why": "GSAP + ScrollTrigger no caben en este margen, y es deliberado: cuando entren en la fase de motion habra que subir este numero a mano y eso se vera en el diff",
+      "$why": "Subido a mano al entrar gsap, que es exactamente lo que la nota anterior decia que tendria que pasar. Medido: 188kb -> 218kb de gzip, o sea 30kb por gsap core mas SplitText. El techo queda en 230 y no en 260: gsap ya esta dentro, asi que lo que este margen tiene que cubrir de aqui en adelante son plugins sueltos y no una segunda libreria entera. CAMBIO POSTERIOR — no en el limite sino en QUE se mide: el runner suma ahora los chunks que el HTML prerenderizado pide de entrada, no todo lo emitido. Desde que gsap se carga con import(), las dos cifras dejaron de ser la misma: partirlo baja 54kb de lo que descarga una visita (241 -> 195 gzip) y no mueve el total ni un byte, porque los bytes siguen en el disco. Con el total como unica vara, la optimizacion correcta salia igual de roja que no hacer nada.",
       "glob": ".next/static/**/*.js",
-      "maxRawKb": 700,
-      "maxGzipKb": 210
+      "maxRawKb": 780,
+      "maxGzipKb": 230
     }
   }
 }

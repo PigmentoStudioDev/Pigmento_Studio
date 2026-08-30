@@ -88,7 +88,10 @@ const COMPONENT_TOKEN = /^(notification|tag|button|status|content-switcher)-/;
 const STANDALONE_TOKEN = /^(grid|layout)-/;
 
 const ZONES = [
-  { selector: ':root', theme: 'g100', brand: 'dark' },
+  // :root es el modo por DEFECTO, y desde que hay dos modos ese es el claro: el
+  // HTML del servidor sale sin clase de modo, asi que sin JS el sitio entero es
+  // claro y coherente en vez de un oscuro a medio pintar.
+  { selector: ':root', theme: 'white', brand: 'light' },
   { selector: '.cds--g100', theme: 'g100', brand: 'dark' },
   { selector: '.cds--g90', theme: 'g90', brand: 'dark' },
   { selector: '.cds--g10', theme: 'g10', brand: 'light' },
@@ -155,7 +158,7 @@ describe('index.scss emite las cuatro zonas de Carbon con la marca encima', () =
    */
   it('emitimos todos los tokens de tema que trae la plantilla', () => {
     const emitted = cascade(source, ':root');
-    const stock = stockTheme('g100');
+    const stock = stockTheme('white');
 
     const expected = [...stock.keys()].filter((k) => !STANDALONE_TOKEN.test(k));
 
@@ -173,9 +176,9 @@ describe('index.scss emite las cuatro zonas de Carbon con la marca encima', () =
    * marca sin decirlo.
    */
   it('la marca no cambia ningun token que no haya declarado', () => {
-    const declared = declaredOverrides('dark');
+    const declared = declaredOverrides('light');
     const emitted = cascade(source, ':root');
-    const stock = stockTheme('g100');
+    const stock = stockTheme('white');
 
     const changed = [...stock.keys()].filter(
       (k) =>
@@ -202,8 +205,27 @@ describe('index.scss emite las cuatro zonas de Carbon con la marca encima', () =
     },
   );
 
-  it('no queda rastro del atributo data-theme que no es de Carbon', () => {
-    expect(source).not.toContain('data-theme');
+  /**
+   * El unico atributo de tema que puede aparecer en el CSS emitido.
+   *
+   * La regla nacio contra un `data-theme` que hubo y se retiro: un mecanismo de
+   * tema PARALELO al de Carbon, que sus componentes no leen. Sigue prohibido.
+   *
+   * `data-theme-section` no es eso y por eso se nombra en vez de permitirse a
+   * ciegas. No es un segundo sistema de tokens: bajo el se emiten los mismos
+   * `--cds-*` de siempre, asi que cualquier pieza que lea la plantilla dentro de
+   * una seccion la encuentra entera. Es lo que resuelve el ROL de la seccion
+   * ('base' | 'alt') contra la zona que lleva el documento, y no puede ser una
+   * clase: la zona depende del modo, el modo solo existe en el navegador, y
+   * resolverlo en React costaria convertir Section en componente de cliente.
+   *
+   * Se afirma por igualdad y no por inclusion a proposito — asi un `data-theme`
+   * nuevo, o cualquier variante, sigue rompiendo este caso.
+   */
+  it('el unico atributo de tema del CSS es data-theme-section', () => {
+    const attrs = [...source.matchAll(/\[(data-theme[\w-]*)/g)].map(([, name]) => name);
+
+    expect([...new Set(attrs)]).toEqual(['data-theme-section']);
   });
 });
 

@@ -1,0 +1,10 @@
+@use '../../../styles/carbon-config';
+
+// En em y no en un tamano fijo: el icono mide lo que le diga el cuerpo de quien lo
+// envuelve. Un boton grande y uno pequeno llevan el mismo componente y salen a la
+// escala que les toca sin una prop de tamano que haya que mantener en dos sitios.
+.root {
+  display: block;
+  inline-size: 1em;
+  block-size: 1em;
+}

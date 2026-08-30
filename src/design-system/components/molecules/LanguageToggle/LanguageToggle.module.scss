@@ -1,0 +1,44 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '../../../styles/component-tokens' as component;
+@use '@carbon/react/scss/theme';
+
+// La misma caja que los botones de icono de su fila. Aqui el contenido es texto y
+// no un dibujo, pero la geometria del control no cambia por eso: en una fila de
+// cuatro, el que mide distinto es el que se nota.
+.root {
+  @include brandtype.style('control-s');
+
+  display: grid;
+  place-items: center;
+  inline-size: brand.$control-block-m;
+  block-size: brand.$control-block-m;
+  padding: 0;
+  border: 1px solid component.get('button-tertiary');
+  border-radius: brand.$radius-control-square;
+  background-color: transparent;
+  color: component.get('button-tertiary');
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color brand.$duration-quarter brand.$ease-default,
+    color brand.$duration-quarter brand.$ease-default;
+}
+
+.root:hover {
+  background-color: component.get('button-tertiary');
+  color: theme.$text-inverse;
+}
+
+.root:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none;
+  }
+}

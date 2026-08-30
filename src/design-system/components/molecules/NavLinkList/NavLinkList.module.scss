@@ -1,6 +1,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/roll' as roll;
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
@@ -8,10 +9,8 @@
 .root {
   display: flex;
   flex-direction: column;
-  // El UA stylesheet le pone a todo <ul> un padding-inline-start de 40px para el
-  // hueco del marcador. list-style: none quita el marcador pero no ese padding
-  // — son dos reglas distintas — y sin este reset la lista entera queda
-  // sangrada a la izquierda aunque no haya ningun bullet que lo justifique.
+  // list-style: none quita el marcador pero no el padding-inline-start de 40px que
+  // el navegador le pone a todo <ul>. Son dos reglas distintas.
   padding-inline-start: 0;
   margin-block: 0;
   list-style: none;
@@ -23,16 +22,13 @@
 
 .link {
   display: flex;
-  // Full width sobre .item: el enlace es el area de clic entera, no solo lo que
-  // mide su texto. Sin esto el hueco a la derecha del texto no responde al clic
-  // ni empuja el distintivo al borde.
+  // El area de clic es la fila entera, no lo que mide el texto.
   inline-size: 100%;
   // La separacion del distintivo respecto al texto. En la referencia son 10px, que
   // no es un escalon de Carbon; el de al lado son 12 y la diferencia no se ve.
   gap: spacing.$spacing-04;
   align-items: center;
-  // Con el enlace a ancho completo, el distintivo se va al borde opuesto en vez de
-  // pegarse al texto — es la fila entera la que reparte el espacio, no el texto.
+  // Manda el distintivo al borde opuesto en vez de pegarlo al texto.
   justify-content: space-between;
   color: theme.$text-primary;
   text-decoration: none;
@@ -67,32 +63,23 @@
   @include brandtype.style('body-l');
 }
 
-// Subrayado que crece desde la izquierda al pasar por encima. El texto no se
-// mueve: un border-bottom en :hover empujaria la linea base media pixel.
+// El mismo gesto que el boton. Sustituye al subrayado que crecia: los dos a la vez
+// eran dos respuestas al mismo hover.
 .text {
-  position: relative;
+  @include roll.surface(brand.$accent-40);
 }
 
-.link:not(.isDisabled) .text::after {
-  content: '';
-  position: absolute;
-  inset-block-end: calc(#{spacing.$spacing-01} * -1);
-  inset-inline-start: 0;
-  inline-size: 100%;
-  block-size: 1px;
-  background-color: currentcolor;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform brand.$duration-half brand.$ease-default;
-}
-
-.link:not(.isDisabled):hover .text::after,
-.link:not(.isDisabled):focus-visible .text::after {
-  transform: scaleX(1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .link:not(.isDisabled) .text::after {
-    transition: none;
+// Solo el enlace vivo: una entrada deshabilitada que responde promete un destino
+// que no existe.
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .link:not(.isDisabled):hover .text {
+    @include roll.rolled;
   }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .link:not(.isDisabled):focus-visible .text {
+    @include roll.rolled;
+  }
+}
+

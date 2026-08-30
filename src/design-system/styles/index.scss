@@ -22,9 +22,13 @@
 // Configurar $theme aqui solo afecta a los valores de respaldo que Carbon
 // incrusta en cada `var(--cds-x, <fallback>)` y a lo que devuelve theme.get().
 // La emision real la controlan los @include de abajo.
+// El fallback tiene que ser el del MODO POR DEFECTO, que desde que existen los dos
+// modos es el claro. Es el valor que Carbon incrusta dentro de cada
+// `var(--cds-x, <fallback>)`: solo se ve si la custom property no llega, y con el
+// anterior lo que se veia era un token oscuro suelto en una pagina clara.
 @use '@carbon/react/scss/theme' with (
-  $fallback: themes.$g100,
-  $theme: pigmento.$overrides-dark
+  $fallback: themes.$white,
+  $theme: pigmento.$overrides-light
 );
 
 // La TERCERA capa de la plantilla. Estos cinco modulos solo DEFINEN los mapas; es
@@ -49,11 +53,29 @@
 @include theme.add-component-tokens(token-content-switcher.$content-switcher-tokens);
 @include theme.add-component-tokens(token-icon-indicator.$status-tokens);
 
-// Las CUATRO zonas de Carbon, con la capa de marca encima.
+// Las CUATRO zonas de Carbon, con la capa de marca encima — y el modo del sitio
+// construido con ellas, sin un segundo vocabulario.
 //
 // Las clases siguen siendo las de Carbon porque el mecanismo de tema sigue siendo
-// el suyo: <Theme> las pone y useTheme() las lee. Lo que ya no emitimos es el CSS
-// de sus componentes, no su forma de tematizar.
+// el suyo. Lo que ya no emitimos es el CSS de sus componentes, no su forma de
+// tematizar.
+//
+// EL MODO ES LA ZONA QUE LLEVA <html>: claro es .cds--white y oscuro .cds--g100.
+// No hay clase de modo ni atributo propio — inventarlos habria dejado dos formas
+// de tematizar conviviendo, que es exactamente lo que la regla 3 prohibe.
+//
+// EL ROL SE RESUELVE DEBAJO. Una seccion no declara un color, declara si es el
+// fondo de la pagina ('base') o una franja que se despega de el ('alt'), y el par
+// de zonas de su modo la resuelve por descendencia. La misma seccion sale g10 en
+// claro y g90 en oscuro sin que la pagina se entere.
+//
+// Cada zona se emite UNA vez. Los selectores de rol son alias en la misma lista,
+// no una segunda emision: 235 tokens repetidos cuatro veces habrian sido unos
+// 40kb de CSS para decir lo que ya estaba dicho.
+//
+// La especificidad sale sola y por eso no hay !important en ninguna parte: el
+// selector de rol lleva dos clases (.cds--g100 [data-theme-section='alt']) y el de
+// zona suelta una, asi que dentro de un modo el rol siempre gana.
 //
 // --pg-on-dark no es un token de tema: es una BANDERA derivada, 1 en las dos zonas
 // oscuras y 0 en las dos claras. Vive aqui porque este es el unico archivo que sabe
@@ -65,27 +87,56 @@
 // exige igualdad exacta contra un tema de fabrica: con el tema ya mezclado el
 // match falla y los 77 caen al fallback del tema white, dando fondos claros con
 // texto claro. Un solo override basta para tirarlos todos.
+
+// La bandera del MODO, y no la de la zona.
+//
+// --pg-on-dark dice si la caja donde estas es oscura, y eso incluye una seccion
+// clara dentro del modo oscuro. --pg-mode-dark dice otra cosa: en que modo esta el
+// SITIO. Las necesita cualquier control que represente el modo — el conmutador de
+// tema — porque con la de zona mostraria el sol mientras el sitio esta en oscuro,
+// solo por estar sobre una seccion clara.
+//
+// El selector lleva :root pegado a la clase a proposito: asi una seccion con la
+// misma clase de zona no la redefine. Se declara una vez arriba y se hereda entera.
+:root {
+  --pg-mode-dark: 0;
+}
+
+:root.cds--g100 {
+  --pg-mode-dark: 1;
+}
+
+// Claro base. Es tambien el default del documento: el HTML del servidor sale sin
+// clase de modo, asi que sin JS el sitio es el claro entero y coherente, no un
+// oscuro a medio pintar.
 :root,
-.cds--g100 {
-  @include theme.theme(themes.$g100, pigmento.$overrides-dark);
+.cds--white,
+.cds--white [data-theme-section='base'] {
+  @include theme.theme(themes.$white, pigmento.$overrides-light);
 
-  --pg-on-dark: 1;
+  --pg-on-dark: 0;
 }
 
-.cds--g90 {
-  @include theme.theme(themes.$g90, pigmento.$overrides-dark);
-
-  --pg-on-dark: 1;
-}
-
-.cds--g10 {
+// Claro elevado.
+.cds--g10,
+.cds--white [data-theme-section='alt'] {
   @include theme.theme(themes.$g10, pigmento.$overrides-light);
 
   --pg-on-dark: 0;
 }
 
-.cds--white {
-  @include theme.theme(themes.$white, pigmento.$overrides-light);
+// Oscuro base.
+.cds--g100,
+.cds--g100 [data-theme-section='base'] {
+  @include theme.theme(themes.$g100, pigmento.$overrides-dark);
 
-  --pg-on-dark: 0;
+  --pg-on-dark: 1;
+}
+
+// Oscuro elevado.
+.cds--g90,
+.cds--g100 [data-theme-section='alt'] {
+  @include theme.theme(themes.$g90, pigmento.$overrides-dark);
+
+  --pg-on-dark: 1;
 }

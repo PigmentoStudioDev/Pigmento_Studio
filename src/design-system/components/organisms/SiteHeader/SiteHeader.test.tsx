@@ -36,11 +36,20 @@ const openPanel = async () => {
 
 const panel = () => document.getElementById(screen.getByRole("button", { name: "Menu" }).getAttribute("aria-controls") ?? "");
 
-/** jsdom no desplaza nada: se mueve scrollY a mano y se emite el evento. */
+/**
+ * jsdom no desplaza nada: se mueve scrollY a mano y se emite el evento.
+ *
+ * Y se espera un frame, porque el componente agrupa su lectura del scroll en un
+ * requestAnimationFrame para no medir en cada evento. Sin la espera, el estado que
+ * depende de esa lectura — la barra compacta, la barra retirada — todavia no ha
+ * cambiado cuando el test mira, y la comprobacion pasa o falla segun que efecto se
+ * este mirando.
+ */
 const scrollTo = async (y: number) => {
   window.scrollY = y;
   await act(async () => {
     window.dispatchEvent(new Event("scroll"));
+    await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
   });
 };
 
@@ -49,6 +58,73 @@ afterEach(() => {
 });
 
 describe("SiteHeader", () => {
+
+  /**
+   * La barra se retira al bajar para devolverle el alto de la ventana al contenido,
+   * y vuelve en cuanto alguien sube. Consultado sobre el <nav> y no sobre el
+   * <header>: la clase va ahi a proposito, porque un transform en el header
+   * convertiria al fondo oscuro del panel — `position: fixed` — en su descendiente
+   * posicionado y dejaria de medir la ventana.
+   */
+  it("se retira al bajar y vuelve al subir", async () => {
+    render(<SiteHeader {...PROPS} />);
+    const nav = screen.getByRole("navigation", { name: "Principal" });
+
+    await scrollTo(600);
+    expect(nav.className).toContain("isHidden");
+
+    await scrollTo(400);
+    expect(nav.className).not.toContain("isHidden");
+  });
+
+  /**
+   * Sobre el hero la barra esta siempre. Esconderla al primer gesto se lee como un
+   * parpadeo, y ademas al volver arriba tiene que reaparecer sin depender de que
+   * alguien suba lo bastante para disparar la direccion.
+   */
+  it("no se esconde cerca de lo alto de la pagina", async () => {
+    render(<SiteHeader {...PROPS} />);
+    const nav = screen.getByRole("navigation", { name: "Principal" });
+
+    await scrollTo(80);
+
+    expect(nav.className).not.toContain("isHidden");
+  });
+
+  /**
+   * El rebote elastico de movil emite scroll sin que nadie se haya movido. Sin
+   * margen de direccion la barra parpadearia sola al llegar a los topes.
+   */
+  it("un temblor de dos pixeles no cuenta como direccion", async () => {
+    render(<SiteHeader {...PROPS} />);
+    const nav = screen.getByRole("navigation", { name: "Principal" });
+
+    await scrollTo(600);
+    expect(nav.className).toContain("isHidden");
+
+    await scrollTo(598);
+
+    expect(nav.className).toContain("isHidden");
+  });
+
+  /**
+   * La barra nunca se retira llevandose el panel abierto, y no hace falta ninguna
+   * guarda para conseguirlo: el mismo gesto que la retira ya cierra el panel, y
+   * React agrupa los dos cambios en el mismo render. El test fija ese ORDEN, que es
+   * lo unico que sostiene la invariante — si un dia el cierre por scroll cambiara,
+   * aqui es donde se veria.
+   */
+  it("al retirarse, el panel ya se ha cerrado", async () => {
+    render(<SiteHeader {...PROPS} />);
+    const nav = screen.getByRole("navigation", { name: "Principal" });
+
+    await openPanel();
+    await scrollTo(600);
+
+    expect(nav.className).toContain("isHidden");
+    expect(screen.getByRole("button", { name: "Menu" })).toHaveAttribute("aria-expanded", "false");
+  });
+
   it("es una navegacion con nombre: un sitio puede tener mas de una", () => {
     render(<SiteHeader {...PROPS} />);
 

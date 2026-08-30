@@ -5,19 +5,28 @@
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
+// Mide como el boton porque ES un control de la misma fila, y hasta ahora tenia
+// geometria propia: 64px de alto — la barra entera —, radio de 2px y 8px de aire
+// lateral, contra los 40 / pildora / 18 del boton que tiene al lado. Tres numeros
+// distintos para dos controles que se leen juntos.
+//
+// No pasa a usar el atomo Button: lleva aspas y aria-expanded, es otro control. Lo
+// que se comparte son los TOKENS, que es donde vive el estandar.
+//
+// El fondo sigue siendo transparente: es un ghost, y un segundo relleno junto a la
+// marca competiria con el CTA. Lo que cambia es que su placa de hover pasa a ser
+// una pildora alineada con el.
 .root {
   display: inline-flex;
   gap: spacing.$spacing-03;
   align-items: center;
-  padding-inline: spacing.$spacing-03;
+  block-size: brand.$control-block-m;
+  padding-inline: brand.$control-inline-m;
   border: 0;
+  border-radius: brand.$radius-full;
   background: transparent;
   color: inherit;
   cursor: pointer;
-  // El escalon minimo, como el .nav-menu del original: un control dentro de una
-  // superficie ya redondeada no compite con ella.
-  border-radius: brand.$radius-01;
-  block-size: 100%;
   transition:
     background-color brand.$duration-quarter brand.$ease-default,
     gap brand.$duration-half brand.$ease-default;
@@ -32,6 +41,9 @@
 .root:focus-visible {
   outline: 2px solid theme.$focus;
   outline-offset: -2px;
+  // El outline hereda el border-radius del elemento, asi que con la pildora ya
+  // sigue la forma. Se deja escrito porque el offset negativo lo mete DENTRO: sin
+  // eso el anillo se saldria del contorno curvo por las esquinas.
 }
 
 // El hueco entre aspa y etiqueta se cierra al abrir. Es un detalle de un pixel que
@@ -41,7 +53,7 @@
 }
 
 .label {
-  @include brandtype.style('control');
+  @include brandtype.style('control-m');
 }
 
 .bars {

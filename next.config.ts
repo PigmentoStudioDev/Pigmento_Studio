@@ -1,5 +1,10 @@
 import path from "node:path";
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+// Le dice a next-intl donde vive la configuracion por peticion. Sin esto el plugin
+// busca en su ruta por defecto y los diccionarios no llegan a ningun sitio.
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   sassOptions: {
@@ -12,4 +17,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

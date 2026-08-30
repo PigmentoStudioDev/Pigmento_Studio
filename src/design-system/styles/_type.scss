@@ -53,7 +53,17 @@ $-styles: (
 
   // Etiquetas de control — boton, conmutador de menu. Van medio peso por encima del
   // cuerpo porque compiten con un fondo y no con una pagina.
-  'control': (size: 1.125rem, height: 1, tracking: -0.02em, weight: 500),
+  //
+  // Son TRES y no uno. Con uno solo, los tamanos que no encajaban caian a un estilo
+  // de CUERPO — y eso ponia el mismo componente a peso 400 en sm y lg y a 500 en md,
+  // con el tracking bailando entre -0.01 y -0.02. Una etiqueta de control lo es en
+  // los tres tamanos: lo que cambia es el cuerpo, no la voz.
+  //
+  // El interlineado 1 es de los tres, y no es cosmetico: es la caja de 1em que
+  // roll.surface() da por supuesta para calcular el recorte.
+  'control-s': (size: 1rem, height: 1, tracking: -0.02em, weight: 500),
+  'control-m': (size: 1.125rem, height: 1, tracking: -0.02em, weight: 500),
+  'control-l': (size: 1.25rem, height: 1, tracking: -0.02em, weight: 500),
 
   // El eyebrow lleva la caja alta DENTRO del estilo. Es lo que lo hace un eyebrow y
   // no un cuerpo pequeno: separarlo dejaria la mitad del estilo a merced de que

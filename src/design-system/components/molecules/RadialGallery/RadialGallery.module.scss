@@ -1,0 +1,172 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+
+/// Diametro de la rueda, en ancho de la propia galeria. Solo entra en pantalla el
+/// arco superior; el resto queda por debajo del recorte, que es lo que hace que
+/// las miniaturas parezcan asomar desde el borde inferior.
+$wheel-diameter: 300cqw;
+
+/// Distancia del medio al borde SUPERIOR de la rueda, no a su centro. El centro
+/// esta a la mitad del diametro, asi que el radio real de la orbita es
+/// 150cqw - 55cqw. En alto de la galeria a proposito: lo que se busca es que el
+/// arco cruce la tarjeta por su mitad, y eso es una medida de la caja, no del
+/// dibujo.
+$wheel-orbit: 50cqh;
+
+// Mitad mas grandes que las de la referencia, y por una razon de encuadre: alli la
+// corona ocupa la pantalla entera, aqui una columna del panel. La misma proporcion
+// del original (1 : 1.3) sobre una caja tres veces mas estrecha daba miniaturas que
+// se leian como sellos.
+//
+// El techo lo pone el choque entre vecinas: la separacion en el arco es el radio
+// por el angulo entre miniaturas, asi que si se agrandan mas hay que quitar piezas
+// o abrir la rueda, no seguir subiendo este numero.
+$thumb-inline-size: 30cqw;
+$thumb-block-size: 39cqw;
+
+/// Cuanto sale el medio de su orbita en cada paso. En % de su propio alto, que es
+/// lo que translateY toma como referencia: asi el empuje escala con la miniatura
+/// y no hay que reajustarlo si la tarjeta cambia de ancho.
+$thumb-lift: 25%;
+
+// La geometria del efecto es relativa a ESTA caja y no al viewport. El original
+// ocupa la pantalla entera, asi que mide en vw; dentro de una tarjeta esas mismas
+// cifras estarian dos ordenes de magnitud arriba. container-type: size hace que
+// cqw/cqh signifiquen "ancho/alto de la galeria" y conserva las proporciones del
+// original tal cual, sin recalcular ninguna.
+.root {
+  position: relative;
+  overflow: hidden;
+  container-type: size;
+  inline-size: 100%;
+  block-size: 100%;
+  // El gesto es HORIZONTAL, asi que el navegador se queda con el vertical: dentro
+  // del panel del menu, que tiene su propio scroll, quitarle los dos dejaria la
+  // corona atrapando el desplazamiento de la pagina.
+  touch-action: pan-y;
+  // Arrastrar sobre una corona de imagenes selecciona texto invisible y deja el
+  // cursor en modo seleccion a mitad del gesto.
+  user-select: none;
+  cursor: grab;
+}
+
+.root[data-dragging='true'] {
+  cursor: grabbing;
+}
+
+// left por calculo y no por un literal negativo: centra la rueda contra la caja
+// que tenga la galeria, en vez de dar por hecho que mide justo el ancho de la
+// pantalla.
+//
+// El giro lo escribe una transicion, no un tween: el JS solo incrementa
+// --step. Asi la duracion y la curva se quedan en la escala de la marca —
+// donde el gate de motion las lee, sobre el CSS compilado — y reduced-motion se
+// apaga en la hoja en vez de en una rama de JS que ningun test ve.
+.track {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: calc((100% - #{$wheel-diameter}) / 2);
+  inline-size: $wheel-diameter;
+  block-size: $wheel-diameter;
+  // Dos giros sumados en una sola rotacion: el del avance, que va por pasos
+  // enteros, y el del arrastre, que es continuo. El arrastre entra como NUMERO y
+  // la unidad la pone aqui — asi el JS no escribe ni una cadena con unidades y el
+  // gate de literales en estilo inline no tiene nada que mirar.
+  transform: rotate(
+    calc(
+      -360deg / var(--radial-gallery-count, 1) * var(--radial-gallery-step, 0) +
+        var(--radial-gallery-drag, 0) * 1deg
+    )
+  );
+  transition: transform brand.$duration-base brand.$ease-default;
+}
+
+// Mientras el dedo esta abajo no hay transicion: la rueda va 1:1 con el puntero.
+// Con ella puesta, cada pointermove arrancaria una interpolacion de 0.6s hacia
+// donde ya estaba el dedo y el gesto se sentiria como arrastrar algo pegajoso.
+//
+// Va en el selector del padre y no como estilo inline por lo de siempre: apagar
+// una transicion es motion, y el motion vive en la hoja.
+.root[data-dragging='true'] .track,
+.root[data-dragging='true'] .thumb {
+  transition: none;
+}
+
+// Cada item ocupa la rueda entera y solo centra su miniatura en horizontal: lo que
+// lo coloca en la corona es su propia rotacion. Repartir por rotacion y no por
+// posicion es lo que permite girar el conjunto moviendo UN solo elemento.
+//
+// El reparto vive en el CSS y no en el JS porque es maquetacion, no movimiento:
+// con reduced-motion, o antes de que monte el componente, la corona tiene que
+// verse quieta y bien repartida y no catorce miniaturas apiladas en el mismo punto.
+.item {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  transform: rotate(
+    calc(360deg / var(--radial-gallery-count, 1) * var(--radial-gallery-index, 0))
+  );
+}
+
+.thumb {
+  inline-size: $thumb-inline-size;
+  block-size: $thumb-block-size;
+  margin-block-start: $wheel-orbit;
+  border-radius: brand.$radius-05;
+  object-fit: cover;
+  // translateY(-50%) es la posicion de REPOSO: centra la miniatura sobre su punto
+  // de la orbita. El empuje de cada paso se suma a este valor.
+  transform: translateY(-50%);
+  transition: transform brand.$duration-half brand.$ease-default;
+}
+
+// El empuje hacia afuera en cada paso. En el efecto de referencia lo dispara la
+// VELOCIDAD de la rueda del raton; aqui no hay gesto, asi que lo dispara el propio
+// paso: la corona respira una vez por miniatura en vez de una vez por empujon.
+//
+// El regreso al reposo lo pide el fin del giro, a los 0.6s, cuando el grupo mas
+// lento lleva 0.9s de recorrido y aun no ha llegado. Esa interrupcion es la onda:
+// si se esperara a que los tres llegasen, la corona subiria y bajaria entera.
+.root[data-lifted='true'] .thumb {
+  transform: translateY(calc(-50% - #{$thumb-lift}));
+}
+
+// La onda. En el original cada medio cae al azar en uno de tres grupos con
+// duraciones 1x, 2x y 3x, y ese desfase es lo que hace que la corona ondule en vez
+// de subir entera como un bloque.
+//
+// Aqui la misma razon 1:2:3 sale de tres pasos CON NOMBRE de la escala —
+// half, base, onehalf son 0.3s, 0.6s y 0.9s — en vez de multiplicar uno por tres.
+// No es cosmetico: el gate lee las duraciones del CSS compilado, y $duration-base
+// por tres da 1.8s, que no es ningun escalon. Que el desfase se pueda escribir con
+// pasos existentes es la prueba de que la escala de ratio hace su trabajo.
+//
+// El reparto va por nth-child y no por sorteo, al reves que el original: sin JS, y
+// el mismo resultado en servidor y en cliente — un sorteo daria dos ondas distintas
+// y React lo cantaria como error de hidratacion.
+.item:nth-child(3n + 2) .thumb {
+  transition-duration: brand.$duration-base;
+}
+
+.item:nth-child(3n + 3) .thumb {
+  transition-duration: brand.$duration-onehalf;
+}
+
+// Se apaga TODO el motion, no se acorta.
+//
+// Y el empuje se anula ademas en su propia regla: transition: none no impide que
+// el transform se aplique, solo que se interpole. Sin esta segunda linea la corona
+// daria el salto hacia afuera de golpe y se quedaria ahi, que es peor que la
+// animacion que se pidio evitar.
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .thumb {
+    transition: none;
+  }
+
+  .root[data-lifted='true'] .thumb {
+    transform: translateY(-50%);
+  }
+}

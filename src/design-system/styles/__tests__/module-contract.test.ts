@@ -37,13 +37,24 @@ interface Pair {
   readonly used: Set<string>;
 }
 
+/**
+ * `:global(.x)` marca una clase que el modulo no escribe — llega de fuera, asi que
+ * no se puede pedir con `styles.x`. Hoy solo `pg-char`, que pone SplitText en
+ * runtime. Sin quitarlas, el gate las cuenta como declaradas y falla.
+ */
+function withoutGlobals(css: string): string {
+  return css.replace(/:global\([^)]*\)/g, '');
+}
+
 const PAIRS: Pair[] = modules(DS).map((sheet) => {
   const tsx = sheet.replace('.module.scss', '.tsx');
 
   return {
     rel: sheet.slice(DS.length + 1),
     declared: new Set(
-      [...compile(sheet, SASS).css.matchAll(/\.([a-zA-Z][\w]*)/g)].map(([, name]) => name),
+      [...withoutGlobals(compile(sheet, SASS).css).matchAll(/\.([a-zA-Z][\w]*)/g)].map(
+        ([, name]) => name,
+      ),
     ),
     used: new Set(
       [...readFileSync(tsx, 'utf8').matchAll(/styles\.([a-zA-Z][\w]*)/g)].map(([, name]) => name),

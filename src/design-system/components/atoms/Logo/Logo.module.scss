@@ -3,11 +3,15 @@
 @use '../../../styles/brand' as brand;
 @use '@carbon/react/scss/spacing';
 
+// De aqui salen las dos formas: el logotipo al 100% y el isotipo cuadrado. La barra
+// mide 4rem, asi que 2rem deja 1rem de aire arriba y abajo.
+$-size: spacing.$spacing-07;
+
 .root {
   display: inline-flex;
   position: relative;
   align-items: center;
-  block-size: spacing.$spacing-06;
+  block-size: $-size;
 }
 
 // Las dos formas se cruzan en el mismo sitio: el isotipo va absoluto sobre el
@@ -39,8 +43,8 @@
 
 .mark {
   position: absolute;
-  inline-size: spacing.$spacing-06;
-  block-size: spacing.$spacing-06;
+  inline-size: $-size;
+  block-size: $-size;
 }
 
 .isFull .mark {

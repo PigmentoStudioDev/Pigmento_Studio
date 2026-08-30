@@ -1,0 +1,88 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// 100% y no 100vw: vw incluye el ancho de la barra de scroll, asi que la tira
+// sobresaldria de la pagina y apareceria scroll horizontal en todo el sitio.
+//
+// El color de fondo lo trae la ZONA que el componente se pone encima, no una
+// declaracion propia: por eso aqui solo se nombran los tokens y no un valor.
+.root {
+  position: relative;
+  overflow: hidden;
+  inline-size: 100%;
+  background-color: theme.$background;
+  color: theme.$text-primary;
+  padding-block: spacing.$spacing-07;
+}
+
+// El carril. Lo ensancha y lo recentra el behavior, que es quien conoce cuanto
+// empuja el scroll; aqui solo se declara que es una fila.
+.track {
+  display: flex;
+  position: relative;
+  will-change: transform;
+}
+
+// Cada copia de la coleccion. `flex: none` es lo que impide que flex las encoja
+// para que quepan: sin eso la tira no se sale de su caja, y sin salirse no hay
+// nada que desplazar.
+.collection {
+  display: flex;
+  flex: none;
+  align-items: center;
+  position: relative;
+  will-change: transform;
+}
+
+// El aire entre piezas va como padding a UN SOLO lado, no repartido a los dos.
+//
+// Con padding en ambos, el hueco que se ve entre dos marcas es el DOBLE del valor
+// declarado, asi que el token deja de describir lo que se ve y hay que dividirlo a
+// ojo cada vez que se toca. Con un solo lado, el token ES el hueco.
+.item {
+  display: flex;
+  align-items: center;
+  flex: none;
+  padding-inline-end: spacing.$spacing-09;
+}
+
+// El texto pide menos aire que un logo: una frase ya trae sus propios espacios
+// dentro y el hueco solo tiene que separarla de la siguiente.
+.item:has(.text) {
+  padding-inline-end: spacing.$spacing-07;
+}
+
+.text {
+  @include brandtype.style('display-l');
+
+  margin: 0;
+  // La tira vive de que su contenido NO se ajuste: un salto de linea la convierte
+  // en un parrafo que se desplaza.
+  white-space: nowrap;
+}
+
+.logo {
+  display: block;
+  block-size: brand.$marquee-logo-block-size;
+  inline-size: auto;
+  // Los logos llegan con proporciones dispares y lo unico que se puede igualar por
+  // CSS es la ALTURA; forzar tambien el ancho los deformaria uno a uno.
+  max-inline-size: none;
+  object-fit: contain;
+}
+
+// Los logos de un kit de marcas vienen casi siempre en blanco, listos para un fondo
+// oscuro. Sobre una zona clara desaparecen. invert() y no un color: son marcas
+// ajenas con sus propias formas internas, y recolorearlas a currentColor aplastaria
+// un logo de dos tonos en una silueta plana. Invertir conserva su contraste interno.
+.onLight .logo {
+  filter: invert(brand.$marquee-logo-invert);
+}
+
+// Sin reduced-motion no hay nada que apagar aqui: el movimiento entero lo pone
+// GSAP, y el behavior no llega ni a crear el tween con esa preferencia. La tira se
+// queda como la deja este archivo, que es quieta.

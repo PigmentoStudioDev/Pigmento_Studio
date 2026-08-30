@@ -1,0 +1,210 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/component-tokens' as component;
+@use '@carbon/react/scss/theme';
+
+// Cuadrado por declaracion: la misma medida en los dos ejes, que es lo que hace
+// que el radio pequeno se lea como un icono de aplicacion y no como una esquina
+// recortada al azar.
+//
+// inline-grid: la placa y las dos caras ocupan la misma celda. Con posicion
+// absoluta el control dejaria de medirse por su contenido y habria que repetir la
+// medida en cada capa.
+.root {
+  display: inline-grid;
+  position: relative;
+  inline-size: brand.$control-block-m;
+  block-size: brand.$control-block-m;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  // El clic comprime el control ENTERO, no solo la placa: aqui no hay etiqueta que
+  // deba quedarse quieta, asi que el gesto puede ser el del control completo.
+  transition: scale brand.$duration-quarter brand.$ease-click;
+}
+
+.root:active:not(:disabled) {
+  scale: 0.955 0.925;
+}
+
+// El anillo de foco vive en su propia capa y por eso no hereda la escala de la
+// cortina.
+//
+// inset: 0 y el grosor por SPREAD de la sombra, no una caja mas grande con un radio
+// mayor. Con un radio pequeno las dos cajas dejan de ser concentricas si comparten
+// radio — la esquina de fuera se ve mas cerrada que la de dentro — y el navegador
+// ya resuelve eso solo: el radio de una sombra exterior es el del elemento MAS su
+// spread. Concentricidad exacta y sin un token que recalcular.
+.root::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: brand.$radius-control-square;
+  pointer-events: none;
+  transition:
+    box-shadow brand.$duration-quarter brand.$ease-focus,
+    scale brand.$duration-half brand.$ease-default;
+}
+
+.root:focus-visible {
+  outline: none;
+}
+
+.root:focus-visible::after {
+  box-shadow: 0 0 0 2px theme.$focus;
+}
+
+.bg {
+  grid-area: 1 / 1;
+  display: flex;
+  border-radius: brand.$radius-control-square;
+  // clip y no hidden: no crea contexto de scroll, que es lo unico que hidden
+  // aportaria aqui y lo que hace que un ancestro pueda saltar al enfocar dentro.
+  overflow: clip;
+  transition: scale brand.$duration-half brand.$ease-default;
+}
+
+// La cortina. Cada lonja sube desde su base con un retardo propio, y ese desfase es
+// todo el efecto: subiendo a la vez seria una persiana, no un barrido.
+//
+// 21% y no 20%: cinco por 21 son 105, asi que cada lonja pisa un 1% a su vecina y
+// no queda la costura de subpixel que deja un reparto exacto. El sobrante lo corta
+// el overflow de la placa. inline-size es TAMANO y no espaciado — el contrato lo
+// dice y por eso puede ser un literal.
+.slice {
+  flex: none;
+  inline-size: 21%;
+  block-size: 100%;
+  transform-origin: center bottom;
+  scale: 1 0;
+  transition: scale brand.$duration-half brand.$ease-default
+    calc(var(--icon-button-slice, 0) * #{brand.$stagger-slice});
+}
+
+.inner {
+  grid-area: 1 / 1;
+  display: grid;
+  border-radius: brand.$radius-control-square;
+  overflow: clip;
+  // Sin esto el icono queda debajo de la cortina en cuanto la placa tiene color.
+  z-index: 1;
+}
+
+.face {
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  block-size: 100%;
+  // El icono mide 1em, asi que su tamano se declara aqui y no dentro del dibujo.
+  font-size: 1.5rem;
+}
+
+// La vuelta de campana. perspective() va en el propio transform y no en el padre:
+// en el padre daria un punto de fuga compartido y las dos caras girarian hacia el
+// mismo lado de la pantalla en vez de cada una sobre su propio eje.
+.faceDefault {
+  transform-origin: top center;
+  transition:
+    transform brand.$duration-half brand.$ease-default,
+    opacity brand.$duration-quarter brand.$ease-default;
+}
+
+.faceHover {
+  transform-origin: bottom center;
+  transform: perspective(10em) scale(0.75) rotateX(-90deg) translate3d(0, 50%, 0);
+  opacity: 0;
+  transition:
+    transform brand.$duration-half brand.$ease-default,
+    opacity brand.$duration-quarter brand.$ease-default;
+}
+
+// Reposo: placa vacia con su contorno. La cortina que sube es el relleno, y por eso
+// el color de hover vive en la lonja y no en la placa.
+.emphasisSecondary .bg {
+  border: 1px solid component.get('button-tertiary');
+}
+
+.emphasisSecondary .slice {
+  background-color: component.get('button-tertiary');
+}
+
+.emphasisSecondary .faceDefault {
+  color: component.get('button-tertiary');
+}
+
+.emphasisSecondary .faceHover {
+  color: theme.$text-inverse;
+}
+
+.emphasisPrimary .bg {
+  background-color: component.get('button-primary');
+}
+
+.emphasisPrimary .slice {
+  background-color: component.get('button-primary-hover');
+}
+
+.emphasisPrimary .face {
+  color: theme.$text-on-color;
+}
+
+.root:disabled {
+  cursor: not-allowed;
+}
+
+.root:disabled .bg {
+  background-color: component.get('button-disabled');
+  border-color: transparent;
+}
+
+.root:disabled .face {
+  color: theme.$text-on-color-disabled;
+}
+
+// (hover: hover) y (pointer: fine) descartan tactil, donde :hover se queda pegado
+// tras el toque y el ultimo control pulsado se quedaria con la cortina subida.
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .root:hover:not(:disabled) .bg,
+  .root:focus-visible .bg {
+    scale: 1.065 1.095;
+  }
+
+  .root:hover:not(:disabled) .slice,
+  .root:focus-visible .slice {
+    scale: 1 1;
+  }
+
+  .root:hover:not(:disabled) .faceDefault,
+  .root:focus-visible .faceDefault {
+    transform: perspective(10em) scale(0.75) rotateX(90deg) translate3d(0, -50%, 0);
+    opacity: 0;
+  }
+
+  .root:hover:not(:disabled) .faceHover,
+  .root:focus-visible .faceHover {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+// Se apaga TODO, no se acorta. Los estados de hover viven ya dentro de una consulta
+// con `prefers-reduced-motion: no-preference`, asi que aqui no llegan: la cara de
+// reposo se queda y la de hover sigue invisible, que es el resultado correcto.
+@media (prefers-reduced-motion: reduce) {
+  .root,
+  .root::after,
+  .bg,
+  .slice,
+  .faceDefault,
+  .faceHover {
+    transition: none;
+  }
+}

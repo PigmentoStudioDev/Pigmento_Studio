@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useCharRoll } from "../../../motion/useCharRoll";
 import styles from "./Button.module.scss";
 
 /**
@@ -12,11 +15,15 @@ import styles from "./Button.module.scss";
  * <button> que navega deja fuera el clic con rueda, el "abrir en pestana nueva" y
  * el menu contextual, y se anuncia como boton a quien usa lector de pantalla
  * cuando en realidad es un destino.
+ *
+ * Es cliente desde que rueda: partir el texto pide DOM. El fondo va en su propio
+ * nodo porque escalar el control escalaria tambien el texto y el anillo de foco.
  */
 export type ButtonEmphasis = "primary" | "secondary" | "ghost";
 export type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonBase {
+  /** Plano y no ReactNode: se parte en caracteres. */
   children: string;
   emphasis?: ButtonEmphasis;
   size?: ButtonSize;
@@ -53,14 +60,31 @@ const SIZE: Record<ButtonSize, string> = {
 
 export function Button(props: ButtonProps) {
   const { children, emphasis = "primary", size = "md", className } = props;
+  const textRef = useCharRoll<HTMLSpanElement>(children);
+
   const classes = [styles.root, EMPHASIS[emphasis], SIZE[size], className]
     .filter(Boolean)
     .join(" ");
 
+  // Cuerpo compartido: con el markup duplicado, un cambio de forma se aplica a una
+  // rama y se olvida en la otra.
+  const inner = (
+    <>
+      <span aria-hidden="true" className={styles.bg} />
+      <span className={styles.inner}>
+        {/* Escondido: partido deja de ser una palabra. El nombre va en el control,
+            que es donde aria-label vale — en un <span> sin rol esta prohibido. */}
+        <span aria-hidden="true" ref={textRef} className={styles.text}>
+          {children}
+        </span>
+      </span>
+    </>
+  );
+
   if (props.href !== undefined) {
     return (
-      <Link href={props.href} onClick={props.onClick} className={classes}>
-        {children}
+      <Link href={props.href} aria-label={children} onClick={props.onClick} className={classes}>
+        {inner}
       </Link>
     );
   }
@@ -68,11 +92,12 @@ export function Button(props: ButtonProps) {
   return (
     <button
       type={props.type ?? "button"}
+      aria-label={children}
       disabled={props.disabled}
       onClick={props.onClick}
       className={classes}
     >
-      {children}
+      {inner}
     </button>
   );
 }
