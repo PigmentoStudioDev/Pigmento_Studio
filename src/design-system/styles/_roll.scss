@@ -1,0 +1,50 @@
+// El caracter que rueda: cada letra lleva una copia por debajo (text-shadow), el
+// contenedor la recorta y al hover la letra sube esa misma distancia.
+//
+// El reposo vive en _app.scss, no aqui: pg-char la crea el hook en runtime sobre
+// cualquier elemento, asi que un componente que parta su texto y olvide surface()
+// se quedaria con caracteres marcados y sin estilo.
+
+@use 'sass:math';
+@use './brand' as brand;
+
+// La invariante del gesto: la copia tiene que empezar POR DEBAJO de donde acaba el
+// recorte, o asoma una tira de las letras en reposo. Con line-height 1 la caja mide
+// 1em, asi que el recorte llega a 1em + el margen de las colas.
+//
+// Se comprueba al compilar porque el sintoma no se parece a la causa: se ve un
+// texto duplicado debajo del control y nada apunta a que sean dos numeros que
+// deiaron de cuadrar.
+$-clip-end: 1 + math.div(brand.$roll-descender, 1em);
+
+@if math.div(brand.$roll-distance, 1em) <= $-clip-end {
+  @error 'roll: la copia (#{brand.$roll-distance}) cae dentro del recorte ' +
+    '(#{$-clip-end}em). Sube $roll-distance o baja $roll-descender en _brand.scss.';
+}
+
+/// Va en el contenedor del texto.
+///
+/// line-height 1 no es cosmetico: fija la caja en 1em, que es de donde sale la
+/// cuenta de arriba. Sin el, cada estilo de tipo traeria su interlineado y la copia
+/// asomaria en unos tamanos si y en otros no.
+@mixin surface($shine: currentcolor) {
+  display: inline-block;
+  line-height: 1;
+  clip-path: inset(0 0 calc(#{brand.$roll-descender} * -1));
+  --pg-char-shine: #{$shine};
+}
+
+/// Bajo :hover / :focus-visible del control, nunca suelto.
+@mixin rolled {
+  :global(.pg-char) {
+    translate: 0 calc(#{brand.$roll-distance} * -1);
+    text-shadow: 0 brand.$roll-distance currentcolor;
+    // El color va medio gesto por detras del movimiento: asi cambia a mitad de
+    // vuelo y no se nota que son dos letras.
+    transition:
+      translate brand.$duration-base brand.$ease-default
+        calc(var(--char, 0) * #{brand.$stagger-char}),
+      text-shadow brand.$duration-quarter brand.$ease-natural
+        calc(var(--char, 0) * #{brand.$stagger-char} + #{brand.$duration-half});
+  }
+}

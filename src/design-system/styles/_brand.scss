@@ -4,6 +4,7 @@
 // vienen de @carbon/colors, @carbon/layout, @carbon/type y @carbon/motion:
 // duplicarlos crea una segunda fuente de verdad.
 
+@use 'sass:color';
 @use 'sass:map';
 @use 'sass:math';
 @use '@carbon/colors';
@@ -77,18 +78,11 @@ $container-wide: map.get(grid.$grid-breakpoints, 'max', 'width');
 /// ahora compartian numero por accidente.
 $container-full: 120rem;
 
-/// Techo duro de la PLACA del mega menu — la barra entera, no su contenido — en
-/// pantallas muy grandes. Sin este tope `.isOpen .nav` iba a 100% y la placa
-/// (fondo, borde, radio) seguia creciendo con la ventana sin limite.
+/// Techo de la PLACA del mega menu, no de su contenido. Sin el, `.isOpen .nav` iba
+/// a 100% y el fondo seguia creciendo con la ventana sin limite.
 ///
-/// Va por DEBAJO de $container-full (1920px) a proposito: aqui el tope de la
-/// placa es el que manda, y $container-full deja de alcanzarse — el contenido ya
-/// no llega a su propio limite porque el padre lo corta antes. No es un error,
-/// es que ahora hay un solo techo real y $container-full queda de reserva para
-/// el dia que la placa vuelva a permitir mas que su contenido.
-///
-/// 1800px y no un escalon de reticula: no es un ancho de lectura ni de panel, es
-/// el punto en el que dejar de crecer se pidio a ojo para una pantalla concreta.
+/// Queda por debajo de $container-full, asi que hoy es el unico techo real: el
+/// contenido ya no llega al suyo porque el padre lo corta antes.
 $container-mega: 112.5rem;
 
 // La barra de la cabecera es fija, asi que su altura la necesitan dos sitios: el
@@ -113,6 +107,58 @@ $radius-header: math.div($header-block-size, 2);
 /// y expandirse dejaria de leerse como gesto.
 $header-compact-inline-size: map.get(grid.$grid-breakpoints, 'md', 'width');
 
+// Metrica de los controles: boton hoy, y lo que llegue con su misma forma.
+//
+// La altura se DECLARA. Derivarla de `line-height + padding` — que era lo que
+// habia — convierte el tamano del control en un efecto secundario del estilo de
+// tipo: nadie eligio que los tres tamanos midieran 24, 34 y 43px, salieron de
+// sumar cosas que se decidieron por separado. Ninguno cae en la reticula y entre
+// ellos no hay relacion.
+//
+// Se leen de spacing y no se escriben porque son alturas de CAJA: la reticula de 8
+// es lo que hace que un boton y un campo puestos en fila compartan linea de base.
+$control-block-s: spacing.$spacing-07;
+$control-block-m: spacing.$spacing-08;
+$control-block-l: spacing.$spacing-09;
+
+/// El aire lateral es IGUAL al cuerpo de la etiqueta, y por eso NO sale de la
+/// reticula.
+///
+/// En una pildora el padding lateral es una relacion optica con el texto que
+/// encierra, no un ritmo de layout. Atado a spacing daba 0.75 / 0.89 / 1.26 sobre
+/// su propio cuerpo, y eso es lo que hacia que los tres tamanos leyeran como tres
+/// componentes distintos en vez de como tres escalones de uno. Atado al cuerpo da
+/// 1.00 en los tres por construccion.
+///
+/// Son literales, y viven aqui porque aqui es donde un literal es la definicion:
+/// repiten a proposito los tamanos de 'control-s|m|l' de la escala de tipo. Esa
+/// igualdad ES el contrato — si un dia se mueve un cuerpo, se mueve su pareja.
+$control-inline-s: 1rem;
+$control-inline-m: 1.125rem;
+$control-inline-l: 1.25rem;
+
+/// Pildora EXACTA de un control de tamano medio, derivada de su alto igual que
+/// $radius-header lo esta del de la barra.
+///
+/// No es $radius-full, y la diferencia importa desde hoy: la pildora recortada es
+/// para cajas cuya altura el CSS NO conoce. Al declarar $control-block-* la conoce,
+/// y un valor enorme que el navegador recorta deja de poder interpolarse — la
+/// transicion no se ve hasta que el declarado baja del recorte, y ahi salta.
+///
+/// Solo existe la 'm' porque solo la 'm' tiene consumidor. El boton se queda en
+/// $radius-full a proposito: su anillo de foco vive en un ::after desplazado hacia
+/// fuera, y el recorte le da la concentricidad gratis en vez de pedir un radio
+/// distinto por tamano.
+$radius-control-m: math.div($control-block-m, 2);
+
+/// Radio de un control CUADRADO — el boton de icono.
+///
+/// Es un escalon de la escala y no una pildora ni un 50%: la forma de referencia es
+/// la de un icono de aplicacion de iOS, una esquina blanda sobre un cuadrado. En un
+/// control de 40px, 8px son un 20% del lado — iOS anda por el 22%, y el escalon de
+/// al lado (12px) ya se lee como boton redondeado y no como icono.
+$radius-control-square: $radius-05;
+
 // Motion.
 //
 // Carbon cubre el registro PRODUCTIVO: 70-700ms y cuatro curvas discretas, hechas
@@ -132,5 +178,113 @@ $duration-base: 0.6s;
 $duration-onehalf: 0.9s;
 $duration-double: 1.2s;
 
-/// Entrada y salida con caracter: arranca decidida y frena largo.
+/// Los gestos que se MIRAN: arranca decidida y frena largo.
 $ease-default: cubic-bezier(0.625, 0.05, 0, 1);
+
+/// El clic. Casi simetrica y corta: no hay gesto que leer sino una confirmacion.
+$ease-click: cubic-bezier(0.4, 0, 0.2, 1);
+
+/// Lo que acompana a otra cosa en vez de liderarla. Frena antes que la de arriba.
+$ease-natural: cubic-bezier(0.32, 0.12, 0.2, 1);
+
+/// El anillo de foco. Rapidisima: un foco que tarda es un foco que ya no se sigue.
+$ease-focus: cubic-bezier(0.32, 0.72, 0, 1);
+
+/// El paso del desfase por CARACTER. No cabe en la escala de duracion: el escalon
+/// mas corto son 0.15s, que en una palabra de seis letras es casi un segundo solo
+/// de retardo.
+$stagger-char: 0.024s;
+
+/// El paso del desfase por LONJA, en la cortina que sube detras de un icono. Es el
+/// doble del de caracter y no un numero nuevo: cinco lonjas con el paso de letra se
+/// leerian como una sola, y con un paso suelto habria dos ritmos de desfase en el
+/// sitio sin nada que los relacione.
+$stagger-slice: $stagger-char * 2;
+
+/// Cuanto baja la copia de la letra, que es lo mismo que sube la letra al rodar —
+/// un solo valor porque si dejan de ser la misma distancia, la copia no aterriza
+/// donde estaba el original. En em: se mide contra su propia letra, asi que un
+/// boton grande y uno pequeno ruedan cada uno lo suyo.
+$roll-distance: 1.3em;
+
+/// Cuanto asoma el recorte por debajo de la caja para no cortar las colas de g, j,
+/// p. En em y no en %, que es lo que fallaba: la profundidad de una cola es una
+/// propiedad de la FUENTE, y atarla a un % de la altura la descuadra en cuanto un
+/// estilo cambia de interlineado.
+$roll-descender: 0.15em;
+
+/// ---------------------------------------------------------------------------
+/// Superficie de cristal
+///
+/// Valores de ILUMINACION, no de marca. Describen como se comporta un material
+/// frente a la luz — el tinte de la lamina, sus dos reflejos especulares, sus dos
+/// cantos y el halo interior — y por eso no salen del mapa de tema de Carbon: no
+/// existe un rol semantico "brillo especular", y forzarlos a uno los volveria
+/// mentira en cuanto alguien cambiara ese token por otro motivo.
+///
+/// Tampoco cambian entre modo claro y oscuro, y es deliberado: el reflejo de un
+/// cristal es blanco mire lo que mire por detras. Lo que cambia es lo que se ve a
+/// traves, y de eso ya se encarga el backdrop-filter.
+///
+/// Salen de la rampa de grises de Carbon con un alfa encima en vez de un hex
+/// suelto: asi el dia que la marca sustituya la rampa, el cristal la sigue.
+/// ---------------------------------------------------------------------------
+
+/// Cuerpo del tinte, y la UNICA perilla de transparencia del efecto: subirlo opaca
+/// el cristal, bajarlo lo deja en un filtro casi puro. El efecto original va al 15%
+/// y a ese valor la barra flota sin llegar a leerse como una superficie.
+///
+/// Es una OPACIDAD y no un color, y esa es la diferencia que hace que el cristal se
+/// re-tematice: el tinte lo mezcla el componente sobre el token de superficie que
+/// toque en cada zona, asi que la barra sigue siendo clara en claro y oscura en
+/// oscuro. Un color fijo aqui la dejaria clara siempre y se cargaria la adopcion de
+/// tema de la cabecera.
+$glass-fill-opacity: 95%;
+
+/// Tinte oscuro que se funde en color-burn para dar cuerpo al cristal. Es el unico
+/// valor oscuro del conjunto: sin el, la lamina se lee como niebla blanca.
+$glass-burn: colors.$gray-100;
+
+/// Reflejos especulares. El fuerte marca el canto por donde entra la luz; el suave
+/// es su rebote en el canto opuesto, y por eso pesa menos.
+$glass-highlight-strong: rgba(colors.$white, 0.8);
+$glass-highlight-soft: rgba(colors.$white, 0.5);
+
+/// Los dos cantos del bisel. Mismo gris, distinto peso: el que da la luz y el que
+/// queda a contraluz.
+$glass-edge-light: rgba(colors.$gray-40, 0.5);
+$glass-edge-dark: rgba(colors.$gray-40, 0.3);
+
+/// Halo interior: la luz que queda atrapada dentro del grosor de la lamina.
+$glass-inner-glow: rgba(colors.$gray-10, 0.3);
+
+/// Desenfoque y saturacion del fondo. La saturacion por encima de 100% es lo que
+/// evita que el cristal se lea como un simple velo gris: un cristal real conserva
+/// el color de lo que hay detras, solo lo difumina.
+$glass-blur: 0.75em;
+$glass-saturation: 120%;
+
+/// Altura a la que se normaliza un logo dentro de una tira. Es lo unico que se
+/// puede igualar por CSS entre marcas: sus proporciones y su peso optico son
+/// dispares, y forzar tambien el ancho las deformaria una a una.
+///
+/// Pequena a proposito. Una tira de logos es una nota al pie — dice "con estos
+/// trabajamos" — y a tamano grande deja de acompanar al contenido para competir con
+/// el. Lo que la hace legible es el AIRE entre marcas, no el tamano de cada una.
+$marquee-logo-block-size: 1.5rem;
+
+/// Tinta a la que caen los logos claros al invertirse sobre una zona clara.
+///
+/// Un invert(1) sobre blanco da negro PURO, y el negro puro no esta en la rampa: al
+/// lado de un texto en gray-100 se lee como una mancha mas dura que todo lo demas de
+/// la pagina. Cae en el escalon mas oscuro de la rampa, que es donde vive el texto.
+$marquee-logo-ink: colors.$gray-100;
+
+/// Cuanto hay que invertir para aterrizar EXACTAMENTE en esa tinta. Se deriva del
+/// token en vez de escribir el 0.914 a mano: el dia que la marca cambie la rampa, el
+/// filtro la sigue solo. Un numero copiado se habria quedado apuntando al gris viejo
+/// sin que nada fallara.
+$marquee-logo-invert: math.div(
+  255 - color.channel($marquee-logo-ink, 'red', $space: rgb),
+  255
+);

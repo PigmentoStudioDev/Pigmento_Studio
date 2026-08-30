@@ -6,6 +6,11 @@
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
+/// Cuanto encoge la barra al retirarse. No es un escalon de ninguna escala del
+/// sistema — no hay escala de escalas — sino el minimo que se percibe como
+/// alejamiento sin llegar a leerse como un cambio de tamano.
+$hidden-scale: 0.95;
+
 // La cabecera ocupa solo lo que mide: la barra, y la barra mas el panel cuando
 // esta abierto. NO cubre la ventana.
 //
@@ -67,13 +72,28 @@
   max-inline-size: brand.$header-compact-inline-size;
   color: theme.$text-primary;
   margin-block-start: spacing.$spacing-06;
-  transition: max-inline-size brand.$duration-onehalf brand.$ease-default;
+  transition:
+    max-inline-size brand.$duration-onehalf brand.$ease-default,
+    transform brand.$duration-half brand.$ease-default,
+    scale brand.$duration-half brand.$ease-default;
 }
 
-// 100% hasta que ese 100% pase de $container-mega: sin el min(), en un monitor muy
-// grande la placa seguia creciendo con la ventana aunque su contenido ya se
-// hubiera parado en $container-full, y el hueco entre los dos se leia como un
-// borde vacio cada vez mas ancho.
+// Escondida: la barra sale por arriba y encoge un punto al irse.
+//
+// El desplazamiento descuenta ademas el margen superior del propio .nav. Con un
+// -100% pelado la barra sale justo su alto y ese margen la sigue empujando hacia
+// dentro, asi que queda una franja asomando por el borde — el fallo tipico de este
+// patron, y solo se ve en el ultimo pixel del recorrido.
+//
+// La escala no es decoracion: irse mas pequena lee como alejarse, y una barra que
+// solo se desliza parece cortada por el borde en vez de retirada.
+.isHidden {
+  transform: translateY(calc(-100% - #{spacing.$spacing-06}));
+  scale: $hidden-scale;
+}
+
+// Sin el min(), en un monitor muy grande la placa sigue creciendo con la ventana
+// aunque su contenido ya se haya parado: el hueco se lee como un borde vacio.
 .isOpen .nav {
   max-inline-size: min(100%, brand.$container-mega);
 }
@@ -90,10 +110,15 @@
 // Y va derivado del alto en vez de dejar que lo recorte el navegador: un radio
 // recortado no interpola. La transicion no se veria hasta que el valor declarado
 // bajase del recorte, y entonces saltaria.
+// Sin background-color propio: el fondo lo pone la lamina de cristal que lleva
+// dentro. Un color opaco aqui dejaria al backdrop-filter del cristal difuminando una
+// superficie plana — que da exactamente la misma superficie plana.
+//
+// El borde SI se queda: es el canto nitido de la pildora, y el bisel del cristal lo
+// acompana por dentro en vez de sustituirlo.
 .plate {
   position: absolute;
   inset: 0;
-  background-color: theme.$layer-01;
   border: 1px solid theme.$border-subtle-01;
   border-radius: brand.$radius-header;
   transition:
@@ -110,23 +135,30 @@
   border-radius: brand.$radius-08;
 }
 
+// Grid de tres columnas y no flex, por una razon que se ve sola en cuanto los
+// flancos dejan de medir lo mismo: con flex, la marca se centraba con
+// `margin-inline: auto`, que reparte el espacio LIBRE — no centra en la barra. El
+// logo quedaba desviado exactamente (ancho del toggle - ancho de las acciones) / 2,
+// unos 10px a la izquierda, y agrandar el CTA lo empeoraba.
+//
+// Con 1fr auto 1fr las dos columnas de fuera miden igual por definicion y la del
+// medio queda centrada pase lo que pase con lo que hay dentro de ellas.
 .bar {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   gap: spacing.$spacing-03;
   align-items: center;
-  // El aire lateral tiene que SALVAR LA CURVA, y ahi no vale copiar el numero de la
-  // referencia: su barra lleva 7px de padding porque su radio son 4px. La nuestra
-  // es una pildora de 32 de radio, y con 7px el primer control se monta encima del
-  // redondeo. La regla es que el padding cubra el radio del estado, y por eso
-  // cambia al abrir: la placa pasa de pildora (32) a superficie (24).
-  padding-inline: spacing.$spacing-07;
+  // Fijo en los dos estados. Derivarlo del radio reservaba sitio para una curva que
+  // a la altura del contenido ya no esta ahi, y ademas movia la marca al abrir.
+  padding-inline: spacing.$spacing-05;
   block-size: brand.$header-block-size;
-  transition: padding-inline brand.$duration-base brand.$ease-default;
 }
 
-.isOpen .bar {
-  padding-inline: spacing.$spacing-06;
+// La columna izquierda es 1fr, asi que el toggle se ancla a su inicio en vez de
+// estirarse hasta el centro.
+.bar > :first-child {
+  justify-self: start;
 }
 
 // Crece de dentro hacia fuera. Que aparezca con opacity delataria que el panel ya
@@ -148,10 +180,11 @@
   opacity: 1;
 }
 
+// Sin margin-inline: auto — ahora la centra el grid, y dejarlo la volveria a
+// descentrar sumando su reparto al de la columna.
 .home {
   display: inline-flex;
   align-items: center;
-  margin-inline: auto;
   padding-inline: spacing.$spacing-03;
   color: inherit;
   text-decoration: none;
@@ -162,9 +195,13 @@
   outline-offset: -2px;
 }
 
+// Al final de su columna: es 1fr, asi que sin esto las acciones arrancarian en el
+// centro de la barra. El hueco iguala al de la barra — 4px entre dos pildoras de
+// 40 las dejaba pegadas.
 .actions {
   display: flex;
-  gap: spacing.$spacing-02;
+  gap: spacing.$spacing-03;
+  justify-self: end;
 }
 
 // El panel se abre con grid-template-rows de 0fr a 1fr: es la unica forma de
@@ -200,15 +237,8 @@
   align-items: center;
   margin-inline: auto;
   inline-size: 100%;
-  // El escalon FULL, no el de pagina. Un mega menu no es una columna de lectura:
-  // no se para en 1584 para proteger la linea de texto, se para donde deja de
-  // parecer un panel. Con el ancho de pagina quedaban dos franjas muertas a los
-  // lados en cuanto la pantalla pasaba de 1600.
-  //
-  // Sin restar un escalon: las tres columnas de .panelRow reparten este ancho a
-  // partes iguales (flex: 1 1 0 cada una), y con el escalon restado el conjunto se
-  // quedaba corto del borde real del panel — el padding de abajo ya es el aire, no
-  // hace falta duplicarlo recortando el contenedor.
+  // El escalon FULL y no el de pagina: un mega menu no es una columna de lectura,
+  // no se para donde la linea de texto se hace ilegible.
   max-inline-size: brand.$container-full;
   padding: spacing.$spacing-06;
   overflow-y: auto;
@@ -287,6 +317,33 @@
   padding-block-start: spacing.$spacing-05;
 }
 
+// Al pie de la columna, como la lista secundaria. `margin-block-start: auto` solo
+// empuja si NO hay ya un .groupSecondary comiendose el sobrante, asi que las dos
+// conviven: la secundaria toma el hueco y las redes se apoyan debajo de ella.
+.utilities {
+  display: flex;
+  gap: spacing.$spacing-03;
+  align-items: center;
+  margin-block-start: auto;
+  padding-block-start: spacing.$spacing-05;
+}
+
+.groupSecondary + .utilities {
+  margin-block-start: 0;
+}
+
+// list-style: none NO quita el hueco de las vinetas: eso es el
+// padding-inline-start de 40px que el navegador le da a todo <ul>, y era lo que
+// dejaba los iconos despegados del borde de la columna. Los margenes verticales por
+// defecto van con el, o la fila no se apoya donde dice apoyarse.
+.socials {
+  display: flex;
+  gap: spacing.$spacing-03;
+  margin-block: 0;
+  padding-inline-start: 0;
+  list-style: none;
+}
+
 .groupLabel {
   @include brandtype.style('eyebrow');
 
@@ -329,7 +386,6 @@
 @media (prefers-reduced-motion: reduce) {
   .backdrop,
   .nav,
-  .bar,
   .plate,
   .line,
   .panel,
@@ -339,5 +395,13 @@
 
   .panelRow > * {
     transform: none;
+  }
+
+  // La barra NO se esconde: sin transicion, retirarla seria un salto — aparecer y
+  // desaparecer de golpe en cada cambio de direccion, que es mas agresivo que el
+  // movimiento que se pidio evitar. Se queda donde esta.
+  .isHidden {
+    transform: none;
+    scale: 1;
   }
 }

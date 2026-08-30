@@ -1,0 +1,99 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/theme';
+
+// La lamina. Cubre a su padre y hereda su radio, asi que se adapta sola a la
+// forma que la contenga — la pildora de la barra hoy, otra caja manana — sin
+// conocerla.
+//
+// isolation: isolate es obligatorio, no higiene: dentro hay capas en
+// mix-blend-mode, y sin un contexto de mezcla propio se funden contra TODA la
+// pagina que tienen debajo en vez de contra la lamina. El sintoma no es un error,
+// es un cristal que cambia de aspecto segun por donde pase el scroll.
+// El nombre NO es `.root`, y no es estetica. En los tests las clases de modulo se
+// emiten sin hash (`classNameStrategy: 'non-scoped'`, que es lo que permite
+// distinguir un mapa correcto de uno con un typo), asi que dos modulos que usen
+// `.root` colisionan en cuanto uno se anida dentro del otro. Con `pointer-events:
+// none` encima, la colision desactiva el puntero del componente que lo contiene:
+// nueve tests de SiteHeader cayeron por esto. En produccion no pasa — ahi cada
+// modulo lleva su hash — asi que el sintoma solo existe donde se comprueba.
+.surface {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  isolation: isolate;
+  pointer-events: none;
+  // El color que heredan las capas que se funden con currentColor.
+  color: brand.$glass-burn;
+  -webkit-backdrop-filter: saturate(brand.$glass-saturation) blur(brand.$glass-blur);
+  backdrop-filter: saturate(brand.$glass-saturation) blur(brand.$glass-blur);
+}
+
+// Todas las capas ocupan la lamina entera y heredan su radio. Lo que las
+// distingue es COMO se funden, no donde estan.
+.fill,
+.fillBurn,
+.highlightSoft,
+.highlightStrong,
+.edgeLight,
+.edgeDark,
+.innerGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+// El tinte: la unica capa que decide cuanto se ve a traves.
+//
+// Se MEZCLA sobre el token de superficie en vez de traer un color propio, y de ahi
+// sale el unico comportamiento que el cristal necesita del sistema: en una zona
+// clara la lamina es clara, en una oscura es oscura. Un color fijo la dejaria clara
+// siempre — correcto como material, y roto como componente de este DS.
+//
+// Los reflejos y los cantos SI son fijos, y no es una incoherencia: lo que cambia
+// con la zona es la superficie, no la luz que le da.
+.fill {
+  background-color: color-mix(in srgb, theme.$layer-01 brand.$glass-fill-opacity, transparent);
+}
+
+// Cuerpo. Un color-burn muy tenue oscurece los medios tonos sin tocar los claros,
+// que es lo que separa un cristal de un velo blanco plano.
+.fillBurn {
+  background-color: currentcolor;
+  mix-blend-mode: color-burn;
+  opacity: 0.05;
+}
+
+// Los dos reflejos especulares, en cantos opuestos. El fuerte marca por donde
+// entra la luz (arriba-izquierda) y el suave es su rebote (abajo-derecha), mas
+// debil y en overlay para que no se lea como un segundo foco.
+.highlightSoft {
+  box-shadow: inset -0.28125em -0.28125em 0.09375em -0.328125em brand.$glass-highlight-soft;
+  mix-blend-mode: overlay;
+}
+
+.highlightStrong {
+  box-shadow: inset 0.28125em 0.28125em 0.09375em -0.328125em brand.$glass-highlight-strong;
+}
+
+// El bisel. plus-lighter suma luz sin lavar el color de debajo, que es justo lo
+// que hace un canto pulido; overlay en el lado opuesto lo hunde.
+.edgeLight {
+  box-shadow: inset 0.1875em 0.28125em 0.09375em -0.1875em brand.$glass-edge-light;
+  mix-blend-mode: plus-lighter;
+}
+
+.edgeDark {
+  box-shadow: inset -0.1875em -0.28125em 0.09375em -0.1875em brand.$glass-edge-dark;
+  mix-blend-mode: overlay;
+}
+
+// La luz atrapada en el grosor de la lamina. En darken para que solo actue donde
+// el fondo es mas claro que el halo: sobre un fondo oscuro no aparece, que es
+// como se comporta de verdad.
+.innerGlow {
+  box-shadow: inset 0 0 1.75em brand.$glass-inner-glow;
+  mix-blend-mode: darken;
+}

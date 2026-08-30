@@ -1,6 +1,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/roll' as roll;
 @use '../../../styles/type' as brandtype;
 @use '../../../styles/component-tokens' as component;
 @use '@carbon/react/scss/spacing';
@@ -10,92 +11,191 @@
 // a mano. Que Carbon ya no emita su boton no los invalida: son nombres de token de
 // componente, y el componente que los consume ahora es este. Entran por el puente
 // _component-tokens.scss, que valida el nombre contra los mapas de Carbon.
+//
+// inline-grid: la placa y el texto ocupan la misma celda. Con flex habria que sacar
+// la placa del flujo y el control dejaria de medirse por su contenido.
 .root {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: spacing.$spacing-02;
-  border: 1px solid transparent;
-  // Pildora, como la barra de la cabecera. El radio lo aporta la marca: Carbon v11
-  // es de esquina recta y no define ninguno.
-  border-radius: brand.$radius-full;
+  display: inline-grid;
+  position: relative;
+  padding: 0;
+  border: none;
+  background-color: transparent;
   text-decoration: none;
   cursor: pointer;
-  // El cuarto de la escala expresiva, no el registro productivo de Carbon. Un
-  // hover tiene que ser corto, pero con la MISMA curva que el resto: dos curvas
-  // conviviendo son dos sensaciones distintas, y eso se nota aunque no se sepa
-  // nombrar.
-  transition:
-    background-color brand.$duration-quarter brand.$ease-default,
-    border-color brand.$duration-quarter brand.$ease-default,
-    color brand.$duration-quarter brand.$ease-default;
+  // Arrastrar sobre un texto partido selecciona letra a letra.
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+// No es un outline porque tiene que seguir la pildora. Y va en ::after y no en la
+// placa para que el foco no herede su escala de hover.
+.root::after {
+  content: '';
+  position: absolute;
+  // Negativo: abraza el control desde fuera sin comerle tamano.
+  inset: calc(#{brand.$radius-01} * -1);
+  border-radius: brand.$radius-full;
+  pointer-events: none;
+  transition: box-shadow brand.$duration-quarter brand.$ease-focus;
 }
 
 .root:focus-visible {
-  outline: 2px solid theme.$focus;
-  outline-offset: 2px;
+  outline: none;
+}
+
+.root:focus-visible::after {
+  box-shadow: 0 0 0 2px theme.$focus;
+}
+
+// Lo unico que se mueve al hover y al clic: el texto se queda, y por eso se lee
+// como que el control responde y no como que el boton salta.
+.bg {
+  grid-area: 1 / 1;
+  border-radius: brand.$radius-full;
+  transition:
+    scale brand.$duration-half brand.$ease-default,
+    background-color brand.$duration-quarter brand.$ease-default,
+    border-color brand.$duration-quarter brand.$ease-default;
+}
+
+.inner {
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: spacing.$spacing-03;
+  // Sin esto el texto queda debajo del fondo en cuanto la placa tiene color.
+  z-index: 1;
+}
+
+.text {
+  @include roll.surface(brand.$accent-40);
+}
+
+// (hover: hover) y (pointer: fine) descartan tactil, donde :hover se queda pegado
+// tras el toque y el ultimo boton pulsado se quedaria rodado.
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .root:hover:not(:disabled) .bg,
+  .root:focus-visible .bg {
+    scale: 1.065 1.095;
+  }
+
+  .root:hover:not(:disabled) .text {
+    @include roll.rolled;
+  }
+}
+
+// El foco rueda con o sin puntero fino: es la unica pista de que el control esta
+// activo para quien navega con teclado.
+@media (prefers-reduced-motion: no-preference) {
+  .root:focus-visible .text {
+    @include roll.rolled;
+  }
+}
+
+// Comprime por debajo del reposo: la placa cede. Curva de clic, casi simetrica —
+// aqui no hay gesto que leer sino una confirmacion.
+.root:active:not(:disabled) .bg {
+  scale: 0.955 0.925;
+  transition-duration: brand.$duration-quarter;
+  transition-timing-function: brand.$ease-click;
 }
 
 .root:disabled {
-  background-color: component.get('button-disabled');
-  border-color: transparent;
-  color: theme.$text-on-color-disabled;
   cursor: not-allowed;
 }
 
-.emphasisPrimary {
+.root:disabled .bg {
+  background-color: component.get('button-disabled');
+  border-color: transparent;
+}
+
+.root:disabled .inner {
+  color: theme.$text-on-color-disabled;
+}
+
+.emphasisPrimary .bg {
   background-color: component.get('button-primary');
+}
+
+.emphasisPrimary .inner {
   color: theme.$text-on-color;
 }
 
-.emphasisPrimary:hover:not(:disabled) {
+.emphasisPrimary:hover:not(:disabled) .bg {
   background-color: component.get('button-primary-hover');
 }
 
-.emphasisPrimary:active:not(:disabled) {
+.emphasisPrimary:active:not(:disabled) .bg {
   background-color: component.get('button-primary-active');
 }
 
-.emphasisSecondary {
+.emphasisSecondary .bg {
   background-color: transparent;
-  border-color: component.get('button-tertiary');
+  border: 1px solid component.get('button-tertiary');
+}
+
+.emphasisSecondary .inner {
   color: component.get('button-tertiary');
 }
 
-.emphasisSecondary:hover:not(:disabled) {
+.emphasisSecondary:hover:not(:disabled) .bg {
   background-color: component.get('button-tertiary');
+}
+
+.emphasisSecondary:hover:not(:disabled) .inner {
   color: theme.$text-inverse;
 }
 
-.emphasisGhost {
+.emphasisGhost .bg {
   background-color: transparent;
+}
+
+.emphasisGhost .inner {
   color: theme.$link-primary;
 }
 
-.emphasisGhost:hover:not(:disabled) {
+.emphasisGhost:hover:not(:disabled) .bg {
   background-color: theme.$background-hover;
 }
 
-.sizeSm {
-  @include brandtype.style('body-m');
+// La medida va en .inner, que es quien tiene el texto: asi la placa hereda el
+// tamano del contenido por el grid.
+//
+// La altura se declara y el padding vertical desaparece. Antes la caja salia de
+// sumar el interlineado al padding, y ninguno de los dos se habia elegido pensando
+// en la altura del control: los tres tamanos acababan en 24, 34 y 43px. Con
+// block-size el numero es el que se quiso, y centrar la etiqueta ya lo hace el
+// flex de .inner.
+//
+// Lateral y cuerpo salen emparejados de brand: el padding de cada tamano es
+// exactamente el cuerpo de su etiqueta. Ver la nota de $control-inline-* — es la
+// unica medida del sistema que no sale de la reticula, y a proposito.
+.sizeSm .inner {
+  @include brandtype.style('control-s');
 
-  padding: spacing.$spacing-02 spacing.$spacing-04;
+  block-size: brand.$control-block-s;
+  padding-inline: brand.$control-inline-s;
 }
 
-.sizeMd {
-  @include brandtype.style('control');
+.sizeMd .inner {
+  @include brandtype.style('control-m');
 
-  padding: spacing.$spacing-03 spacing.$spacing-05;
+  block-size: brand.$control-block-m;
+  padding-inline: brand.$control-inline-m;
 }
 
-.sizeLg {
-  @include brandtype.style('body-l');
+.sizeLg .inner {
+  @include brandtype.style('control-l');
 
-  padding: spacing.$spacing-04 spacing.$spacing-06;
+  block-size: brand.$control-block-l;
+  padding-inline: brand.$control-inline-l;
 }
 
+// Los caracteres no estan aqui: su apagado es global, en _app.scss.
 @media (prefers-reduced-motion: reduce) {
-  .root {
+  .root::after,
+  .bg {
     transition: none;
   }
 }

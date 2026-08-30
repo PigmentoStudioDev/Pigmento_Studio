@@ -1,0 +1,37 @@
+@use '../../../styles/carbon-config';
+
+/// Cuanto mas alto que su mascara mide el objetivo. Ese sobrante es el recorrido
+/// que tiene el parallax para moverse sin descubrir un hueco vacio por arriba o
+/// por abajo: con el objetivo al 100% cualquier desplazamiento deja borde.
+$target-overflow: 120%;
+
+// La mascara. Recorta, y es tambien el disparador del parallax: el recorrido se
+// mide contra ESTA caja, la que de verdad ocupa el hueco en la pagina.
+.mask {
+  position: relative;
+  overflow: hidden;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+// El objetivo: mas alto que la mascara y absoluto, para que su exceso de altura
+// no empuje el contenido que va encima.
+//
+// Anclado ABAJO y no arriba. El parallax lo desplaza hacia abajo conforme se baja
+// por la pagina — asi el fondo va por detras del scroll, que es lo que se lee como
+// profundidad; anclado arriba iria mas rapido que la pagina y se lee como un error.
+// Con el ancla abajo, el sobrante empieza escondido por ENCIMA del recorte y es
+// justo el que va entrando.
+.target {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  inline-size: 100%;
+  block-size: $target-overflow;
+}
+
+.video {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}

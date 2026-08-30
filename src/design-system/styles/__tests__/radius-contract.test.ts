@@ -38,6 +38,8 @@ const SCALE_VARS = [
   'radius-08',
   'radius-full',
   'radius-header',
+  'radius-control-m',
+  'radius-control-square',
 ];
 
 const scale = new Set(
@@ -80,10 +82,26 @@ describe('contrato de radios', () => {
     expect(RADII.length).toBeGreaterThan(0);
   });
 
+  /**
+   * `inherit` es un APLAZAMIENTO, no un valor. El radio lo pone el padre, y ese padre
+   * lo tiene vigilado por este mismo contrato, asi que nada se escapa: la forma sigue
+   * saliendo de la escala, solo que un nivel mas arriba.
+   *
+   * Existe porque una lamina decorativa que cubre a su padre — GlassSurface sobre la
+   * pildora de la barra — tiene que adaptarse a la forma que la contenga sin
+   * conocerla. Declarar un escalon ahi seria PEOR que no declararlo: la lamina
+   * asomaria por las esquinas de cualquier caja que no midiera lo que ella supone, y
+   * el sintoma es un borde recto asomando bajo una esquina redonda.
+   *
+   * Y no abre ninguna puerta: heredar sin un padre con radio deja la caja a 0, que
+   * tambien es un escalon de la escala.
+   */
+  const DEFERRED_TO_PARENT = 'inherit';
+
   it.each(RADII.map((r) => [`${r.rel} · ${r.selector}`, r] as const))(
     '%s usa un escalon de la escala',
     (_label, radius) => {
-      expect(scale.has(radius.value)).toBe(true);
+      expect(radius.value === DEFERRED_TO_PARENT || scale.has(radius.value)).toBe(true);
     },
   );
 
@@ -100,7 +118,10 @@ describe('contrato de radios', () => {
     loadPaths: [...(SASS.loadPaths ?? []), STYLES],
   }).css.match(/:\s*([^;]+);/)![1].trim();
 
-  const CONTROLS = /(Button|Tag)\//;
+  // Whitelist POR NOMBRE, no un patron abierto: cada control que puede llevar
+  // pildora se anade a mano y se ve en el diff. NavToggle es un <button> con su
+  // aria-expanded — un control, aunque no sea el atomo Button.
+  const CONTROLS = /(Button|Tag|NavToggle)\//;
 
   it('la pildora solo la usan los controles', () => {
     const misuse = RADII.filter((r) => r.value === pill && !CONTROLS.test(r.rel));

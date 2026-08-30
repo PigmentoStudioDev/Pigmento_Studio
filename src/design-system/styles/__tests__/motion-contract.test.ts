@@ -25,7 +25,14 @@ const STYLES = join(DS, 'styles');
 const SASS: Options<'sync'> = { loadPaths: ['node_modules'], quietDeps: true };
 
 const ANIMATES = /^(transition|animation)/;
-const REDUCED_MOTION = /prefers-reduced-motion/;
+/**
+ * Solo el bloque que APAGA. Antes bastaba con nombrar la consulta, y eso dejaba
+ * fuera del recuento todo lo que vive dentro de `prefers-reduced-motion:
+ * no-preference` — que es donde esta casi todo el hover del sitio. El gate decia
+ * medir las duraciones de cada hoja y en la practica se saltaba las del gesto
+ * principal de dos atomos.
+ */
+const REDUCED_MOTION = /prefers-reduced-motion:\s*reduce/;
 
 /**
  * Hojas que la pagina de preview carga por su cuenta, exentas de la regla de
@@ -57,33 +64,75 @@ const ALL: Sheet[] = sheets(DS).map((file) => ({
 }));
 
 /**
- * Declaraciones de transition/animation FUERA de un bloque reduced-motion.
+ * Declaraciones de transition/animation, con las de un bloque `reduce` descontadas.
  *
  * Se marcan primero las que viven dentro del bloque y luego se descuentan, en vez
  * de subir por los padres de cada declaracion: el tipo de `parent` en postcss es
  * una union que incluye Document, y recorrerla a mano obliga a castear justo donde
  * el compilador estaba siendo util.
+ *
+ * `guarded` hace lo mismo con las que viven bajo `no-preference`. Las dos preguntas
+ * de este contrato necesitan recuentos distintos y por eso van separadas:
+ *
+ *   la de DURACIONES las quiere todas — un gesto de hover esta casi siempre dentro
+ *   de un no-preference, y saltarselas dejaba fuera el gesto principal del sitio
+ *
+ *   la de APAGADO solo quiere las que pueden llegar a correr con reduced-motion
+ *   activo, y una declaracion bajo no-preference no puede por construccion
  */
+const NO_PREFERENCE = /prefers-reduced-motion:\s*no-preference/;
+
 function animatingDecls(css: string): Declaration[] {
   const root = postcss.parse(css);
-  const reduced = new Set<Declaration>();
+  const reduced = new Set<string>();
 
   root.walkAtRules('media', (rule: AtRule) => {
     if (!REDUCED_MOTION.test(rule.params)) return;
     rule.walkDecls((decl) => {
-      reduced.add(decl);
+      reduced.add(`${decl.prop}:${decl.value}@${decl.source?.start?.offset}`);
     });
   });
 
   const found: Declaration[] = [];
   root.walkDecls((decl) => {
-    if (ANIMATES.test(decl.prop) && !reduced.has(decl)) found.push(decl);
+    const id = `${decl.prop}:${decl.value}@${decl.source?.start?.offset}`;
+    if (ANIMATES.test(decl.prop) && !reduced.has(id)) found.push(decl);
+  });
+
+  return found;
+}
+
+/** Las que de verdad pueden correr con reduced-motion activo. */
+function unguardedDecls(css: string): Declaration[] {
+  const root = postcss.parse(css);
+  const skip = new Set<string>();
+
+  root.walkAtRules('media', (rule: AtRule) => {
+    if (!REDUCED_MOTION.test(rule.params) && !NO_PREFERENCE.test(rule.params)) return;
+    rule.walkDecls((decl) => {
+      skip.add(`${decl.prop}:${decl.value}@${decl.source?.start?.offset}`);
+    });
+  });
+
+  const found: Declaration[] = [];
+  root.walkDecls((decl) => {
+    const id = `${decl.prop}:${decl.value}@${decl.source?.start?.offset}`;
+    if (ANIMATES.test(decl.prop) && !skip.has(id)) found.push(decl);
   });
 
   return found;
 }
 
 const ANIMATING = ALL.filter((sheet) => animatingDecls(sheet.css).length > 0);
+
+/**
+ * Una hoja cuyo motion vive ENTERO bajo `no-preference` no necesita bloque de
+ * apagado: la consulta ya es el interruptor. Exigirselo pedia un `@media` que no
+ * puede apagar nada porque nada llega hasta el.
+ */
+const NEEDS_OFF_SWITCH = new Set(
+  ALL.filter((sheet) => unguardedDecls(sheet.css).length > 0).map((sheet) => sheet.rel),
+);
 
 describe('contrato de motion', () => {
   it('hay hojas que animan: si no, este contrato no estaria midiendo nada', () => {
@@ -97,6 +146,7 @@ describe('contrato de motion', () => {
    */
   it.each(ANIMATING.map((sheet) => sheet.rel))('%s apaga su motion en reduced-motion', (rel) => {
     if (EXEMPT[rel]) return;
+    if (!NEEDS_OFF_SWITCH.has(rel)) return;
 
     const sheet = ANIMATING.find((candidate) => candidate.rel === rel)!;
     const blocks: AtRule[] = [];
@@ -139,6 +189,16 @@ describe('contrato de motion', () => {
          c: brand.$duration-base;
          d: brand.$duration-onehalf;
          e: brand.$duration-double;
+
+         /*
+          * Los pasos de DESFASE tambien son escala de marca, aunque no sean
+          * duraciones: no caben en ella — el escalon mas corto son 0.15s, que en una
+          * palabra de seis letras es casi un segundo solo de retardo — pero salen
+          * del mismo sitio y estan igual de cerrados. Sin ellos aqui, la unica forma
+          * de escalonar nada seria un literal.
+          */
+         f: brand.$stagger-char;
+         g: brand.$stagger-slice;
        }`,
       { ...SASS, loadPaths: [...(SASS.loadPaths ?? []), STYLES] },
     )

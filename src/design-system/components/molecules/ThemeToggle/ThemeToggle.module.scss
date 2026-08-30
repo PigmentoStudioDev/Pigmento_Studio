@@ -1,0 +1,83 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/component-tokens' as component;
+@use '@carbon/react/scss/theme';
+
+// Mide como los botones de icono de su fila: misma caja y mismo radio. Es el cuarto
+// control de una fila de cuatro y no puede ser el unico con otra geometria.
+.root {
+  display: grid;
+  position: relative;
+  place-items: center;
+  inline-size: brand.$control-block-m;
+  block-size: brand.$control-block-m;
+  padding: 0;
+  border: 1px solid component.get('button-tertiary');
+  border-radius: brand.$radius-control-square;
+  background-color: transparent;
+  color: component.get('button-tertiary');
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color brand.$duration-quarter brand.$ease-default,
+    color brand.$duration-quarter brand.$ease-default;
+}
+
+.root:hover {
+  background-color: component.get('button-tertiary');
+  color: theme.$text-inverse;
+}
+
+.root:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+}
+
+// La ventana por la que asoma un solo icono. Los dos viven en una tira de dos pisos
+// y lo que cambia es que piso se ve.
+.track {
+  position: relative;
+  display: block;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  overflow: clip;
+}
+
+// Los dos pisos de la tira, apilados: el sol arriba y la luna justo debajo, fuera
+// del recorte.
+//
+// El desplazamiento y el giro salen los DOS de --pg-mode-dark, que vale 0 o 1. No
+// hay un selector por estado ni una clase que alguien tenga que acordarse de poner:
+// el mismo numero que dice en que modo esta el sitio mueve la tira. En claro, 0 da
+// translateY(0) y rotate(-90deg); en oscuro, 1 da translateY(-100%) y rotate(0).
+//
+// La bandera es la de MODO y no la de zona: con --pg-on-dark, el conmutador
+// mostraria el sol por estar sobre una seccion clara aunque el sitio este en oscuro.
+.face {
+  position: absolute;
+  inset-inline: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 100%;
+  font-size: 1.5rem;
+  transform: translateY(calc(var(--pg-mode-dark, 0) * -100%))
+    rotate(calc(var(--pg-mode-dark, 0) * 90deg - 90deg));
+  transition: transform brand.$duration-base brand.$ease-default;
+}
+
+.face:first-child {
+  inset-block-start: 0;
+}
+
+.face:last-child {
+  inset-block-start: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root,
+  .face {
+    transition: none;
+  }
+}

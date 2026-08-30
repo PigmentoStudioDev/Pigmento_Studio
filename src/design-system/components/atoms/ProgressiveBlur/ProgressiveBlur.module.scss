@@ -1,0 +1,91 @@
+@use '../../../styles/carbon-config';
+
+/// Alto de la franja. En em a proposito, igual que los desenfoques: el efecto
+/// entero escala con el font-size de su contexto en vez de quedar clavado a una
+/// medida absoluta.
+$band-block-size: 15em;
+
+/// Debajo de la cabecera (100) y encima del contenido. La franja difumina lo que
+/// pasa por detras de la barra; ponerla por encima la difuminaria a ella tambien.
+$band-z-index: 90;
+
+// Anclada ARRIBA, al reves que el efecto original, que cuelga del borde inferior.
+//
+// La inversion no toca ni un porcentaje: cada mascara se lee `to top`, asi que sus
+// paradas se miden desde abajo y el degradado queda espejado exacto. Recalcular los
+// stops a mano habria dado el mismo dibujo con cinco oportunidades de equivocarse.
+// El nombre NO es `.root`, y no es estetica. En los tests las clases de modulo se
+// emiten sin hash (`classNameStrategy: 'non-scoped'`, que es lo que permite
+// distinguir un mapa correcto de uno con un typo), asi que dos modulos que usen
+// `.root` colisionan en cuanto uno se anida dentro del otro. Con `pointer-events:
+// none` encima, la colision desactiva el puntero del componente que lo contiene:
+// nueve tests de SiteHeader cayeron por esto. En produccion no pasa — ahi cada
+// modulo lleva su hash — asi que el sintoma solo existe donde se comprueba.
+.band {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: $band-z-index;
+  inline-size: 100%;
+  block-size: $band-block-size;
+  overflow: hidden;
+  // Decoracion: no intercepta un solo clic de lo que tiene debajo.
+  pointer-events: none;
+  // isolation + contain + translateZ forman la promocion a capa propia. Sin ellos
+  // el navegador recompone las cinco capas de backdrop-filter contra la pagina
+  // entera en cada scroll, y es de las cosas mas caras que se le pueden pedir.
+  isolation: isolate;
+  contain: paint;
+  transform: translateZ(0);
+  transform-style: preserve-3d;
+}
+
+.layer {
+  position: absolute;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+// Cinco capas, cada una con el DOBLE de desenfoque que la anterior y su ventana un
+// escalon mas cerca del borde. Lo que se percibe como un difuminado continuo es la
+// suma de los cinco: una sola capa con degradado daria un corte, porque
+// backdrop-filter no acepta una intensidad variable.
+//
+// Los prefijos -webkit- van escritos y no delegados al autoprefixer: Safari es
+// justo donde este efecto se usa y donde su ausencia no da error, solo deja de
+// difuminar.
+
+.layer1 {
+  -webkit-backdrop-filter: blur(0.09375em);
+  backdrop-filter: blur(0.09375em);
+  -webkit-mask: linear-gradient(to top, transparent 50%, black 62.5% 75%, transparent 87.5%);
+  mask: linear-gradient(to top, transparent 50%, black 62.5% 75%, transparent 87.5%);
+}
+
+.layer2 {
+  -webkit-backdrop-filter: blur(0.1875em);
+  backdrop-filter: blur(0.1875em);
+  -webkit-mask: linear-gradient(to top, transparent 62.5%, black 75% 87.5%, transparent 100%);
+  mask: linear-gradient(to top, transparent 62.5%, black 75% 87.5%, transparent 100%);
+}
+
+.layer3 {
+  -webkit-backdrop-filter: blur(0.375em);
+  backdrop-filter: blur(0.375em);
+  -webkit-mask: linear-gradient(to top, transparent 75%, black 87.5% 100%);
+  mask: linear-gradient(to top, transparent 75%, black 87.5% 100%);
+}
+
+.layer4 {
+  -webkit-backdrop-filter: blur(0.75em);
+  backdrop-filter: blur(0.75em);
+  -webkit-mask: linear-gradient(to top, transparent 82%, black 92% 100%);
+  mask: linear-gradient(to top, transparent 82%, black 92% 100%);
+}
+
+.layer5 {
+  -webkit-backdrop-filter: blur(1.5em);
+  backdrop-filter: blur(1.5em);
+  -webkit-mask: linear-gradient(to top, transparent 88%, black 100%);
+  mask: linear-gradient(to top, transparent 88%, black 100%);
+}

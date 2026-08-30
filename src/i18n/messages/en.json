@@ -1,0 +1,34 @@
+{
+  "nav": {
+    "label": "Main",
+    "homeLabel": "Pigmento Studio, go to home",
+    "toggleLabel": "Menu",
+    "themeToggle": "Switch between light and dark mode",
+    "languageToggle": "Change language",
+    "estudio": {
+      "label": "Studio",
+      "trabajo": "Work",
+      "servicios": "Services",
+      "nosotros": "About",
+      "laboratorio": "Lab",
+      "pronto": "Soon"
+    },
+    "servicios": {
+      "label": "Services",
+      "motion": "Motion",
+      "marketing": "Marketing",
+      "web": "Web development"
+    },
+    "social": {
+      "instagram": "Pigmento Studio on Instagram (opens in a new tab)",
+      "facebook": "Pigmento Studio on Facebook (opens in a new tab)",
+      "behance": "Pigmento Studio on Behance (opens in a new tab)"
+    },
+    "cta": "Let's talk",
+    "banner": {
+      "title": "Latest published case",
+      "cta": "See the work",
+      "tag": "Featured"
+    }
+  }
+}

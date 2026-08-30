@@ -35,12 +35,22 @@
     "directive": "use client"
   },
   "clientBoundary": {
-    "why": "cada 'use client' nuevo mueve arbol al bundle del navegador. El sitio es server-first y la frontera se declara AQUI, no se descubre en el budget de CSS/JS cuando ya duele. preview/ es herramienta de desarrollo y solo la carga /ds; los dos error boundaries necesitan estado de cliente por definicion. Los componentes del DS entran de UNO EN UNO, con su ruta completa y nunca por directorio: un permiso a design-system/components/ dejaria de contar cuantos componentes se han mudado al navegador, que es justo lo que esta lista mide. SiteHeader lo esta porque es interactiva de arriba abajo — estado de apertura, Escape, scroll y observador de tema.",
+    "why": "cada 'use client' nuevo mueve arbol al bundle del navegador. El sitio es server-first y la frontera se declara AQUI, no se descubre en el budget de CSS/JS cuando ya duele. preview/ es herramienta de desarrollo y solo la carga /ds; los dos error boundaries necesitan estado de cliente por definicion. Los componentes del DS entran de UNO EN UNO, con su ruta completa y nunca por directorio: un permiso a design-system/components/ dejaria de contar cuantos componentes se han mudado al navegador, que es justo lo que esta lista mide. SiteHeader lo esta porque es interactiva de arriba abajo — estado de apertura, Escape, scroll y observador de tema. Button y NavLinkList entran al rodar su texto: partirlo en caracteres pide DOM, y repartirlo cuando llega la fuente buena pide escuchar. Lo que cruza es el modulo una vez, no una copia por instancia. useCharRoll es el hook que las dos comparten. RadialGallery entra porque su escaparate avanza solo: un intervalo y un observador para pararlo con el menu cerrado piden navegador. Lo que NO cruza con ella es el motion — el giro, el empuje y la onda son transiciones de su hoja, asi que el modulo que viaja es un contador, no una animacion. VideoBackdrop y useParallax entran por el scroll: ScrollTrigger mide posiciones reales de la caja y el autoplay del video se decide con matchMedia, que en servidor no existe. useParallax es el hook, VideoBackdrop el unico que lo usa hoy. ThemeToggle entra solo por su manejador de clic: lo que pinta el estado es el CSS desde --pg-mode-dark, no React. Sin esa decision harian falta un store suscrito, un suppressHydrationWarning y un fotograma con el icono equivocado — el servidor no conoce la preferencia. Lo que cruza son cuatro lineas de manejador, no el dibujo. LanguageToggle entra porque conmutar de idioma es navegar: necesita la ruta actual sin prefijo y el router de next-intl, y las dos son APIs de cliente. Es un boton y no dos enlaces porque con dos idiomas uno de ellos siempre apuntaria a donde ya estas. Marquee y useMarquee entran por dos motivos a la vez: el bucle es GSAP, y la tira resuelve su propia zona de tema — que necesita el modo, y el modo solo existe en el navegador.",
     "allow": [
-      "app/error.tsx",
+      "app/[locale]/error.tsx",
       "app/global-error.tsx",
+      "design-system/components/atoms/Button/Button.tsx",
+      "design-system/components/molecules/LanguageToggle/LanguageToggle.tsx",
+      "design-system/components/molecules/NavLinkList/NavLinkList.tsx",
+      "design-system/components/molecules/RadialGallery/RadialGallery.tsx",
+      "design-system/components/molecules/ThemeToggle/ThemeToggle.tsx",
+      "design-system/components/molecules/VideoBackdrop/VideoBackdrop.tsx",
+      "design-system/components/organisms/SiteHeader/SiteHeader.tsx",
+      "design-system/motion/useCharRoll.ts",
+      "design-system/motion/useParallax.ts",
       "design-system/preview/",
-      "design-system/components/organisms/SiteHeader/SiteHeader.tsx"
+      "design-system/motion/useMarquee.ts",
+      "design-system/components/molecules/Marquee/Marquee.tsx"
     ]
   },
   "routeExports": {

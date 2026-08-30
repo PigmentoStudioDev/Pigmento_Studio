@@ -5,9 +5,14 @@
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
+// Columna: el texto arriba y el escaparate debajo. Antes la corona era un FONDO
+// —absoluta, a sangre— con el texto centrado encima, y eso obligaba a que la
+// tarjeta se leyera a traves de las miniaturas. Puestos en dos filas, cada uno
+// tiene su sitio y ninguno compite con el otro por contraste.
 .root {
   position: relative;
   display: flex;
+  flex-direction: column;
   overflow: hidden;
   // Superficie grande: el mismo escalon que el banner de la referencia.
   border-radius: brand.$radius-07;
@@ -15,7 +20,9 @@
   // 110% sobre un div vacio; aspect-ratio hace lo mismo sin el div y ademas se
   // adapta cuando la columna cambia de ancho.
   aspect-ratio: 1 / 1.1;
-  padding: spacing.$spacing-07;
+  // El aire lo lleva .content, no la tarjeta: la corona tiene que llegar a los
+  // bordes. Su gracia es justamente que las miniaturas asomen recortadas, y un
+  // padding en la tarjeta las despegaria del canto dejando una banda muerta.
   background-color: theme.$layer-02;
   color: theme.$text-primary;
   text-decoration: none;
@@ -31,6 +38,9 @@
   outline-offset: -2px;
 }
 
+// La imagen fija sigue siendo fondo a sangre: es una foto y su trabajo es estar
+// detras. Nunca convive con la galeria — son dos formas de llenar la tarjeta, y la
+// colocacion la pone la tarjeta, que es quien conoce su caja.
 .image {
   position: absolute;
   inset: 0;
@@ -39,14 +49,33 @@
   object-fit: cover;
 }
 
+// La galeria SI esta en el flujo, y es la fila de abajo.
+//
+// min-block-size: 0 no es opcional. Un item de flex column tiene alto minimo
+// automatico igual a su contenido, y el contenido aqui es una rueda de tres veces
+// el ancho de la tarjeta: sin esta linea la fila reclamaria ese alto, se comeria el
+// texto y reventaria la proporcion de la tarjeta.
+//
+// Y el alto tiene que quedar DEFINIDO, no automatico: la galeria usa
+// container-type: size, que aplica contencion en los dos ejes — con alto auto se
+// resolveria a cero y no se veria nada, sin ningun error.
+.gallery {
+  position: relative;
+  flex: 1;
+  min-block-size: 0;
+}
+
+// Fila de arriba, y la que manda: se mide por su contenido y lo que sobra es de la
+// galeria. flex: none y no flex: 1 — con flex: 1 las dos filas se repartirian el
+// alto a partes iguales y el texto quedaria flotando en medio de su mitad.
 .content {
   position: relative;
   display: flex;
-  flex: 1;
+  flex: none;
   flex-direction: column;
   gap: spacing.$spacing-04;
   align-items: center;
-  justify-content: center;
+  padding: spacing.$spacing-07;
   text-align: center;
 }
 
@@ -61,11 +90,25 @@
 
 // Aspecto de boton, pero no es un boton: la tarjeta entera ya es el enlace y un
 // control dentro de un enlace no es HTML valido.
+//
+// Y precisamente porque su unico trabajo es PARECERLO, mide con los tokens del
+// boton en vez de con los suyos. Tenia padding propio — el que fue el 'md' antes de
+// que la escala de controles existiera — y ningun radio: era el unico rectangulo
+// recto en una barra de pildoras, que es justo lo que delataba que no era del mismo
+// sistema.
+//
+// inline-flex y no el display por defecto: block-size en un <span> en flujo inline
+// no hace nada, y sin centrar no habria donde poner el alto declarado.
 .cta {
-  @include brandtype.style('control');
+  @include brandtype.style('control-m');
 
-  padding: spacing.$spacing-03 spacing.$spacing-05;
+  display: inline-flex;
+  align-items: center;
+  block-size: brand.$control-block-m;
+  padding-inline: brand.$control-inline-m;
   border: 1px solid currentcolor;
+  // Derivado y no recortado: aqui el alto se declara, asi que se conoce.
+  border-radius: brand.$radius-control-m;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { compile, type Options } from "sass";
@@ -98,5 +98,58 @@ describe("Button", () => {
     const { container } = render(node);
 
     expect(await axe(container)).toHaveNoViolations();
+  });
+
+  /**
+   * El texto se parte en caracteres para poder escalonarlos, y partido deja de ser
+   * una palabra en el DOM: es una fila de <span> de una letra. Estas dos pruebas
+   * cubren los dos lados de eso.
+   *
+   * El nombre tiene que sobrevivir a la particion. Sale del control y no del
+   * contenido justamente porque el contenido ya no sirve para nombrar — y en un
+   * <span> sin rol, aria-label esta PROHIBIDO. Es el fallo que destapo axe cuando el
+   * nombre lo ponia SplitText en el propio span partido.
+   */
+  it("el nombre sale del control, no del texto que se parte", () => {
+    render(<Button>Enviar</Button>);
+
+    expect(screen.getByRole("button", { name: "Enviar" })).toHaveAttribute(
+      "aria-label",
+      "Enviar",
+    );
+  });
+
+  it("el texto no cuenta dos veces en el arbol de accesibilidad", () => {
+    const { container } = render(<Button>Enviar</Button>);
+    const text = container.querySelector(".text");
+
+    // Escondido: si contara, el nombre seria "Enviar Enviar" — una vez por el
+    // aria-label del control y otra por su contenido.
+    expect(text).toHaveAttribute("aria-hidden", "true");
+    expect(text).toHaveTextContent("Enviar");
+  });
+
+  /**
+   * El desfase por caracter lo lee la hoja de --char, y --char lo emite SplitText.
+   * Si algun dia deja de emitirlo — otra version, otra opcion — el calc() cae al
+   * valor de respaldo y TODAS las letras salen a la vez. El gesto no desaparece:
+   * se queda plano, que es de las cosas que no se miran dos veces.
+   */
+  it("cada caracter sale con su indice, que es lo que escalona el gesto", async () => {
+    const { container } = render(<Button>Enviar</Button>);
+
+    // Se ESPERA porque SplitText llega por import(): el hook lo pide bajo demanda
+    // para que gsap no viaje en el bundle compartido de todas las rutas. En reposo
+    // no se nota —un texto partido y uno entero se dibujan igual— pero un test que
+    // mire el DOM en el mismo tick ve el texto todavia sin partir.
+    await waitFor(() => {
+      expect(container.querySelectorAll(".pg-char")).toHaveLength("Enviar".length);
+    });
+
+    const chars = [...container.querySelectorAll(".pg-char")];
+
+    expect(chars.map((char) => char.getAttribute("style"))).toEqual(
+      chars.map((_, index) => `--char: ${index + 1};`),
+    );
   });
 });

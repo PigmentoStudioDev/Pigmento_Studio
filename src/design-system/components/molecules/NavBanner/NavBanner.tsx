@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Tag } from "../../atoms/Tag/Tag";
+import { RadialGallery, type RadialGalleryImage } from "../RadialGallery/RadialGallery";
 import styles from "./NavBanner.module.scss";
 
 /**
@@ -30,13 +31,20 @@ export interface NavBannerProps {
   cta: string;
   tags?: string[];
   image?: NavBannerImage;
+  /**
+   * Escaparate giratorio en lugar de la imagen fija. Ocupa el mismo hueco: son dos
+   * formas de llenar el fondo de la tarjeta, no dos capas — una tarjeta que anuncia
+   * "el ultimo caso" con una foto detras y una corona de otros catorce encima
+   * anuncia dos cosas a la vez.
+   */
+  gallery?: RadialGalleryImage[];
   onNavigate?: () => void;
 }
 
-export function NavBanner({ href, title, cta, tags, image, onNavigate }: NavBannerProps) {
+export function NavBanner({ href, title, cta, tags, image, gallery, onNavigate }: NavBannerProps) {
   return (
     <Link href={href} onClick={onNavigate} className={styles.root}>
-      {image ? (
+      {!gallery?.length && image ? (
         <Image
           src={image.src}
           alt={image.alt}
@@ -69,6 +77,21 @@ export function NavBanner({ href, title, cta, tags, image, onNavigate }: NavBann
           {cta}
         </span>
       </span>
+
+      {/*
+        Despues del texto, que es donde se ve y donde se lee. Antes iba primero
+        porque era el fondo de la tarjeta; ahora es la fila de abajo y el orden del
+        DOM tiene que decir lo mismo que el orden visual.
+
+        <div> y no <span> como el resto de la tarjeta: un <a> admite contenido de
+        flujo, pero un <span> solo admite contenido de frase, y la galeria trae
+        divs dentro. El resto de piezas son spans porque son texto; esta no lo es.
+      */}
+      {gallery?.length ? (
+        <div className={styles.gallery}>
+          <RadialGallery images={gallery} />
+        </div>
+      ) : null}
     </Link>
   );
 }

@@ -318,8 +318,18 @@ function sectionStructure() {
 
   for (const file of walk(join(ROOT, 'src'), '.tsx')) {
     if (file.startsWith(scoped)) continue;
-    for (const [, cls] of readFileSync(file, 'utf8').matchAll(
-      new RegExp(`["'\`][^"'\`]*\\b(${g.prefix}[a-z0-9-]+)`, 'g'),
+
+    // Dos precisiones, las dos por falsos positivos reales:
+    //
+    // scannable() quita los comentarios, como ya hacen las demas secciones. Esta
+    // los leia, asi que nombrar una clase en una nota la daba por usada — y una
+    // clase que solo vive en un comentario no llega a ningun DOM.
+    //
+    // El lookbehind descarta `--pg-x`, que es una CUSTOM PROPERTY y no una clase.
+    // Con \b bastaba el guion para abrir palabra, asi que `--pg-mode-dark` se
+    // contaba como `.pg-mode-dark` y se le exigia estar en la hoja global.
+    for (const [, cls] of scannable(readFileSync(file, 'utf8')).matchAll(
+      new RegExp(`["'\`][^"'\`]*(?<![-\\w])(${g.prefix}[a-z0-9-]+)`, 'g'),
     )) {
       used.add(cls);
     }
@@ -331,6 +341,36 @@ function sectionStructure() {
     }
   }
   ok('structure', `${used.size} clases globales definidas donde toca`);
+}
+
+/**
+ * Los archivos que las paginas ya renderizadas piden DE ENTRADA.
+ *
+ * Existe desde que hay carga bajo demanda. Sumar todo lo emitido media una cosa
+ * distinta de la que este contrato dice medir: partir gsap en su propio trozo baja
+ * 54kb de lo que descarga una visita y no mueve el total ni un byte, porque los
+ * bytes siguen en el disco. Con el total como unica vara, la optimizacion correcta
+ * salia igual de roja que no hacer nada.
+ *
+ * Se leen del HTML prerenderizado y no de un manifiesto: es la lista real de lo que
+ * el navegador va a pedir antes de ejecutar nada. Si no hay HTML —una app sin rutas
+ * estaticas— se devuelve null y quien llama cae al total, que sigue siendo el techo
+ * honesto en ese caso.
+ */
+function firstLoadFiles(dir, ext) {
+  const pages = join(ROOT, '.next/server/app');
+  if (!existsSync(pages) || ext !== '.js') return null;
+
+  const referenced = new Set();
+  for (const page of walk(pages, '.html')) {
+    const html = readFileSync(page, 'utf8');
+    for (const [, ref] of html.matchAll(/\/_next\/(static\/[^"'?]+\.js)/g)) {
+      const file = join(ROOT, '.next', ref);
+      if (existsSync(file)) referenced.add(file);
+    }
+  }
+
+  return referenced.size > 0 ? [...referenced] : null;
 }
 
 /** budgets — peso de lo que viaja al navegador. */
@@ -346,9 +386,10 @@ function sectionBudgets() {
     }
 
     const ext = artifact.glob.slice(artifact.glob.lastIndexOf('.'));
+    const files = firstLoadFiles(dir, ext) ?? [...walk(dir, ext)];
     let raw = 0;
     let gzip = 0;
-    for (const file of walk(dir, ext)) {
+    for (const file of files) {
       const buf = readFileSync(file);
       raw += buf.length;
       gzip += gzipSync(buf).length;

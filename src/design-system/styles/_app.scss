@@ -10,35 +10,58 @@
 @use '@carbon/react/scss/theme';
 @use '@carbon/react/scss/type';
 
-// Sin esto el padding y el borde se SUMAN al tamano declarado en vez de
-// repartirse dentro de el — content-box es el valor inicial de CSS. Lo delata
-// cualquier caja que mezcle aspect-ratio con padding, como la tarjeta del mega
-// menu: aspect-ratio se calcula sobre la content-box por defecto, asi que su
-// padding desproporciona la caja renderizada en cuanto la columna cambia de
-// ancho, y el cuadrado deja de serlo justo en los anchos donde mas se nota.
+// content-box es el valor inicial de CSS: sin esto el padding se suma al tamano
+// declarado, y cualquier caja que mezcle aspect-ratio con padding pierde su
+// proporcion.
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-// La familia BASE del sitio.
-//
-// La ponia el reset de Carbon, y desde que index.scss dejo de emitir el CSS de sus
-// componentes ya no la pone nadie: sus tokens de tipo llevan tamano, peso e
-// interlineado, pero NO familia — heading-04 no emite font-family. Sin una familia
-// base, todo lo que no sea mono o serif cae al valor inicial del navegador, que es
-// una serif. El sitio entero salio en Times y el fallo no rompe nada.
-//
-// Va en body y no en :root para no pisar la familia de los tokens que si traen la
-// suya, que heredan desde aqui igual.
+// La familia base la ponia el reset de Carbon, y desde que index.scss dejo de
+// emitir sus componentes no la pone nadie: sus tokens de tipo no llevan familia.
+// Sin esto el sitio entero cae a la serif por defecto del navegador.
+// La cabecera es fija y se superpone al contenido a proposito: el hero es a sangre
+// y la barra tiene que quedar SOBRE el video, no encima de un hueco reservado. Por
+// eso el body ya no deja sitio para ella — el aire de cabecera, donde haga falta, lo
+// pone la seccion que abre cada ruta.
 body {
   font-family: type.font-family('sans');
 
-  // La cabecera es fija: sin este hueco el contenido de cualquier ruta arranca
-  // debajo de la barra. Va aqui porque la cabecera la monta el layout raiz, o sea
-  // todas las rutas.
-  padding-block-start: brand.$header-block-size;
+  // El margen de 8px que trae de fabrica todo navegador. Lo quitaba el reset de
+  // Carbon, y desde que index.scss dejo de emitir sus componentes no lo quita
+  // nadie: el sitio entero se dibujaba dentro de un marco de 8px contra el borde
+  // de la ventana, que en un hero a sangre se ve como una franja de fondo
+  // alrededor del video. Misma regresion que la familia tipografica de arriba, y
+  // por el mismo motivo.
+  margin: 0;
+}
+
+// Reposo del caracter que rueda (el gesto, en _roll.scss). Global porque pg-char la
+// crea el hook en runtime: en un modulo, el componente que olvide el mixin se queda
+// con caracteres marcados y sin estilo.
+.pg-char {
+  // translate no se aplica a elementos inline no reemplazados. Sin esto la
+  // declaracion es valida y no mueve nada, sin error. El display del contenedor no
+  // vale: quien se mueve es cada letra.
+  display: inline-block;
+  text-shadow: 0 brand.$roll-distance var(--pg-char-shine, currentcolor);
+  // Al salir se deshace sin escalonar: revertir letra a letra parece que el
+  // control se queda enganchado.
+  transition:
+    translate brand.$duration-half brand.$ease-default,
+    text-shadow brand.$duration-quarter brand.$ease-natural;
+}
+
+// Se apaga la copia, no solo el movimiento: si no, la sombra se queda pintada a
+// media altura.
+@media (prefers-reduced-motion: reduce) {
+  .pg-char {
+    translate: none;
+    text-shadow: none;
+    transition: none;
+  }
 }
 
 .pg-landing,

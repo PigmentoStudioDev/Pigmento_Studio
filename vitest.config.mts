@@ -56,6 +56,21 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+
+    /**
+     * next-intl se procesa por Vite en vez de cargarse como dependencia externa.
+     *
+     * Por dentro importa `next/navigation` sin extension, y el resolver de Node no
+     * lo encuentra dentro del arbol aislado de pnpm — el paquete esta ahi, pero no
+     * en el node_modules de next-intl. El resolver de Vite si lo resuelve, y esta es
+     * la unica frontera del proyecto que lo necesita.
+     *
+     * Se inlinea en lugar de hoistear `next` en .npmrc: hoistear cambia como se
+     * instala TODO el arbol para arreglar un caso de test.
+     */
+    server: {
+      deps: { inline: ['next-intl'] },
+    },
     globals: true,
     // Por defecto Vitest NO procesa CSS y devuelve un proxy que responde a
     // cualquier clave: `styles.claseQueNoExiste` sale como si existiera, y un test

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { themeZoneClass, type ThemeZone } from "../../../theme/zone";
+import type { ThemeRole } from "../../../theme/zone";
 import styles from "./Section.module.scss";
 
 /**
@@ -16,13 +16,19 @@ import styles from "./Section.module.scss";
  * ReactNode porque esta capa COMPONE, no mapea contenido. La regla sigue firme
  * para moleculas y organismos, que son los que alimenta el CMS.
  */
-export type SectionTheme = ThemeZone;
+export type SectionTheme = ThemeRole;
 export type SectionWidth = "content" | "wide" | "full";
 export type SectionSpacing = "none" | "compact" | "default" | "loose";
 
 export interface SectionProps {
   children: ReactNode;
-  /** Zona de tema de Carbon. Sin valor, la seccion hereda el tema de la pagina. */
+  /**
+   * Papel de la seccion dentro del modo: 'base' es el fondo de la pagina y 'alt'
+   * una franja que se despega de el. Sin valor hereda el del documento.
+   *
+   * Es un ROL y no una zona de Carbon a proposito. Una seccion que declarase
+   * `g100` mentiria en modo claro — la prop diria una cosa y el CSS pintaria otra.
+   */
   theme?: SectionTheme;
   width?: SectionWidth;
   spacing?: SectionSpacing;
@@ -56,20 +62,18 @@ export function Section({
   id,
   labelledBy,
 }: SectionProps) {
-  const className = [
-    styles.root,
-    WIDTH[width],
-    SPACING[spacing],
-    theme ? themeZoneClass(theme) : undefined,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  // Sin clase de tema: la zona la resuelve el CSS desde data-theme-section, bajo
+  // la del documento. Resolverla aqui obligaria a conocer el modo, y el modo solo
+  // existe en el navegador — Section se quedaria sin poder ser server component
+  // por una cuenta que la cascada ya sabe hacer.
+  const className = [styles.root, WIDTH[width], SPACING[spacing]].filter(Boolean).join(" ");
 
   return (
-    // data-theme-section es la marca legible desde JS de la zona que ocupa esta
-    // seccion. La cabecera la observa para adoptar el tema de lo que tiene debajo,
-    // sin conocer ninguna seccion concreta y sin leer las clases internas de
-    // Carbon, que son suyas y pueden cambiar en cualquier minor.
+    // data-theme-section hace dos trabajos con un solo atributo. Para el CSS es lo
+    // que resuelve el rol contra el modo del documento; para la cabecera es la
+    // marca legible desde JS del papel que ocupa esta seccion, que observa para
+    // adoptar el tema de lo que tiene debajo — sin conocer ninguna seccion
+    // concreta y sin leer las clases internas de Carbon, que son suyas.
     <section
       id={id}
       aria-labelledby={labelledBy}
