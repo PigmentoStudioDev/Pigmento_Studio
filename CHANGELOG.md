@@ -7,6 +7,39 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
 
 ### Added
 
+- **Modo claro y oscuro, por zonas.** El modo NO es un vocabulario nuevo: es cual de
+  las cuatro zonas de Carbon lleva `<html>`. Una seccion declara un ROL (`base` |
+  `alt`) y el par de zonas de su modo lo resuelve por descendencia — la misma seccion
+  sale `g10` en claro y `g90` en oscuro sin que la pagina se entere. Con zonas
+  literales la prop mentiria en cuanto existiera el modo claro: diria `g100` y el CSS
+  pintaria otra cosa. Cada zona se emite UNA vez; los selectores de rol son alias en
+  la misma lista y no una segunda emision de 235 tokens (~40kb de CSS).
+- **Script anti-parpadeo** en el `<head>`. Corre sincrono antes de la primera pintura:
+  sin el, quien eligio oscuro ve un fotograma en claro en cada carga. El `<html>` lleva
+  `suppressHydrationWarning` porque el servidor no puede conocer la preferencia — la
+  diferencia no es un fallo, es el mecanismo.
+- **i18n es/en** con `localePrefix: "as-needed"`, para que las URLs en espanol no
+  cambien. Con prefijo siempre, cada enlace ya publicado pasaria a redirigir y `/ds`
+  —herramienta, no pagina— cambiaria de direccion sin ninguna razon. Los diccionarios
+  viven DENTRO de `i18n/`: el contrato de modularidad pide que un import que sale del
+  modulo se vea como tal.
+- **`Icon`**, por NOMBRE y no por SVG: es lo que mantiene serializables las props de
+  quien lo use. Dos familias de dibujo — logotipos a relleno, interfaz a linea — porque
+  pintar un icono de linea con `fill` no lo descolora, lo convierte en una mancha.
+- **`IconButton`** con cortina de cinco lonjas escalonadas y volteo del icono. Cuadrado
+  por declaracion, con radio pequeno: la forma de referencia es la de un icono de
+  aplicacion, no un circulo. NO es componente de cliente — el gesto es CSS entero.
+- **`ThemeToggle`**, que no lee el modo desde React. Lo pinta el CSS desde
+  `--pg-mode-dark`, declarada en `:root.cds--g100` con el selector pegado para que una
+  seccion con la misma clase no la redefina. Sin eso harian falta un store suscrito,
+  otro `suppressHydrationWarning` y un fotograma con el icono equivocado.
+- **`LanguageToggle`**, un boton y no dos enlaces: con dos idiomas, uno de los dos
+  enlaces siempre apuntaria a donde ya estas.
+- **Fila de utilidades** al pie de la columna de servicios: redes, tema e idioma.
+- **Metrica de control** (`$control-block-*`, `$control-inline-*`) y tres estilos
+  `control-s|m|l`, todos a peso 500 y tracking -0.02em.
+
+
 - **Birken Nue como la sans del sitio**, los nueve pesos. `next/font` emite un
   `@font-face` por peso y el navegador solo descarga los que algun texto usa: recortar
   la lista quitaria opciones al diseno sin ahorrar un byte a quien visita.
@@ -53,6 +86,29 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
 
 ### Changed
 
+- **La altura de un control se DECLARA.** Salia de `line-height + padding`, asi que el
+  tamano era un efecto secundario del estilo de tipo: nadie eligio que los tres
+  tamanos midieran 24, 34 y 43px — salieron de sumar cosas decididas por separado, y
+  ninguno cae en la reticula.
+- **El aire lateral se ata al cuerpo de la etiqueta**, no a la reticula. En una
+  pildora es una relacion optica con el texto que encierra, no un ritmo de layout:
+  atado a spacing daba 0.75 / 0.89 / 1.26 sobre su propio cuerpo y los tres tamanos
+  leian como tres componentes distintos. Es la unica medida del sistema fuera de
+  reticula, y a proposito.
+- **La barra de la cabecera pasa a grid de tres columnas.** Con flex, la marca se
+  centraba con `margin-inline: auto`, que reparte el espacio LIBRE y no centra en la
+  barra: quedaba desviada exactamente `(ancho del toggle - ancho de las acciones) / 2`.
+- **gsap se carga con `import()`.** Lo pedia `useCharRoll`, que usan `Button` y
+  `NavLinkList` dentro de la cabecera, asi que viajaba en el bundle COMPARTIDO de todas
+  las rutas: 54kb gzip que pagaba hasta una pagina sin una sola animacion. Carga
+  inicial 241 -> 195kb gzip. Se va `useGSAP` — es un hook y no se puede pedir a mitad
+  de un render; lo que aportaba ya lo hacia el `revert()` de cada consumidor.
+- **`budgets` mide lo que DESCARGA UNA VISITA**, no todo el JS emitido. Desde que hay
+  carga bajo demanda las dos cifras dejaron de ser la misma: partir el bundle no mueve
+  el total ni un byte, porque los bytes siguen en el disco. Con esa vara, la
+  optimizacion correcta salia igual de roja que no hacer nada.
+
+
 - **Los anchos de contenedor salen de la reticula**, por `map.get()` sobre
   `$grid-breakpoints`, en vez de escribirse a ojo. La excepcion es `$container-full` y
   esta escrita: un mega menu no es una columna de LECTURA, y las dos medidas
@@ -74,6 +130,24 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
   que la marca no toque nada que no haya declarado.
 
 ### Fixed
+
+- **El gate de motion no miraba casi nada.** Daba por buena cualquier consulta con
+  `prefers-reduced-motion`, incluida `no-preference` — que es donde vive el hover de
+  todo el sitio. Las duraciones del gesto principal de dos atomos nunca se comprobaron.
+  Al apretarlo hubo que separar sus dos preguntas: la de duraciones las quiere todas,
+  la de apagado solo las que pueden llegar a correr con reduced-motion activo.
+- **El gate de clases globales daba falsos positivos.** Leia comentarios —una clase
+  nombrada en una nota no llega a ningun DOM— y contaba `--pg-x` como si fuera la clase
+  `.pg-x`, cuando es una custom property.
+- **La galeria radial se quedaba con las miniaturas empujadas hacia fuera.** El regreso
+  al reposo dependia de `transitionend` sobre el giro; con el intervalo por debajo de
+  su duracion la transicion se interrumpe y el evento no llega nunca. Pasaba tambien al
+  volver de una pestana en segundo plano.
+- **Arrastrar la galeria navegaba**, porque vive dentro de un enlace: al soltar, el
+  clic subia hasta el `<a>`. Girar la rueda y acabar en otra pagina es el fallo mas
+  desconcertante que podia tener la pieza.
+- **`key={image.src}`** rompia con imagenes repetidas, que es como se llena la corona.
+
 
 - **El sitio entero llevaba renderizando en Times.** La familia base la ponia el reset
   de Carbon, y desde que dejamos de emitir el CSS de sus componentes no la ponia nadie:
@@ -190,3 +264,43 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
 - SVGs del scaffold en `public/`.
 - `vite-tsconfig-paths`: Vitest 4 avisa en runtime de que Vite ya resuelve los paths
   del tsconfig de forma nativa. La guia de Next todavia lo recomienda.
+
+---
+
+## Pendiente
+
+Lo que quedo abierto, con el porque. No es una lista de deseos: cada punto se
+verifico y se dejo fuera por una razon concreta.
+
+### Decisiones que necesitan a Karen
+
+- **La regla 3 de `CLAUDE.md` quedo desactualizada.** Dice "no inventar atributos
+  propios (`data-theme` y similares)" y ahora `data-theme-section` SI selecciona una
+  paleta. No es lo que la regla prohibia —bajo el se emiten los mismos `--cds-*`, no un
+  sistema paralelo— pero el texto ya no describe el codigo. El test se endurecio para
+  decirlo con precision: afirma por igualdad que el unico atributo de tema del CSS es
+  `data-theme-section`, asi que un `data-theme` nuevo sigue rompiendolo.
+- **`object-fit: cover` en la galeria**, donde la referencia usa `contain` +
+  `object-position: 50% 100%`. Recorta en vez de encajar. Puede ser deliberado, pero
+  cambia el encuadre.
+- **El nudge optico del boton no se porto.** La referencia empuja el texto 1px hacia
+  arriba; ese valor esta calibrado para SU tipografia. Con Birken Nue medi que el texto
+  ya cae centrado con 0.7px de diferencia — si al verlo canta, ahi esta la causa.
+
+### Trabajo identificado y no hecho
+
+- **Solo esta traducida la navegacion.** El contenido de las paginas sigue en espanol.
+  Se anade al diccionario sin tocar codigo.
+- **`SiteHeader.tsx` (434 lineas) y su hoja (408)** pasaron el aviso de 400. El tope
+  duro son 800, asi que no corre prisa, pero la fila de utilidades y el panel ya son
+  dos cosas distintas en el mismo archivo.
+- **`public/` son 1.9MB de PNG sin optimizar.**
+- **La galeria carga sus miniaturas en diferido y la mayoria nace fuera de cuadro.**
+  `next/image` es lazy por defecto: las piezas de la parte baja de la rueda no se piden
+  hasta que rotan a la vista y aparecen en blanco un instante. Falta `sizes` y falta
+  decidir cuales llevan `priority`.
+- **`container-type: size` colapsa a cero con alto automatico.** Hoy funciona porque el
+  banner le da alto definido; montar `RadialGallery` en flujo normal no se ve, y sin
+  ningun error. Esta escrito en la hoja.
+- **La barra compacta deja 8px de aire.** Al hacer scroll la placa se mete 4px y baja a
+  56px visibles con controles de 40 dentro. Es justo, no roto.
