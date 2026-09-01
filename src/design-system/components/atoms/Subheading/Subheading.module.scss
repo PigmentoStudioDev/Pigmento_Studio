@@ -1,0 +1,40 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/theme';
+
+.root {
+  margin: 0;
+
+  // La medida en ch y no en rem. Un parrafo se lee bien entre 45 y 75 caracteres por
+  // linea, y una linea de apoyo bajo un titular pide el extremo corto. La regla esta
+  // escrita en caracteres, asi que la unidad correcta es la que los cuenta: en rem,
+  // la misma caja le queda ancha al ingles, que corre un 10-15% mas corto que el
+  // espanol para el mismo contenido.
+  //
+  // Y va aqui y no en la composicion, al reves que la medida de un titular: cuantas
+  // lineas ocupa un display es una decision de diseno de la seccion; cuantos
+  // caracteres caben en una linea de texto corrido es legibilidad, y eso lo sabe el
+  // componente.
+  max-inline-size: 48ch;
+
+  // `pretty` y no `balance`: en un parrafo lo que hay que evitar es la palabra huerfana
+  // de la ultima linea, no repartir todas por igual.
+  text-wrap: pretty;
+}
+
+.sizeBodyL {
+  @include brandtype.style('body-l');
+}
+
+.sizeBodyM {
+  @include brandtype.style('body-m');
+}
+
+.tonePrimary {
+  color: theme.$text-primary;
+}
+
+.toneSecondary {
+  color: theme.$text-secondary;
+}

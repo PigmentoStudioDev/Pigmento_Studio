@@ -1,0 +1,59 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/theme';
+
+// El margen lo pone la composicion, no el titular. Un h1 trae el suyo de fabrica y
+// aqui ya no hay reset de Carbon que lo quite, asi que sin esto el hueco entre un
+// titular y lo que le sigue dependeria de la etiqueta elegida — o sea del esquema
+// del documento — en vez del ritmo que arme la pagina.
+.root {
+  margin: 0;
+
+  // Las dos reglas del texto que cambia de largo al traducirse. `balance` reparte
+  // las lineas para que la ultima no se quede con una palabra suelta, que es lo que
+  // pasa en cuanto el ingles acorta una frase escrita en espanol.
+  //
+  // `break-word` es el seguro del display: a 9.375rem una palabra larga se sale de
+  // la ventana, y eso no da error ni aviso — solo scroll horizontal en un movil.
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.sizeDisplayXxl {
+  @include brandtype.style('display-xxl');
+}
+
+.sizeDisplayXl {
+  @include brandtype.style('display-xl');
+}
+
+.sizeDisplayL {
+  @include brandtype.style('display-l');
+}
+
+.sizeHeadingL {
+  @include brandtype.style('heading-l');
+}
+
+.sizeHeadingM {
+  @include brandtype.style('heading-m');
+}
+
+.sizeHeadingS {
+  @include brandtype.style('heading-s');
+}
+
+.sizeHeadingXs {
+  @include brandtype.style('heading-xs');
+}
+
+// Rol, no color. Es lo que hace que el titular se invierta solo al caer dentro de
+// una zona oscura.
+.tonePrimary {
+  color: theme.$text-primary;
+}
+
+.toneSecondary {
+  color: theme.$text-secondary;
+}
