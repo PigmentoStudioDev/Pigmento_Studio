@@ -1,0 +1,39 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// La superficie sale de `layer-01`, que es el token de "un escalon por encima del
+// fondo" y se re-resuelve en cada zona: sobre la pagina clara da gris claro, dentro
+// de una seccion oscura da el gris de al lado. Un color fijo aqui obligaria a un
+// chip por zona.
+.root {
+  @include brandtype.style('eyebrow');
+
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-03;
+  block-size: brand.$chip-block-size;
+  padding-inline: spacing.$spacing-04;
+  border-radius: brand.$radius-chip;
+  background-color: theme.$layer-01;
+  color: theme.$text-secondary;
+  white-space: nowrap;
+}
+
+// El punto SI puede llevar el acento, y el texto de al lado no: el acento de hoy es
+// un placeholder que no llega a 4.5:1 sobre fondo claro — por eso el delta claro de
+// _theme.scss esta vacio a proposito. Un punto decorativo no es texto y no tiene que
+// alcanzar ese contraste.
+//
+// El radio es la mitad de su propio tamano, que es como se declara un circulo
+// exacto en este sistema: 50% deforma en cuanto la caja deja de ser cuadrada, y
+// $radius-full es de los controles.
+.dot {
+  inline-size: 0.375rem;
+  block-size: 0.375rem;
+  border-radius: brand.$radius-02;
+  background-color: theme.$border-interactive;
+}

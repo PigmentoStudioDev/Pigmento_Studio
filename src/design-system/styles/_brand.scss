@@ -159,6 +159,20 @@ $radius-control-m: math.div($control-block-m, 2);
 /// al lado (12px) ya se lee como boton redondeado y no como icono.
 $radius-control-square: $radius-05;
 
+// Metrica del chip de seccion: la etiqueta que nombra la seccion sobre su titular.
+//
+// Es una SUPERFICIE, no un control — no se pulsa, no recibe foco, no tiene estado —
+// y por eso no lleva $radius-full. Su altura la decide el CSS y no su contenido,
+// asi que el radio se deriva de ella igual que el de la barra: una pildora exacta
+// que ademas se puede interpolar, en vez de un valor enorme que recorta el
+// navegador y salta al animarse.
+//
+// Cae justo sobre $radius-07 (1rem), y eso es construccion y no copia: el dia que
+// el chip cambie de alto, su radio le sigue solo. Escribir el escalon a mano seria
+// atarlos por casualidad.
+$chip-block-size: spacing.$spacing-07;
+$radius-chip: math.div($chip-block-size, 2);
+
 // Motion.
 //
 // Carbon cubre el registro PRODUCTIVO: 70-700ms y cuatro curvas discretas, hechas
