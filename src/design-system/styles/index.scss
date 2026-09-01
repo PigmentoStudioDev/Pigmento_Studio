@@ -109,17 +109,23 @@
 // Claro base. Es tambien el default del documento: el HTML del servidor sale sin
 // clase de modo, asi que sin JS el sitio es el claro entero y coherente, no un
 // oscuro a medio pintar.
+// El rol 'alt' es la zona INVERTIDA y no un escalon: una franja que se despega lo
+// hace cambiando de lado, no subiendo un gris. Por eso el alias de 'alt' del modo
+// oscuro vive en el bloque CLARO y el del modo claro en el oscuro. El mapa gemelo
+// en theme/zone.ts dice lo mismo para el JS, y el contrato de tema comprueba que
+// los dos coincidan.
 :root,
 .cds--white,
-.cds--white [data-theme-section='base'] {
+.cds--white [data-theme-section='base'],
+.cds--g100 [data-theme-section='alt'] {
   @include theme.theme(themes.$white, pigmento.$overrides-light);
 
   --pg-on-dark: 0;
 }
 
-// Claro elevado.
-.cds--g10,
-.cds--white [data-theme-section='alt'] {
+// Claro elevado. Ya no lo ata ningun rol: queda para quien pida la zona por su
+// clase, que es como Carbon la ofrece.
+.cds--g10 {
   @include theme.theme(themes.$g10, pigmento.$overrides-light);
 
   --pg-on-dark: 0;
@@ -127,15 +133,15 @@
 
 // Oscuro base.
 .cds--g100,
-.cds--g100 [data-theme-section='base'] {
+.cds--g100 [data-theme-section='base'],
+.cds--white [data-theme-section='alt'] {
   @include theme.theme(themes.$g100, pigmento.$overrides-dark);
 
   --pg-on-dark: 1;
 }
 
-// Oscuro elevado.
-.cds--g90,
-.cds--g100 [data-theme-section='alt'] {
+// Oscuro elevado. Sin rol que lo ate, igual que g10.
+.cds--g90 {
   @include theme.theme(themes.$g90, pigmento.$overrides-dark);
 
   --pg-on-dark: 1;

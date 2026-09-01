@@ -58,12 +58,25 @@ export function themeModeClass(mode: ThemeMode): string {
 
 /**
  * El par de zonas de cada modo. `base` es la del documento y `alt` la que se
- * despega de ella — un escalon hacia dentro en claro, un escalon hacia fuera en
- * oscuro, que es como Carbon ordena sus cuatro.
+ * despega de ella.
+ *
+ * `alt` es la zona INVERTIDA, no un escalon: en modo claro una franja alt sale
+ * oscura y en oscuro sale clara. Antes era un escalon suave —g10 en claro, g90 en
+ * oscuro— y eso hacia que dos secciones seguidas se distinguieran por un gris de
+ * diferencia que en una pantalla mal calibrada no existe. Un rol que solo se ve en
+ * un monitor bueno no esta separando nada.
+ *
+ * Y es simetrico a proposito. El rol tiene que querer decir lo mismo en los dos
+ * modos: con la inversion en claro y el escalon en oscuro, `alt` seria un corte
+ * duro o un matiz segun donde caiga, y la pagina que lo usa no puede saber cual le
+ * va a tocar.
+ *
+ * Las cuatro zonas de Carbon se siguen emitiendo; lo que cambia es cuales ata un
+ * rol. g10 y g90 quedan disponibles para quien las pida por su clase.
  */
 const ROLE_ZONE: Record<ThemeMode, Record<ThemeRole, ThemeZone>> = {
-  light: { base: "white", alt: "g10" },
-  dark: { base: "g100", alt: "g90" },
+  light: { base: "white", alt: "g100" },
+  dark: { base: "g100", alt: "white" },
 };
 
 export function resolveZone(mode: ThemeMode, role: ThemeRole): ThemeZone {
