@@ -11,6 +11,7 @@
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import postcss, { type Rule } from 'postcss';
+import { resolveZone, themeModeClass } from '../../theme/zone';
 import { compile, compileString, type Options } from 'sass';
 import { describe, expect, it } from 'vitest';
 
@@ -226,6 +227,34 @@ describe('index.scss emite las cuatro zonas de Carbon con la marca encima', () =
     const attrs = [...source.matchAll(/\[(data-theme[\w-]*)/g)].map(([, name]) => name);
 
     expect([...new Set(attrs)]).toEqual(['data-theme-section']);
+  });
+
+  /**
+   * El mapa de roles vive DOS veces: como selectores aqui y como ROLE_ZONE en
+   * theme/zone.ts, que es de donde lo leen la cabecera y la tira al resolver su
+   * propia zona. No se puede unificar — el CSS no puede importar de TypeScript y
+   * resolver el rol en React costaria convertir Section en componente de cliente —
+   * asi que lo que queda es comprobar que los dos digan lo mismo.
+   *
+   * El sintoma de una desincronizacion no es un error: la seccion se pinta con una
+   * zona y la cabecera se adapta a la otra, y lo unico que se ve es una barra que
+   * no acaba de casar con lo que tiene debajo.
+   */
+  it.each(
+    (['light', 'dark'] as const).flatMap((mode) =>
+      (['base', 'alt'] as const).map(
+        (role) => [`${mode}/${role}`, mode, role, resolveZone(mode, role)] as const,
+      ),
+    ),
+  )('%s: el CSS resuelve la misma zona que ROLE_ZONE', (_label, mode, role, zone) => {
+    // Sin comillas: Sass las quita al emitir, y cascade() compara el selector
+    // literal contra el del CSS ya compilado.
+    const selector = `.${themeModeClass(mode)} [data-theme-section=${role}]`;
+    const emitted = cascade(source, selector);
+    const stock = stockTheme(zone);
+
+    expect(emitted.size).toBeGreaterThan(0);
+    expect(emitted.get('background')).toBe(stock.get('background'));
   });
 });
 

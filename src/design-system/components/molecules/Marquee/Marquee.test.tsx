@@ -88,9 +88,13 @@ describe("Marquee", () => {
   });
 
   /**
-   * La inversion sigue a la ZONA RESUELTA, no al rol. En modo claro tanto `base` como
-   * `alt` caen en zonas claras — white y g10 — asi que las dos invierten. Un rol no
-   * dice un color, y tomarlo por uno es el error que este test fija.
+   * La inversion sigue a la ZONA RESUELTA, no al rol. Un rol no dice un color, y
+   * tomarlo por uno es el error que este caso fija.
+   *
+   * Desde que `alt` es la zona INVERTIDA y no un escalon, los dos roles del mismo
+   * modo caen en zonas de signo contrario — white y g100 — y por eso el caso
+   * distingue de verdad. Antes las dos ramas daban la misma respuesta: un
+   * componente que mirase el rol en vez de la zona pasaba este test en verde.
    *
    * Que zonas son claras lo decide theme/zone.ts; aqui solo se comprueba que el
    * componente lo consulta en vez de deducirlo.
@@ -100,7 +104,7 @@ describe("Marquee", () => {
     const alt = render(<Marquee kind="logos" items={LOGOS} theme="alt" />);
 
     expect(base.container.firstElementChild?.className).toMatch(/onLight/);
-    expect(alt.container.firstElementChild?.className).toMatch(/onLight/);
+    expect(alt.container.firstElementChild?.className).not.toMatch(/onLight/);
   });
 
   it("no tiene violaciones de accesibilidad", async () => {
