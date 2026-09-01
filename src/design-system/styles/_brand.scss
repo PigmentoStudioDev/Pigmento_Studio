@@ -227,6 +227,12 @@ $roll-distance: 1.3em;
 /// estilo cambia de interlineado.
 $roll-descender: 0.15em;
 
+/// Cuanto sube el contenido al entrar. En em por lo mismo que la distancia del
+/// rodado: se mide contra su propio cuerpo, asi que un titular de display y una
+/// linea de apoyo recorren cada uno lo que le toca y llegan juntos. En rem, el
+/// titular haria un viaje ridiculo y el parrafo uno enorme.
+$reveal-distance: 1.5em;
+
 /// ---------------------------------------------------------------------------
 /// Superficie de cristal
 ///
