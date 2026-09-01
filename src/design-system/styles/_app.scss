@@ -7,7 +7,6 @@
 
 @use './brand' as brand;
 @use '@carbon/react/scss/spacing';
-@use '@carbon/react/scss/theme';
 @use '@carbon/react/scss/type';
 
 // content-box es el valor inicial de CSS: sin esto el padding se suma al tamano
@@ -64,21 +63,24 @@ body {
   }
 }
 
-.pg-landing,
+// El hueco entre lineas lo pone la COLUMNA, no cada pieza. Los componentes de
+// texto salen sin margen a proposito — el ritmo es de la pagina — asi que la unica
+// forma de que la 404 y el error respiren es que su contenedor lo declare una vez.
+// Antes lo ponia un margin-block-end por elemento, que solo funcionaba mientras el
+// markup fuese h1 + p a pelo.
 .pg-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: spacing.$spacing-05;
   padding: spacing.$spacing-09;
   max-inline-size: 42rem;
 }
 
-.pg-status h1 {
-  @include type.type-style('heading-04');
-
-  margin-block-end: spacing.$spacing-05;
-}
-
+// El digest del error se queda en <p><code>: es un identificador de maquina y eso
+// lo dice el elemento, no un componente de texto — que recibe una cadena y perderia
+// el <code> por el camino. Lo unico que necesita es no traer el margen de fabrica,
+// que se sumaria al gap de la columna.
 .pg-status p {
-  @include type.type-style('body-01');
-
-  margin-block-end: spacing.$spacing-05;
-  color: theme.$text-secondary;
+  margin: 0;
 }
