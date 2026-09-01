@@ -1,0 +1,63 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+
+@keyframes pg-reveal {
+  from {
+    opacity: 0;
+    translate: 0 brand.$reveal-distance;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+// El retardo se calcula en el navegador y no en Sass: el indice viaja como custom
+// property y el PASO es un token. Escribir el retardo ya sumado por escalon daria
+// cinco literales que no dicen de donde salen, y reafinar el ritmo obligaria a
+// recalcularlos a mano — que es justo lo que la escala de motion existe para evitar.
+.root {
+  animation: pg-reveal brand.$duration-onehalf brand.$ease-default both;
+  animation-delay: calc(var(--pg-reveal-step, 0) * #{brand.$stagger-slice});
+}
+
+// El paso se toma del desfase de lonja en vez de inventar uno nuevo. Dos ritmos de
+// desfase distintos conviviendo en el mismo sitio se notan aunque no se sepa
+// nombrar, y este es el mismo gesto un nivel mas arriba: piezas que entran una
+// detras de otra.
+.step0 {
+  --pg-reveal-step: 0;
+}
+
+.step1 {
+  --pg-reveal-step: 1;
+}
+
+.step2 {
+  --pg-reveal-step: 2;
+}
+
+.step3 {
+  --pg-reveal-step: 3;
+}
+
+.step4 {
+  --pg-reveal-step: 4;
+}
+
+.step5 {
+  --pg-reveal-step: 5;
+}
+
+// Se apaga entero, no se acorta: quien pide reduced-motion no esta pidiendo prisa.
+// Y hay que devolver el estado final a mano — con la animacion apagada, el `both`
+// deja de aplicar el ultimo fotograma y el contenido se quedaria invisible.
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    animation: none;
+    opacity: 1;
+    translate: none;
+  }
+}
