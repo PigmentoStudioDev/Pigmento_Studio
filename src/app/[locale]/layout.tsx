@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProgressiveBlur } from "@/design-system/components/atoms/ProgressiveBlur/ProgressiveBlur";
+import { SiteFooter } from "@/design-system/components/organisms/SiteFooter/SiteFooter";
 import { SiteHeader } from "@/design-system/components/organisms/SiteHeader/SiteHeader";
 import { themeModeScript } from "@/design-system/theme/mode";
 import { routing } from "@/i18n/routing";
+import { getFooter } from "../footer";
 import { getNavigation } from "../navigation";
 import { IBM_Plex_Mono, IBM_Plex_Serif } from "next/font/google";
 import localFont from "next/font/local";
@@ -38,13 +40,20 @@ const sans = localFont({
   ],
 });
 
-// Mono y serif siguen siendo Plex: los usan tokens de Carbon que no son de la sans
-// — code-01/02 el mono, quotation-01/02 y fluid-paragraph-01 el serif — y hoy solo
-// aparecen en /ds. TODO(brand): decidir si Pigmento quiere las suyas.
+// Mono y serif siguen siendo Plex. El mono ya no es solo cosa de /ds: es la familia
+// de las etiquetas y de los controles, o sea la mitad de la senal tipografica del
+// sitio — mono para lo que es metadato o accion, la sans para el contenido.
+//
+// El 500 lo pide esa escala, y sin declararlo el navegador sintetiza un peso falso
+// estirando el 400: mas gordo y sin el dibujo que la fundicion hizo para ese peso.
+// El 400 se queda porque lo usan los tokens de codigo de Carbon.
+//
+// El serif solo aparece en tokens de Carbon (quotation-01/02, fluid-paragraph-01).
+// TODO(brand): decidir si Pigmento quiere un mono propio, que ahora si se ve.
 const mono = IBM_Plex_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["400", "500"],
 });
 
 const serif = IBM_Plex_Serif({
@@ -91,6 +100,7 @@ export default async function RootLayout({
   setRequestLocale(locale);
 
   const t = await getTranslations("nav");
+  const tFooter = await getTranslations("footer");
 
   return (
     <html
@@ -136,6 +146,12 @@ export default async function RootLayout({
           <ProgressiveBlur />
           <SiteHeader {...getNavigation(t)} />
           {children}
+          {/* Chrome de pagina, como la cabecera: va aqui y no envuelto en un
+              Section. Un <footer> dentro de <section> deja de ser el landmark
+              contentinfo — la regla de HTML es que solo lo es cuando no esta
+              anidado — y ademas el pie no es un bloque que el CMS vaya a colocar
+              entre otros, asi que no tiene ritmo vertical que heredar. */}
+          <SiteFooter {...getFooter(tFooter)} />
         </NextIntlClientProvider>
       </body>
     </html>

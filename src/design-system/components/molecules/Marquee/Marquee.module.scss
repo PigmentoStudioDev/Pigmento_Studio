@@ -1,6 +1,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/grain' as grain;
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
@@ -16,6 +17,8 @@
   inline-size: 100%;
   background-color: theme.$background;
   color: theme.$text-primary;
+
+  @include grain.surface;
   padding-block: spacing.$spacing-07;
 }
 

@@ -1,0 +1,21 @@
+@use '../../../styles/carbon-config';
+
+// Partiendo por lineas el envoltorio no tiene caja: los hijos se colocan como si no
+// existiera. Es lo que permite meterlo entre un contenedor y su contenido sin mover un
+// pixel — dentro de una columna flex, el hijo sigue siendo el elemento flexible, no
+// este. El recorte de cada linea lo pone SplitText, una capa mas abajo.
+.root {
+  display: contents;
+}
+
+// En modo caja el recorte es ESTE, y por eso aqui si hace falta una caja: lo que se
+// esconde detras del borde es el bloque entero, y algo tiene que recortarlo. Es la
+// unica diferencia entre los dos modos — el gesto es el mismo, lo que cambia es que
+// se recorta.
+//
+// `clip` y no `hidden`: no crea caja de scroll, asi que un bloque que asome no puede
+// dejar una barra dentro del envoltorio.
+.mask {
+  display: block;
+  overflow: clip;
+}

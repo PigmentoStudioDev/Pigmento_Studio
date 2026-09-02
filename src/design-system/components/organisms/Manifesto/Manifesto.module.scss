@@ -1,0 +1,89 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+
+/// Lado de la pieza que brota. La referencia va a 20vw — un cartel por palabra — y
+/// aqui se queda en menos de la mitad: a ese tamano las piezas tapaban la frase que
+/// venian a ilustrar, y lo que se lee primero en este bloque es el texto.
+///
+/// Es ademas lo que las convierte en un vistazo y no en una galeria: pasan, se
+/// entiende que hay trabajo detras, y el portafolio sigue siendo el sitio donde se
+/// mira de verdad.
+$piece-size: 9vw;
+
+/// Ancho de la frase. Centrada y al 80%, que es lo que deja la linea en unos 30
+/// caracteres a esta talla — por debajo se parte en demasiadas lineas y por encima
+/// deja de leerse de un vistazo.
+$sentence-inline-size: 80%;
+
+/// Grosor y separacion del subrayado de las palabras calientes. En em: se miden
+/// contra su propia letra, asi que la marca pesa igual a cualquier tamano del
+/// titular fluido.
+$underline-size: 0.06em;
+$underline-offset: 0.1em;
+
+// La raiz es el sistema de referencia de las piezas: van posicionadas contra ELLA,
+// no contra la pagina. Es lo que evita tener que sumar el scroll a mano.
+//
+// `overflow-x: clip` y no `hidden`: una pieza que brote de la ultima palabra de una
+// linea sobresale por el lado y sacaria barra horizontal en TODO el sitio. `clip`
+// corta sin crear caja de scroll, y a diferencia de `hidden` deja que el eje
+// vertical siga siendo visible — que hace falta, porque las piezas suben por encima
+// del texto.
+.root {
+  position: relative;
+  overflow-x: clip;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: spacing.$spacing-09;
+}
+
+.sentence {
+  @include brandtype.style('heading');
+
+  margin: 0;
+  inline-size: $sentence-inline-size;
+  text-align: center;
+  // El texto por delante de las piezas: brotan por debajo de la palabra y tienen
+  // que pasar POR DETRAS de la frase, o la tapan justo cuando se esta leyendo.
+  position: relative;
+  z-index: 1;
+}
+
+// Enlaces de verdad, asi que el subrayado dice la verdad. Se queda el de la
+// referencia —fino y separado— y no el del navegador, que a 84px cae pegado a las
+// letras y engorda con el cuerpo.
+.word {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: $underline-size;
+  text-underline-offset: $underline-offset;
+}
+
+.pieces {
+  position: absolute;
+  inset: 0;
+  // Decoracion: ni ocupa sitio en el flujo ni intercepta un clic de lo que hay
+  // debajo, que aqui son los propios enlaces que la disparan.
+  pointer-events: none;
+}
+
+// Cada pieza arranca invisible y la rafaga la enciende. `visibility` ademas de
+// `opacity` porque es lo que gsap mueve con autoAlpha, y porque una imagen a
+// opacidad cero sigue existiendo para el navegador: con quince encima del texto,
+// eso es quince capas que componer en cada fotograma.
+.piece {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: $piece-size;
+  block-size: $piece-size;
+  object-fit: contain;
+  visibility: hidden;
+  opacity: 0;
+}

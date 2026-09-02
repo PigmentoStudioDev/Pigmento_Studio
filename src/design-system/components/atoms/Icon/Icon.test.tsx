@@ -3,8 +3,8 @@ import { axe } from "jest-axe";
 import { describe, expect, it } from "vitest";
 import { Icon, type IconName } from "./Icon";
 
-/** Logotipos: siluetas rellenas. */
-const FILLED: IconName[] = ["instagram", "facebook", "behance"];
+/** Logotipos y senales: siluetas rellenas. */
+const FILLED: IconName[] = ["instagram", "facebook", "behance", "arrow"];
 /** De interfaz: dibujados a linea. */
 const STROKED: IconName[] = ["sun", "moon"];
 const NAMES: IconName[] = [...FILLED, ...STROKED];
@@ -47,6 +47,19 @@ describe("Icon", () => {
     expect(paths.length).toBeGreaterThan(0);
     expect(paths.every((path) => path.getAttribute("stroke") === "currentcolor")).toBe(true);
     expect(paths.every((path) => path.getAttribute("fill") === "none")).toBe(true);
+  });
+
+  /**
+   * El lienzo por defecto es la reticula de 24 y solo se sale quien declare el suyo.
+   * La flecha llega en 118x115: si el componente le impusiera el de la casa, el SVG
+   * recortaria el dibujo por la mitad sin decir nada.
+   */
+  it("respeta el lienzo propio de un icono que lo declara", () => {
+    const cuadricula = render(<Icon name="instagram" />);
+    const flecha = render(<Icon name="arrow" />);
+
+    expect(cuadricula.container.querySelector("svg")).toHaveAttribute("viewBox", "0 0 24 24");
+    expect(flecha.container.querySelector("svg")?.getAttribute("viewBox")).not.toBe("0 0 24 24");
   });
 
   /** Instagram son tres trazados. Aplanarlos a uno los funde en una mancha. */

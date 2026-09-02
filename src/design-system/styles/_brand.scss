@@ -284,6 +284,37 @@ $glass-inner-glow: rgba(colors.$gray-10, 0.3);
 $glass-blur: 0.75em;
 $glass-saturation: 120%;
 
+/// ---------------------------------------------------------------------------
+/// Grano
+///
+/// La textura que llevan los fondos planos del tema. Va aqui y no en la hoja que la
+/// pinta por lo mismo que los valores del cristal: describe un MATERIAL — cuanto
+/// pesa el ruido y como de fino es— y ese material es el mismo en toda la pagina.
+/// ---------------------------------------------------------------------------
+
+/// Lado de la baldosa. El ruido se genera en un lienzo de este tamano y se repite;
+/// cuanto mas grande, mas tarda en notarse la repeticion y mas caro es rasterizarlo
+/// una vez.
+$grain-tile: 12.5rem;
+
+/// Cuantas veces cabe una oscilacion del ruido en cada pixel del lienzo. Es la
+/// perilla del TAMANO del grano: subirla lo afina hasta la sal y pimienta, bajarla
+/// lo engorda hasta la nube.
+$grain-frequency: 0.8;
+
+/// Capas de ruido superpuestas, cada una al doble de frecuencia. Con una sola el
+/// grano sale regular y se le ve el patron; tres es donde deja de leerse como
+/// generado.
+$grain-octaves: 3;
+
+/// Los dos pesos, y son DOS por la misma razon que el cristal lleva dos reflejos: el
+/// ruido oscuro solo se ve sobre fondo claro y el claro solo sobre fondo oscuro. Con
+/// uno solo, la textura desaparece en la mitad de los modos del sitio.
+///
+/// El oscuro pesa mas porque multiplicar reparte sobre lo que ya hay; aclarar suma.
+$grain-dark-opacity: 0.5;
+$grain-light-opacity: 0.28;
+
 /// Altura a la que se normaliza un logo dentro de una tira. Es lo unico que se
 /// puede igualar por CSS entre marcas: sus proporciones y su peso optico son
 /// dispares, y forzar tambien el ancho las deformaria una a una.

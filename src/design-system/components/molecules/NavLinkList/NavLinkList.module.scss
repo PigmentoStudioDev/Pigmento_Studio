@@ -8,7 +8,6 @@
 
 .root {
   display: flex;
-  flex-direction: column;
   // list-style: none quita el marcador pero no el padding-inline-start de 40px que
   // el navegador le pone a todo <ul>. Son dos reglas distintas.
   padding-inline-start: 0;
@@ -16,8 +15,26 @@
   list-style: none;
 }
 
-.item + .item {
+.directionColumn {
+  flex-direction: column;
+}
+
+.directionColumn .item + .item {
   border-block-start: 1px solid theme.$border-subtle-01;
+}
+
+// En fila las entradas se reparten a los lados y ninguna crece: es una linea de
+// metadatos, no una columna de navegacion. El filete que separa las entradas de la
+// columna no se hereda a proposito — en horizontal seria un filete vertical entre
+// celdas, que se lee como una tabla.
+.directionRow {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: spacing.$spacing-05;
+}
+
+.directionRow .link {
+  inline-size: auto;
 }
 
 .link {
@@ -30,7 +47,13 @@
   align-items: center;
   // Manda el distintivo al borde opuesto en vez de pegarlo al texto.
   justify-content: space-between;
-  color: theme.$text-primary;
+  // El color se HEREDA en vez de declararse.
+  //
+  // Declarado, la lista pinta siempre el texto primario de su zona y deja de poder
+  // vivir dentro de una superficie que tenga su propio color — que es justo lo que
+  // hace el pie, donde la capa del foco es una copia entera en color de acento. En
+  // la cabecera no cambia nada: lo que la rodea ya es el texto primario.
+  color: inherit;
   text-decoration: none;
 }
 
@@ -65,7 +88,20 @@
 
 // El mismo gesto que el boton. Sustituye al subrayado que crecia: los dos a la vez
 // eran dos respuestas al mismo hover.
-.text {
+//
+// Va DESPUES de la escala de tipo y con su MISMA especificidad, y eso no es estilo:
+// es la condicion para que el gesto funcione. La superficie fija `line-height: 1`
+// porque de esa caja de 1em sale la cuenta del recorte que esconde la copia; si el
+// interlineado del estilo de tipo gana, la caja crece y la copia — que vive a 1.3em
+// — se mete dentro del recorte y se ve en reposo, debajo del texto.
+//
+// Escrito como `.text` a secas perdia contra `.sizeSmall .text` por un punto de
+// especificidad. Con `body` (interlineado 1.5) el recorte llegaba a 1.65em y toda
+// lista pequena con enlaces mostraba su copia. En el menu no se vio porque la unica
+// lista pequena que hay es la de una entrada sin destino, y sin destino no se parte
+// el texto: no hay copia que asome.
+.sizeLarge .text,
+.sizeSmall .text {
   @include roll.surface(brand.$accent-40);
 }
 

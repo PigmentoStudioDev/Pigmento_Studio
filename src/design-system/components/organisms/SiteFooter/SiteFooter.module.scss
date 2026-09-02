@@ -1,0 +1,106 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/grain' as grain;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// La medida sale de la referencia TAL CUAL, y va en EM contra el texto: alli la
+// flecha mide 7.8vw mientras la linea mide 10.5vw, o sea 0.74 veces el cuerpo. En em
+// esa proporcion se mantiene sola, y es lo que hace que el dia que la linea cambie de
+// tamano la flecha le siga sin tocar nada.
+$icon-inline-size: 0.74em;
+
+// El alto lo decide el CONTENIDO. La referencia reserva una pantalla entera porque
+// alli el pie son tres lineas de titular con una foto dentro; con una sola linea esa
+// reserva deja de ser respiro y se lee como hueco.
+//
+// Y un alto atado a la ventana en un pie es ademas la clase de medida que envejece
+// mal: lo que tiene que crecer cuando manana entre una fila mas es el contenido, no
+// un numero que alguien tenga que volver a calcular.
+.root {
+  padding-inline: spacing.$spacing-06;
+  background-color: theme.$background;
+  color: theme.$text-primary;
+
+  @include grain.surface;
+}
+
+// Las dos filas son la MISMA lista de enlaces que el menu, en su tamano pequeno y
+// en horizontal. La fila solo aporta el aire y la caja alta.
+//
+// La caja se pone aqui y no dentro de la lista porque se HEREDA: asi el pie decide
+// como habla su propia fila sin que el componente tenga que llevar una prop de caja
+// que despues alguien tendria que mantener en dos sitios.
+.row {
+  padding-block: spacing.$spacing-06;
+  text-transform: uppercase;
+}
+
+// La fila de abajo se separa del titular y se apoya en una linea. El color es el
+// secundario: es la letra pequena del pie, y a la misma tinta que el titular
+// competiria con el.
+.bottom {
+  position: relative;
+  margin-block-start: spacing.$spacing-09;
+  border-block-start: 1px solid theme.$border-subtle;
+  color: theme.$text-secondary;
+}
+
+// La linea es una FILA que reparte a los lados, no un parrafo. Es lo que coloca la
+// foto en mitad de la frase y la flecha en el extremo opuesto al nombre.
+//
+// El estilo de tipo va AQUI y no en cada palabra, y no es indiferente: la foto y la
+// flecha se miden en em, y un em solo vale lo que vale el cuerpo del elemento que
+// los contiene. Con el estilo una capa mas abajo, los dos se median contra el
+// cuerpo heredado del documento y salian a 16px — la flecha, del tamano de una
+// letra.
+.line {
+  @include brandtype.style('display-bleed');
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.word {
+  color: inherit;
+  text-decoration: none;
+  // Una linea a sangre vive de que su contenido NO se ajuste: un salto convierte el
+  // titular en un parrafo y descoloca la foto de en medio.
+  white-space: nowrap;
+}
+
+// La flecha se mide como CAJA, y no con el `font-size` del envoltorio que seria la
+// via natural del atomo.
+//
+// El atomo se dibuja a 1em justo para que lo escale el cuerpo de quien lo envuelve,
+// pero un cuerpo tiene que salir de una de las dos escalas — lo comprueba el
+// contrato de tipo sobre el CSS compilado — y 0.74 del titular no es ningun escalon
+// ni tiene por que serlo: esto no es texto, es un dibujo que ocupa tres cuartos de
+// la altura de la linea.
+.icon {
+  display: flex;
+  inline-size: $icon-inline-size;
+}
+
+.icon svg {
+  inline-size: 100%;
+  block-size: auto;
+}
+
+// Cuatro celdas no caben en un movil. Cae la ultima de cada fila y no la primera:
+// la de la izquierda es el nombre del estudio y la red principal.
+@include breakpoint.breakpoint-down('md') {
+  // Por `li` y no por una clase de la lista: lo unico de lo que depende esta regla
+  // es de que sea una lista, que es HTML, y no de como NavLinkList llame a sus
+  // clases por dentro.
+  .row li:last-child {
+    display: none;
+  }
+}
