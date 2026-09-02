@@ -27,6 +27,11 @@ interface ButtonBase {
   children: string;
   emphasis?: ButtonEmphasis;
   size?: ButtonSize;
+  /**
+   * Estira el control hasta el ancho de su contenedor. Por defecto mide lo que su
+   * etiqueta: un boton siempre estirado deja de leerse como boton.
+   */
+  fullWidth?: boolean;
   className?: string;
 }
 
@@ -59,10 +64,16 @@ const SIZE: Record<ButtonSize, string> = {
 };
 
 export function Button(props: ButtonProps) {
-  const { children, emphasis = "primary", size = "md", className } = props;
+  const { children, emphasis = "primary", size = "md", fullWidth = false, className } = props;
   const textRef = useCharRoll<HTMLSpanElement>(children);
 
-  const classes = [styles.root, EMPHASIS[emphasis], SIZE[size], className]
+  const classes = [
+    styles.root,
+    EMPHASIS[emphasis],
+    SIZE[size],
+    fullWidth ? styles.fullWidth : null,
+    className,
+  ]
     .filter(Boolean)
     .join(" ");
 

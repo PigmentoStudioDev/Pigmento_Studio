@@ -17,7 +17,7 @@ const declared = new Set(
   ].map(([, name]) => name),
 );
 
-const SIZES: SubheadingSize[] = ["body-l", "body-m"];
+const SIZES: SubheadingSize[] = ["lead", "body"];
 const TONES: SubheadingTone[] = ["primary", "secondary"];
 
 describe("Subheading", () => {

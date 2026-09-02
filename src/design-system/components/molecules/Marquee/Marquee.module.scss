@@ -57,7 +57,7 @@
 }
 
 .text {
-  @include brandtype.style('display-l');
+  @include brandtype.style('display');
 
   margin: 0;
   // La tira vive de que su contenido NO se ajuste: un salto de linea la convierte

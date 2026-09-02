@@ -33,11 +33,18 @@ const probe = (body: string): string[] =>
  * Las dos escalas, leidas de su propio Sass. Una lista copiada a mano se
  * desincroniza en cuanto la marca reafine un escalon — que es exactamente lo que va
  * a pasar cuando se sustituyan los placeholders.
+ *
+ * Se recorre estilo a estilo y no en una lista separada por comas, que es como
+ * estaba. Dejo de funcionar en cuanto la cima de la escala paso a ser fluida: un
+ * `clamp(3.5rem, 10vw, 9.375rem)` lleva comas DENTRO, asi que partir por coma lo
+ * hacia trizas y el contrato acababa comparando contra tres fragmentos rotos. El
+ * fallo no habria sido un falso verde sino un rojo incomprensible, que es peor.
  */
 const SIZES = new Set([
-  ...probe(`@use 'type' as brandtype; .p { s: brandtype.sizes(); }`)[0]
-    .split(',')
-    .map((v) => v.trim()),
+  ...probe(`@use 'type' as brandtype;
+    @each $name in brandtype.names() {
+      .p-#{$name} { s: brandtype.size($name); }
+    }`),
   // Los de Carbon se recorren token a token: su mapa anida mapas y meterlo entero
   // en una interpolacion revienta el serializador de Sass.
   ...probe(`@use 'sass:map';
@@ -50,9 +57,10 @@ const SIZES = new Set([
 const TRACKINGS = new Set([
   '0',
   'normal',
-  ...probe(`@use 'type' as brandtype; .p { t: brandtype.trackings(); }`)[0]
-    .split(',')
-    .map((v) => v.trim()),
+  ...probe(`@use 'type' as brandtype;
+    @each $name in brandtype.names() {
+      .p-#{$name} { t: brandtype.tracking($name); }
+    }`),
 ]);
 
 function sheets(dir: string): string[] {

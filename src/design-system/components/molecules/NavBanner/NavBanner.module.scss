@@ -85,7 +85,7 @@
 }
 
 .title {
-  @include brandtype.style('heading-l');
+  @include brandtype.style('heading');
 }
 
 // Aspecto de boton, pero no es un boton: la tarjeta entera ya es el enlace y un

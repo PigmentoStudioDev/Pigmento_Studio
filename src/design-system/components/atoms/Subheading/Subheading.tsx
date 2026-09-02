@@ -10,8 +10,13 @@ import styles from "./Subheading.module.scss";
  * <Heading> con `size` bajo — para eso el titular separa nivel de cuerpo.
  *
  * `tone` va a secundario por defecto: acompana a un titular, no compite con el.
+ *
+ * Y el cuerpo por defecto es `lead` y no `body`. Al lado de un display, un parrafo
+ * de cuerpo normal queda a una quinta parte de su tamano y deja de leerse como
+ * entradilla para leerse como letra pequena. `body` esta para cuando el subtitulo
+ * acompana a un titular de seccion y no a una cima.
  */
-export type SubheadingSize = "body-l" | "body-m";
+export type SubheadingSize = "lead" | "body";
 export type SubheadingTone = "primary" | "secondary";
 
 export interface SubheadingProps {
@@ -21,8 +26,8 @@ export interface SubheadingProps {
 }
 
 const SIZE: Record<SubheadingSize, string> = {
-  "body-l": styles.sizeBodyL,
-  "body-m": styles.sizeBodyM,
+  lead: styles.sizeLead,
+  body: styles.sizeBody,
 };
 
 const TONE: Record<SubheadingTone, string> = {
@@ -30,6 +35,6 @@ const TONE: Record<SubheadingTone, string> = {
   secondary: styles.toneSecondary,
 };
 
-export function Subheading({ children, size = "body-l", tone = "secondary" }: SubheadingProps) {
+export function Subheading({ children, size = "lead", tone = "secondary" }: SubheadingProps) {
   return <p className={[styles.root, SIZE[size], TONE[tone]].join(" ")}>{children}</p>;
 }

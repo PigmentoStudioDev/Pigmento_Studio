@@ -52,7 +52,7 @@
 }
 
 .sizeLarge .text {
-  @include brandtype.style('heading-m');
+  @include brandtype.style('lead');
 }
 
 .sizeSmall .link {
@@ -60,7 +60,7 @@
 }
 
 .sizeSmall .text {
-  @include brandtype.style('body-l');
+  @include brandtype.style('body');
 }
 
 // El mismo gesto que el boton. Sustituye al subrayado que crecia: los dos a la vez

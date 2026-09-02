@@ -10,7 +10,7 @@
 // de una seccion oscura da el gris de al lado. Un color fijo aqui obligaria a un
 // chip por zona.
 .root {
-  @include brandtype.style('eyebrow');
+  @include brandtype.style('label');
 
   display: inline-flex;
   align-items: center;

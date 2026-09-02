@@ -6,22 +6,29 @@
 // cuerpos el tracking neutro y el interlineado holgado son justo lo que hace que un
 // titular de dos lineas se lea como dos frases sueltas en vez de como un bloque.
 //
-// Lo que se calca de la referencia NO son los tamanos — esos mapean razonablemente
-// contra Carbon, tres exactos y tres cerca — sino las dos curvas que Carbon no
-// tiene:
+// CINCO ESTILOS EDITORIALES Y TRES DE CONTROL, y ese recuento es la decision.
 //
-//   el tracking se APRIETA segun crece el cuerpo, de -0.01em a -0.06em
-//   el interlineado BAJA DE 1 en display, donde Carbon esta en 1.19
+// Hubo trece. Ocho de ellos vivian apretados entre 11 y 24px — con dos colisiones
+// exactas, body-m contra control-s y control-l contra heading-xs, separados solo por
+// el peso — y luego habia un salto de x2 entre 40 y 80 sin nada en medio. O sea:
+// toda la resolucion donde nadie distingue un escalon del siguiente, y ninguna justo
+// donde una pagina decide de verdad, que es el titulo de una seccion.
 //
-// En rem y no en em por lo mismo que el resto de la capa: el spacing de Carbon es
-// rem, y una tipografia que escala con su contenedor junto a un padding que no
-// descuadra todo lo que dependa de los dos.
+// Ahora ningun vecino se parece a su vecino: x1.88, x1.60 y x3.0 entre los cuerpos.
+// El hueco entre 16 y 30 se deja VACIO a proposito. Si una pieza no cabe en ninguno
+// de los dos, la respuesta casi siempre es que su sitio en la pagina esta mal, no
+// que falte un tamano — y un escalon intermedio es exactamente como se reconstruye
+// el atasco que esto viene a deshacer.
 //
-// TODO(brand): los pesos de la referencia son variables — 420, 430. Birken Nue es
-// estatica, asi que se redondean al escalon de al lado. Si algun dia hay version
-// variable, aqui es donde se afina.
+// Las dos curvas que se calcan de la referencia siguen aqui, porque Carbon no las
+// tiene: el tracking se APRIETA segun crece el cuerpo y el interlineado BAJA DE 1 en
+// display. En rem y no en em por lo mismo que el resto de la capa.
 
 @use 'sass:map';
+// Sin alias: el contrato permite `type.font-family(` por su nombre exacto, asi que
+// renombrarlo aqui haria fallar el gate de familias — que es el que impide que un
+// 'IBM Plex Sans' escrito a mano se cuele y se pierda la tipografia sin error.
+@use '@carbon/react/scss/type';
 
 // Los nueve pesos de la familia, con nombre. Birken Nue los trae todos y un
 // `font-weight: 700` suelto no dice cual de los nueve es ni si existe: con el
@@ -37,38 +44,86 @@ $weight-extrabold: 800;
 $weight-heavy: 900;
 
 $-styles: (
-  // Display: el territorio que Carbon no cubre. El tracking negativo fuerte es lo
-  // que impide que un titular enorme se lea como letras sueltas.
-  'display-xxl': (size: 9.375rem, height: 0.9, tracking: -0.05em, weight: 400),
-  'display-xl': (size: 7rem, height: 1, tracking: -0.06em, weight: 400),
-  'display-l': (size: 5rem, height: 1, tracking: -0.04em, weight: 400),
+  // La cima es FLUIDA, y es el unico sitio de la escala donde eso hace falta.
+  //
+  // Un display fijo solo esta calibrado para un ancho: 150px son el 6% de un monitor
+  // de 2560 —donde no domina nada— y el 40% de un movil, donde revienta. Con vw en
+  // el centro del clamp, la proporcion contra la pantalla es la misma en las dos.
+  //
+  // El clamp acota los dos extremos porque un vw suelto no tiene fondo ni techo: a
+  // 320px de ancho el titular se volveria ilegible y a 3000 se comeria la pagina.
+  'display': (size: clamp(3.5rem, 10vw, 9.375rem), height: 0.9, tracking: -0.05em, weight: 400),
 
-  'heading-l': (size: 2.5rem, height: 1.05, tracking: -0.03em, weight: 400),
-  'heading-m': (size: 1.875rem, height: 1.08, tracking: -0.03em, weight: 400),
-  'heading-s': (size: 1.5rem, height: 1, tracking: -0.02em, weight: 400),
-  'heading-xs': (size: 1.25rem, height: 1.08, tracking: -0.02em, weight: 400),
+  // La cima A SANGRE, y es la unica que no lleva clamp en toda la escala.
+  //
+  // 'display' es un titular DENTRO de un contenedor: por eso tiene suelo y techo —
+  // sin techo se comeria la pagina en un monitor grande, y sin suelo seria ilegible
+  // en un movil. Este es el caso contrario: una linea que ocupa el ancho entero de
+  // la ventana y no se puede partir, porque parte de su composicion es que la frase
+  // llegue de un borde al otro.
+  //
+  // Ahi el clamp deja de proteger y pasa a estorbar en los dos extremos. Con el
+  // suelo de 3.5rem, tres palabras en caja alta desbordan un movil de 375px y sacan
+  // barra horizontal al SITIO ENTERO; con el techo de 9.375rem, la linea deja de
+  // llegar al borde a partir de 1500px y la composicion se descuadra sola. En vw
+  // puro la proporcion contra la ventana es la misma en las dos, que es la unica
+  // forma de que una linea a sangre siga siendo a sangre.
+  //
+  // Peso 500 y caja alta van EN el estilo y no en quien lo usa: es un titular de
+  // cartel, y esas dos cosas son lo que lo distinguen del display de contenedor.
+  'display-bleed': (size: 10.5vw, height: 0.9, tracking: -0.05em, weight: 500, upper: true),
 
-  'body-l': (size: 1.1875rem, height: 1.25, tracking: -0.02em, weight: 400),
-  'body-m': (size: 1rem, height: 1.3, tracking: -0.01em, weight: 400),
+  // La segunda cima, y fluida por el MISMO motivo que la primera: un titular fijo
+  // solo esta calibrado para un ancho. 48px eran grandes en un movil y pequenos en
+  // un monitor de 2560.
+  //
+  // El techo no es un numero al ojo: 5.25rem son 5.6vw a 1500px, que es exactamente
+  // el ancho donde 'display' deja de crecer. Las dos cimas paran a la vez, y esa es
+  // la propiedad que hace que un titular y un display puestos en la misma pagina
+  // conserven su relacion a cualquier tamano de pantalla.
+  //
+  // Fluidas las dos cimas y fijas las tallas de lectura, que es la linea correcta:
+  // un cuerpo de texto que escala con la ventana cambia de medida de lectura en cada
+  // pantalla, y la medida de lectura es lo unico que no deberia moverse.
+  'heading': (size: clamp(2rem, 5.6vw, 5.25rem), height: 1, tracking: -0.03em, weight: 400),
 
-  // Etiquetas de control — boton, conmutador de menu. Van medio peso por encima del
-  // cuerpo porque compiten con un fondo y no con una pagina.
+  // El cuerpo grande que acompana a un display. No es texto corrido y por eso su
+  // interlineado es de titular: al lado de una cima de 144px, un parrafo de 19 no se
+  // leia como entradilla sino como letra pequena.
+  'lead': (size: 1.875rem, height: 1.1, tracking: -0.02em, weight: 400),
+
+  // El unico de la escala pensado para LEER seguido, y el unico con interlineado de
+  // lectura. Todo lo demas se mira antes de leerse.
+  'body': (size: 1rem, height: 1.5, tracking: -0.01em, weight: 400),
+
+  // El metadato: chip de seccion, distintivo, contador.
+  //
+  // La familia es lo que hace el trabajo, no el tamano. Contra un cuerpo de 16 la
+  // diferencia de tamano es de solo x1.23 — indistinguible por si sola — pero en
+  // mono y en caja alta se sabe que es metadato ANTES de leerlo. Es la separacion
+  // mas barata que existe y la unica que funciona a cualquier tamano.
+  //
+  // El tracking va en POSITIVO, al reves que el resto de la escala. La caja alta no
+  // trae ascendentes ni descendentes que separen las letras, asi que apretarla la
+  // convierte en una mancha; la curva que aprieta segun crece el cuerpo es para caja
+  // baja.
+  'label': (size: 0.8125rem, height: 1, tracking: 0.02em, weight: 500, family: 'mono', upper: true),
+
+  // Etiquetas de control — boton, conmutador de menu. Comparten familia y caja con
+  // el metadato: en la pagina solo hay DOS familias y cada una dice una cosa, mono
+  // para lo que es maquina, accion o etiqueta, y la sans para el contenido.
   //
   // Son TRES y no uno. Con uno solo, los tamanos que no encajaban caian a un estilo
-  // de CUERPO — y eso ponia el mismo componente a peso 400 en sm y lg y a 500 en md,
-  // con el tracking bailando entre -0.01 y -0.02. Una etiqueta de control lo es en
-  // los tres tamanos: lo que cambia es el cuerpo, no la voz.
+  // de CUERPO — y eso ponia el mismo componente a peso 400 en sm y lg y a 500 en md.
+  // Una etiqueta de control lo es en los tres tamanos: lo que cambia es el cuerpo,
+  // no la voz. Los tres cuerpos los espeja $control-inline-* en _brand.scss, y esa
+  // igualdad es un contrato: si se mueve uno, se mueve su pareja.
   //
   // El interlineado 1 es de los tres, y no es cosmetico: es la caja de 1em que
   // roll.surface() da por supuesta para calcular el recorte.
-  'control-s': (size: 1rem, height: 1, tracking: -0.02em, weight: 500),
-  'control-m': (size: 1.125rem, height: 1, tracking: -0.02em, weight: 500),
-  'control-l': (size: 1.25rem, height: 1, tracking: -0.02em, weight: 500),
-
-  // El eyebrow lleva la caja alta DENTRO del estilo. Es lo que lo hace un eyebrow y
-  // no un cuerpo pequeno: separarlo dejaria la mitad del estilo a merced de que
-  // alguien se acuerde.
-  'eyebrow': (size: 0.6875rem, height: 1, tracking: 0, weight: 500, upper: true),
+  'control-s': (size: 1rem, height: 1, tracking: 0.02em, weight: 500, family: 'mono', upper: true),
+  'control-m': (size: 1.125rem, height: 1, tracking: 0.02em, weight: 500, family: 'mono', upper: true),
+  'control-l': (size: 1.25rem, height: 1, tracking: 0.02em, weight: 500, family: 'mono', upper: true)
 );
 
 /// Aplica un estilo de la escala de marca.
@@ -85,30 +140,35 @@ $-styles: (
   letter-spacing: map.get($s, tracking);
   font-weight: map.get($s, weight);
 
+  // Solo se declara la familia cuando NO es la del documento. La sans ya la pone el
+  // body, asi que repetirla en cada estilo seria una declaracion muerta por regla.
+  @if map.get($s, family) {
+    font-family: type.font-family(map.get($s, family));
+  }
+
   @if map.get($s, upper) {
     text-transform: uppercase;
   }
 }
 
-/// Los tamanos de la escala, para que el contrato los lea de aqui y no de una lista
-/// copiada a mano que se desincroniza en cuanto la marca reafine un escalon.
-@function sizes() {
-  $out: ();
-
-  @each $name, $s in $-styles {
-    $out: append($out, map.get($s, size), comma);
-  }
-
-  @return $out;
+/// Los nombres de la escala, para que el contrato la recorra estilo a estilo.
+///
+/// Antes se devolvian los tamanos en UNA lista separada por comas y el contrato la
+/// partia por la coma. Eso dejo de funcionar en cuanto la cima paso a ser fluida:
+/// un clamp() lleva comas dentro, asi que partir por coma lo hacia trizas y el
+/// contrato comparaba contra tres fragmentos rotos en vez de contra un valor.
+@function names() {
+  @return map.keys($-styles);
 }
 
-/// Lo mismo con el tracking.
-@function trackings() {
-  $out: ();
+/// El cuerpo de un estilo. Sirve al contrato y a cualquier pieza que necesite
+/// razonar sobre la escala sin reimplementarla.
+@function size($name) {
+  @return map.get(map.get($-styles, $name), size);
+}
 
-  @each $name, $s in $-styles {
-    $out: append($out, map.get($s, tracking), comma);
-  }
-
-  @return $out;
+/// Lo mismo con el tracking, que es lo que mas distingue las dos escalas: Carbon lo
+/// deja a cero en todo y la marca lo curva con el cuerpo.
+@function tracking($name) {
+  @return map.get(map.get($-styles, $name), tracking);
 }

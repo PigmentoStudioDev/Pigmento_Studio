@@ -345,7 +345,7 @@ $hidden-scale: 0.95;
 }
 
 .groupLabel {
-  @include brandtype.style('eyebrow');
+  @include brandtype.style('label');
 
   color: theme.$text-secondary;
 }
