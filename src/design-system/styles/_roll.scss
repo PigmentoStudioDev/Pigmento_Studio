@@ -27,9 +27,20 @@ $-clip-end: 1 + math.div(brand.$roll-descender, 1em);
 /// line-height 1 no es cosmetico: fija la caja en 1em, que es de donde sale la
 /// cuenta de arriba. Sin el, cada estilo de tipo traeria su interlineado y la copia
 /// asomaria en unos tamanos si y en otros no.
+///
+/// Y `nowrap` por la MISMA cuenta, que da por supuesta una sola linea: en cuanto la
+/// etiqueta envuelve, la caja mide dos lineas, el recorte baja con ella y las copias
+/// de la primera se quedan dentro — se ven en reposo, debajo del texto. Pasaba en el
+/// boton del hero, donde "Ver el trabajo" no cabia de una linea.
+///
+/// La consecuencia esta escrita para que sea decision y no descuido: una etiqueta
+/// que no quepa se sale de su caja en vez de partirse. Es lo correcto para lo que
+/// usa esto —botones y enlaces de navegacion, que son etiquetas cortas— y el aviso
+/// es visible, al reves que una copia fantasma que parece un fallo de pintado.
 @mixin surface($shine: currentcolor) {
   display: inline-block;
   line-height: 1;
+  white-space: nowrap;
   clip-path: inset(0 0 calc(#{brand.$roll-descender} * -1));
   --pg-char-shine: #{$shine};
 }

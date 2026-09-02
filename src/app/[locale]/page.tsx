@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Section } from "@/design-system/components/layout/Section/Section";
+import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
 import { HeroVideo } from "@/design-system/components/organisms/HeroVideo/HeroVideo";
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
+import { getManifesto } from "../manifesto";
 
 /**
  * El hero va en la RUTA y no en `app/layout.tsx`: en el layout raiz saldria tambien
@@ -12,7 +15,15 @@ import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
  * propio. El organismo no decide ni su hueco ni su tema, para que el dia que Payload
  * arme la pagina el espacio entre bloques dependa del orden y no de cuales sean.
  */
-export default function Home() {
+export default async function Home({ params }: PageProps<"/[locale]">) {
+  const { locale } = await params;
+
+  // Sin esto la ruta se vuelve dinamica: leer traducciones cuenta como leer cabeceras
+  // salvo que el segmento este entre los generados de antemano.
+  setRequestLocale(locale);
+
+  const t = await getTranslations("home.manifesto");
+
   return (
     <main>
       <Section width="full" spacing="none">
@@ -27,13 +38,13 @@ export default function Home() {
       </Section>
 
       {/* Debajo del hero, y a sangre: una tira que se cortara contra un contenedor
-          dejaria de leerse como una cinta continua. `alt` la despega del fondo de la
-          pagina — g10 en modo claro, g90 en oscuro, resuelto por el rol y no por un
-          color fijo. */}
+          dejaria de leerse como una cinta continua. `base` y no `alt`: un rol alt es
+          la zona INVERTIDA — fondo oscuro en modo claro — y la tira tiene que seguir
+          al modo, no contradecirlo. */}
       <Section width="full" spacing="none">
         <Marquee
           kind="logos"
-          theme="alt"
+          theme="base"
           direction="left"
           items={[
             { src: "/logos/twitter.svg", alt: "Twitter", width: 100, height: 81 },
@@ -46,6 +57,13 @@ export default function Home() {
             { src: "/logos/apple.svg", alt: "Apple", width: 74, height: 91 },
           ]}
         />
+      </Section>
+
+      {/* La frase que dice a que se dedica el estudio. Va aqui, entre la tira de
+          logos y los servicios: primero quien confia, luego que hacemos, y el
+          trabajo dos bloques mas abajo. */}
+      <Section spacing="loose" width="wide">
+        <Manifesto {...getManifesto(t)} />
       </Section>
 
       <Section>

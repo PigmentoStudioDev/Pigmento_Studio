@@ -30,5 +30,34 @@
       "cta": "Ver el trabajo",
       "tag": "Destacado"
     }
+  },
+  "footer": {
+    "studio": "Pigmento Studio®",
+    "work": "Trabajo",
+    "services": "Servicios",
+    "contact": "Contacto",
+    "handle": "@pigmento__studio",
+    "handleName": "Pigmento Studio en Instagram (abre en una pestaña nueva)",
+    "instagram": "Instagram",
+    "instagramName": "Pigmento Studio en Instagram (abre en una pestaña nueva)",
+    "behance": "Behance",
+    "behanceName": "Pigmento Studio en Behance (abre en una pestaña nueva)",
+    "facebook": "Facebook",
+    "facebookName": "Pigmento Studio en Facebook (abre en una pestaña nueva)",
+    "city": "Ciudad de México",
+    "metaLabel": "Atajos del pie",
+    "linksLabel": "Redes y ubicación"
+  },
+  "home": {
+    "manifesto": {
+      "eyebrow": "Qué hacemos",
+      "open": "Construimos marcas que se reconocen: ",
+      "branding": "branding",
+      "afterBranding": " con criterio, ",
+      "sites": "sitios",
+      "afterSites": " que cargan y convierten, ",
+      "motion": "motion",
+      "close": " que nadie se salta."
+    }
   }
 }

@@ -1,0 +1,51 @@
+// El grano de los fondos planos del tema.
+//
+// Es PINTURA DEL FONDO y no un velo por encima, y esa es la decision entera: el
+// ruido va delante del color y detras de todo lo demas, asi que una foto, un video o
+// un titular que se pinten dentro lo tapan. Un velo a pantalla completa —que es como
+// se monta el grano de pelicula clasico— granularia tambien el video del hero y el
+// texto, que es justo lo que aqui no se quiere.
+//
+// La consecuencia, escrita para que sea decision: el grano vive donde vive el color
+// del tema. Una seccion que pinte una imagen a sangre no lo lleva, porque ahi no hay
+// fondo plano que texturizar.
+
+@use './brand' as brand;
+
+/// Una baldosa de ruido, como imagen.
+///
+/// El ruido se GENERA con feTurbulence dentro de un data URI: ni un archivo que
+/// servir, ni un dominio del que depender, ni una peticion que pueda fallar y dejar
+/// la pagina sin textura. Y las perillas quedan en tokens en vez de horneadas dentro
+/// de un .avif que nadie puede reajustar.
+///
+/// `stitchTiles='stitch'` es lo que hace que la baldosa CIERRE consigo misma. Sin
+/// eso el ruido se corta en cada junta y aparece una cuadricula de lineas sobre el
+/// fondo — el fallo mas visible que puede tener una textura repetida.
+///
+/// Va todo percent-encoded porque un data URI de SVG no admite `<` ni `#` en crudo;
+/// `%25` es el `%` de `100%`. El `id` no puede chocar con nada: cada URI es su propio
+/// documento.
+///
+/// @param {Number} $opacity — cuanto pesa esta capa
+@function texture($opacity) {
+  @return url(
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='#{brand.$grain-frequency}' numOctaves='#{brand.$grain-octaves}' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='#{$opacity}'/%3E%3C/svg%3E"
+  );
+}
+
+/// Va en el elemento que pinta el color del tema, JUNTO a su background-color.
+///
+/// Son dos baldosas del mismo ruido fundidas al reves la una de la otra: la de abajo
+/// multiplica —solo puede oscurecer, asi que es la que se ve sobre fondo claro— y la
+/// de arriba aclara, que es la que se ve sobre fondo oscuro. La de abajo se funde
+/// contra el color del tema, y por eso el orden importa.
+///
+/// Con una sola capa habria que elegir modo, y el sitio tiene dos: la textura
+/// desapareceria en uno de los dos sin que nada avisara.
+@mixin surface {
+  background-image: texture(brand.$grain-light-opacity), texture(brand.$grain-dark-opacity);
+  background-repeat: repeat;
+  background-size: brand.$grain-tile;
+  background-blend-mode: screen, multiply;
+}

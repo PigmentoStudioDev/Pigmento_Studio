@@ -46,13 +46,23 @@ function withoutGlobals(css: string): string {
   return css.replace(/:global\([^)]*\)/g, '');
 }
 
+/**
+ * Un `url(...)` no declara ninguna clase. Sin quitarlos, el dominio que lleva dentro
+ * un data URI de SVG —`www.w3.org`, obligatorio en el namespace— se lee como `.w3` y
+ * `.org`, y el gate exige que alguien use dos clases que no existen. Lo destapo la
+ * textura de grano de los fondos.
+ */
+function withoutUrls(css: string): string {
+  return css.replace(/url\((?:'[^']*'|"[^"]*"|[^)]*)\)/g, '');
+}
+
 const PAIRS: Pair[] = modules(DS).map((sheet) => {
   const tsx = sheet.replace('.module.scss', '.tsx');
 
   return {
     rel: sheet.slice(DS.length + 1),
     declared: new Set(
-      [...withoutGlobals(compile(sheet, SASS).css).matchAll(/\.([a-zA-Z][\w]*)/g)].map(
+      [...withoutGlobals(withoutUrls(compile(sheet, SASS).css)).matchAll(/\.([a-zA-Z][\w]*)/g)].map(
         ([, name]) => name,
       ),
     ),

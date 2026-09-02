@@ -17,7 +17,7 @@ import styles from "./Icon.module.scss";
  * que pone quien lo envuelve — el enlace, el boton — y nombrarse a si mismo produce
  * dos nombres para un solo control.
  */
-export type IconName = "instagram" | "facebook" | "behance" | "sun" | "moon";
+export type IconName = "instagram" | "facebook" | "behance" | "sun" | "moon" | "arrow";
 
 /**
  * Un icono es una LISTA de trazados: los de marca no son una sola figura. El de
@@ -31,6 +31,15 @@ interface IconDefinition {
   readonly paths: readonly string[];
   /** Dibujado a linea y no a relleno. El grosor va con el, no en quien lo llama. */
   readonly stroke?: boolean;
+  /**
+   * Lienzo propio, cuando el dibujo no cabe en la reticula de 24.
+   *
+   * Se declara en vez de reescalar los trazados: reescribir a mano las coordenadas
+   * de un trazado para meterlo en otro viewBox es aritmetica sin verificacion — un
+   * digito mal y el dibujo sale deformado sin que nada falle. El SVG ya sabe
+   * encajar su lienzo en la caja que le den.
+   */
+  readonly viewBox?: string;
 }
 
 const ICONS: Record<IconName, IconDefinition> = {
@@ -62,6 +71,19 @@ const ICONS: Record<IconName, IconDefinition> = {
       "M4.93018 4.92999L5.64018 5.63999",
     ],
   },
+  /**
+   * La flecha del pie. Son DOS figuras y no una: el asta con su punta, y la barra
+   * vertical suelta del margen izquierdo — separadas, que es lo que le da el aire
+   * de senal y no de simple flecha.
+   */
+  arrow: {
+    viewBox: "0 0 118 115",
+    paths: [
+      "m76.5346 31.8467 41.4654 41.5767-41.4654 41.5766h-18.429l33.9984-34.0896h-92.0658671v-14.974h92.0658671l-33.9984-34.0897z",
+      "m.00000377 80.7447-.00000377-80.74469922 14.6416-.00000078v80.7447z",
+    ],
+  },
+
   moon: {
     stroke: true,
     paths: [
@@ -72,6 +94,9 @@ const ICONS: Record<IconName, IconDefinition> = {
 
 /** Grosor de linea de los iconos de interfaz, en unidades del viewBox de 24. */
 const STROKE_WIDTH = 1.5;
+
+/** La reticula de la casa. Solo se sale quien declare la suya. */
+const VIEW_BOX = "0 0 24 24";
 
 export interface IconProps {
   name: IconName;
@@ -96,7 +121,12 @@ export function Icon({ name }: IconProps) {
     // focusable="false" ademas de aria-hidden: Internet Explorer y algunos lectores
     // meten los <svg> en el orden de tabulacion aunque esten ocultos, y entonces la
     // tecla Tab se para en un dibujo.
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" className={styles.root}>
+    <svg
+      viewBox={icon.viewBox ?? VIEW_BOX}
+      aria-hidden="true"
+      focusable="false"
+      className={styles.root}
+    >
       {icon.paths.map((path) => (
         <path key={path} d={path} {...paint} />
       ))}

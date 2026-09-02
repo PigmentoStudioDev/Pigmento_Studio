@@ -63,6 +63,82 @@ body {
   }
 }
 
+// El gesto de entrada por scroll, en sus dos formas. Global porque las clases las
+// crea SplitText en runtime y los atributos los pone el hook, igual que con pg-char:
+// un modulo no puede nombrar algo que no existe hasta que alguien parte el texto.
+//
+// La linea arranca FUERA de su recorte — 110% de su propio alto, un pelo mas que el
+// 100% para que las colas de g, j, p no asomen por el borde — y el gesto es devolverla
+// a cero. El recorte lo pone SplitText envolviendo cada linea.
+//
+// El desfase se calcula en el navegador y no en Sass: el indice viaja como custom
+// property (`--line`, `--word`, que pone el propio SplitText) y el PASO es un token de
+// la escala. Escribirlo ya sumado daria una lista de literales que no dicen de donde
+// salen, y reafinar el ritmo obligaria a recalcularlos a mano.
+// El recorte de cada linea, que crea SplitText clonando la linea. Va a bloque por lo
+// mismo que la linea: es un <span>, y un span en linea no puede contener un bloque.
+.pg-line-mask {
+  display: block;
+}
+
+.pg-line,
+.pg-word {
+  // translate NO se aplica a elementos en linea no reemplazados. Sin esto la
+  // declaracion de abajo es valida, no da error y no mueve nada — el texto se queda
+  // quieto y parece que el efecto no existe. Es la misma trampa que ya documenta
+  // pg-char, y aqui vuelve a morder porque los trozos salen como <span>.
+  display: block;
+  translate: 0 110%;
+  transition: translate brand.$duration-onehalf brand.$ease-default;
+  transition-delay: calc(var(--line, var(--word, 0)) * #{brand.$stagger-slice});
+}
+
+// La palabra, en cambio, tiene que seguir fluyendo en la linea: a bloque, cada una
+// ocuparia su propio renglon.
+.pg-word {
+  display: inline-block;
+}
+
+[data-reveal='revealed'] .pg-line,
+[data-reveal='revealed'] .pg-word {
+  translate: 0 0;
+}
+
+// La otra forma: la caja entera. Es lo unico que se puede hacer con una fila flex o
+// una pildora, donde partir por lineas mete un envoltorio de bloque entre el
+// contenedor y sus hijos y le deshace la fila.
+//
+// Es el MISMO gesto que el de las lineas y no un fundido: arranca fuera de un recorte
+// —el 100% de su propio alto, que es justo lo que lo esconde entero— y entra hasta su
+// sitio con la misma duracion y la misma curva. Lo unico que cambia entre los dos
+// modos es quien recorta: alli SplitText por linea, aqui el envoltorio.
+[data-reveal-mode='block'] {
+  transition: translate brand.$duration-onehalf brand.$ease-default;
+}
+
+[data-reveal-mode='block'][data-reveal='idle'] {
+  translate: 0 100%;
+}
+
+// Se apaga entero y se devuelve todo a su sitio: con la transicion apagada pero el
+// desplazamiento puesto, el bloque se quedaria escondido dentro de su recorte — que es
+// mucho peor que la animacion que se pidio evitar.
+//
+// El hook ademas no llega ni a partir el texto con esta preferencia, asi que estas
+// reglas son la segunda defensa: cubren que alguien la active con la pagina ya partida.
+@media (prefers-reduced-motion: reduce) {
+  .pg-line,
+  .pg-word,
+  [data-reveal-mode='block'] {
+    translate: none;
+    transition: none;
+  }
+
+  [data-reveal-mode='block'][data-reveal='idle'] {
+    translate: none;
+  }
+}
+
 // El hueco entre lineas lo pone la COLUMNA, no cada pieza. Los componentes de
 // texto salen sin margen a proposito — el ritmo es de la pagina — asi que la unica
 // forma de que la 404 y el error respiren es que su contenedor lo declare una vez.

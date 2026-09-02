@@ -6,6 +6,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/grain' as grain;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
@@ -21,8 +22,14 @@
   // mismo build. Configurarlo aqui duplicaria la eleccion de tema en cada modulo;
   // moverla a _carbon-config obligaria a index.scss a dejar de configurar el suyo
   // y cambiaria la referencia sin marca de theme-contract.test.ts.
-  background: theme.$background;
+  // `background-color` y no el atajo `background`: el atajo reinicia las capas de
+  // imagen, asi que se llevaria por delante la textura del grano.
+  background-color: theme.$background;
   inline-size: 100%;
+
+  // El grano va DELANTE del color y detras de todo lo demas: lo que la seccion
+  // pinte dentro —una foto, un video, el texto— lo tapa.
+  @include grain.surface;
 }
 
 .inner {

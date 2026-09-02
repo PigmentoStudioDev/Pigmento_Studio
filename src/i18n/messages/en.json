@@ -30,5 +30,34 @@
       "cta": "See the work",
       "tag": "Featured"
     }
+  },
+  "footer": {
+    "studio": "Pigmento Studio®",
+    "work": "Work",
+    "services": "Services",
+    "contact": "Contact",
+    "handle": "@pigmento__studio",
+    "handleName": "Pigmento Studio on Instagram (opens in a new tab)",
+    "instagram": "Instagram",
+    "instagramName": "Pigmento Studio on Instagram (opens in a new tab)",
+    "behance": "Behance",
+    "behanceName": "Pigmento Studio on Behance (opens in a new tab)",
+    "facebook": "Facebook",
+    "facebookName": "Pigmento Studio on Facebook (opens in a new tab)",
+    "city": "Mexico City",
+    "metaLabel": "Footer shortcuts",
+    "linksLabel": "Social and location"
+  },
+  "home": {
+    "manifesto": {
+      "eyebrow": "What we do",
+      "open": "We build brands people recognise: ",
+      "branding": "branding",
+      "afterBranding": " with a reason, ",
+      "sites": "sites",
+      "afterSites": " that load and convert, ",
+      "motion": "motion",
+      "close": " nobody skips."
+    }
   }
 }
