@@ -58,6 +58,19 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
 
     /**
+     * Los contratos de estilo COMPILAN Sass dentro del test —Carbon entero, y en
+     * theme-contract una vez por zona— y despues parsean el CSS que sale. Eso no es
+     * un test lento por descuido: es la unica forma de afirmar sobre lo que de
+     * verdad se emite, y por eso el techo de 5s por defecto no mide nada util aqui.
+     *
+     * Los tres segundos de margen que sobran en un portatil desaparecen en un
+     * runner compartido: la misma suite tarda 10s aqui y 56s en CI, y lo que
+     * fallaba no era una asercion sino el reloj. Un gate que se cae por la maquina
+     * donde corre deja de decir nada sobre el codigo.
+     */
+    testTimeout: 20_000,
+
+    /**
      * next-intl se procesa por Vite en vez de cargarse como dependencia externa.
      *
      * Por dentro importa `next/navigation` sin extension, y el resolver de Node no
