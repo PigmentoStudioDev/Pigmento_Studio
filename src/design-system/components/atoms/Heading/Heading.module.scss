@@ -14,38 +14,26 @@
   // las lineas para que la ultima no se quede con una palabra suelta, que es lo que
   // pasa en cuanto el ingles acorta una frase escrita en espanol.
   //
-  // `break-word` es el seguro del display: a 9.375rem una palabra larga se sale de
-  // la ventana, y eso no da error ni aviso — solo scroll horizontal en un movil.
+  // `break-word` es el seguro del display: en la cima de la escala una palabra larga
+  // se sale de la ventana, y eso no da error ni aviso — solo scroll horizontal en un
+  // movil.
   text-wrap: balance;
   overflow-wrap: break-word;
 }
 
-.sizeDisplayXxl {
-  @include brandtype.style('display-xxl');
+// Tres cuerpos y no siete. Los cuatro que faltan no se han perdido: eran escalones
+// que nadie distinguia del de al lado. Un titular que no cabe en ninguno de estos
+// tres esta pidiendo otro sitio en la pagina, no otro tamano.
+.sizeDisplay {
+  @include brandtype.style('display');
 }
 
-.sizeDisplayXl {
-  @include brandtype.style('display-xl');
+.sizeHeading {
+  @include brandtype.style('heading');
 }
 
-.sizeDisplayL {
-  @include brandtype.style('display-l');
-}
-
-.sizeHeadingL {
-  @include brandtype.style('heading-l');
-}
-
-.sizeHeadingM {
-  @include brandtype.style('heading-m');
-}
-
-.sizeHeadingS {
-  @include brandtype.style('heading-s');
-}
-
-.sizeHeadingXs {
-  @include brandtype.style('heading-xs');
+.sizeLead {
+  @include brandtype.style('lead');
 }
 
 // Rol, no color. Es lo que hace que el titular se invierta solo al caer dentro de

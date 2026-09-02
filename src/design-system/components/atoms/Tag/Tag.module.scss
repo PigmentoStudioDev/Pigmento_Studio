@@ -10,7 +10,7 @@
 // consume. Un distintivo por color deja la decision al que escribe el markup;
 // por intencion, la deja en el design system.
 .root {
-  @include brandtype.style('eyebrow');
+  @include brandtype.style('label');
 
   display: inline-flex;
   align-items: center;

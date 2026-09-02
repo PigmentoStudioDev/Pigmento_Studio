@@ -15,15 +15,7 @@ const declared = new Set(
 
 const LEVELS: HeadingLevel[] = [1, 2, 3, 4, 5, 6];
 
-const SIZES: HeadingSize[] = [
-  "display-xxl",
-  "display-xl",
-  "display-l",
-  "heading-l",
-  "heading-m",
-  "heading-s",
-  "heading-xs",
-];
+const SIZES: HeadingSize[] = ["display", "heading", "lead"];
 
 const TONES: HeadingTone[] = ["primary", "secondary"];
 
@@ -41,13 +33,13 @@ describe("Heading", () => {
    */
   it("el cuerpo no decide el nivel", () => {
     const { container } = render(
-      <Heading level={3} size="display-xxl">
+      <Heading level={3} size="display">
         Estudio de marca
       </Heading>,
     );
 
     expect(screen.getByRole("heading", { level: 3 })).toBeInTheDocument();
-    expect([...(container.firstElementChild?.classList ?? [])]).toContain("sizeDisplayXxl");
+    expect([...(container.firstElementChild?.classList ?? [])]).toContain("sizeDisplay");
   });
 
   /**

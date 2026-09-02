@@ -10,7 +10,8 @@
   // linea, y una linea de apoyo bajo un titular pide el extremo corto. La regla esta
   // escrita en caracteres, asi que la unidad correcta es la que los cuenta: en rem,
   // la misma caja le queda ancha al ingles, que corre un 10-15% mas corto que el
-  // espanol para el mismo contenido.
+  // espanol para el mismo contenido. Y en ch la caja sigue al cuerpo: con `lead` es
+  // ancha en pixeles y con `body` estrecha, sin tener que declararlo dos veces.
   //
   // Y va aqui y no en la composicion, al reves que la medida de un titular: cuantas
   // lineas ocupa un display es una decision de diseno de la seccion; cuantos
@@ -23,12 +24,12 @@
   text-wrap: pretty;
 }
 
-.sizeBodyL {
-  @include brandtype.style('body-l');
+.sizeLead {
+  @include brandtype.style('lead');
 }
 
-.sizeBodyM {
-  @include brandtype.style('body-m');
+.sizeBody {
+  @include brandtype.style('body');
 }
 
 .tonePrimary {

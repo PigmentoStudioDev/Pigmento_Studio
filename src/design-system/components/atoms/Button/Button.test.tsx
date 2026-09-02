@@ -84,6 +84,24 @@ describe("Button", () => {
     expect(own.filter((cls) => !declared.has(cls))).toEqual([]);
   });
 
+  /**
+   * El estirado es OPT-IN y esta es la mitad del contrato: por defecto el control
+   * mide lo que su etiqueta. Un boton que se estirase siempre dejaria de leerse
+   * como boton en cuanto cayera dentro de un contenedor ancho.
+   */
+  it("por defecto no se estira, y con fullWidth si", () => {
+    const { rerender } = render(<Button>Enviar</Button>);
+    expect([...screen.getByRole("button").classList]).not.toContain("fullWidth");
+
+    rerender(<Button fullWidth>Enviar</Button>);
+    const own = [...screen.getByRole("button").classList];
+
+    // root + enfasis + tamano + fullWidth.
+    expect(own).toHaveLength(4);
+    expect(own).toContain("fullWidth");
+    expect(own.filter((cls) => !declared.has(cls))).toEqual([]);
+  });
+
   it("acepta una clase extra sin perder las suyas", () => {
     render(<Button className="extra">Enviar</Button>);
 

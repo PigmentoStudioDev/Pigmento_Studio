@@ -8,7 +8,7 @@ export default function NotFound() {
       {/* level 1 y cuerpo pequeno: es el titulo del documento, pero una pagina de
           estado no es un hero. Es justo el caso para el que el titular separa el
           nivel del tamano. */}
-      <Heading level={1} size="heading-m">
+      <Heading level={1} size="lead">
         Pagina no encontrada
       </Heading>
 

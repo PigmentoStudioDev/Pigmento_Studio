@@ -27,6 +27,21 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+// Por defecto el control mide lo que su etiqueta, que es lo correcto dentro de un
+// parrafo o de una barra: un boton que se estira siempre deja de leerse como un
+// boton y pasa a leerse como una franja. `fullWidth` es para el otro caso — el CTA
+// de un movil, el boton que cierra un formulario — donde el ancho lo manda el
+// contenedor y no el texto.
+//
+// No basta con cambiar el display a `grid`. Dentro de una columna flex con
+// `align-items: flex-start`, que es como esta montado el hero, el item sigue
+// encogiendo hasta su contenido porque esa propiedad ya decide el eje transversal.
+// El 100% es lo que de verdad lo estira, y funciona igual en flujo normal.
+.fullWidth {
+  display: grid;
+  inline-size: 100%;
+}
+
 // No es un outline porque tiene que seguir la pildora. Y va en ::after y no en la
 // placa para que el foco no herede su escala de hover.
 .root::after {

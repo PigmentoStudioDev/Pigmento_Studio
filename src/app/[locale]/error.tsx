@@ -21,7 +21,7 @@ export default function Error({
 
   return (
     <main className="pg-status">
-      <Heading level={1} size="heading-m">
+      <Heading level={1} size="lead">
         Algo salio mal
       </Heading>
 

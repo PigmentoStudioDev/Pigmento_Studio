@@ -22,14 +22,7 @@ import styles from "./Heading.module.scss";
  */
 export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
-export type HeadingSize =
-  | "display-xxl"
-  | "display-xl"
-  | "display-l"
-  | "heading-l"
-  | "heading-m"
-  | "heading-s"
-  | "heading-xs";
+export type HeadingSize = "display" | "heading" | "lead";
 
 export type HeadingTone = "primary" | "secondary";
 
@@ -47,13 +40,9 @@ export interface HeadingProps {
 }
 
 const SIZE: Record<HeadingSize, string> = {
-  "display-xxl": styles.sizeDisplayXxl,
-  "display-xl": styles.sizeDisplayXl,
-  "display-l": styles.sizeDisplayL,
-  "heading-l": styles.sizeHeadingL,
-  "heading-m": styles.sizeHeadingM,
-  "heading-s": styles.sizeHeadingS,
-  "heading-xs": styles.sizeHeadingXs,
+  display: styles.sizeDisplay,
+  heading: styles.sizeHeading,
+  lead: styles.sizeLead,
 };
 
 const TONE: Record<HeadingTone, string> = {
@@ -65,14 +54,19 @@ const TONE: Record<HeadingTone, string> = {
  * El cuerpo por defecto de cada nivel: la lectura razonable de una pagina bien
  * anidada. No es una atadura — existe `size` justamente para cuando la composicion
  * pida otra cosa — pero evita que el caso comun tenga que decir dos veces lo mismo.
+ *
+ * Del cuarto nivel hacia abajo todos comparten cuerpo, y no es dejadez: la escala
+ * tiene tres titulares porque un cuarto escalon seria indistinguible del tercero.
+ * Una pagina que necesite que su h4 se vea distinto de su h3 tiene un problema de
+ * estructura y no de tipografia.
  */
 const SIZE_FOR_LEVEL: Record<HeadingLevel, HeadingSize> = {
-  1: "display-l",
-  2: "heading-l",
-  3: "heading-m",
-  4: "heading-s",
-  5: "heading-xs",
-  6: "heading-xs",
+  1: "display",
+  2: "heading",
+  3: "lead",
+  4: "lead",
+  5: "lead",
+  6: "lead",
 };
 
 export function Heading({ children, level, size, tone = "primary", id }: HeadingProps) {
