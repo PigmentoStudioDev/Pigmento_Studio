@@ -12,10 +12,10 @@ import { loadMotion, type Motion } from "./gsap";
  *   `lines` / `words` — el texto se parte y cada trozo entra desde debajo de su
  *   propio recorte. Es el gesto bueno, y solo vale para texto corrido.
  *
- *   `block` — la caja entera sube y aparece. Es para todo lo demas: una pildora, una
- *   fila de enlaces, un titular que ademas es una fila flex. Partir por lineas una
- *   caja flex mete un envoltorio de bloque entre el contenedor y sus hijos y le
- *   deshace la fila; con estos no hay eleccion que tomar.
+ *   `block` — la caja sube un poco y aparece, y los hermanos se escalonan. Es para
+ *   todo lo demas: una pildora, una fila de enlaces, una rejilla de retratos. Partir
+ *   por lineas una caja flex mete un envoltorio de bloque entre el contenedor y sus
+ *   hijos y le deshace la fila; y una foto no tiene lineas que partir.
  *
  * **El movimiento no vive aqui.** El JS hace las dos cosas que el CSS no sabe —partir
  * un parrafo por lineas, que depende de como caiga el texto, y saber cuando el bloque
@@ -43,6 +43,15 @@ export interface ScrollRevealOptions {
    * misma unidad se leen como dos sistemas.
    */
   by?: ScrollRevealBy;
+  /**
+   * El grupo son los hijos del HIJO, no el hijo.
+   *
+   * Es para una lista o una rejilla, donde el envoltorio no puede meterse entre el
+   * contenedor y sus items: un <div> dentro de un <ul> no es HTML valido y rompe la
+   * lista para quien la escucha. Con esto el envoltorio se queda fuera y el desfase
+   * lo reparten igualmente las celdas.
+   */
+  inner?: boolean;
 }
 
 /** Las clases que crea el partido. Globales, en `_app.scss`, como `.pg-char`. */
@@ -51,6 +60,12 @@ const WORD_CLASS = "pg-word";
 
 /** El estado, legible desde el CSS: `idle` esperando su turno, `revealed` dentro. */
 const STATE_ATTRIBUTE = "data-reveal";
+
+/**
+ * El sitio de cada pieza en la cola, que es lo que lee el retardo en la hoja. El paso
+ * es un token de la escala; aqui solo viaja el orden, igual que en `Reveal`.
+ */
+const INDEX_PROPERTY = "--pg-reveal-index";
 
 /** Y como llega, que decide QUE se mueve: la caja o los trozos de dentro. */
 const MODE_ATTRIBUTE = "data-reveal-mode";
@@ -82,7 +97,10 @@ function alreadyInView(element: HTMLElement): boolean {
   return box.top < window.innerHeight && box.bottom > 0;
 }
 
-export function useScrollReveal<T extends HTMLElement>({ by = "lines" }: ScrollRevealOptions = {}) {
+export function useScrollReveal<T extends HTMLElement>({
+  by = "lines",
+  inner = false,
+}: ScrollRevealOptions = {}) {
   const rootRef = useRef<T>(null);
 
   useEffect(() => {
@@ -99,7 +117,8 @@ export function useScrollReveal<T extends HTMLElement>({ by = "lines" }: ScrollR
     // Los bloques se toman por ESTRUCTURA — los hijos del envoltorio — y no por una
     // clase: quien lo usa decide que mete dentro, y este hook no tiene por que
     // enterarse de como se llaman sus cosas. Es como useMarquee lee sus copias.
-    const blocks = [...root.children].filter(
+    const container = inner ? (root.firstElementChild ?? root) : root;
+    const blocks = [...container.children].filter(
       (child): child is HTMLElement => child instanceof HTMLElement,
     );
     if (blocks.length === 0) return;
@@ -110,25 +129,25 @@ export function useScrollReveal<T extends HTMLElement>({ by = "lines" }: ScrollR
 
     const watch = () => {
       /**
-       * Quien se VIGILA no siempre es quien se MUEVE, y confundirlos deja el efecto
-       * muerto sin un solo error.
+       * En modo caja el grupo entra JUNTO y escalonado, no pieza a pieza segun cada
+       * una asoma: son hermanos de la misma rejilla o de la misma fila, y si cada uno
+       * esperase su turno de scroll, una rejilla ancha entraria por columnas — que no
+       * es un gesto, es un fallo de sincronia. Dispara la primera y las demas la
+       * siguen con su retardo.
        *
-       * En modo caja el bloque arranca desplazado fuera de su recorte, asi que su
-       * area visible es cero — y un elemento recortado por un ancestro no interseca
-       * nunca. Se vigilaria a si mismo desde detras de su propia mascara y no
-       * entraria jamas. Quien esta en el flujo y si se ve es el envoltorio.
-       *
-       * Partiendo por lineas no pasa: el recorte lo lleva cada linea por dentro y el
-       * bloque sigue ocupando su sitio, asi que cada uno puede vigilarse a si mismo
-       * y entrar cuando le toca.
+       * Partiendo por lineas es al reves: cada bloque de texto se vigila a si mismo,
+       * porque leer es secuencial y cada parrafo entra cuando llega.
        */
       const targets =
         by === "block"
-          ? new Map<HTMLElement, HTMLElement[]>([[root, blocks]])
+          ? new Map<HTMLElement, HTMLElement[]>([[blocks[0], blocks]])
           : new Map(blocks.map((block) => [block, [block]]));
 
-      blocks.forEach((block) => {
-        if (by === "block") block.setAttribute(MODE_ATTRIBUTE, "block");
+      blocks.forEach((block, index) => {
+        if (by !== "block") return;
+
+        block.setAttribute(MODE_ATTRIBUTE, "block");
+        block.style.setProperty(INDEX_PROPERTY, String(index));
       });
 
       // Sin observador —un entorno que no lo trae— todo se da por revelado: el
@@ -219,9 +238,10 @@ export function useScrollReveal<T extends HTMLElement>({ by = "lines" }: ScrollR
       blocks.forEach((block) => {
         block.removeAttribute(STATE_ATTRIBUTE);
         block.removeAttribute(MODE_ATTRIBUTE);
+        block.style.removeProperty(INDEX_PROPERTY);
       });
     };
-  }, [by]);
+  }, [by, inner]);
 
   return rootRef;
 }
