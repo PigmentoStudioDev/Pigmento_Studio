@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProgressiveBlur } from "@/design-system/components/atoms/ProgressiveBlur/ProgressiveBlur";
+import { SmoothScroll } from "@/design-system/components/layout/SmoothScroll/SmoothScroll";
 import { SiteFooter } from "@/design-system/components/organisms/SiteFooter/SiteFooter";
 import { SiteHeader } from "@/design-system/components/organisms/SiteHeader/SiteHeader";
 import { themeModeScript } from "@/design-system/theme/mode";
@@ -139,6 +140,10 @@ export default async function RootLayout({
             que necesita el navegador son las cadenas de los componentes de
             cliente, y mandarle el resto es peso que nadie lee. */}
         <NextIntlClientProvider>
+          {/* No pinta nada: cambia como se desplaza la pagina entera. Va antes que
+              todo lo demas para que el scroll ya este suavizado cuando el primer
+              bloque se registre a el. */}
+          <SmoothScroll />
           {/* Antes que la cabecera: difumina lo que pasa por DEBAJO de la barra
               conforme se acerca al borde, para que la barra pueda ir sin fondo
               propio sobre un hero de video. Detras de ella tambien por z-index
