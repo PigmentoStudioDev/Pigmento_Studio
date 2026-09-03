@@ -14,8 +14,8 @@
 // toda la resolucion donde nadie distingue un escalon del siguiente, y ninguna justo
 // donde una pagina decide de verdad, que es el titulo de una seccion.
 //
-// Ahora ningun vecino se parece a su vecino: x1.88, x1.60 y x3.0 entre los cuerpos.
-// El hueco entre 16 y 30 se deja VACIO a proposito. Si una pieza no cabe en ninguno
+// Ahora ningun vecino se parece a su vecino, y el hueco entre el cuerpo de lectura y
+// la entradilla se deja VACIO a proposito. Si una pieza no cabe en ninguno
 // de los dos, la respuesta casi siempre es que su sitio en la pagina esta mal, no
 // que falte un tamano — y un escalon intermedio es exactamente como se reconstruye
 // el atasco que esto viene a deshacer.
@@ -94,7 +94,18 @@ $-styles: (
 
   // El unico de la escala pensado para LEER seguido, y el unico con interlineado de
   // lectura. Todo lo demas se mira antes de leerse.
-  'body': (size: 1rem, height: 1.5, tracking: -0.01em, weight: 400),
+  //
+  // 20px y no los 16 de costumbre. Los 16 son el cuerpo por defecto del navegador y
+  // el de una interfaz de producto; en una pagina cuya cima llega a 150px y cuya
+  // entradilla mide 30, ese mismo cuerpo deja de leerse como texto y pasa a leerse
+  // como letra pequena — se noto en las respuestas de la FAQ, a sangre y con la
+  // linea larga.
+  //
+  // Lo que se estrecha con esto es el hueco hasta la entradilla, que pasa de x1.88 a
+  // x1.50. Sigue siendo un escalon que se ve, y el de abajo tambien: contra el
+  // metadato la diferencia de tamano nunca fue el argumento — es la familia mono y
+  // la caja alta las que dicen que eso es metadato antes de leerlo.
+  'body': (size: 1.25rem, height: 1.5, tracking: -0.01em, weight: 400),
 
   // El metadato: chip de seccion, distintivo, contador.
   //
