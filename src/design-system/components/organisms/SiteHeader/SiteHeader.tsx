@@ -361,7 +361,10 @@ export function SiteHeader({
               igual y la fila de 0fr nunca llega a cero: el panel cerrado seguia
               ocupando alto y empujaba la placa por debajo de la barra. */}
           <div className={styles.panelInner}>
-            <div className={styles.panelContent}>
+            {/* Este panel se desplaza por dentro. `data-lenis-prevent` es lo que
+                impide que el scroll suavizado de la pagina se lo quede: sin el, la
+                rueda dentro del menu movia la pagina de detras. */}
+            <div className={styles.panelContent} data-lenis-prevent>
               <div className={styles.panelRow}>
                 {groups.map((group) => (
                   <div
