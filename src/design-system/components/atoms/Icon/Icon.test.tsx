@@ -6,7 +6,7 @@ import { Icon, type IconName } from "./Icon";
 /** Logotipos y senales: siluetas rellenas. */
 const FILLED: IconName[] = ["instagram", "facebook", "behance", "arrow"];
 /** De interfaz: dibujados a linea. */
-const STROKED: IconName[] = ["sun", "moon"];
+const STROKED: IconName[] = ["sun", "moon", "chevron"];
 const NAMES: IconName[] = [...FILLED, ...STROKED];
 
 describe("Icon", () => {

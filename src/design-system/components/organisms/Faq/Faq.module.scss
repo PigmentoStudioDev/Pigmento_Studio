@@ -1,0 +1,159 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// Lado del chevron. En em contra la pregunta: si un dia la fila cambia de cuerpo, el
+/// icono le sigue sin tocar nada.
+$icon-size: 0.9em;
+
+/// Medida de la respuesta. Ancha —el doble de una columna de lectura normal, que es
+/// lo que pide una FAQ a sangre— pero no a sangre del todo: la referencia deja correr
+/// la linea hasta unos 160 caracteres, y ahi el ojo ya no encuentra el renglon de
+/// vuelta. A 120 la respuesta sigue llenando media pantalla y se lee de un tiron.
+$answer-inline-size: 120ch;
+
+/// Cuanto tarda la respuesta en asomar respecto a la apertura del panel. La
+/// referencia arranca su texto a un tercio del recorrido: antes, el texto sale
+/// cuando todavia no hay hueco donde ponerlo.
+$answer-delay: brand.$duration-quarter;
+
+.root {
+  padding-inline: spacing.$spacing-06;
+}
+
+.row {
+  border-block-start: 1px solid theme.$border-subtle;
+}
+
+// El ultimo filete cierra la lista: sin el, la ultima fila se queda abierta contra el
+// aire y la seccion parece cortada.
+.row:last-child {
+  border-block-end: 1px solid theme.$border-subtle;
+}
+
+// El titular no aporta caja: la fila entera la dibuja el boton. Sin esto, el h3 trae
+// el margen y el cuerpo del navegador y descuadra la fila.
+.questionHeading {
+  margin: 0;
+  font: inherit;
+}
+
+// El area de pulsacion es la FILA ENTERA y no lo que mide el texto: en una lista a
+// sangre, un blanco del ancho de la pregunta deja media pantalla muerta.
+// El estilo de tipo va AQUI y no en la pregunta, y no es indiferente: el chevron se
+// mide en em, y un em vale lo que vale el cuerpo del elemento que lo contiene. Con el
+// estilo una capa mas abajo, el icono se medía contra el cuerpo heredado del
+// documento y salia a 14px — la mitad de lo que le toca.
+.trigger {
+  @include brandtype.style('lead');
+
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: spacing.$spacing-05;
+  inline-size: 100%;
+  padding-block: spacing.$spacing-06;
+  border: none;
+  background-color: transparent;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.trigger:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+.question {
+  text-transform: uppercase;
+}
+
+.icon {
+  display: flex;
+  inline-size: $icon-size;
+  color: theme.$text-secondary;
+  // Gira al abrirse. La apertura es decidida y el cierre mas calmado, igual que el
+  // panel: si los dos usan la misma curva, cerrar se lee como un rebote.
+  transition: rotate brand.$duration-half brand.$ease-natural;
+}
+
+.icon svg {
+  inline-size: 100%;
+  block-size: auto;
+}
+
+// El panel se abre de `0fr` a `1fr` y NO midiendo su alto en JS.
+//
+// La reticula ya sabe cuanto mide su contenido, asi que no hay que preguntarselo al
+// DOM en cada apertura ni recalcularlo cuando el texto cambie de numero de lineas al
+// redimensionar — que es la mitad del codigo de cualquier acordeon con alto animado.
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  // La de CERRAR: mas corta y con la curva que acompana en vez de liderar.
+  transition: grid-template-rows brand.$duration-half brand.$ease-natural;
+}
+
+// El recorte. Es tambien lo que esconde la respuesta antes de que suba.
+.panelInner {
+  overflow: hidden;
+}
+
+.answer {
+  @include brandtype.style('body');
+
+  margin: 0;
+  max-inline-size: $answer-inline-size;
+  padding-block-end: spacing.$spacing-07;
+  color: theme.$text-secondary;
+  // Sube desde detras del borde del panel, no aparece en su sitio: es el mismo gesto
+  // que el revelado por lineas del resto de la pagina, un nivel mas arriba.
+  translate: 0 100%;
+  transition: translate brand.$duration-half brand.$ease-natural;
+}
+
+// Abierta. Las tres transiciones se declaran AQUI ademas de en el reposo, y no es
+// repeticion: una transicion se aplica al estado hacia el que se va, asi que la de
+// esta regla es la de ABRIR y la del reposo la de cerrar. Es como se consigue que los
+// dos sentidos no duren lo mismo sin una linea de JS.
+.row[data-faq-open='true'] .panel {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows brand.$duration-base brand.$ease-default;
+}
+
+.row[data-faq-open='true'] .icon {
+  rotate: 180deg;
+  transition: rotate brand.$duration-base brand.$ease-default;
+}
+
+.row[data-faq-open='true'] .answer {
+  translate: 0 0;
+  transition: translate brand.$duration-base brand.$ease-default;
+  // La respuesta entra cuando el panel ya ha abierto hueco donde ponerla.
+  transition-delay: $answer-delay;
+}
+
+// Se apaga TODO, no se acorta. Y hay que devolver la respuesta a su sitio: con la
+// transicion apagada pero el desplazamiento puesto, el texto se quedaria escondido
+// detras del borde del panel — mucho peor que la animacion que se pidio evitar.
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .icon,
+  .answer,
+  .row[data-faq-open='true'] .panel,
+  .row[data-faq-open='true'] .icon,
+  .row[data-faq-open='true'] .answer {
+    transition: none;
+  }
+
+  .answer {
+    translate: none;
+  }
+}

@@ -1,0 +1,46 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// Dos columnas y el texto en la derecha. El hueco de la izquierda esta vacio a
+// proposito: es lo que hace que el ojo baje del titular a lo que viene sin tropezar
+// con un parrafo por el camino.
+.band {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: spacing.$spacing-05;
+  margin-block-start: spacing.$spacing-07;
+  padding-block: spacing.$spacing-07;
+  border-block-start: 1px solid theme.$border-subtle;
+}
+
+.label {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+// La entradilla es una ENTRADILLA, que es justo el escalon `lead` de la escala: el
+// cuerpo grande que acompana a un titular. A cuerpo de texto normal, en una banda de
+// 1900px de ancho, no introduce nada — se lee como una nota al pie del titulo.
+//
+// En secundario para que no compita con lo que viene debajo, que es lo que se escanea.
+// Y sin medida propia: la columna ya es la medida.
+.intro {
+  @include brandtype.style('lead');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+// En movil las dos columnas se apilan: a media pantalla, un parrafo en la columna
+// derecha sale a cuatro palabras por linea.
+@include breakpoint.breakpoint-down('md') {
+  .band {
+    grid-template-columns: 1fr;
+  }
+}

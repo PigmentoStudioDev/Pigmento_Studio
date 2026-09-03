@@ -58,6 +58,65 @@
       "afterSites": " que cargan y convierten, ",
       "motion": "motion",
       "close": " que nadie se salta."
+    },
+    "team": {
+      "title": "Equipo",
+      "label": "Quién lo hace",
+      "intro": "Un estudio pequeño en el que la persona que diseña tu marca es la misma que contesta tus correos. Sin capas de gestión entre tú y quien hace el trabajo.",
+      "one": {
+        "name": "Nombre Apellido",
+        "role": "Dirección de arte"
+      },
+      "two": {
+        "name": "Nombre Apellido",
+        "role": "Diseño de marca"
+      },
+      "three": {
+        "name": "Nombre Apellido",
+        "role": "Desarrollo web"
+      },
+      "four": {
+        "name": "Nombre Apellido",
+        "role": "Motion"
+      },
+      "five": {
+        "name": "Nombre Apellido",
+        "role": "Marketing"
+      }
+    },
+    "faq": {
+      "title": "FAQ",
+      "label": "Preguntas frecuentes",
+      "intro": "Elegir estudio es una decisión cara de deshacer. Abajo están las preguntas que nos hacen antes de firmar, contestadas como las contestamos en una llamada.",
+      "price": {
+        "question": "¿Cuánto cuesta un proyecto?",
+        "answer": "Depende del alcance, y el número se dice en la primera llamada. Una identidad completa no vale lo mismo que una landing. Trabajamos con presupuesto cerrado por proyecto: sabes lo que cuesta antes de empezar, no al final."
+      },
+      "time": {
+        "question": "¿Cuánto tarda?",
+        "answer": "Un sitio, entre cuatro y ocho semanas. Una identidad, entre seis y diez. La variable rara vez somos nosotros: es cuánto tarda en llegar el contenido y en volver una respuesta."
+      },
+      "remote": {
+        "question": "¿Trabajan con marcas fuera de México?",
+        "answer": "Sí, y buena parte de lo que hacemos se entrega en remoto. Desde Ciudad de México el horario cruza con toda América y alcanza la mañana europea."
+      },
+      "ownership": {
+        "question": "¿De quién es lo que producen?",
+        "answer": "Tuyo. Al cerrar el proyecto se entregan los archivos editables y los accesos, sin licencias que caduquen ni piezas que se queden en un servidor nuestro."
+      },
+      "scope": {
+        "question": "¿Puedo contratar solo una parte?",
+        "answer": "Sí, sabiendo qué se pierde: el sitio, la campaña y el motion se diseñan a la vez para que digan lo mismo. Por separado funciona; junto funciona mejor."
+      },
+      "start": {
+        "question": "¿Qué necesitan de mí para empezar?",
+        "answer": "Media hora para entender el negocio, alguien que pueda decir sí o no sin consultar a cuatro personas, y lo que ya tengas — aunque sea un logo dentro de un PDF."
+      }
+    },
+    "cta": {
+      "label": "Hablemos",
+      "title": "Agendemos una llamada y vemos por dónde empieza tu marca.",
+      "cta": "Agendar una llamada"
     }
   }
 }
