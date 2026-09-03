@@ -16,10 +16,9 @@ import styles from "./ScrollReveal.module.scss";
  * cruza al navegador es este envoltorio, una vez, no cada bloque de texto que quiera
  * entrar. Con un hook por componente, cada parrafo del sitio se mudaria al cliente.
  *
- * Partiendo por lineas, `display: contents` en la hoja: el envoltorio no crea caja, asi
- * que se mete entre un contenedor y su hijo sin tocar el layout de ninguno de los dos —
- * ni una columna flex se entera de que hay un div nuevo por medio. En modo caja si crea
- * una, porque el recorte tiene que vivir en algun sitio.
+ * `display: contents` en la hoja: el envoltorio no crea caja, asi que se mete entre un
+ * contenedor y su hijo sin tocar el layout de ninguno de los dos — ni una columna flex
+ * ni una rejilla se enteran de que hay un div nuevo por medio.
  *
  * Primitiva de COMPOSICION: vive en layout/ y recibe `children: ReactNode`, que es la
  * excepcion declarada a las props serializables.
@@ -29,16 +28,21 @@ export interface ScrollRevealProps {
   /**
    * Como llega. `lines` es el gesto bueno y solo vale para texto corrido; `block`
    * mueve la caja entera y es lo unico que se puede hacer con una fila flex, una
-   * pildora o cualquier cosa que no sea un parrafo.
+   * pildora o una foto.
    */
   by?: ScrollRevealBy;
+  /**
+   * El grupo son los hijos del HIJO. Para una lista o una rejilla, donde este
+   * envoltorio no puede meterse entre el contenedor y sus items sin romper la lista.
+   */
+  inner?: boolean;
 }
 
-export function ScrollReveal({ children, by = "lines" }: ScrollRevealProps) {
-  const rootRef = useScrollReveal<HTMLDivElement>({ by });
+export function ScrollReveal({ children, by = "lines", inner = false }: ScrollRevealProps) {
+  const rootRef = useScrollReveal<HTMLDivElement>({ by, inner });
 
   return (
-    <div ref={rootRef} className={by === "block" ? styles.mask : styles.root}>
+    <div ref={rootRef} className={styles.root}>
       {children}
     </div>
   );

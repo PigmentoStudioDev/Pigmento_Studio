@@ -104,20 +104,28 @@ body {
   translate: 0 0;
 }
 
-// La otra forma: la caja entera. Es lo unico que se puede hacer con una fila flex o
-// una pildora, donde partir por lineas mete un envoltorio de bloque entre el
-// contenedor y sus hijos y le deshace la fila.
+// La otra forma: la caja entera, para lo que no tiene lineas que partir — una fila
+// flex, una pildora, una foto.
 //
-// Es el MISMO gesto que el de las lineas y no un fundido: arranca fuera de un recorte
-// —el 100% de su propio alto, que es justo lo que lo esconde entero— y entra hasta su
-// sitio con la misma duracion y la misma curva. Lo unico que cambia entre los dos
-// modos es quien recorta: alli SplitText por linea, aqui el envoltorio.
+// Y NO es la misma que la de las lineas, aunque lo fue: una caja que sale de detras de
+// su propio borde es una cortina, y una cortina sobre un retrato grande se lee como si
+// la foto se estuviera cargando. Aqui el recorrido es corto —la distancia de entrada
+// de la marca, la misma que usa el gesto de montaje— y lo que hace el trabajo es el
+// fundido, no el viaje.
+//
+// El desfase entre hermanos se calcula en el navegador: el indice viaja como custom
+// property y el PASO es un token. Escribirlo ya sumado daria una lista de literales
+// que no dicen de donde salen.
 [data-reveal-mode='block'] {
-  transition: translate brand.$duration-onehalf brand.$ease-default;
+  transition:
+    opacity brand.$duration-onehalf brand.$ease-default,
+    translate brand.$duration-onehalf brand.$ease-default;
+  transition-delay: calc(var(--pg-reveal-index, 0) * #{brand.$stagger-slice});
 }
 
 [data-reveal-mode='block'][data-reveal='idle'] {
-  translate: 0 100%;
+  opacity: 0;
+  translate: 0 brand.$reveal-distance;
 }
 
 // Se apaga entero y se devuelve todo a su sitio: con la transicion apagada pero el
@@ -135,6 +143,7 @@ body {
   }
 
   [data-reveal-mode='block'][data-reveal='idle'] {
+    opacity: 1;
     translate: none;
   }
 }
