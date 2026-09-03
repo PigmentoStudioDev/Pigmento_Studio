@@ -1,10 +1,15 @@
-import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Section } from "@/design-system/components/layout/Section/Section";
+import { Faq } from "@/design-system/components/organisms/Faq/Faq";
+import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
+import { Team } from "@/design-system/components/organisms/Team/Team";
 import { HeroVideo } from "@/design-system/components/organisms/HeroVideo/HeroVideo";
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
+import { getFinalCta } from "../cta";
+import { getFaq } from "../faq";
 import { getManifesto } from "../manifesto";
+import { getTeam } from "../team";
 
 /**
  * El hero va en la RUTA y no en `app/layout.tsx`: en el layout raiz saldria tambien
@@ -15,6 +20,11 @@ import { getManifesto } from "../manifesto";
  * propio. El organismo no decide ni su hueco ni su tema, para que el dia que Payload
  * arme la pagina el espacio entre bloques dependa del orden y no de cuales sean.
  */
+/** Las anclas que atan cada <section> con su titular. */
+const TEAM_TITLE_ID = "equipo";
+const FAQ_TITLE_ID = "faq";
+const CTA_TITLE_ID = "contacto";
+
 export default async function Home({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
 
@@ -23,6 +33,9 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   setRequestLocale(locale);
 
   const t = await getTranslations("home.manifesto");
+  const tTeam = await getTranslations("home.team");
+  const tFaq = await getTranslations("home.faq");
+  const tCta = await getTranslations("home.cta");
 
   return (
     <main>
@@ -66,11 +79,27 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <Manifesto {...getManifesto(t)} />
       </Section>
 
-      <Section>
-        <p>
-          <Link href="/ds">Ver el preview del design system</Link>
-        </p>
+      {/* Quien hace el trabajo, antes de las objeciones: la primera pregunta de
+          cualquiera que va a contratar un estudio pequeno es con quien va a hablar. */}
+      <Section width="full" spacing="loose" labelledBy={TEAM_TITLE_ID}>
+        <Team {...getTeam(tTeam)} titleId={TEAM_TITLE_ID} />
       </Section>
+
+      {/* Las objeciones, al final: quien llega hasta aqui ya sabe que hacemos y
+          esta decidiendo, no explorando. A sangre porque la lista se escanea de un
+          borde al otro. `labelledBy` convierte el <section> en un landmark con
+          nombre, y quien pone ese nombre es el titular del bloque. */}
+      <Section width="full" spacing="loose" labelledBy={FAQ_TITLE_ID}>
+        <Faq {...getFaq(tFaq)} titleId={FAQ_TITLE_ID} />
+      </Section>
+
+      {/* La ultima llamada, pegada al pie. La placa se despega de la pagina con el rol
+          invertido: oscura sobre claro y clara sobre oscuro — lo que la hace placa es
+          el contraste, no un color fijo. */}
+      <Section width="full" spacing="loose" labelledBy={CTA_TITLE_ID}>
+        <FinalCta {...getFinalCta(tCta)} titleId={CTA_TITLE_ID} />
+      </Section>
+
     </main>
   );
 }

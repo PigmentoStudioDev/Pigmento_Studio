@@ -1,0 +1,84 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// Ancho minimo de un retrato antes de que la rejilla parta a menos columnas. Con
+/// menos, una cara deja de reconocerse y la fila se lee como una tira de sellos.
+$member-min-inline-size: 14rem;
+
+/// Proporcion del retrato. Vertical, que es como se encuadra a una persona.
+///
+/// Como CADENA y no como fraccion: en Sass la barra sigue siendo division, asi que
+/// `3 / 4` llegaria al CSS como `0.75`. Es el mismo numero y se pierde la lectura —
+/// una proporcion se entiende de un vistazo y un decimal no.
+$portrait-ratio: '3 / 4';
+
+.root {
+  padding-inline: spacing.$spacing-06;
+}
+
+// `auto-fit` y no un numero de columnas: cuantas caben lo decide el ancho, y cuantos
+// hay lo decide el contenido. Con un `repeat(5, 1fr)` escrito a mano, el dia que
+// entre o salga alguien del equipo hay que venir a esta hoja a cambiarlo.
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($member-min-inline-size, 1fr));
+  gap: spacing.$spacing-06;
+  // list-style quita el marcador pero no el padding de 40px que el navegador le pone
+  // a todo <ul>. Son dos reglas distintas.
+  padding-inline-start: 0;
+  margin-block: 0;
+  list-style: none;
+}
+
+.member {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-03;
+}
+
+// El marco se queda quieto y es quien escucha. No lleva recorte: la tarjeta que vuela
+// tiene que poder salirse de el.
+.frame {
+  position: relative;
+  margin-block-end: spacing.$spacing-03;
+}
+
+// Lo que vuela. `will-change` lo promociona a capa propia: sin eso, cada golpe
+// repinta la foto entera en cada fotograma en vez de recomponerla.
+.card {
+  overflow: hidden;
+  border-radius: brand.$radius-05;
+  will-change: transform;
+}
+
+.photo {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: #{$portrait-ratio};
+  object-fit: cover;
+}
+
+.name {
+  @include brandtype.style('body');
+
+  margin: 0;
+  font-weight: brandtype.$weight-medium;
+}
+
+// El oficio es METADATO y por eso va en la voz de metadato del sitio: mono y caja
+// alta. La diferencia de tamano contra el nombre no seria suficiente por si sola —
+// la familia dice que esto es una etiqueta antes de que nadie la lea.
+.role {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}

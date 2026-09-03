@@ -17,7 +17,14 @@ import styles from "./Icon.module.scss";
  * que pone quien lo envuelve — el enlace, el boton — y nombrarse a si mismo produce
  * dos nombres para un solo control.
  */
-export type IconName = "instagram" | "facebook" | "behance" | "sun" | "moon" | "arrow";
+export type IconName =
+  | "instagram"
+  | "facebook"
+  | "behance"
+  | "sun"
+  | "moon"
+  | "arrow"
+  | "chevron";
 
 /**
  * Un icono es una LISTA de trazados: los de marca no son una sola figura. El de
@@ -82,6 +89,15 @@ const ICONS: Record<IconName, IconDefinition> = {
       "m76.5346 31.8467 41.4654 41.5767-41.4654 41.5766h-18.429l33.9984-34.0896h-92.0658671v-14.974h92.0658671l-33.9984-34.0897z",
       "m.00000377 80.7447-.00000377-80.74469922 14.6416-.00000078v80.7447z",
     ],
+  },
+
+  /**
+   * El que abre una fila. Apunta ABAJO en reposo y gira al abrirse: un chevron que
+   * ya mira hacia arriba antes de que pase nada promete que la fila esta abierta.
+   */
+  chevron: {
+    stroke: true,
+    paths: ["M5 9L12 16L19 9"],
   },
 
   moon: {

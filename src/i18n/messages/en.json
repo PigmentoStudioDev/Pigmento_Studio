@@ -58,6 +58,65 @@
       "afterSites": " that load and convert, ",
       "motion": "motion",
       "close": " nobody skips."
+    },
+    "team": {
+      "title": "Team",
+      "label": "Who does it",
+      "intro": "A small studio where the person designing your brand is the one answering your emails. No layers of account management between you and the work.",
+      "one": {
+        "name": "Nombre Apellido",
+        "role": "Art direction"
+      },
+      "two": {
+        "name": "Nombre Apellido",
+        "role": "Brand design"
+      },
+      "three": {
+        "name": "Nombre Apellido",
+        "role": "Web development"
+      },
+      "four": {
+        "name": "Nombre Apellido",
+        "role": "Motion"
+      },
+      "five": {
+        "name": "Nombre Apellido",
+        "role": "Marketing"
+      }
+    },
+    "faq": {
+      "title": "FAQ",
+      "label": "Frequently asked questions",
+      "intro": "Choosing a studio is an expensive decision to undo. Below are the questions people ask us before signing, answered the way we'd answer them on a call.",
+      "price": {
+        "question": "What does a project cost?",
+        "answer": "It depends on scope, and you get the number on the first call. A full identity isn't a landing page. We work to a fixed project price: you know what it costs before we start, not after."
+      },
+      "time": {
+        "question": "How long does it take?",
+        "answer": "A site, four to eight weeks. An identity, six to ten. The variable is rarely us: it's how long content takes to arrive and answers take to come back."
+      },
+      "remote": {
+        "question": "Do you work with brands outside Mexico?",
+        "answer": "Yes, and most of it ships remotely. From Mexico City the day overlaps with all of the Americas and reaches the European morning."
+      },
+      "ownership": {
+        "question": "Who owns what you make?",
+        "answer": "You do. When the project closes you get the editable files and the accounts, with no licences that expire and nothing left sitting on a server of ours."
+      },
+      "scope": {
+        "question": "Can I hire just one part?",
+        "answer": "Yes, knowing what you give up: the site, the campaign and the motion are designed together so they say the same thing. Separately it works; together it works better."
+      },
+      "start": {
+        "question": "What do you need from me to start?",
+        "answer": "Half an hour to understand the business, someone who can say yes or no without asking four people, and whatever you already have — even if it's a logo inside a PDF."
+      }
+    },
+    "cta": {
+      "label": "Get in touch",
+      "title": "Book a call and let's see where your brand starts.",
+      "cta": "Book a call"
     }
   }
 }

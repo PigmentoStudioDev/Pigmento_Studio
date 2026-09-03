@@ -56,3 +56,29 @@ export function loadMotion(): Promise<Motion> {
 
   return pending;
 }
+
+/**
+ * La inercia va APARTE del cargador de arriba, y no es un capricho de orden.
+ *
+ * `loadMotion()` lo pide todo lo que anima en el sitio — el marquee, el rodado, los
+ * reveals — asi que lo que entre ahi lo descarga cualquiera que vea una pagina con
+ * movimiento. La inercia la usa un solo bloque, y son 16kb que no tiene por que pagar
+ * quien nunca pasa por el.
+ *
+ * Se registra igual una sola vez: registrar un plugin es un efecto global, y hacerlo
+ * desde cada componente deja el orden a merced del bundler.
+ */
+let inertia: Promise<void> | null = null;
+
+export function loadInertia(): Promise<void> {
+  inertia ??= (async () => {
+    const [{ gsap }, { InertiaPlugin }] = await Promise.all([
+      import("gsap"),
+      import("gsap/InertiaPlugin"),
+    ]);
+
+    gsap.registerPlugin(InertiaPlugin);
+  })();
+
+  return inertia;
+}
