@@ -13,7 +13,8 @@
     "warn": 400,
     "max": 800,
     "exemptFiles": {
-      "design-system/preview/tokens.generated.ts": "generado por scripts/generate-preview-tokens.mjs. Su tamano lo decide cuantos tokens trae Carbon, no una decision nuestra: partirlo no arregla nada y el generador lo reescribe entero"
+      "design-system/preview/tokens.generated.ts": "generado por scripts/generate-preview-tokens.mjs. Su tamano lo decide cuantos tokens trae Carbon, no una decision nuestra: partirlo no arregla nada y el generador lo reescribe entero",
+      "payload-types.ts": "generado por `payload generate:types`. Su tamano lo decide cuantas colecciones hay; partirlo no arregla nada y el generador lo reescribe entero en cada cambio de config."
     }
   },
   "imports": {
@@ -57,6 +58,7 @@
         "to": "design-system/components/organisms/",
         "importableFrom": [
           "app/",
+          "cms/",
           "design-system/components/organisms/",
           "design-system/preview/"
         ],
@@ -65,9 +67,10 @@
       {
         "from": "design-system/",
         "mayNotImport": [
-          "app/"
+          "app/",
+          "cms/"
         ],
-        "why": "la dependencia va en un solo sentido. El design system tiene que poder salir de este repo entero; si conoce las rutas de la app, deja de ser un design system y pasa a ser la app con otro nombre"
+        "why": "la dependencia va en un solo sentido. El design system tiene que poder salir de este repo entero; si conoce las rutas de la app o el adaptador del CMS, se lleva payload-types consigo y deja de ser un design system."
       },
       {
         "to": "design-system/preview/",
@@ -83,6 +86,14 @@
           "design-system/preview/"
         ],
         "why": "es un artefacto generado, no una API. Quien lo importe queda atado a la forma que escupe el generador y se rompe en el siguiente 'pnpm gen:tokens'"
+      },
+      {
+        "to": "cms/",
+        "importableFrom": [
+          "app/",
+          "cms/"
+        ],
+        "why": "cms/ es el adaptador entre Payload y el sitio: lo consume una RUTA. Si lo importa un organismo, el design system pasa a depender del CMS por la puerta de atras y la frontera deja de existir aunque el archivo siga ahi"
       }
     ]
   }

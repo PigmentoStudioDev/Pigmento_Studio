@@ -1,4 +1,7 @@
+import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
 import { Section } from "@/design-system/components/layout/Section/Section";
 import { Faq } from "@/design-system/components/organisms/Faq/Faq";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
@@ -8,6 +11,7 @@ import { HeroVideo } from "@/design-system/components/organisms/HeroVideo/HeroVi
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { getFinalCta } from "../cta";
 import { getFaq } from "../faq";
+import { getFeaturedPieces } from "@/cms/projects";
 import { getManifesto } from "../manifesto";
 import { getTeam } from "../team";
 
@@ -28,11 +32,21 @@ const CTA_TITLE_ID = "contacto";
 export default async function Home({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
 
+  // La misma guarda que el layout. Es redundante en ejecucion —el layout ya
+  // llamo a notFound()— y aun asi va: es lo que estrecha `string` al par de
+  // idiomas reales, y sin ella el tipo del CMS lo tendria que dar un cast, que
+  // es afirmar en vez de comprobar.
+  if (!hasLocale(routing.locales, locale)) notFound();
+
   // Sin esto la ruta se vuelve dinamica: leer traducciones cuenta como leer cabeceras
   // salvo que el segmento este entre los generados de antemano.
   setRequestLocale(locale);
 
   const t = await getTranslations("home.manifesto");
+
+  // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
+  // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
+  const pieces = await getFeaturedPieces(locale);
   const tTeam = await getTranslations("home.team");
   const tFaq = await getTranslations("home.faq");
   const tCta = await getTranslations("home.cta");
@@ -76,7 +90,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           logos y los servicios: primero quien confia, luego que hacemos, y el
           trabajo dos bloques mas abajo. */}
       <Section spacing="loose" width="wide">
-        <Manifesto {...getManifesto(t)} />
+        <Manifesto {...getManifesto(t, pieces)} />
       </Section>
 
       {/* Quien hace el trabajo, antes de las objeciones: la primera pregunta de

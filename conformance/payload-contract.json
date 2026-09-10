@@ -4,7 +4,10 @@
   "rules": {
     "sin-secretos-literales": {
       "why": "un secreto llega por process.env o no llega. Escrito en el codigo viaja al repo, al historial y a cualquier clon, y rotarlo deja de ser una variable de entorno para pasar a ser un commit",
-      "exts": [".ts", ".tsx"],
+      "exts": [
+        ".ts",
+        ".tsx"
+      ],
       "pattern": "(PAYLOAD_SECRET|DATABASE_AUTH_TOKEN|DATABASE_URI|R2_[A-Z_]+)\\s*[:=]\\s*[\"'`]"
     }
   },
@@ -22,5 +25,25 @@
     "why": "dos listas de idiomas que se separan no dan error: dan una pagina en espanol pidiendo un locale que el CMS no tiene, y el fallback lo tapa. El sintoma es contenido que no se actualiza, y nadie lo relaciona con esto",
     "intl": "i18n/routing.ts",
     "payload": "payload.config.ts"
+  },
+  "paquetes": {
+    "why": "solape a proposito con el grafo de modularidad: aquel mira imports internos, este mira los PAQUETES. Un organismo que importe `payload` o `@/payload-types` ata el design system al CMS sin cruzar ninguna frontera interna",
+    "reglas": [
+      {
+        "nombre": "payload-fuera-del-ds",
+        "dir": "design-system/",
+        "prohibido": [
+          "payload",
+          "@payload-config",
+          "@payloadcms/",
+          "@/payload-types"
+        ]
+      },
+      {
+        "nombre": "payload-types-solo-en-cms",
+        "soloEn": "cms/",
+        "modulo": "@/payload-types"
+      }
+    ]
   }
 }

@@ -483,6 +483,28 @@ function sectionPayload() {
     }
   }
 
+  // 2b. Los PAQUETES: el otro lado de la frontera del design system.
+  const paq = contract.paquetes;
+  const SPEC = /(?:from\s*|import\s*|import\(\s*)["'`]([^"'`]+)["'`]/g;
+
+  for (const file of walk(base, ['.ts', '.tsx'])) {
+    const rel = relative(base, file);
+    const src = scannable(readFileSync(file, 'utf8'));
+
+    for (const [, spec] of src.matchAll(SPEC)) {
+      for (const regla of paq.reglas) {
+        if (regla.dir && rel.startsWith(regla.dir)) {
+          if (regla.prohibido.some((mod) => spec === mod || spec.startsWith(mod))) {
+            fail('payload', `${rel}: importa '${spec}' — ${regla.nombre}: ${paq.why}`);
+          }
+        }
+        if (regla.soloEn && spec === regla.modulo && !rel.startsWith(regla.soloEn)) {
+          fail('payload', `${rel}: importa '${spec}' fuera de ${regla.soloEn} — ${regla.nombre}: ${paq.why}`);
+        }
+      }
+    }
+  }
+
   // 3. El panel, fuera del idioma.
   const proxy = contract.adminFueraDelProxy;
   const matcher = readFileSync(join(base, proxy.file), 'utf8').match(/matcher:\s*["'`]([^"'`]+)/);

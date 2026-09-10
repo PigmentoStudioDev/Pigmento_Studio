@@ -24,7 +24,7 @@ este documento, y lo que no este escrito aqui se pregunta a Karen.
 | S1 | Budget de CSS antes que Payload | cerrada — 2026-09-09 · handoff/S1.md · `/ds` excluido, techos 178/17 y 771/227 |
 | S2 | Instalacion y arranque de Payload | cerrada — 2026-09-09 · handoff/S2.md · 5 gates, panel en /admin |
 | S3 | Users + Media sobre R2 | cerrada — 2026-09-10 · handoff/S3.md · upload real verificado en R2 |
-| S4 | Coleccion `projects` (portfolio) | pendiente |
+| S4 | Coleccion `projects` (portfolio) | cerrada — 2026-09-10 · handoff/S4.md · frontera cms/ activa |
 | S5 | Coleccion `proposals` (privada) | pendiente |
 | S6 | Globals de navegacion y pie | pendiente — opcional |
 | S7 | Migraciones de produccion y deploy | pendiente — **bloqueada por aprobacion de deploy** |

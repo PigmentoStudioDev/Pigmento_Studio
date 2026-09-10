@@ -21,6 +21,14 @@ env:
   # en CI. pnpm ya los bloquea via ignoredBuiltDependencies; esto es el cinturon.
   IBM_TELEMETRY_DISABLED: 'true'
 
+  # Una base de usar y tirar. Desde que la home lee el portfolio del CMS, el
+  # prerenderizado CONSULTA en tiempo de build: sin base, el gate 1 no compila.
+  # Darsela ademas hace util el C5 de migraciones, que sin DATABASE_URI se salta.
+  # El fichero cae bajo *.db en .gitignore, asi que C4 sigue verde.
+  DATABASE_URI: 'file:./ci.db'
+  # No es un secreto: es CI, sin datos y sin dominio. El real vive en Vercel.
+  PAYLOAD_SECRET: 'ci-no-es-un-secreto-esta-base-se-tira'
+
 jobs:
   # El nombre de este job es el contexto que exige la proteccion de main. Cambiarlo
   # sin actualizar la regla deja main sin gate.
@@ -41,6 +49,12 @@ jobs:
 
       - name: Instalar
         run: pnpm install --frozen-lockfile
+
+      # Las migraciones ANTES del build, que es el orden de produccion: el esquema
+      # tiene que existir antes de que nadie consulte. Es el unico paso que CI
+      # hace de mas, y hace de menos quien lo omita.
+      - name: Migrar
+        run: pnpm payload migrate
 
       # Un solo entrypoint, el mismo que en local (CLAUDE.md > Como se verifica).
       # Si CI corriera sus propios pasos, "verde en mi maquina" y "verde en CI"
