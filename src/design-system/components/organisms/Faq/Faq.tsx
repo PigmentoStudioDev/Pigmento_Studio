@@ -125,6 +125,10 @@ export function Faq({
                 className={styles.trigger}
                 aria-expanded={isOpen}
                 aria-controls={panelId}
+                // El atributo se lee en el momento del evento, con el estado de ANTES
+                // del clic: cerrada suena a desplegar. Un solo control dice dos senales
+                // distintas sin una linea de JS.
+                data-uisfx={isOpen ? "collapse" : "expand"}
                 onClick={() => toggle(index)}
                 onKeyDown={(event) => handleKeyDown(event, index)}
               >

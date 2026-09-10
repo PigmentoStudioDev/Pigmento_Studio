@@ -48,6 +48,7 @@ export function getNavigation(t: Translate): SiteHeaderProps {
           { icon: "behance", href: "https://www.behance.net/pigmentostudio1", label: t("social.behance") },
         ],
         themeToggle: { label: t("themeToggle") },
+        soundToggle: { label: t("soundToggle") },
         languageToggle: { label: t("languageToggle") },
       },
     ],

@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProgressiveBlur } from "@/design-system/components/atoms/ProgressiveBlur/ProgressiveBlur";
+import { InterfaceSound } from "@/design-system/components/layout/InterfaceSound/InterfaceSound";
 import { SmoothScroll } from "@/design-system/components/layout/SmoothScroll/SmoothScroll";
 import { SiteFooter } from "@/design-system/components/organisms/SiteFooter/SiteFooter";
 import { SiteHeader } from "@/design-system/components/organisms/SiteHeader/SiteHeader";
@@ -133,7 +135,7 @@ export default async function RootLayout({
             un solo dato de entrada — ni props, ni URL, ni CMS — y que inyectarlo
             inline es la unica forma de correr algo antes de la primera pintura,
             que es el requisito completo de esta linea. */}
-        <script dangerouslySetInnerHTML={{ __html: themeModeScript() }} />{/* conformance-exempt: constante del DS sin datos de entrada, ver arriba */}
+        <Script id="pg-theme-mode" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: themeModeScript() }} />{/* conformance-exempt: constante del DS sin datos de entrada, ver arriba */}
       </head>
       <body>
         {/* Solo el proveedor de cliente, sin volcar los diccionarios enteros: lo
@@ -144,6 +146,10 @@ export default async function RootLayout({
               todo lo demas para que el scroll ya este suavizado cuando el primer
               bloque se registre a el. */}
           <SmoothScroll />
+          {/* Tampoco pinta nada: enlaza los sonidos de la interfaz con los atributos
+              que ya viajan en el HTML. Con el sonido apagado —que es como arranca— no
+              carga ni un byte de la libreria. */}
+          <InterfaceSound />
           {/* Antes que la cabecera: difumina lo que pasa por DEBAJO de la barra
               conforme se acerca al borde, para que la barra pueda ir sin fondo
               propio sobre un hero de video. Detras de ella tambien por z-index

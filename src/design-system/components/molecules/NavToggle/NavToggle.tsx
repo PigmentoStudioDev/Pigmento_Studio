@@ -27,6 +27,10 @@ export function NavToggle({ open, controls, label, onToggle }: NavToggleProps) {
     <button
       type="button"
       aria-expanded={open}
+      // El atributo se lee en el momento del evento, cuando el estado es todavia el
+      // de ANTES del clic: cerrado suena a abrir. Es lo que permite que un solo
+      // control diga dos senales distintas sin una linea de JS.
+      data-uisfx={open ? "close" : "open"}
       aria-controls={controls}
       onClick={onToggle}
       className={[styles.root, open ? styles.isOpen : styles.isClosed].join(" ")}

@@ -24,7 +24,9 @@ export type IconName =
   | "sun"
   | "moon"
   | "arrow"
-  | "chevron";
+  | "chevron"
+  | "sound"
+  | "mute";
 
 /**
  * Un icono es una LISTA de trazados: los de marca no son una sola figura. El de
@@ -98,6 +100,18 @@ const ICONS: Record<IconName, IconDefinition> = {
   chevron: {
     stroke: true,
     paths: ["M5 9L12 16L19 9"],
+  },
+
+  /** El altavoz con su onda: el sonido de interfaz encendido. */
+  sound: {
+    stroke: true,
+    paths: ["M4 9.5H7L11.5 6V18L7 14.5H4V9.5Z", "M15 9.5C16.3 11 16.3 13 15 14.5"],
+  },
+
+  /** El mismo altavoz, callado. La cruz y no una onda tachada: se lee a 16px. */
+  mute: {
+    stroke: true,
+    paths: ["M4 9.5H7L11.5 6V18L7 14.5H4V9.5Z", "M15 10L19 14", "M19 10L15 14"],
   },
 
   moon: {

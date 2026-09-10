@@ -13,6 +13,7 @@ import { NavBanner, type NavBannerProps } from "../../molecules/NavBanner/NavBan
 import { NavLinkList, type NavLinkItem } from "../../molecules/NavLinkList/NavLinkList";
 import { NavToggle } from "../../molecules/NavToggle/NavToggle";
 import { LanguageToggle } from "../../molecules/LanguageToggle/LanguageToggle";
+import { SoundToggle } from "../../molecules/SoundToggle/SoundToggle";
 import { ThemeToggle } from "../../molecules/ThemeToggle/ThemeToggle";
 import styles from "./SiteHeader.module.scss";
 
@@ -61,6 +62,8 @@ export interface SiteHeaderGroup {
   themeToggle?: SiteHeaderThemeToggle;
   /** Conmutador de idioma, al lado del de tema. */
   languageToggle?: SiteHeaderThemeToggle;
+  /** Interruptor del sonido de la interfaz, en la misma fila. */
+  soundToggle?: SiteHeaderThemeToggle;
 }
 
 export interface SiteHeaderThemeToggle {
@@ -387,7 +390,10 @@ export function SiteHeader({
                       </div>
                     ) : null}
 
-                    {group.socials?.length || group.themeToggle || group.languageToggle ? (
+                    {group.socials?.length ||
+                    group.themeToggle ||
+                    group.languageToggle ||
+                    group.soundToggle ? (
                       <div className={styles.utilities}>
                         {group.socials?.length ? (
                           // <ul> y no una fila de enlaces sueltos: son una
@@ -411,6 +417,10 @@ export function SiteHeader({
 
                         {group.themeToggle ? (
                           <ThemeToggle label={group.themeToggle.label} />
+                        ) : null}
+
+                        {group.soundToggle ? (
+                          <SoundToggle label={group.soundToggle.label} />
                         ) : null}
 
                         {group.languageToggle ? (
