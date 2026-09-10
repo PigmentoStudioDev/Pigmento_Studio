@@ -11,6 +11,23 @@ import { Users } from './collections/Users';
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
+ * La base, por cualquiera de sus dos nombres.
+ *
+ * `DATABASE_URI` es el nuestro. `TURSO_*` son los que inyecta la integracion de
+ * Turso en Vercel, y los inyecta ELLA: renombrarlos alli no dura — los vuelve a
+ * poner en el siguiente sync. Asi que se leen los dos en vez de pelearse.
+ *
+ * El ORDEN es la parte que importa. `DATABASE_URI` manda, y por eso el `.env`
+ * local —que lo trae apuntando a un archivo— no se va a Turso aunque tenga los
+ * de la integracion al lado. Al reves, quien desarrolla migraria contra
+ * produccion sin enterarse.
+ */
+const db = {
+  url: process.env.DATABASE_URI || process.env.TURSO_DATABASE_URL || '',
+  authToken: process.env.DATABASE_AUTH_TOKEN || process.env.TURSO_AUTH_TOKEN,
+};
+
+/**
  * El config de Payload. Vive en src/ y no en la raiz porque `@payload-config`
  * lo resuelve por el path del tsconfig, y asi el arbol de codigo sigue entero
  * dentro de src/ como el resto del repo.
@@ -35,10 +52,7 @@ export default buildConfig({
   },
 
   db: sqliteAdapter({
-    client: {
-      url: process.env.DATABASE_URI || '',
-      authToken: process.env.DATABASE_AUTH_TOKEN,
-    },
+    client: db,
 
     /**
      * `push` APAGADO, tambien en local. El adaptador lo trae encendido: sincroniza
