@@ -85,11 +85,19 @@ export default buildConfig({
      * La media va al R2 que el sitio ya usa para el video del hero: en Vercel el
      * sistema de archivos es efimero y lo subido no sobrevive al deploy.
      *
-     * `enabled` exige el bucket Y las dos claves. Colgarlo solo del bucket era un
-     * error: con el nombre puesto y las claves vacias el plugin se ENCIENDE a
-     * medias, y cada subida muere en un error de S3 que habla de firmas y no de
-     * configuracion. Apagado del todo, Payload cae a disco local y el proyecto
-     * arranca en la maquina de cualquiera sin pedir credenciales.
+     * `enabled` NO cuelga del entorno, y costo dos intentos entenderlo.
+     *
+     * Este plugin no solo enruta bytes: aporta ESQUEMA — el campo `prefix` de la
+     * coleccion. Con `enabled` atado a las credenciales, `payload-types.ts` y las
+     * migraciones salen distintos segun quien los genere: con secretos aparece
+     * `prefix`, sin ellos no. Lo cazo CI, que no tiene `.env`, contra un local que
+     * si lo tiene — el CLI de Payload LEE `.env`, asi que en la maquina de uno
+     * siempre parece correcto.
+     *
+     * La forma de la base de datos no puede depender de quien tiene secretos. El
+     * precio es que sin credenciales las SUBIDAS fallan en ejecucion en vez de caer
+     * a disco local; el sitio compila, el panel abre, y el esquema es el mismo para
+     * todos. Es el lado correcto del intercambio.
      *
      * `disablePayloadAccessControl` sirve el archivo directo desde R2 en vez de
      * por /api/media/file/...: es correcto para el portfolio, que es publico.
@@ -97,9 +105,7 @@ export default buildConfig({
      * URL publica de R2 no pregunta quien la pide.
      */
     s3Storage({
-      enabled: Boolean(
-        process.env.R2_BUCKET && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY,
-      ),
+      enabled: true,
       collections: {
         [Media.slug]: {
           /**
