@@ -1,5 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "$comment": "Las migraciones ANTES del build, y solo en Vercel. No se toca el script `build` de package.json a proposito: ahi lo corren `gates.sh` y CI, y migrar en cada build local apuntaria a la base de desarrollo en cada compilacion. Desde que la home lee el portfolio, el prerenderizado CONSULTA en tiempo de build: sin esquema aplicado, Turso esta vacio y el build falla pidiendo tablas que no existen.",
   "buildCommand": "pnpm payload migrate && pnpm build"
 }
