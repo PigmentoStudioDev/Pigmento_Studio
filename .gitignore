@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...menos el ejemplo, que ES documentacion: dice que variables hacen falta y no
+# lleva ni un valor real. Sin esta linea, `.env*` se lo traga y quien clona el
+# repo no tiene forma de saber que espera Payload.
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +43,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# La base de SQLite en local. Datos, no codigo.
+*.db
+*.db-shm
+*.db-wal

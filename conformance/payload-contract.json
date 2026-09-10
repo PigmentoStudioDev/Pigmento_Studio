@@ -1,0 +1,26 @@
+{
+  "$comment": "Contrato de Payload. Vigila la frontera entre el CMS y el sitio: que ningun secreto viva en el codigo, que lo generado siga siendo generado, que el panel quede fuera del idioma y que las dos listas de locales digan lo mismo. Las reglas de acceso (overrideAccess, noindex, centavos) entran con cms/ y proposals en S4-S5: un gate que vigila un directorio que no existe pasa verde sin mirar nada, y eso entrena a ignorarlo.",
+  "scanDir": "src",
+  "rules": {
+    "sin-secretos-literales": {
+      "why": "un secreto llega por process.env o no llega. Escrito en el codigo viaja al repo, al historial y a cualquier clon, y rotarlo deja de ser una variable de entorno para pasar a ser un commit",
+      "exts": [".ts", ".tsx"],
+      "pattern": "(PAYLOAD_SECRET|DATABASE_AUTH_TOKEN|DATABASE_URI|R2_[A-Z_]+)\\s*[:=]\\s*[\"'`]"
+    }
+  },
+  "generated": {
+    "why": "los archivos que Payload genera llevan cabecera y se reescriben solos: editarlos es trabajo que desaparece en el siguiente generate. Se vigila en las DOS direcciones — que los de (payload) esten eximidos, y que nadie fuera de ahi se pegue la cabecera para comprarse una exencion",
+    "dir": "app/(payload)/",
+    "header": "THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD"
+  },
+  "adminFueraDelProxy": {
+    "why": "el panel es una app de Payload, no una pagina del sitio, y no tiene version por idioma. Sin excluirlo del matcher, next-intl le pone prefijo de locale y el panel deja de resolver",
+    "file": "proxy.ts",
+    "mustExclude": "admin"
+  },
+  "localesEnSintonia": {
+    "why": "dos listas de idiomas que se separan no dan error: dan una pagina en espanol pidiendo un locale que el CMS no tiene, y el fallback lo tapa. El sintoma es contenido que no se actualiza, y nadie lo relaciona con esto",
+    "intl": "i18n/routing.ts",
+    "payload": "payload.config.ts"
+  }
+}

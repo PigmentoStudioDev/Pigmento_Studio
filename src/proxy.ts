@@ -12,10 +12,14 @@ export const config = {
   /**
    * Todo menos lo que no es una pagina.
    *
+   * `admin` es el panel de Payload: es una app suya, no una pagina del sitio, y
+   * no tiene version por idioma. Sin excluirlo, next-intl le pone prefijo de
+   * locale y el panel deja de resolver.
+   *
    * `_next` son los artefactos del build y `_vercel` los del hosting; el ultimo
    * tramo descarta cualquier ruta con punto, que es como se ven los archivos
    * estaticos — favicon, fuentes, imagenes. Sin esa exclusion, el proxy correria en
    * cada .woff2 para decidir un idioma que a una fuente no le importa.
    */
-  matcher: "/((?!api|_next|_vercel|.*\\..*).*)",
+  matcher: "/((?!api|admin|_next|_vercel|.*\\..*).*)",
 };

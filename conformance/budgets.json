@@ -3,15 +3,16 @@
   "$note": "Los limites se pusieron midiendo el build real tras degradar Carbon a plantilla de tokens: 129kb/12kb de CSS y 611kb/188kb de JS. Antes eran 938kb/96kb y 1226kb/358kb — el CSS de sus componentes y el barrel de @carbon/react, que entraba entero por importar <Theme>. El margen es corto a proposito: con un techo holgado, una regresion que vuelva a arrastrar Carbon cabria dentro y nadie se enteraria.",
   "artifacts": {
     "css": {
+      "$why": "Mide el CSS que pide DE ENTRADA una pagina que un VISITANTE descarga: ni el panel de Payload ni /ds. Contar el panel pondria rojo un gate que habla de otra cosa, y la salida obvia seria subir el limite — justo lo que este gate existe para impedir. /ds salio el 2026-09-09 por decision de Karen: CLAUDE.md ya dice que es herramienta de desarrollo y no una pagina del sitio, y medirlo aqui contradecia esa linea. LOS TECHOS BAJAN CON LA MEDIDA: 161/18 -> 139/15 al sacar /ds, asi que 200/20 pasa a 178/17. Dejarlos arriba habria regalado 2.7kb de gzip de holgura que nadie midio, y un techo holgado es como vuelve a entrar Carbon sin que nadie se entere.",
       "glob": ".next/static/**/*.css",
-      "maxRawKb": 200,
-      "maxGzipKb": 20
+      "maxRawKb": 178,
+      "maxGzipKb": 17
     },
     "js": {
-      "$why": "Subido a mano al entrar gsap, que es exactamente lo que la nota anterior decia que tendria que pasar. Medido: 188kb -> 218kb de gzip, o sea 30kb por gsap core mas SplitText. El techo queda en 230 y no en 260: gsap ya esta dentro, asi que lo que este margen tiene que cubrir de aqui en adelante son plugins sueltos y no una segunda libreria entera. CAMBIO POSTERIOR — no en el limite sino en QUE se mide: el runner suma ahora los chunks que el HTML prerenderizado pide de entrada, no todo lo emitido. Desde que gsap se carga con import(), las dos cifras dejaron de ser la misma: partirlo baja 54kb de lo que descarga una visita (241 -> 195 gzip) y no mueve el total ni un byte, porque los bytes siguen en el disco. Con el total como unica vara, la optimizacion correcta salia igual de roja que no hacer nada.",
+      "$why": "Subido a mano al entrar gsap, que es exactamente lo que la nota anterior decia que tendria que pasar. Medido: 188kb -> 218kb de gzip, o sea 30kb por gsap core mas SplitText. El techo queda en 230 y no en 260: gsap ya esta dentro, asi que lo que este margen tiene que cubrir de aqui en adelante son plugins sueltos y no una segunda libreria entera. CAMBIO POSTERIOR — no en el limite sino en QUE se mide: el runner suma ahora los chunks que el HTML prerenderizado pide de entrada, no todo lo emitido. Desde que gsap se carga con import(), las dos cifras dejaron de ser la misma: partirlo baja 54kb de lo que descarga una visita (241 -> 195 gzip) y no mueve el total ni un byte, porque los bytes siguen en el disco. Con el total como unica vara, la optimizacion correcta salia igual de roja que no hacer nada. CAMBIO 2026-09-09 — /ds sale de la medida junto con (payload): aportaba 9kb raw / 3kb gzip. Medido 693/216 -> 684/213, asi que el techo baja de 780/230 a 771/227 para conservar el mismo margen absoluto que se fijo al entrar gsap. No es un limite nuevo: es el mismo margen sobre una medida mas pequena.",
       "glob": ".next/static/**/*.js",
-      "maxRawKb": 780,
-      "maxGzipKb": 230
+      "maxRawKb": 771,
+      "maxGzipKb": 227
     }
   }
 }
