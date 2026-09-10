@@ -1,5 +1,8 @@
 ignoredBuiltDependencies:
-  - sharp
+  # sharp SALE de la lista: Payload lo necesita compilado para procesar uploads,
+  # y el template oficial lo pone en onlyBuiltDependencies. Los @carbon/* y @ibm/*
+  # que siguen abajo NO se tocan: su postinstall es telemetria de IBM y bloquearlos
+  # es una decision de privacidad escrita, no una linea que sobra.
   - unrs-resolver
   # Los postinstall de @carbon/* y @ibm/* son @ibm/telemetry-js. Segun su doc solo
   # recolecta en CI (nunca en local) y manda URL de repo y hashes de-identificados

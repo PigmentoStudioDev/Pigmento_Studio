@@ -183,9 +183,20 @@ function sectionReact() {
   let client = 0;
   let checked = 0;
 
+  /**
+   * Una clave que acaba en '/' exime su subarbol. Existe por el codigo generado:
+   * Payload anade archivos al arbol cuando cambia el config, y una lista archivo a
+   * archivo se desincroniza en silencio. Sin la barra sigue siendo igualdad exacta,
+   * que es lo que impide que 'app/' se coma media aplicacion.
+   */
+  const eximido = (rel) =>
+    Object.keys(contract.exemptFiles).some(
+      (k) => rel === k || (k.endsWith('/') && rel.startsWith(k)),
+    );
+
   for (const file of walk(base, contract.ext)) {
     const rel = relative(base, file);
-    if (contract.exemptFiles[rel]) continue;
+    if (eximido(rel)) continue;
 
     const raw = readFileSync(file, 'utf8');
     const lines = codeLines(raw);
@@ -298,12 +309,15 @@ function sectionStructure() {
   const contract = readJson('structure-contract.json');
 
   // 1. Todo entry de Sass (no partial) carga el partial de configuracion.
-  const { scanDir, partial, why } = contract.sassConfigPartial;
+  const { scanDir, partial, why, exemptFiles = {} } = contract.sassConfigPartial;
   let entries = 0;
   for (const file of walk(join(ROOT, scanDir), '.scss')) {
     const rel = relative(ROOT, file);
     if (file.split('/').pop().startsWith('_')) continue;
+    // Una exencion cuenta como entry: si no, quitar la hoja del contrato y quitarla
+    // del proyecto darian el mismo numero y nadie notaria la diferencia.
     entries += 1;
+    if (exemptFiles[rel]) continue;
     if (!readFileSync(file, 'utf8').includes(partial)) {
       fail('structure', `${rel}: entry de Sass sin @use de '${partial}' — ${why}`);
     }
@@ -344,7 +358,7 @@ function sectionStructure() {
 }
 
 /**
- * Los archivos que las paginas ya renderizadas piden DE ENTRADA.
+ * Los archivos que piden DE ENTRADA las paginas PUBLICAS ya renderizadas.
  *
  * Existe desde que hay carga bajo demanda. Sumar todo lo emitido media una cosa
  * distinta de la que este contrato dice medir: partir gsap en su propio trozo baja
@@ -352,19 +366,37 @@ function sectionStructure() {
  * bytes siguen en el disco. Con el total como unica vara, la optimizacion correcta
  * salia igual de roja que no hacer nada.
  *
- * Se leen del HTML prerenderizado y no de un manifiesto: es la lista real de lo que
- * el navegador va a pedir antes de ejecutar nada. Si no hay HTML —una app sin rutas
- * estaticas— se devuelve null y quien llama cae al total, que sigue siendo el techo
- * honesto en ese caso.
+ * Que queda fuera y por que vive en FUERA_DE_LA_VISITA, no en un `if` encadenado:
+ * asi la siguiente ruta que se excluya tiene que traer su motivo escrito al lado.
+ *
+ * El mismo fallo en CSS: devolver null cuando la extension no era .js hacia que
+ * quien llama cayera a walk() sobre .next/static entero, y el CSS del admin
+ * reventaria el techo de gzip midiendo algo que ningun visitante pide.
+ *
+ * Se leen del HTML prerenderizado y no de un manifiesto: es la lista real de lo
+ * que el navegador va a pedir antes de ejecutar nada. Si no hay HTML publico —una
+ * app sin rutas estaticas, o solo el panel— se devuelve null y quien llama cae al
+ * total, que sigue siendo el techo honesto en ese caso.
  */
+const FUERA_DE_LA_VISITA = [
+  ['(payload)', 'el panel del CMS: lo abre quien edita, no quien visita el sitio'],
+  ['/ds.html', '/ds es herramienta de desarrollo y no una pagina del sitio (CLAUDE.md)'],
+];
+
 function firstLoadFiles(dir, ext) {
   const pages = join(ROOT, '.next/server/app');
-  if (!existsSync(pages) || ext !== '.js') return null;
+  if (!existsSync(pages) || (ext !== '.js' && ext !== '.css')) return null;
 
   const referenced = new Set();
+
   for (const page of walk(pages, '.html')) {
+    if (FUERA_DE_LA_VISITA.some(([fragment]) => page.includes(fragment))) continue;
     const html = readFileSync(page, 'utf8');
-    for (const [, ref] of html.matchAll(/\/_next\/(static\/[^"'?]+\.js)/g)) {
+    const pattern =
+      ext === '.css'
+        ? /<link\b[^>]*\brel=["']stylesheet["'][^>]*href=["']\/_next\/(static\/[^"'?]+\.css)/gi
+        : /\/_next\/(static\/[^"'?]+\.js)/g;
+    for (const [, ref] of html.matchAll(pattern)) {
       const file = join(ROOT, '.next', ref);
       if (existsSync(file)) referenced.add(file);
     }
@@ -408,6 +440,85 @@ function sectionBudgets() {
   }
 }
 
+/** payload — la frontera entre el CMS y el sitio. */
+function sectionPayload() {
+  const contract = readJson('payload-contract.json');
+  const base = join(ROOT, contract.scanDir);
+
+  // 1. Ningun secreto escrito en el codigo.
+  for (const [name, rule] of Object.entries(contract.rules)) {
+    const re = new RegExp(rule.pattern, 'g');
+    for (const file of walk(base, rule.exts)) {
+      const rel = relative(base, file);
+      for (const line of codeLines(readFileSync(file, 'utf8'))) {
+        re.lastIndex = 0;
+        if (re.test(line.text)) {
+          fail('payload', `${rel}:${line.n}: ${name} — ${rule.why}`);
+        }
+      }
+    }
+  }
+
+  // 2. Lo generado, en las dos direcciones.
+  const gen = contract.generated;
+  const reactExempt = readJson('react-contract.json').exemptFiles;
+  let generated = 0;
+
+  for (const file of walk(base, ['.ts', '.tsx'])) {
+    const rel = relative(base, file);
+    const marcado = readFileSync(file, 'utf8').includes(gen.header);
+    const dentro = rel.startsWith(gen.dir);
+
+    if (marcado && !dentro) {
+      fail('payload', `${rel}: lleva la cabecera de generado fuera de ${gen.dir} — ${gen.why}`);
+    }
+    if (marcado && dentro) {
+      generated += 1;
+      const cubierto = Object.keys(reactExempt).some(
+        (k) => rel === k || (k.endsWith('/') && rel.startsWith(k)),
+      );
+      if (!cubierto) {
+        fail('payload', `${rel}: generado y sin exencion en react-contract — ${gen.why}`);
+      }
+    }
+  }
+
+  // 3. El panel, fuera del idioma.
+  const proxy = contract.adminFueraDelProxy;
+  const matcher = readFileSync(join(base, proxy.file), 'utf8').match(/matcher:\s*["'`]([^"'`]+)/);
+  if (!matcher) fail('payload', `${proxy.file}: no encuentro el matcher — ${proxy.why}`);
+  else if (!matcher[1].includes(proxy.mustExclude)) {
+    fail('payload', `${proxy.file}: el matcher no excluye '${proxy.mustExclude}' — ${proxy.why}`);
+  }
+
+  // 4. Las dos listas de idiomas dicen lo mismo.
+  const loc = contract.localesEnSintonia;
+  const leer = (file, clave) => {
+    const src = readFileSync(join(base, file), 'utf8');
+    const lista = src.match(new RegExp(`${clave}:\\s*\\[([^\\]]*)\\]`));
+    const def = src.match(/defaultLocale:\s*["'`]([^"'`]+)/);
+    return {
+      locales: lista ? [...lista[1].matchAll(/["'`]([a-z-]+)["'`]/g)].map(([, v]) => v).sort() : null,
+      defaultLocale: def ? def[1] : null,
+    };
+  };
+
+  const a = leer(loc.intl, 'locales');
+  const b = leer(loc.payload, 'locales');
+
+  if (!a.locales || !b.locales) {
+    fail('payload', `no pude leer los locales de ${loc.intl} o ${loc.payload} — ${loc.why}`);
+  } else if (a.locales.join(',') !== b.locales.join(',')) {
+    fail('payload', `locales distintos: ${loc.intl} [${a.locales}] vs ${loc.payload} [${b.locales}] — ${loc.why}`);
+  } else if (a.defaultLocale !== b.defaultLocale) {
+    fail('payload', `defaultLocale distinto: '${a.defaultLocale}' vs '${b.defaultLocale}' — ${loc.why}`);
+  } else {
+    ok('payload', `locales en sintonia: [${a.locales}], default '${a.defaultLocale}'`);
+  }
+
+  ok('payload', `${generated} archivos generados dentro de ${gen.dir}, sin secretos en el codigo`);
+}
+
 const SECTIONS = {
   style: () => literalSection('style', 'style-contract.json'),
   tsx: () => literalSection('tsx', 'tsx-contract.json'),
@@ -415,6 +526,7 @@ const SECTIONS = {
   structure: sectionStructure,
   modularity: sectionModularity,
   budgets: sectionBudgets,
+  payload: sectionPayload,
 };
 
 const pick = process.argv[2];

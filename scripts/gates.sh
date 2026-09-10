@@ -3,7 +3,7 @@
 #
 #   ./scripts/gates.sh
 #
-# Cuatro gates: build, estatico, contrato, tests. Exit != 0 si alguno falla.
+# Cinco gates: build, estatico, contrato, payload, tests. Exit != 0 si alguno falla.
 # El orden no es cosmetico: el build va PRIMERO porque la seccion `budgets` del
 # contrato mide sobre .next/, y sin build se salta con una nota en vez de medir.
 set -u
@@ -61,8 +61,19 @@ else
     fail "violaciones de contrato (detalle arriba)"
 fi
 
-# -------------------------------------------------------------- Gate 4: tests
-section "Gate 4 — tests"
+# ------------------------------------------------------------- Gate 4: payload
+# Va DESPUES del contrato y ANTES de los tests porque mide artefactos del build:
+# que el panel compilo, y que los generados (tipos, importMap) esten al dia. Un
+# tipo viejo no rompe el build — rompe el runtime, lejos de la causa.
+section "Gate 4 — payload"
+if node scripts/payload-build-check.mjs; then
+    pass "artefactos de Payload al dia"
+else
+    fail "artefactos de Payload desactualizados (detalle arriba)"
+fi
+
+# -------------------------------------------------------------- Gate 5: tests
+section "Gate 5 — tests"
 out=$(pnpm test 2>&1)
 if [ $? -eq 0 ]; then
     pass "vitest verde — $(echo "$out" | grep -oE 'Tests +[0-9]+ passed[^)]*' | tail -1)"
