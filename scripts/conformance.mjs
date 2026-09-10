@@ -505,6 +505,158 @@ function sectionPayload() {
     }
   }
 
+  // 2c. Las lecturas de la Local API, coleccion por coleccion.
+  const lec = contract.lecturas;
+  const LLAMADA = new RegExp(`payload\\.(${lec.metodos.join('|')})\\(`, 'g');
+
+  for (const file of walk(join(base, lec.dir), ['.ts', '.tsx'])) {
+    if (file.endsWith('.test.ts')) continue;
+    const rel = relative(base, file);
+    const src = readFileSync(file, 'utf8');
+
+    for (const hit of src.matchAll(LLAMADA)) {
+      /**
+       * Se equilibran llaves desde la llamada hasta cerrar su argumento. Un regex
+       * de una linea no sirve: las opciones ocupan varias, y un gate que solo mira
+       * la primera pasa verde sobre la consulta que importa.
+       */
+      const desde = hit.index + hit[0].length;
+      let nivel = 0;
+      let fin = desde;
+      for (; fin < src.length; fin += 1) {
+        if (src[fin] === '(' || src[fin] === '{') nivel += 1;
+        else if (src[fin] === ')' || src[fin] === '}') {
+          nivel -= 1;
+          if (nivel < 0) break;
+        }
+      }
+      const crudo = src.slice(desde, fin);
+      if (/conformance-exempt/.test(crudo)) continue;
+
+      // Sin comentarios: si no, `/* accessToken */` pegado a la llamada compra el
+      // gate entero. La comprobacion tiene que mirar codigo, no prosa.
+      const args = stripComments(crudo);
+      const nLinea = src.slice(0, hit.index).split('\n').length;
+
+      const coleccion = args.match(/collection:\s*['"`]([^'"`]+)/)?.[1];
+      const regla = (coleccion && lec.porColeccion[coleccion]) || lec.porDefecto;
+
+      const quejarse = (falta) =>
+        fail('payload', `${rel}:${nLinea}: lectura de '${coleccion ?? '?'}' ${falta} — ${regla.why}`);
+
+      for (const exigido of regla.exige ?? []) {
+        const patron = new RegExp(exigido.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\ /g, '\\s*'));
+        if (!patron.test(args)) quejarse(`sin \`${exigido}\``);
+      }
+
+      /**
+       * Los campos que tienen que estar en el `where`, y no en cualquier parte de
+       * la llamada. La diferencia no es cosmetica: un
+       * `find({ collection: 'proposals', where: { id: { equals: x } }, limit: 1 })`
+       * lleva la palabra `accessToken` en un comentario o en una variable cercana y
+       * pasaba verde, devolviendo cotizaciones por un id numerico adivinable.
+       */
+      if (regla.exigeEnWhere?.length) {
+        const inicio = args.indexOf('where:');
+        let where = '';
+        if (inicio !== -1) {
+          let nivel = 0;
+          let cierre = inicio;
+          for (; cierre < args.length; cierre += 1) {
+            if (args[cierre] === '{') nivel += 1;
+            else if (args[cierre] === '}') {
+              nivel -= 1;
+              if (nivel === 0) break;
+            }
+          }
+          where = args.slice(inicio, cierre + 1);
+        }
+
+        for (const campo of regla.exigeEnWhere) {
+          if (!new RegExp(`\\b${campo}\\s*:`).test(where)) {
+            quejarse(`sin \`${campo}\` COMO CAMPO DEL where`);
+          }
+        }
+      }
+    }
+  }
+
+  // 2d. La pagina de una propuesta no se indexa ni se prerenderiza.
+  const idx = contract.noindex;
+  const pagina = join(base, idx.file);
+
+  if (!existsSync(pagina)) {
+    fail('payload', `${idx.file}: no existe la pagina de la propuesta — ${idx.why}`);
+  } else {
+    const src = scannable(readFileSync(pagina, 'utf8'));
+
+    // Vale metadata o generateMetadata: son las dos formas que Next acepta, y
+    // exigir una concreta obligaria a reescribir el gate el dia que la pagina
+    // necesite el titulo del cliente en el <title>.
+    const exporta = (nombre) =>
+      new RegExp(`export\\s+(?:const|async\\s+function|function)\\s+${nombre}\\b`).test(src);
+
+    if (!idx.exigeExport.some(exporta)) {
+      fail('payload', `${idx.file}: no exporta ${idx.exigeExport.join(' ni ')} — ${idx.why}`);
+    } else {
+      for (const exigido of idx.exige) {
+        if (!src.includes(exigido)) {
+          fail('payload', `${idx.file}: su metadata no dice \`${exigido}\` — ${idx.why}`);
+        }
+      }
+    }
+
+    for (const prohibido of idx.prohibeExport) {
+      if (exporta(prohibido)) {
+        fail('payload', `${idx.file}: exporta ${prohibido} — ${idx.whyProhibe}`);
+      }
+    }
+
+    for (const declarado of idx.exigeDeclarado ?? []) {
+      if (!src.includes(declarado)) {
+        fail('payload', `${idx.file}: no declara \`${declarado}\` — ${idx.whyDeclarado}`);
+      }
+    }
+  }
+
+  // 2e. El dinero, en centavos enteros y sin nombres que inviten a decimales.
+  const din = contract.dinero;
+  const coleccion = readFileSync(join(base, din.file), 'utf8');
+
+  /**
+   * Se recorre campo a campo equilibrando llaves, igual que las lecturas: un
+   * regex de una linea no ve un `min: 0` que este tres lineas mas abajo, y ese
+   * es justo el sitio donde se escribe.
+   */
+  const CAMPO = /\{\s*name:\s*'([^']+)'/g;
+  for (const hit of coleccion.matchAll(CAMPO)) {
+    const nombre = hit[1];
+    let nivel = 0;
+    let fin = hit.index;
+    for (; fin < coleccion.length; fin += 1) {
+      if (coleccion[fin] === '{') nivel += 1;
+      else if (coleccion[fin] === '}') {
+        nivel -= 1;
+        if (nivel === 0) break;
+      }
+    }
+    const cuerpo = coleccion.slice(hit.index, fin + 1);
+    const nLinea = coleccion.slice(0, hit.index).split('\n').length;
+
+    if (din.nombresProhibidos.includes(nombre)) {
+      fail('payload', `${din.file}:${nLinea}: el campo '${nombre}' no dice su unidad — ${din.why}`);
+      continue;
+    }
+    if (!nombre.endsWith(din.sufijo)) continue;
+
+    for (const exigido of din.exige) {
+      const patron = new RegExp(exigido.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\ /g, '\\s*'));
+      if (!patron.test(cuerpo)) {
+        fail('payload', `${din.file}:${nLinea}: '${nombre}' sin \`${exigido}\` — ${din.why}`);
+      }
+    }
+  }
+
   // 3. El panel, fuera del idioma.
   const proxy = contract.adminFueraDelProxy;
   const matcher = readFileSync(join(base, proxy.file), 'utf8').match(/matcher:\s*["'`]([^"'`]+)/);

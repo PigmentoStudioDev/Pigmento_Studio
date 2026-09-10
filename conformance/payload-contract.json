@@ -45,5 +45,66 @@
         "modulo": "@/payload-types"
       }
     ]
+  },
+  "lecturas": {
+    "why": "la Local API se salta el control de acceso POR DEFECTO. Una lectura mal escrita en cms/ devuelve documentos que el visitante no puede ver, sin error y sin que ningun tipo se queje. Es el unico fallo de este repo que se lleva datos de clientes por delante",
+    "dir": "cms/",
+    "metodos": [
+      "find",
+      "findByID",
+      "findGlobal"
+    ],
+    "porColeccion": {
+      "proposals": {
+        "exigeEnWhere": [
+          "accessToken"
+        ],
+        "exige": [
+          "limit: 1"
+        ],
+        "why": "proposals es PRIVADA y su pagina publica es anonima, asi que aqui no cabe `overrideAccess: false` — con la coleccion cerrada a sesion, un anonimo no leeria ni su propia propuesta. Lo que sostiene la seguridad es el filtro por token y la imposibilidad de enumerar: sin `accessToken` en el where, esta consulta devuelve cotizaciones ajenas; sin `limit: 1`, las devuelve todas de golpe. `accessToken` se exige COMO CAMPO DEL where y no como texto suelto en la llamada: filtrando por `id` y dejando la palabra en un comentario, la consulta devuelve cotizaciones por un numero adivinable y el gate pasaba verde"
+      }
+    },
+    "porDefecto": {
+      "exige": [
+        "overrideAccess: false"
+      ],
+      "why": "para todo lo demas, `overrideAccess: false` es lo correcto y lo barato: hace que la Local API respete el mismo control de acceso que el REST, y sin el un borrador se cuela en una pagina publica"
+    }
+  },
+  "noindex": {
+    "why": "la pagina de una propuesta es privada por tener una URL que nadie adivina, y eso deja de ser cierto en cuanto un buscador la indexa: basta con que el cliente pegue el enlace en un chat rastreable. La linea que lo impide es una sola y no la echa de menos nadie cuando se cae en un refactor — por eso es gate y no revision",
+    "file": "app/[locale]/propuesta/[token]/page.tsx",
+    "exigeExport": [
+      "metadata",
+      "generateMetadata"
+    ],
+    "exige": [
+      "robots",
+      "index: false"
+    ],
+    "prohibeExport": [
+      "generateStaticParams"
+    ],
+    "whyProhibe": "prerenderizar esto seria escribir cada cotizacion en el build y servirla desde la CDN, donde ya no la protege ningun token",
+    "exigeDeclarado": [
+      "export const dynamic = 'force-dynamic'"
+    ],
+    "whyDeclarado": "hoy la ruta ya es dinamica por no tener generateStaticParams ni llamadas cacheadas, pero eso es accidental: envolver la consulta en unstable_cache la vuelve cacheable sin que nada avise, y entonces una cotizacion se le sirve a otro. Declararlo hace que quitarlo sea un diff y no un descuido"
+  },
+  "dinero": {
+    "why": "SQLite no tiene decimal. Un importe en coma flotante es un centavo que aparece o desaparece al sumar, y en una cotizacion lo ve el cliente. El nombre del campo es lo unico que impide reintroducirlo sin pensarlo",
+    "file": "collections/Proposals.ts",
+    "sufijo": "Cents",
+    "exige": [
+      "type: 'number'",
+      "min: 0"
+    ],
+    "nombresProhibidos": [
+      "amount",
+      "price",
+      "total",
+      "subtotal"
+    ]
   }
 }
