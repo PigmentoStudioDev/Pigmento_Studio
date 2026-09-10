@@ -119,5 +119,13 @@
       "title": "Book a call and let's see where your brand starts.",
       "cta": "Book a call"
     }
+  },
+  "proposal": {
+    "title": "Proposal",
+    "concept": "Item",
+    "amount": "Amount",
+    "total": "Total",
+    "validUntil": "Valid until",
+    "expired": "This proposal is past its validity date. Get in touch and we will refresh it."
   }
 }

@@ -119,5 +119,13 @@
       "title": "Agendemos una llamada y vemos por dónde empieza tu marca.",
       "cta": "Agendar una llamada"
     }
+  },
+  "proposal": {
+    "title": "Propuesta",
+    "concept": "Concepto",
+    "amount": "Importe",
+    "total": "Total",
+    "validUntil": "Vigente hasta el",
+    "expired": "Esta propuesta paso de su fecha de vigencia. Escribenos y la actualizamos."
   }
 }
