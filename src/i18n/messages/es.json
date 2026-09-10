@@ -4,6 +4,7 @@
     "homeLabel": "Pigmento Studio, ir al inicio",
     "toggleLabel": "Menu",
     "themeToggle": "Cambiar entre modo claro y oscuro",
+    "soundToggle": "Activar o silenciar el sonido de la interfaz",
     "languageToggle": "Cambiar idioma",
     "estudio": {
       "label": "Estudio",

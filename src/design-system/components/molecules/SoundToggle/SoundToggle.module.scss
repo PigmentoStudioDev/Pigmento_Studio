@@ -1,0 +1,41 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/component-tokens' as component;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// Cuerpo del icono. En rem y no en em: este control no vive dentro de un texto, vive
+/// en una fila de utilidades donde todos los conmutadores miden lo mismo.
+$icon-size: 1.25rem;
+
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: brand.$control-block-m;
+  block-size: brand.$control-block-m;
+  padding: 0;
+  border: none;
+  border-radius: brand.$radius-control-square;
+  background-color: transparent;
+  color: theme.$text-primary;
+  cursor: pointer;
+  font-size: $icon-size;
+  transition: background-color brand.$duration-quarter brand.$ease-default;
+}
+
+.root:hover {
+  background-color: component.get('button-tertiary');
+}
+
+.root:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none;
+  }
+}

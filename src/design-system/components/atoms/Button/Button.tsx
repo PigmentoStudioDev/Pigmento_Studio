@@ -92,9 +92,23 @@ export function Button(props: ButtonProps) {
     </>
   );
 
+  /**
+   * La senal de "elegido", que es lo que hace un boton. El sonido lo enlaza el
+   * instalador escuchando en el documento: aqui solo se declara CUAL suena, y por eso
+   * el atributo viaja en el HTML sin que este atomo tenga que enterarse de si hay
+   * sonido encendido ni cargar nada.
+   */
+  const cue = "select";
+
   if (props.href !== undefined) {
     return (
-      <Link href={props.href} aria-label={children} onClick={props.onClick} className={classes}>
+      <Link
+        href={props.href}
+        aria-label={children}
+        onClick={props.onClick}
+        className={classes}
+        data-uisfx={cue}
+      >
         {inner}
       </Link>
     );
@@ -107,6 +121,7 @@ export function Button(props: ButtonProps) {
       disabled={props.disabled}
       onClick={props.onClick}
       className={classes}
+      data-uisfx={cue}
     >
       {inner}
     </button>
