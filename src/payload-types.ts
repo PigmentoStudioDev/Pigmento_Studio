@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     projects: Project;
+    proposals: Proposal;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +81,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    proposals: ProposalsSelect<false> | ProposalsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -204,6 +206,39 @@ export interface Project {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "proposals".
+ */
+export interface Proposal {
+  id: number;
+  client: string;
+  contactEmail?: string | null;
+  status: 'borrador' | 'enviada' | 'aceptada' | 'rechazada' | 'vencida';
+  scopeItems?:
+    | {
+        concept: string;
+        detail?: string | null;
+        /**
+         * En CENTAVOS. 1500 son $15.00
+         */
+        amountCents: number;
+        id?: string | null;
+      }[]
+    | null;
+  currency: 'MXN' | 'USD';
+  validUntil?: string | null;
+  /**
+   * Se genera solo. La URL privada de esta propuesta cuelga de el.
+   */
+  accessToken?: string | null;
+  /**
+   * Interno. NUNCA sale al cliente — el adaptador de cms/ no lo mapea.
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -237,6 +272,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'projects';
         value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'proposals';
+        value: number | Proposal;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -345,6 +384,29 @@ export interface ProjectsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "proposals_select".
+ */
+export interface ProposalsSelect<T extends boolean = true> {
+  client?: T;
+  contactEmail?: T;
+  status?: T;
+  scopeItems?:
+    | T
+    | {
+        concept?: T;
+        detail?: T;
+        amountCents?: T;
+        id?: T;
+      };
+  currency?: T;
+  validUntil?: T;
+  accessToken?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

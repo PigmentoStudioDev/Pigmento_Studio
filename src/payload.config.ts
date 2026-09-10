@@ -6,6 +6,7 @@ import { buildConfig } from 'payload';
 import sharp from 'sharp';
 import { Media } from './collections/Media';
 import { Projects } from './collections/Projects';
+import { Proposals } from './collections/Proposals';
 import { Users } from './collections/Users';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -43,7 +44,7 @@ export default buildConfig({
     importMap: { baseDir: path.resolve(dirname) },
   },
 
-  collections: [Users, Media, Projects],
+  collections: [Users, Media, Projects, Proposals],
 
   secret: process.env.PAYLOAD_SECRET || '',
 
