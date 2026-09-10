@@ -294,7 +294,7 @@ Los nombres de estilos y espaciados se **generan** desde los mapas de Carbon
 
 ## Como se verifica
 
-Un solo entrypoint: **`./scripts/gates.sh`**. Cuatro gates, y falla el conjunto si
+Un solo entrypoint: **`./scripts/gates.sh`**. Cinco gates, y falla el conjunto si
 falla uno.
 
 | Gate | Que | Por que ahi |
@@ -302,11 +302,12 @@ falla uno.
 | 1 build | `pnpm build` | va primero porque `budgets` mide sobre `.next/`; sin build no mide, solo avisa |
 | 2 estatico | secretos + `pnpm lint` | ESLint es quien entiende AST: hooks y core-web-vitals |
 | 3 contrato | `node scripts/conformance.mjs` | las reglas de la casa |
-| 4 tests | `pnpm test` | contrato del tema y de las fuentes, sobre el Sass real |
+| 4 payload | `node scripts/payload-build-check.mjs` | mide artefactos del build: tipos, importMap y migraciones al dia |
+| 5 tests | `pnpm test` | contrato del tema y de las fuentes, sobre el Sass real |
 
 El contrato del gate 3 **es data**: las reglas viven en `conformance/*.json` y el
 runner es tonto. Relajar una ley obliga a editar ese directorio, y eso se ve en el
-diff; un literal enterrado en un `.scss` no se ve. Seis secciones, ejecutables por
+diff; un literal enterrado en un `.scss` no se ve. Siete secciones, ejecutables por
 separado con `pnpm conformance <seccion>`:
 
 - `style` / `tsx` — cero literales de color, spacing, tipografia y motion.
@@ -316,6 +317,11 @@ separado con `pnpm conformance <seccion>`:
 - `structure` — cada entry de Sass carga `carbon-config`; las clases usadas fuera de
   `preview/` estan en `_app.scss`.
 - `budgets` — peso del CSS **y del JS** que viajan al navegador.
+- `payload` — la frontera con el CMS: ningun secreto literal, lo generado sigue
+  generado, `payload-types` solo en `cms/`, el panel fuera del proxy de idioma, las
+  dos listas de locales en sintonia, y **cada lectura de la Local API con lo que su
+  coleccion exige** — `overrideAccess: false` por defecto; en `proposals`, que es
+  privada con pagina publica anonima, el filtro por token y el `limit: 1`.
 - `modularity` — longitud (400 aviso, 800 tope) y grafo de imports: el DS no depende
   de `app/`, `preview/` solo lo importa `/ds`, `tokens.generated` solo `preview/`, y
   el modelo atomico va en un solo sentido — `layout/` no conoce a nadie, `atoms/` no

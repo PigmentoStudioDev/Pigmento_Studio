@@ -25,7 +25,7 @@ este documento, y lo que no este escrito aqui se pregunta a Karen.
 | S2 | Instalacion y arranque de Payload | cerrada — 2026-09-09 · handoff/S2.md · 5 gates, panel en /admin |
 | S3 | Users + Media sobre R2 | cerrada — 2026-09-10 · handoff/S3.md · upload real verificado en R2 |
 | S4 | Coleccion `projects` (portfolio) | cerrada — 2026-09-10 · handoff/S4.md · frontera cms/ activa |
-| S5 | Coleccion `proposals` (privada) | pendiente |
+| S5 | Coleccion `proposals` (privada) | cerrada — 2026-09-10 · handoff/S5.md · 404/403 verificados con curl |
 | S6 | Globals de navegacion y pie | pendiente — opcional |
 | S7 | Migraciones de produccion y deploy | pendiente — **bloqueada por aprobacion de deploy** |
 
