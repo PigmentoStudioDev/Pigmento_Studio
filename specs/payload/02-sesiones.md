@@ -290,9 +290,11 @@ del programa donde un fallo tiene consecuencias fuera del repo.
 ```ts
 // src/cms/proposals.ts
 /**
- * Una propuesta por token. `overrideAccess: false` NO es opcional: la Local API
- * se salta el control de acceso por defecto, asi que sin esta linea un find por
- * token devuelve el catalogo entero de cotizaciones y no falla nada.
+ * Una propuesta por token. CORREGIDO al implementar (ver handoff/S5.md): aqui NO
+ * va `overrideAccess: false`. Con `access.read` exigiendo sesion —que es lo que
+ * cierra el REST— un visitante anonimo no leeria ni su propia propuesta. Lo que
+ * sostiene la seguridad es el filtro por `accessToken`, el `limit: 1` y el mapeo
+ * campo a campo. Para el resto de colecciones sigue siendo obligatorio.
  */
 export async function getProposalByToken(token: string): Promise<ProposalView | null>
 
@@ -308,7 +310,9 @@ export interface ProposalView {
 ```
 
 **Restricciones — las siete que no se negocian.**
-1. `overrideAccess: false` en toda lectura de `proposals`. Gate, no revision.
+1. Toda lectura de `proposals` filtra por `accessToken` y lleva `limit: 1`. Gate,
+   no revision. **No** `overrideAccess: false` — el motivo esta arriba y en el
+   handoff; para las demas colecciones ese flag si es obligatorio.
 2. `notes` **no** aparece en `ProposalView`. El adaptador escoge campo por campo; **no
    hay ningun `...doc`** en `cms/`. Un spread es como se filtra un campo interno.
 3. La ruta responde **404** cuando el token no coincide. Nunca 403: un 403 confirma
