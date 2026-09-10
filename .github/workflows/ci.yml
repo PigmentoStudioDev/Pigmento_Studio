@@ -42,9 +42,13 @@ jobs:
 
       - uses: pnpm/action-setup@v6
 
+      # 24 y no 22: es la version con la que compila Vercel. Con dos versiones
+      # distintas, "verde en CI" deja de garantizar "verde en el deploy", que es
+      # justo la divergencia que gates.sh existe para evitar. La fija tambien
+      # `engines.node` en package.json, que es lo que lee Vercel.
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
 
       - name: Instalar
