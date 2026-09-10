@@ -1,4 +1,5 @@
 import type { SiteHeaderProps } from "@/design-system/components/organisms/SiteHeader/SiteHeader";
+import type { ProjectPiece } from "@/cms/projects";
 
 /**
  * El contenido de la navegacion. Vive en app/ y no en el design system porque es
@@ -15,7 +16,7 @@ import type { SiteHeaderProps } from "@/design-system/components/organisms/SiteH
  */
 type Translate = (key: string) => string;
 
-export function getNavigation(t: Translate): SiteHeaderProps {
+export function getNavigation(t: Translate, gallery: ProjectPiece[]): SiteHeaderProps {
   return {
     label: t("label"),
     homeHref: "/",
@@ -63,36 +64,7 @@ export function getNavigation(t: Translate): SiteHeaderProps {
       cta: t("banner.cta"),
       tags: [t("banner.tag")],
 
-      /**
-       * El escaparate giratorio del pie de la tarjeta.
-       *
-       * Las medidas van una a una y no como un tamano comun porque NO lo son: las
-       * piezas van de 477 a 796 de alto. next/image las necesita para reservar el
-       * hueco antes de descargarlas, y darle una medida inventada haria saltar el
-       * panel al llegar cada archivo.
-       *
-       * Son las catorce, una vez. El efecto de referencia las repite dos veces para
-       * cerrar el circulo, pero alli la corona ocupa la pantalla; aqui, con las
-       * miniaturas a 30cqw, veintiocho se solapan — el arco da para unas
-       * veinticinco. Si se quieren mas piezas, la palanca es abrir la rueda, no
-       * repetir la lista.
-       */
-      gallery: [
-      { src: "/portfolio/01.png", width: 522, height: 522 },
-      { src: "/portfolio/02.png", width: 522, height: 715 },
-      { src: "/portfolio/03.png", width: 521, height: 737 },
-      { src: "/portfolio/04.png", width: 521, height: 690 },
-      { src: "/portfolio/05.png", width: 516, height: 775 },
-      { src: "/portfolio/06.png", width: 520, height: 601 },
-      { src: "/portfolio/07.png", width: 521, height: 715 },
-      { src: "/portfolio/08.png", width: 521, height: 477 },
-      { src: "/portfolio/09.png", width: 523, height: 605 },
-      { src: "/portfolio/10.png", width: 523, height: 753 },
-      { src: "/portfolio/11.png", width: 521, height: 631 },
-      { src: "/portfolio/12.png", width: 509, height: 718 },
-      { src: "/portfolio/13.png", width: 520, height: 796 },
-      { src: "/portfolio/14.png", width: 518, height: 688 },
-      ],
+      gallery,
     },
   };
 }

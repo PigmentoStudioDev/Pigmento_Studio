@@ -11,6 +11,7 @@ import { SiteHeader } from "@/design-system/components/organisms/SiteHeader/Site
 import { themeModeScript } from "@/design-system/theme/mode";
 import { routing } from "@/i18n/routing";
 import { getFooter } from "../footer";
+import { getFeaturedPieces } from "@/cms/projects";
 import { getNavigation } from "../navigation";
 import { IBM_Plex_Mono, IBM_Plex_Serif } from "next/font/google";
 import localFont from "next/font/local";
@@ -103,6 +104,11 @@ export default async function RootLayout({
   setRequestLocale(locale);
 
   const t = await getTranslations("nav");
+
+  // El escaparate del menu sale del CMS. Si la coleccion viene vacia llega [] y
+  // NavBanner ya lo aguanta: no hay fallback a los PNG de public/, porque un
+  // fallback silencioso convierte "el CMS no responde" en "el sitio se ve bien".
+  const pieces = await getFeaturedPieces(locale);
   const tFooter = await getTranslations("footer");
 
   return (
@@ -155,7 +161,7 @@ export default async function RootLayout({
               propio sobre un hero de video. Detras de ella tambien por z-index
               (90 contra 100) — encima la difuminaria a ella. */}
           <ProgressiveBlur />
-          <SiteHeader {...getNavigation(t)} />
+          <SiteHeader {...getNavigation(t, pieces)} />
           {children}
           {/* Chrome de pagina, como la cabecera: va aqui y no envuelto en un
               Section. Un <footer> dentro de <section> deja de ser el landmark

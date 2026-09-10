@@ -5,6 +5,7 @@ import { s3Storage } from '@payloadcms/storage-s3';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
 import { Media } from './collections/Media';
+import { Projects } from './collections/Projects';
 import { Users } from './collections/Users';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -25,7 +26,7 @@ export default buildConfig({
     importMap: { baseDir: path.resolve(dirname) },
   },
 
-  collections: [Users, Media],
+  collections: [Users, Media, Projects],
 
   secret: process.env.PAYLOAD_SECRET || '',
 
