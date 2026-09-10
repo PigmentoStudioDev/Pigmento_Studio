@@ -44,9 +44,21 @@ function generado(script, archivo, nombre) {
   const despues = readFileSync(file, 'utf8');
 
   if (normal(antes) !== normal(despues)) {
+    /**
+     * Se imprimen las primeras lineas que difieren. Un gate que solo dice
+     * "desactualizado" obliga a reproducir el entorno para saber QUE cambio, y
+     * en CI —donde no hay ni .env ni la base— eso puede ser media tarde.
+     */
+    const a = normal(antes).split('\n');
+    const b = normal(despues).split('\n');
+    const diff = [];
+    for (let i = 0; i < Math.max(a.length, b.length) && diff.length < 12; i += 1) {
+      if (a[i] !== b[i]) diff.push(`    ${i + 1}: -${a[i] ?? '(nada)'}\n    ${i + 1}: +${b[i] ?? '(nada)'}`);
+    }
     fail(`${nombre}: ${archivo} estaba desactualizado. Alguien cambio el config y no
         regenero, asi que a partir de ahi ese archivo miente. Ya quedo regenerado:
-        revisa el diff y commitealo con el cambio que lo causo.`);
+        revisa el diff y commitealo con el cambio que lo causo.
+${diff.join('\n')}`);
   } else {
     ok(`${nombre} al dia`);
   }
