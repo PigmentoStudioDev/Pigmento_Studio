@@ -28,6 +28,8 @@ este documento, y lo que no este escrito aqui se pregunta a Karen.
 | S5 | Coleccion `proposals` (privada) | cerrada — 2026-09-10 · handoff/S5.md · 404/403 verificados con curl |
 | S6 | Globals de navegacion y pie | pendiente — opcional |
 | S7 | Migraciones de produccion y deploy | pendiente — **bloqueada por aprobacion de deploy** |
+| S8a | Propuesta comparativa: schema y adaptador | spec escrito 2026-09-10 · sin firmar |
+| S8b | Propuesta comparativa: los siete organismos | spec escrito 2026-09-10 · sin firmar |
 
 Un agente que cierra una sesion actualiza esta tabla y escribe
 `specs/payload/handoff/S<n>.md`. No hay otro sitio donde viva el estado.
