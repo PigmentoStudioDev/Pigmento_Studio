@@ -51,6 +51,14 @@ describe('criterionKey', () => {
   });
 });
 
+/**
+ * El tipo que `alignProposal` acepta. Sin nombrarlo, TypeScript infiere de cada literal
+ * un elemento SIN `key` ni `id` y `out.packages[0].key` no compila: la funcion devuelve
+ * exactamente el tipo que recibe. Se nombra aqui en vez de exportar su interfaz solo
+ * para el test.
+ */
+type Alineable = Parameters<typeof alignProposal>[0];
+
 describe('alignProposal', () => {
   const criteria = [{ label: 'Inventario' }, { label: 'Permisos' }];
 
@@ -106,6 +114,38 @@ describe('alignProposal', () => {
     });
 
     expect(out.packages?.[0].values).toEqual([{ key: 'inventario', value: 'Nuevo' }]);
+  });
+
+  /**
+   * La fila de un valor CONSERVA SU ID.
+   *
+   * Antes de localizar daba igual: el texto vivia en la propia fila y se reescribia
+   * identico. Con `value` localizado, devolver una fila sin id hace que Payload borre
+   * la vieja y cree otra — y las filas `_locales` que colgaban de ella se van en
+   * cascada. Guardar la version en ingles vaciaba la tabla comparativa en espanol,
+   * sin error y sin que nada lo avisara.
+   */
+  it('conserva el id de cada fila de valor', () => {
+    const entrada: Alineable = {
+      criteria: [{ key: 'inventario', label: 'Inventario' }],
+      packages: [{ name: 'Ruta', values: [{ id: 'fila-1', key: 'inventario', value: 'Texto' }] }],
+    };
+
+    expect(alignProposal(entrada).packages?.[0]?.values?.[0]).toEqual({
+      id: 'fila-1',
+      key: 'inventario',
+      value: 'Texto',
+    });
+  });
+
+  /** El hueco de un criterio nuevo no trae id: lo acuna Payload al guardarlo. */
+  it('el criterio sin valor previo entra sin id', () => {
+    const entrada: Alineable = {
+      criteria: [{ key: 'nuevo', label: 'Nuevo' }],
+      packages: [{ name: 'Ruta', values: [] }],
+    };
+
+    expect(alignProposal(entrada).packages?.[0]?.values).toEqual([{ key: 'nuevo', value: '' }]);
   });
 
   /**
@@ -165,13 +205,6 @@ describe('alignProposal · hallazgos', () => {
  * sobrevive a los dos idiomas.
  */
 describe('alignProposal · rutas', () => {
-  /**
-   * Sin esto, TypeScript infiere del literal un elemento SIN `key` y `out.packages[0].key`
-   * no compila: `alignProposal` devuelve exactamente el tipo que recibe. Se nombra el
-   * tipo que la funcion acepta en vez de exportar su interfaz solo para el test.
-   */
-  type Alineable = Parameters<typeof alignProposal>[0];
-
   it('deriva la clave de cada ruta y respeta la que ya tenga', () => {
     const out = alignProposal({
       packages: [
