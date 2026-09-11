@@ -68,6 +68,8 @@ interface ValueRow {
 }
 
 interface PackageRow {
+  key?: string | null;
+  name?: string | null;
   values?: ValueRow[] | null;
 }
 
@@ -80,6 +82,7 @@ interface AlignableProposal {
   criteria?: CriterionRow[] | null;
   packages?: PackageRow[] | null;
   findings?: FindingRow[] | null;
+  recommendedPackage?: string | null;
 }
 
 /**
@@ -118,9 +121,26 @@ export function alignProposal<T extends AlignableProposal>(data: T): T {
     key: c.key || criterionKey(c.label ?? ''),
   }));
 
-  if (!criterios.length) return { ...data, findings, criteria: criterios };
+  // La clave de cada ruta se acuna ANTES de la salida temprana: no depende de la
+  // matriz, y una propuesta puede declarar sus rutas antes de declarar en que se
+  // diferencian.
+  const conClave =
+    data.packages?.map((p) => ({ ...p, key: p.key || criterionKey(p.name ?? '') })) ??
+    data.packages;
 
-  const packages = (data.packages ?? []).map((paquete) => {
+  // La recomendada se guarda por CLAVE. Quien redacta sigue escribiendo el nombre
+  // —teclear una clave es pedirle disciplina de programador— y aqui se normaliza
+  // con la misma funcion que la derivo, asi que casan por construccion. Es
+  // idempotente: normalizar una clave devuelve la clave.
+  const recommendedPackage = data.recommendedPackage
+    ? criterionKey(data.recommendedPackage)
+    : data.recommendedPackage;
+
+  if (!criterios.length) {
+    return { ...data, findings, criteria: criterios, packages: conClave, recommendedPackage };
+  }
+
+  const packages = (conClave ?? []).map((paquete) => {
     const previos = new Map(
       (paquete.values ?? []).map((v) => [v.key ?? '', v.value ?? '']),
     );
@@ -131,7 +151,7 @@ export function alignProposal<T extends AlignableProposal>(data: T): T {
     };
   });
 
-  return { ...data, findings, criteria: criterios, packages };
+  return { ...data, findings, criteria: criterios, packages, recommendedPackage };
 }
 
 /**
@@ -285,22 +305,26 @@ export const Proposals: CollectionConfig = {
             {
               name: 'serviceTitle',
               type: 'text',
+              localized: true,
               admin: { description: 'El servicio: "Digital Growth Strategy".' },
             },
             {
               name: 'tagline',
               type: 'textarea',
+              localized: true,
               admin: { description: 'Una linea por renglon.' },
             },
             { name: 'coverImage', type: 'upload', relationTo: 'media' },
             {
               name: 'headline',
               type: 'text',
+              localized: true,
               admin: { description: 'El titular del diagnostico.' },
             },
             {
               name: 'context',
               type: 'textarea',
+              localized: true,
               admin: { description: 'Donde esta el cliente hoy y que proponen las rutas.' },
             },
 
@@ -332,18 +356,21 @@ export const Proposals: CollectionConfig = {
                 {
                   name: 'area',
                   type: 'text',
+                  localized: true,
                   required: true,
                   admin: { description: 'La etiqueta corta: captacion, calificacion, seguimiento.' },
                 },
                 {
                   name: 'title',
                   type: 'text',
+                  localized: true,
                   required: true,
                   admin: { description: 'La afirmacion: "la ficha no capta ningun lead".' },
                 },
                 {
                   name: 'cost',
                   type: 'textarea',
+                  localized: true,
                   required: true,
                   admin: { description: 'Lo que cuesta hoy, en dinero o en tiempo del equipo.' },
                 },
@@ -376,12 +403,14 @@ export const Proposals: CollectionConfig = {
                 {
                   name: 'label',
                   type: 'textarea',
+                  localized: true,
                   required: true,
                   admin: { description: 'Que es ese numero.' },
                 },
                 {
                   name: 'source',
                   type: 'text',
+                  localized: true,
                   required: true,
                   admin: { description: 'De donde sale. Obligatorio a proposito.' },
                 },
@@ -394,19 +423,20 @@ export const Proposals: CollectionConfig = {
           label: 'Base comun',
           description: 'Lo que llevan todas las rutas.',
           fields: [
-            { name: 'baseTitle', type: 'text', defaultValue: 'Lo que incluye' },
+            { name: 'baseTitle', type: 'text', localized: true, defaultValue: 'Lo que incluye' },
             {
               name: 'deliverables',
               type: 'array',
               labels: { singular: 'Entregable', plural: 'Entregables' },
               fields: [
-                { name: 'name', type: 'text', required: true },
-                { name: 'description', type: 'textarea', required: true },
+                { name: 'name', type: 'text', localized: true, required: true },
+                { name: 'description', type: 'textarea', localized: true, required: true },
               ],
             },
             {
               name: 'includedInAll',
               type: 'textarea',
+              localized: true,
               admin: {
                 description: 'Una linea por punto. Es una textarea y no una lista de filas: cada punto es UN dato, y seis filas plegables para seis frases es mas trabajo sin mas estructura.',
               },
@@ -418,7 +448,7 @@ export const Proposals: CollectionConfig = {
           label: 'Rutas',
           description: 'Los paquetes y la matriz que los compara.',
           fields: [
-            { name: 'routesEyebrow', type: 'text', admin: { description: 'El rotulo comun de las rutas.' } },
+            { name: 'routesEyebrow', type: 'text', localized: true, admin: { description: 'El rotulo comun de las rutas.' } },
             {
               name: 'criteria',
               type: 'array',
@@ -427,7 +457,7 @@ export const Proposals: CollectionConfig = {
                 description: 'Se declaran UNA vez. Cada ruta recibe su hueco automaticamente al guardar.',
               },
               fields: [
-                { name: 'label', type: 'text', required: true },
+                { name: 'label', type: 'text', localized: true, required: true },
                 {
                   name: 'key',
                   type: 'text',
@@ -440,7 +470,12 @@ export const Proposals: CollectionConfig = {
               type: 'array',
               labels: { singular: 'Ruta', plural: 'Rutas' },
               fields: [
-                { name: 'name', type: 'text', required: true },
+                { name: 'name', type: 'text', localized: true, required: true },
+                {
+                  name: 'key',
+                  type: 'text',
+                  admin: { readOnly: true, description: 'Se deriva del nombre. Es lo que ata la ruta recomendada y las columnas de la comparativa, y NO se traduce.' },
+                },
                 {
                   name: 'accent',
                   type: 'select',
@@ -455,7 +490,7 @@ export const Proposals: CollectionConfig = {
                 },
                 ...precio,
                 { name: 'deliveryWeeks', type: 'number', min: 0 },
-                { name: 'body', type: 'textarea', admin: { description: 'Un parrafo por bloque, separados por linea en blanco.' } },
+                { name: 'body', type: 'textarea', localized: true, admin: { description: 'Un parrafo por bloque, separados por linea en blanco.' } },
                 {
                   name: 'values',
                   type: 'array',
@@ -463,7 +498,7 @@ export const Proposals: CollectionConfig = {
                   admin: { description: 'Se rellena solo a partir de los criterios. Solo hay que escribir el valor.' },
                   fields: [
                     { name: 'key', type: 'text', admin: { readOnly: true } },
-                    { name: 'value', type: 'textarea' },
+                    { name: 'value', type: 'textarea', localized: true },
                   ],
                 },
               ],
@@ -474,44 +509,44 @@ export const Proposals: CollectionConfig = {
         {
           label: 'Modulos y recomendacion',
           fields: [
-            { name: 'addOnsTitle', type: 'text' },
-            { name: 'addOnsIntro', type: 'textarea' },
+            { name: 'addOnsTitle', type: 'text', localized: true },
+            { name: 'addOnsIntro', type: 'textarea', localized: true },
             {
               name: 'addOns',
               type: 'array',
               labels: { singular: 'Modulo', plural: 'Modulos' },
               fields: [
-                { name: 'name', type: 'text', required: true },
+                { name: 'name', type: 'text', localized: true, required: true },
                 ...precio,
-                { name: 'description', type: 'textarea', required: true },
+                { name: 'description', type: 'textarea', localized: true, required: true },
               ],
             },
             {
               name: 'recommendedPackage',
               type: 'text',
-              admin: { description: 'El NOMBRE exacto de la ruta recomendada.' },
+              admin: { description: 'El nombre de la ruta recomendada. Al guardar se convierte en su clave, que es lo que casa en los dos idiomas.' },
             },
-            { name: 'recHeadline', type: 'text' },
-            { name: 'recBody', type: 'textarea' },
-            { name: 'technicalNote', type: 'textarea' },
+            { name: 'recHeadline', type: 'text', localized: true },
+            { name: 'recBody', type: 'textarea', localized: true },
+            { name: 'technicalNote', type: 'textarea', localized: true },
           ],
         },
 
         {
           label: 'Terminos',
           fields: [
-            { name: 'termsTitle', type: 'text', defaultValue: 'Siguiente paso' },
+            { name: 'termsTitle', type: 'text', localized: true, defaultValue: 'Siguiente paso' },
             {
               name: 'terms',
               type: 'array',
               labels: { singular: 'Termino', plural: 'Terminos' },
               defaultValue: TERMINOS_POR_DEFECTO,
               fields: [
-                { name: 'label', type: 'text', required: true },
-                { name: 'value', type: 'textarea', required: true },
+                { name: 'label', type: 'text', localized: true, required: true },
+                { name: 'value', type: 'textarea', localized: true, required: true },
               ],
             },
-            { name: 'closing', type: 'textarea' },
+            { name: 'closing', type: 'textarea', localized: true },
           ],
         },
 
@@ -523,8 +558,8 @@ export const Proposals: CollectionConfig = {
       name: 'scopeItems',
       type: 'array',
       fields: [
-        { name: 'concept', type: 'text', required: true },
-        { name: 'detail', type: 'textarea' },
+        { name: 'concept', type: 'text', localized: true, required: true },
+        { name: 'detail', type: 'textarea', localized: true },
         {
           name: 'amountCents',
           type: 'number',

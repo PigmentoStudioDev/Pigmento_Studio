@@ -317,6 +317,10 @@ export interface Proposal {
     | {
         name: string;
         /**
+         * Se deriva del nombre. Es lo que ata la ruta recomendada y las columnas de la comparativa, y NO se traduce.
+         */
+        key?: string | null;
+        /**
          * El tinte que identifica la ruta. Numerado, no por color.
          */
         accent: 'uno' | 'dos' | 'tres';
@@ -368,7 +372,7 @@ export interface Proposal {
       }[]
     | null;
   /**
-   * El NOMBRE exacto de la ruta recomendada.
+   * El nombre de la ruta recomendada. Al guardar se convierte en su clave, que es lo que casa en los dos idiomas.
    */
   recommendedPackage?: string | null;
   recHeadline?: string | null;
@@ -600,6 +604,7 @@ export interface ProposalsSelect<T extends boolean = true> {
     | T
     | {
         name?: T;
+        key?: T;
         accent?: T;
         priceKind?: T;
         amountCents?: T;

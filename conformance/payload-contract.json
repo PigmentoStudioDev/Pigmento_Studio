@@ -60,9 +60,10 @@
           "accessToken"
         ],
         "exige": [
-          "limit: 1"
+          "limit: 1",
+          "locale"
         ],
-        "why": "proposals es PRIVADA y su pagina publica es anonima, asi que aqui no cabe `overrideAccess: false` — con la coleccion cerrada a sesion, un anonimo no leeria ni su propia propuesta. Lo que sostiene la seguridad es el filtro por token y la imposibilidad de enumerar: sin `accessToken` en el where, esta consulta devuelve cotizaciones ajenas; sin `limit: 1`, las devuelve todas de golpe. `accessToken` se exige COMO CAMPO DEL where y no como texto suelto en la llamada: filtrando por `id` y dejando la palabra en un comentario, la consulta devuelve cotizaciones por un numero adivinable y el gate pasaba verde"
+        "why": "proposals es PRIVADA y su pagina publica es anonima, asi que aqui no cabe `overrideAccess: false` — con la coleccion cerrada a sesion, un anonimo no leeria ni su propia propuesta. Lo que sostiene la seguridad es el filtro por token y la imposibilidad de enumerar: sin `accessToken` en el where, esta consulta devuelve cotizaciones ajenas; sin `limit: 1`, las devuelve todas de golpe. `accessToken` se exige COMO CAMPO DEL where y no como texto suelto en la llamada: filtrando por `id` y dejando la palabra en un comentario, la consulta devuelve cotizaciones por un numero adivinable y el gate pasaba verde. Y `locale`, porque desde S10 la propuesta se escribe en dos idiomas: una lectura que no lo pasa sirve SIEMPRE el idioma por defecto, y con `fallback` encendido eso no da error ni hueco — da una pagina en ingles con el texto en espanol, que es exactamente el sintoma que costo encontrar"
       }
     },
     "porDefecto": {

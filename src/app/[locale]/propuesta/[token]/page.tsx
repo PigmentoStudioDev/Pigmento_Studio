@@ -90,7 +90,7 @@ export default async function ProposalPage({ params }: PageProps<"/[locale]/prop
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
-  const proposal = await getProposalByToken(token);
+  const proposal = await getProposalByToken(token, locale);
 
   // Ni el token equivocado ni el borrador salen. Una propuesta en 'borrador' aun
   // no se ha enviado: que su URL respondiera dejaria ver precios a medio pensar.
@@ -233,7 +233,7 @@ function documento(
           currency={proposal.currency}
           locale={intlLocale}
           routes={proposal.packages.map((p) => ({
-            key: p.name,
+            key: p.key,
             name: p.name,
             accent: p.accent,
             kind: p.price.kind,
@@ -249,7 +249,7 @@ function documento(
           values={proposal.criteria.map((c) => ({
             criterion: c.label,
             cells: proposal.packages.map((p) => ({
-              key: p.name,
+              key: p.key,
               value: p.values.find((v) => v.key === c.key)?.value ?? "",
             })),
           }))}

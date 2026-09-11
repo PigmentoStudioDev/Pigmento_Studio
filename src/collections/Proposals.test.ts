@@ -108,9 +108,18 @@ describe('alignProposal', () => {
     expect(out.packages?.[0].values).toEqual([{ key: 'inventario', value: 'Nuevo' }]);
   });
 
-  it('sin criterios no toca los paquetes', () => {
+  /**
+   * Antes de S10 esto afirmaba IDENTIDAD —que el array saliera siendo el mismo
+   * objeto— y dejo de ser cierto a proposito: ahora se acuna la clave de cada ruta
+   * tambien sin criterios. Lo que sigue en pie, y es lo que protegia de verdad, es
+   * que sin matriz declarada los valores ya escritos no se tocan: vaciarlos aqui
+   * borraria trabajo del editor cada vez que guardara antes de declarar criterios.
+   */
+  it('sin criterios no toca los valores de los paquetes', () => {
     const paquetes = [{ values: [{ key: 'x', value: 'y' }] }];
-    expect(alignProposal({ criteria: [], packages: paquetes }).packages).toBe(paquetes);
+    const out = alignProposal({ criteria: [], packages: paquetes });
+
+    expect(out.packages?.[0]?.values).toEqual([{ key: 'x', value: 'y' }]);
   });
 });
 
@@ -142,5 +151,84 @@ describe('alignProposal · hallazgos', () => {
    */
   it('no inventa una lista cuando la propuesta no trae hallazgos', () => {
     expect(alignProposal({ criteria: [], findings: undefined }).findings).toBeUndefined();
+  });
+});
+
+/**
+ * La clave de cada RUTA, que es el mismo problema una capa mas.
+ *
+ * Hasta S10 la ruta recomendada se resolvia comparando cadenas:
+ * `recommendedPackage === p.name`. Eso aguanta mientras el nombre sea un dato
+ * fijo, y deja de aguantar en cuanto el nombre se traduce — en ingles
+ * "Plataforma conectada" no casa con "Connected platform" y la insignia
+ * desaparece sin que falle nada. Una clave que no se traduce es lo unico que
+ * sobrevive a los dos idiomas.
+ */
+describe('alignProposal · rutas', () => {
+  /**
+   * Sin esto, TypeScript infiere del literal un elemento SIN `key` y `out.packages[0].key`
+   * no compila: `alignProposal` devuelve exactamente el tipo que recibe. Se nombra el
+   * tipo que la funcion acepta en vez de exportar su interfaz solo para el test.
+   */
+  type Alineable = Parameters<typeof alignProposal>[0];
+
+  it('deriva la clave de cada ruta y respeta la que ya tenga', () => {
+    const out = alignProposal({
+      packages: [
+        { name: 'Plataforma conectada' },
+        { name: 'Nombre reescrito tres veces', key: 'sitio-base' },
+      ],
+    });
+
+    expect(out.packages?.map((p) => p.key)).toEqual([
+      'plataforma-conectada',
+      'sitio-base',
+    ]);
+  });
+
+  /**
+   * Sin criterios `alignProposal` sale temprano —no hay matriz que alinear— pero
+   * las claves de ruta se acunan igual: no dependen de la matriz, y una propuesta
+   * puede declarar rutas antes de declarar en que se diferencian.
+   */
+  it('acuna la clave aunque no haya criterios que alinear', () => {
+    const entrada: Alineable = { criteria: [], packages: [{ name: 'Sitio base' }] };
+    const out = alignProposal(entrada);
+
+    expect(out.packages?.[0]?.key).toBe('sitio-base');
+  });
+
+  it('no inventa una lista cuando la propuesta no trae rutas', () => {
+    expect(alignProposal({ criteria: [], packages: undefined }).packages).toBeUndefined();
+  });
+
+  /**
+   * Quien redacta escribe el NOMBRE de la ruta recomendada, no su clave. Se
+   * normaliza con la misma funcion que derivo la clave, asi que casan por
+   * construccion y nadie tiene que teclear un slug.
+   */
+  it('convierte la ruta recomendada en su clave', () => {
+    const entrada: Alineable = {
+      criteria: [],
+      packages: [{ name: 'Plataforma conectada' }],
+      recommendedPackage: 'Plataforma conectada',
+    };
+    const out = alignProposal(entrada);
+
+    expect(out.recommendedPackage).toBe(out.packages?.[0]?.key);
+  });
+
+  /** Idempotente: guardar dos veces no degrada la clave. */
+  it('deja en paz una recomendada que ya venia en clave', () => {
+    const entrada: Alineable = { criteria: [], recommendedPackage: 'plataforma-conectada' };
+
+    expect(alignProposal(entrada).recommendedPackage).toBe('plataforma-conectada');
+  });
+
+  /** Sin recomendada no se inventa una cadena vacia que casaria con cualquier hueco. */
+  it('no toca la recomendada cuando no hay ninguna', () => {
+    const entrada: Alineable = { criteria: [] };
+
+    expect(alignProposal(entrada).recommendedPackage).toBeUndefined();
   });
 });

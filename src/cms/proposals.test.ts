@@ -79,3 +79,55 @@ describe('toView', () => {
     expect(toView(propuesta({}), ahora).expired).toBe(false);
   });
 });
+
+/**
+ * La ruta recomendada, atada por CLAVE y no por nombre.
+ *
+ * El fixture pone a proposito un nombre distinto del valor de
+ * `recommendedPackage`: es la situacion exacta del ingles, donde el nombre esta
+ * traducido y la clave no. Comparando cadenas de nombre, la insignia se apagaba
+ * en silencio — sin error, sin hueco, sin nada que mirar.
+ */
+describe('toView · ruta recomendada', () => {
+  const conRutas = (recommendedPackage: string) =>
+    propuesta({
+      recommendedPackage,
+      packages: [
+        {
+          key: 'plataforma-conectada',
+          name: 'Connected platform',
+          accent: 'uno',
+          priceKind: 'fijo',
+          amountCents: 100,
+          unit: 'proyecto',
+        },
+        {
+          key: 'sitio-base',
+          name: 'Base site',
+          accent: 'dos',
+          priceKind: 'fijo',
+          amountCents: 200,
+          unit: 'proyecto',
+        },
+      ],
+    } as Partial<Proposal>);
+
+  it('marca la ruta cuya clave casa, aunque el nombre este traducido', () => {
+    const view = toView(conRutas('plataforma-conectada'));
+
+    expect(view.packages.map((p) => p.recommended)).toEqual([true, false]);
+  });
+
+  /** La clave viaja a la vista: es la que ata cada columna de la comparativa. */
+  it('expone la clave de cada ruta', () => {
+    expect(toView(conRutas('sitio-base')).packages.map((p) => p.key)).toEqual([
+      'plataforma-conectada',
+      'sitio-base',
+    ]);
+  });
+
+  /** Sin recomendada, ninguna. Una cadena vacia no puede casar con nada. */
+  it('sin ruta recomendada no marca ninguna', () => {
+    expect(toView(conRutas('')).packages.some((p) => p.recommended)).toBe(false);
+  });
+});

@@ -4,6 +4,7 @@ import * as migration_20260910_172428_projects from './20260910_172428_projects'
 import * as migration_20260910_221046_proposals from './20260910_221046_proposals';
 import * as migration_20260911_151335_propuesta_comparativa from './20260911_151335_propuesta_comparativa';
 import * as migration_20260911_162011_auditoria_y_cifras from './20260911_162011_auditoria_y_cifras';
+import * as migration_20260911_183048_propuesta_bilingue from './20260911_183048_propuesta_bilingue';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20260911_162011_auditoria_y_cifras.up,
     down: migration_20260911_162011_auditoria_y_cifras.down,
-    name: '20260911_162011_auditoria_y_cifras'
+    name: '20260911_162011_auditoria_y_cifras',
+  },
+  {
+    up: migration_20260911_183048_propuesta_bilingue.up,
+    down: migration_20260911_183048_propuesta_bilingue.down,
+    name: '20260911_183048_propuesta_bilingue'
   },
 ];
