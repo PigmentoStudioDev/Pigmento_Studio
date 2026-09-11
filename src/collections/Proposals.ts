@@ -63,6 +63,7 @@ interface CriterionRow {
 }
 
 interface ValueRow {
+  id?: string | null;
   key?: string | null;
   value?: string | null;
 }
@@ -141,13 +142,22 @@ export function alignProposal<T extends AlignableProposal>(data: T): T {
   }
 
   const packages = (conClave ?? []).map((paquete) => {
-    const previos = new Map(
-      (paquete.values ?? []).map((v) => [v.key ?? '', v.value ?? '']),
-    );
+    const previos = new Map((paquete.values ?? []).map((v) => [v.key ?? '', v]));
 
+    /**
+     * Se reutiliza la FILA ENTERA, con su id, y no solo su texto.
+     *
+     * Devolver `{ key, value }` sin id hace que Payload borre la fila guardada y cree
+     * otra — y con `value` localizado, las filas `_locales` que colgaban de ella se van
+     * en cascada. Guardar la version en ingles vaciaba la comparativa en espanol, sin
+     * error y sin dejar hueco. El criterio nuevo si entra sin id: ese lo acuna Payload.
+     */
     return {
       ...paquete,
-      values: criterios.map((c) => ({ key: c.key, value: previos.get(c.key) ?? '' })),
+      values: criterios.map((c) => {
+        const previo = previos.get(c.key);
+        return previo ? { ...previo, key: c.key } : { key: c.key, value: '' };
+      }),
     };
   });
 
