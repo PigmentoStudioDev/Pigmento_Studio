@@ -87,6 +87,23 @@ $-styles: (
   // pantalla, y la medida de lectura es lo unico que no deberia moverse.
   'heading': (size: clamp(2rem, 5.6vw, 5.25rem), height: 1, tracking: -0.03em, weight: 400),
 
+  // La CIFRA: un numero que se lee de un vistazo dentro de una caja.
+  //
+  // Es el unico estilo de la escala que no se mide contra la ventana sino contra su
+  // CONTENEDOR, y por eso existe en vez de reusar 'display'. Un precio no vive a
+  // sangre: vive en una tarjeta que en la comparativa de rutas ocupa un tercio del
+  // ancho. Con 10vw, esa cifra se calculaba contra un monitor de 1584 y salia a
+  // 150px dentro de una columna de 430 — el numero desbordaba su propia banda.
+  //
+  // TRAMPA, y es la razon de este parrafo: cqi sin contenedor NO falla, cae a la
+  // ventana pequena. Quien use este estilo tiene que declarar
+  // `container-type: inline-size` en el bloque que lo envuelve, o vuelve
+  // silenciosamente a estar medido contra la pantalla y nadie se entera.
+  //
+  // El clamp acota igual que en las cimas, y por lo mismo: en una columna de movil
+  // 12cqi serian 35px, legibles, pero en una banda a ancho completo se dispararian.
+  'figure': (size: clamp(2rem, 12cqi, 3.5rem), height: 1, tracking: -0.03em, weight: 400),
+
   // El cuerpo grande que acompana a un display. No es texto corrido y por eso su
   // interlineado es de titular: al lado de una cima de 144px, un parrafo de 19 no se
   // leia como entradilla sino como letra pequena.

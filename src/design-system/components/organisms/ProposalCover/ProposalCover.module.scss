@@ -1,0 +1,90 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: spacing.$spacing-05;
+  min-block-size: 60vh;
+  // Sin aire propio: el panel se apoya en el borde del hero. El hueco entre los dos
+  // bordes se leia como un marco, y un marco dentro de otro marco es una caja mas
+  // que mirar antes de llegar al titular.
+  border-radius: brand.$radius-05;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+/**
+ * El panel del texto: una superficie solida sobre la imagen.
+ *
+ * Solida y no translucida. Sobre una textura con tanto detalle como la portada, un
+ * velo deja el contraste a merced de lo que caiga debajo — y lo que cae debajo se
+ * MUEVE, porque el fondo lleva parallax. El unico contraste que se puede garantizar
+ * es el que no depende de la imagen.
+ *
+ * El fondo es FIJO, y eso obliga a fijar tambien lo que va encima. Dentro hay un
+ * Heading y un SectionChip que se pintan con los tokens del modo: en oscuro, un
+ * `text-primary` claro sobre este panel es texto blanco sobre gris claro, y ningun
+ * token estaria mal — por eso no se ve venir.
+ *
+ * La solucion es una ISLA: se redeclaran aqui las tres custom properties que leen
+ * sus hijos, y con eso el panel entero queda en claro mire como mire el resto de la
+ * pagina. La alternativa de casa seria `theme.theme(themes.$white)`, que es el
+ * mecanismo de index.scss — pero emite las 540 propiedades del tema, medido en
+ * 3.2kb comprimidos, con el presupuesto de CSS justo en su tope de 17.
+ */
+.content {
+  display: flex;
+  flex-direction: column;
+  // Los hijos se estiran al ancho del panel en vez de encogerse a su contenido: con
+  // `flex-start`, el distintivo, el titular y las frases arrancaban en la misma
+  // linea pero terminaban en tres distintas, y el bloque no se leia como un bloque.
+  align-items: stretch;
+  gap: spacing.$spacing-05;
+  inline-size: 100%;
+  max-inline-size: brand.$container-content;
+  padding: spacing.$spacing-06;
+  background-color: brand.$surface-cover;
+
+  // Las tres que leen los hijos: el titular, y el chip con su superficie y su texto.
+  // Se declaran y no se heredan porque un color heredado no llega a un componente
+  // que pinta el suyo.
+  --cds-text-primary: #{brand.$text-on-accent};
+  --cds-text-secondary: #{brand.$text-on-accent-secondary};
+  --cds-layer-01: #{brand.$surface-cover-raised};
+
+  color: brand.$text-on-accent;
+}
+
+.tagline {
+  @include brandtype.style('lead');
+
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.taglineLine {
+  display: block;
+}
+
+// En movil el panel ocupa el ancho entero del padre: un tope de lectura dentro de
+// una columna que ya es estrecha solo deja un margen que no separa de nada.
+@include breakpoint.breakpoint-down('md') {
+  .content {
+    max-inline-size: none;
+    padding: spacing.$spacing-05;
+  }
+}

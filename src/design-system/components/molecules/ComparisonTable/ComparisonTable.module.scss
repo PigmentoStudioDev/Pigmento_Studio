@@ -1,0 +1,126 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/a11y' as a11y;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/**
+ * El ancho minimo de columna es lo que decide cuando la tabla desborda.
+ *
+ * Sin el, el navegador aprieta las columnas hasta que cada celda es una palabra por
+ * linea y la comparativa deja de leerse mucho antes de desbordar. Con el, la tabla
+ * se sale del contenedor y este la desplaza — que es la unica forma honesta de
+ * meter tres rutas de prosa en un telefono.
+ */
+.scroller {
+  --comparison-column: 12rem;
+
+  inline-size: 100%;
+  overflow-x: auto;
+
+  // Quien la recorra con teclado tiene que ver donde esta.
+  &:focus-visible {
+    outline: 2px solid theme.$focus;
+    outline-offset: 2px;
+  }
+}
+
+.table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  color: theme.$text-primary;
+}
+
+.caption {
+  @include brandtype.style('label');
+
+  text-align: start;
+  text-transform: uppercase;
+  color: theme.$text-secondary;
+  padding-block-end: spacing.$spacing-05;
+}
+
+/**
+ * La primera columna se queda quieta al desplazar.
+ *
+ * Y es una eleccion, no las dos cosas: con `overflow-x: auto` el navegador convierte
+ * el `overflow-y` en `hidden`, asi que una cabecera pegada al TOPE de la pagina deja
+ * de funcionar dentro de este contenedor — se pegaria a la tabla, no a la ventana.
+ * Se elige la columna porque el problema real aqui es el desplazamiento lateral: sin
+ * ella, al mirar la tercera ruta ya no se sabe que criterio se esta leyendo.
+ */
+.corner,
+.criterion {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  background-color: theme.$background;
+  text-align: start;
+  min-inline-size: var(--comparison-column);
+}
+
+.corner {
+  @include brandtype.style('label');
+
+  text-transform: uppercase;
+  color: theme.$text-secondary;
+  padding: spacing.$spacing-05;
+  border-block-end: 1px solid theme.$border-strong;
+}
+
+.criterion {
+  @include brandtype.style('label');
+
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: spacing.$spacing-05;
+  border-block-end: 1px solid theme.$border-subtle;
+}
+
+.columnHead {
+  display: table-cell;
+  text-align: start;
+  min-inline-size: var(--comparison-column);
+  padding: spacing.$spacing-05;
+  border-block-end: 1px solid theme.$border-strong;
+}
+
+.columnName {
+  @include brandtype.style('body');
+
+  display: block;
+  font-weight: 600;
+}
+
+.columnMeta {
+  @include brandtype.style('label');
+
+  display: block;
+  color: theme.$text-secondary;
+}
+
+.cell {
+  @include brandtype.style('body');
+
+  vertical-align: top;
+  min-inline-size: var(--comparison-column);
+  padding: spacing.$spacing-05;
+  border-block-end: 1px solid theme.$border-subtle;
+  color: theme.$text-secondary;
+}
+
+// La ausencia se apaga pero se dibuja: el color es refuerzo, no la unica senal.
+.absent {
+  display: inline-block;
+  inline-size: spacing.$spacing-05;
+  block-size: spacing.$spacing-05;
+  color: theme.$text-placeholder;
+}
+
+.srOnly {
+  @include a11y.visually-hidden;
+}

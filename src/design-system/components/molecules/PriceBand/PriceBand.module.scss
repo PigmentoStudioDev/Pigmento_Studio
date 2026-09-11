@@ -1,0 +1,72 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+
+.root {
+  // La banda es el contenedor contra el que se mide la cifra. Sin esta linea el
+  // 'figure' de .amount cae a la ventana pequena sin avisar y el precio vuelve a
+  // dimensionarse contra la pantalla en vez de contra su columna.
+  container-type: inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: spacing.$spacing-03 spacing.$spacing-07;
+  padding-block: spacing.$spacing-05;
+  padding-inline: spacing.$spacing-06;
+  border-radius: brand.$radius-05;
+
+  // El fondo lo pone el modificador de ruta y el texto NO re-tematiza: las tres
+  // bandas son claras por diseno, asi que en modo oscuro un `text-primary` seria
+  // claro sobre claro. Fondo fijo obliga a primer plano fijo.
+  color: brand.$text-on-accent;
+}
+
+.accentUno {
+  background-color: brand.$accent-ruta-uno;
+}
+
+.accentDos {
+  background-color: brand.$accent-ruta-dos;
+}
+
+.accentTres {
+  background-color: brand.$accent-ruta-tres;
+}
+
+// La cifra es lo unico que se lee de lejos: es el dato por el que se abre la
+// pagina. 'figure' y no 'display' — no titula una seccion, ES el valor, y se mide
+// contra la banda que la envuelve y no contra la ventana.
+.amount {
+  @include brandtype.style('figure');
+
+  margin: 0;
+  flex: 1 1 auto;
+  // Las cifras en ancho fijo para que $48,000 y $72,000 ocupen lo mismo: puestas
+  // una encima de otra en la comparativa, un ancho proporcional las desalinea y
+  // el ojo lee dos precios distintos antes de leer los numeros.
+  font-variant-numeric: tabular-nums;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-02;
+}
+
+.unit {
+  @include brandtype.style('label');
+
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.delivery {
+  @include brandtype.style('body');
+
+  margin: 0;
+}

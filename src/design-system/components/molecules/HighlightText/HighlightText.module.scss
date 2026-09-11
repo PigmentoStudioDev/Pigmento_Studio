@@ -1,0 +1,39 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '@carbon/react/scss/theme';
+
+.root {
+  // Sin esto, cada trozo se pega al siguiente: son elementos separados y el espacio
+  // entre palabras viene en el texto de cada uno.
+  white-space: pre-wrap;
+}
+
+// El resalte se pinta con un fondo que CRECE, no con un color que aparece: el hook
+// lleva background-size de 0% a 100% y eso barre la palabra de izquierda a derecha.
+//
+// El 0% de reposo va AQUI y no en JS, y esa es la diferencia con el original. Puesto
+// desde JS, entre el primer pintado y la llegada de gsap la marca se ve rellena y
+// luego se vacia de golpe — un parpadeo que solo se nota con la red lenta, que es
+// justo cuando nadie esta mirando el diff.
+.mark {
+  background-image: linear-gradient(theme.$highlight, theme.$highlight);
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  background-position: 0 0;
+  // <mark> trae fondo y color propios del navegador: los dos estorban, porque el
+  // fondo lo pone el gradiente y el color tiene que seguir al tema.
+  background-color: transparent;
+  color: inherit;
+}
+
+// Quien pide menos movimiento lee la frase ya resaltada. Se resuelve en la hoja y
+// no preguntando por la preferencia desde JS: asi es cierto tambien antes de que
+// gsap llegue, y sigue siendolo si no llega nunca.
+@media (prefers-reduced-motion: reduce) {
+  .mark {
+    background-size: 100% 100%;
+  }
+}

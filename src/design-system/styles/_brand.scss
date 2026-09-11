@@ -17,6 +17,46 @@ $accent-40: colors.$blue-40;
 $accent-60: colors.$blue-60;
 $accent-70: colors.$blue-70;
 
+// Los tres tintes que distinguen las RUTAS de una propuesta. No son decoracion:
+// en el documento de Pigmento cada ruta lleva el suyo y es como el lector sabe
+// que la banda de precio y la columna de la comparativa hablan de lo mismo.
+//
+// Van numerados y no nombrados por color a proposito. `ruta-dos` sigue teniendo
+// sentido cuando la marca decida que el lila es otra cosa; `ruta-lila` obligaria
+// a renombrar el token, el campo del CMS y todo el contenido ya capturado.
+//
+// TODO(brand): tres familias de Carbon como placeholder, igual que los acentos.
+$accent-ruta-uno: colors.$cyan-30;
+$accent-ruta-dos: colors.$purple-30;
+$accent-ruta-tres: colors.$orange-40;
+
+// Las tres bandas son claras POR DISENO, asi que su texto no puede re-tematizar:
+// en modo oscuro `theme.$text-primary` seria claro sobre claro. Un fondo fijo
+// obliga a un primer plano fijo, y eso se declara aqui una vez en vez de que cada
+// componente elija su gris.
+$text-on-accent: colors.$gray-100;
+
+/// El secundario de esa misma superficie fija. No es $text-on-accent atenuado con
+/// opacidad: sobre un fondo con textura, la transparencia deja pasar la imagen y el
+/// contraste deja de ser el que se midio.
+$text-on-accent-secondary: colors.$gray-70;
+
+/// La superficie del panel de portada, y NO re-tematiza.
+///
+/// Misma logica que las tres bandas de ruta: el fondo es fijo porque lo que tiene
+/// debajo es fijo — una imagen clara, en modo claro y en oscuro. Un `theme.$background`
+/// pintaria el panel de negro sobre una foto que sigue siendo clara.
+///
+/// El valor no sale del catalogo de Carbon a proposito: su gray-10 es #f4f4f4 y
+/// sobre esta textura se desvanece. Este es medio punto mas oscuro, elegido contra
+/// la imagen. Va aqui porque _brand.scss ES la capa de primitivas, el unico sitio
+/// donde un literal de color es la definicion y no una fuga.
+$surface-cover: #f0f0f0;
+
+/// El escalon DENTRO del panel de portada: lo que lleva el chip. Sale del mismo
+/// cluster que $surface-cover y por el mismo motivo es fijo.
+$surface-cover-raised: colors.$gray-20;
+
 // Radios. Carbon v11 no define ninguno — su lenguaje visual es de esquina recta —
 // asi que esta es la unica fuente de verdad.
 //
@@ -77,6 +117,28 @@ $container-wide: map.get(grid.$grid-breakpoints, 'max', 'width');
 /// cubre la ventana no tiene ese problema. Son dos medidas distintas que hasta
 /// ahora compartian numero por accidente.
 $container-full: 120rem;
+
+/// El ancho minimo de una tarjeta dentro de una reticula que se reacomoda sola.
+///
+/// UNO y no uno por organismo. Cada hoja traia el suyo —14, 18 y 20rem— y el efecto
+/// era que tres reticulas de la misma pagina rompian a columna unica en tres anchos
+/// distintos: al estrechar la ventana, la pagina se recomponia por partes en vez de
+/// a la vez. Eso es lo que se lee como desorden, mas que el numero en si.
+///
+/// Va en la capa de marca y no en cada modulo por lo mismo que los contenedores: es
+/// una medida de la reticula, y la reticula es del sistema.
+$track-card: 22rem;
+
+/// El sangrado de una caja que RECORTA texto, en em.
+///
+/// `overflow: clip` corta a ras de la caja de linea, y los glifos se salen de ella:
+/// las colas de la 4 y la 9, los remates, los acentos. Este par —relleno mas margen
+/// negativo del mismo valor— ensancha la zona de recorte sin mover nada de sitio.
+///
+/// En em y no en la reticula de Carbon a proposito: es una medida del TIPO, no del
+/// espacio. La cifra de una portada mide 54px y la de una tarjeta 35, y un valor en
+/// rem sangraria de mas en la pequena y de menos en la grande.
+$clip-bleed: 0.05em;
 
 /// Techo de la PLACA del mega menu, no de su contenido. Sin el, `.isOpen .nav` iba
 /// a 100% y el fondo seguia creciendo con la ventana sin limite.

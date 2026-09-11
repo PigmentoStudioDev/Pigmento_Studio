@@ -3,7 +3,8 @@ import { render } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { compile } from "sass";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { TARGET_OVERFLOW, VideoBackdrop } from "./VideoBackdrop";
+import { TARGET_OVERFLOW } from "../../../motion/backdrop";
+import { VideoBackdrop } from "./VideoBackdrop";
 
 const SRC = "https://cdn.example/hero.mp4";
 const POSTER = "/hero-poster.webp";

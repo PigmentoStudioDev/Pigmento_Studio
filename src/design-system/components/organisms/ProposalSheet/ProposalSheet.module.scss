@@ -9,15 +9,8 @@
 @use '@carbon/react/scss/theme';
 @use '../../../styles/component-tokens' as component;
 
-/// Medida de lectura de la hoja. Una cotizacion se lee de arriba abajo, no de un
-/// borde al otro: sin acotar, en una pantalla ancha el concepto y su importe
-/// quedan tan lejos que hay que seguir la fila con el dedo.
-$sheet-inline-size: 62ch;
-
 .root {
   inline-size: 100%;
-  max-inline-size: $sheet-inline-size;
-  margin-inline: auto;
   display: flex;
   flex-direction: column;
   gap: spacing.$spacing-09;

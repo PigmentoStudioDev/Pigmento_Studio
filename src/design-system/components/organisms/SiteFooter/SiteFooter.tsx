@@ -44,35 +44,36 @@ export function SiteFooter({
 }: SiteFooterProps) {
   return (
     <footer className={styles.root}>
-      {/* Las tres piezas del pie llegan como CAJA y no partidas por lineas: las dos
-          filas son listas de enlaces que ya parten su texto en caracteres para
-          rodarlo — dos particiones sobre los mismos nodos se pelean — y la linea
-          grande es una fila flex que un envoltorio de bloque desharia. */}
+      {/* Las dos filas llegan como CAJA y no partidas por lineas: son listas de
+          enlaces que ya parten su texto en caracteres para rodarlo, y dos
+          particiones sobre los mismos nodos se pelean. */}
       <ScrollReveal by="block">
         <div className={styles.row}>
           <NavLinkList direction="row" size="small" label={metaLabel} items={meta} />
         </div>
       </ScrollReveal>
 
-      <ScrollReveal by="block">
-        <p className={styles.line}>
-          <span className={styles.icon}>
-            <Icon name="arrow" />
-          </span>
-          <a
-            className={styles.word}
-            href={handle.href}
-            aria-label={handle.name}
-            target={handle.external ? "_blank" : undefined}
-            // noreferrer va con noopener y no en su lugar: el segundo cierra el
-            // acceso a window.opener y el primero ademas no filtra de donde viene la
-            // visita.
-            rel={handle.external ? "noopener noreferrer" : undefined}
-          >
-            {handle.label}
-          </a>
-        </p>
-      </ScrollReveal>
+      {/* La linea grande entra SIN gesto, a proposito. Es lo mas alto del pie y lo
+          ultimo de la pagina: moverla la convierte en el remate de una entrada en
+          vez de en el cierre, y compite con el marquee que lleva al lado. Las dos
+          filas de enlaces si entran — son secundarias y el movimiento las ordena. */}
+      <p className={styles.line}>
+        <span className={styles.icon}>
+          <Icon name="arrow" />
+        </span>
+        <a
+          className={styles.word}
+          href={handle.href}
+          aria-label={handle.name}
+          target={handle.external ? "_blank" : undefined}
+          // noreferrer va con noopener y no en su lugar: el segundo cierra el
+          // acceso a window.opener y el primero ademas no filtra de donde viene la
+          // visita.
+          rel={handle.external ? "noopener noreferrer" : undefined}
+        >
+          {handle.label}
+        </a>
+      </p>
 
       <ScrollReveal by="block">
         <div className={`${styles.row} ${styles.bottom}`}>

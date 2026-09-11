@@ -1,0 +1,88 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-06;
+}
+
+.proof {
+  @include brandtype.style('body');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+// El contador sustituye al numero en los datos. counter-reset va en la lista y no en
+// cada fila: reiniciarlo por fila daria 01 cuatro veces.
+.list {
+  counter-reset: hallazgo;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(brand.$track-card, 1fr));
+  gap: spacing.$spacing-08;
+}
+
+// La tarjeta es una SUPERFICIE, no un filete. `layer` es el escalon que sale del
+// fondo de la seccion dentro del mismo cluster, asi que en modo claro y en oscuro
+// dice lo mismo: "esto es una pieza". Un borde de 1px pide que el ojo lo busque;
+// un cambio de fondo se ve sin buscarlo, y eso es exactamente lo que baja la carga.
+.item {
+  counter-increment: hallazgo;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-03;
+  background-color: theme.$layer;
+  padding: spacing.$spacing-06;
+  border-radius: brand.$radius-05;
+}
+
+// El numero es decorativo: el orden ya lo dice el <ol>, asi que leerlo dos veces solo
+// alarga el recorrido de quien escucha la pagina. Por eso vive en ::before y no en
+// el marcado.
+.item::before {
+  @include brandtype.style('label');
+
+  content: counter(hallazgo, decimal-leading-zero);
+  color: theme.$text-secondary;
+}
+
+.area {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.cost {
+  @include brandtype.style('body');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+// La etiqueta "Lo que cuesta" delante del parrafo, en bloque para que el ojo la use
+// como entradilla y no la lea como parte de la frase.
+.costLabel {
+  @include brandtype.style('label');
+
+  display: block;
+  color: theme.$text-primary;
+}
+
+@include breakpoint.breakpoint-down('md') {
+  .list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

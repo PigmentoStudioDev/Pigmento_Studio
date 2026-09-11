@@ -1,0 +1,66 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-06;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(brand.$track-card, 1fr));
+  gap: spacing.$spacing-08;
+}
+
+.item {
+  // El contenedor contra el que se mide la cifra. Sin esto, el 'figure' de .value cae
+  // a la ventana pequena sin avisar y vuelve a dimensionarse contra la pantalla.
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-03;
+  background-color: theme.$layer;
+  padding: spacing.$spacing-06;
+  border-radius: brand.$radius-05;
+}
+
+.value {
+  @include brandtype.style('figure');
+
+  margin: 0;
+  // Las cifras en ancho fijo: puestas una al lado de otra, un ancho proporcional las
+  // desalinea y el ojo compara los anchos antes que los numeros.
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  @include brandtype.style('body');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.source {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+@include breakpoint.breakpoint-down('md') {
+  .list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
