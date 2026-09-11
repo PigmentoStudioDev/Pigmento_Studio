@@ -126,6 +126,26 @@
     "amount": "Importe",
     "total": "Total",
     "validUntil": "Vigente hasta el",
-    "expired": "Esta propuesta paso de su fecha de vigencia. Escribenos y la actualizamos."
+    "expired": "Esta propuesta paso de su fecha de vigencia. Escribenos y la actualizamos.",
+    "auditTitle": "Donde se pierde dinero hoy",
+    "auditProof": "Cada hallazgo se puede verificar en el sitio actual.",
+    "auditCost": "Lo que cuesta",
+    "figuresTitle": "El mercado en el que operan",
+    "source": "Fuente:",
+    "routesTitle": "Las rutas",
+    "comparison": "La diferencia, en concreto",
+    "criterion": "Criterio",
+    "empty": "no aplica",
+    "scroll": "Comparativa de rutas, desplazable en horizontal",
+    "recommended": "Recomendada",
+    "recommendationEyebrow": "Recomendacion",
+    "includedTitle": "En todas las rutas",
+    "included": "incluido",
+    "excluded": "no incluido",
+    "addOnsTitle": "Modulos adicionales",
+    "delivery": "Entrega estimada: {weeks} semanas",
+    "unitProyecto": "por proyecto",
+    "unitMes": "al mes",
+    "unitPieza": "cada uno"
   }
 }

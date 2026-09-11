@@ -126,6 +126,26 @@
     "amount": "Amount",
     "total": "Total",
     "validUntil": "Valid until",
-    "expired": "This proposal is past its validity date. Get in touch and we will refresh it."
+    "expired": "This proposal is past its validity date. Get in touch and we will refresh it.",
+    "auditTitle": "Where money leaks today",
+    "auditProof": "Every finding can be verified on the current site.",
+    "auditCost": "What it costs",
+    "figuresTitle": "The market they operate in",
+    "source": "Source:",
+    "routesTitle": "The routes",
+    "comparison": "The difference, in detail",
+    "criterion": "Criterion",
+    "empty": "not applicable",
+    "scroll": "Route comparison, scrolls horizontally",
+    "recommended": "Recommended",
+    "recommendationEyebrow": "Recommendation",
+    "includedTitle": "In every route",
+    "included": "included",
+    "excluded": "not included",
+    "addOnsTitle": "Add-on modules",
+    "delivery": "Estimated delivery: {weeks} weeks",
+    "unitProyecto": "per project",
+    "unitMes": "per month",
+    "unitPieza": "each"
   }
 }

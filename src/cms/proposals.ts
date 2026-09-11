@@ -1,6 +1,6 @@
 import config from '@payload-config';
 import { getPayload } from 'payload';
-import type { Proposal } from '@/payload-types';
+import type { Media, Proposal } from '@/payload-types';
 
 /**
  * El adaptador de las propuestas. Es la frontera entre una coleccion PRIVADA y
@@ -8,6 +8,9 @@ import type { Proposal } from '@/payload-types';
  */
 
 export type ProposalStatus = 'borrador' | 'enviada' | 'aceptada' | 'rechazada' | 'vencida';
+export type PriceKind = 'fijo' | 'mensual' | 'rango';
+export type PriceUnit = 'proyecto' | 'mes' | 'pieza';
+export type PriceAccent = 'uno' | 'dos' | 'tres';
 
 export interface ProposalItem {
   concept: string;
@@ -15,25 +18,159 @@ export interface ProposalItem {
   amountCents: number;
 }
 
+export interface ProposalPrice {
+  kind: PriceKind;
+  amountCents: number;
+  amountMaxCents: number | null;
+  unit: PriceUnit;
+}
+
+export interface ProposalImage {
+  url: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
+export interface ProposalDeliverable {
+  name: string;
+  description: string;
+}
+
+export interface ProposalCriterion {
+  key: string;
+  label: string;
+}
+
+export interface ProposalFinding {
+  key: string;
+  area: string;
+  title: string;
+  cost: string;
+}
+
+export interface ProposalFigure {
+  value: string;
+  label: string;
+  source: string;
+}
+
+export interface ProposalPackage {
+  name: string;
+  accent: PriceAccent;
+  price: ProposalPrice;
+  deliveryWeeks: number | null;
+  body: string[];
+  values: { key: string; value: string }[];
+  recommended: boolean;
+}
+
+export interface ProposalAddOn {
+  name: string;
+  description: string;
+  price: ProposalPrice;
+}
+
+export interface ProposalTerm {
+  label: string;
+  value: string;
+}
+
 /**
- * Lo que el cliente puede ver. NO lleva `notes` ni `accessToken`, y por eso se
- * arma campo a campo: un `...doc` filtraria cualquier campo interno que se anada
- * despues, sin que nadie tome esa decision.
+ * Lo que el cliente puede ver. NO lleva `notes`, `contactEmail` ni `accessToken`, y
+ * por eso se arma campo a campo: un `...doc` filtraria cualquier campo interno que se
+ * anada despues, sin que nadie tome esa decision.
  */
 export interface ProposalView {
   client: string;
   status: ProposalStatus;
-  items: ProposalItem[];
-  totalCents: number;
   currency: 'MXN' | 'USD';
   validUntil: string | null;
   expired: boolean;
+
+  /** La cotizacion simple de una sola ruta. Vacia cuando hay paquetes. */
+  items: ProposalItem[];
+  totalCents: number;
+
+  serviceTitle: string | null;
+  tagline: string[];
+  cover: ProposalImage | null;
+  headline: string | null;
+  context: string | null;
+  findings: ProposalFinding[];
+  figures: ProposalFigure[];
+
+  baseTitle: string | null;
+  deliverables: ProposalDeliverable[];
+  includedInAll: string[];
+
+  routesEyebrow: string | null;
+  criteria: ProposalCriterion[];
+  packages: ProposalPackage[];
+
+  addOnsTitle: string | null;
+  addOnsIntro: string | null;
+  addOns: ProposalAddOn[];
+
+  recHeadline: string | null;
+  recBody: string | null;
+  technicalNote: string | null;
+
+  termsTitle: string | null;
+  terms: ProposalTerm[];
+  closing: string | null;
+}
+
+/** Una linea por renglon, sin las vacias. Es como se captura una lista en una textarea. */
+function lines(value?: string | null): string[] {
+  return (value ?? '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+/** Los parrafos van separados por linea en blanco, que es como se escribe prosa. */
+function paragraphs(value?: string | null): string[] {
+  return (value ?? '')
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+}
+
+function toPrice(row: {
+  priceKind: PriceKind;
+  amountCents: number;
+  amountMaxCents?: number | null;
+  unit: PriceUnit;
+}): ProposalPrice {
+  return {
+    kind: row.priceKind,
+    amountCents: row.amountCents,
+    amountMaxCents: row.amountMaxCents ?? null,
+    unit: row.unit,
+  };
+}
+
+/**
+ * La imagen, campo a campo y nunca entera.
+ *
+ * Un `Media` de Payload trae `filename`, `filesize`, `createdAt` y el resto del
+ * documento; solo cuatro de esos campos pintan algo. Ancho y alto son obligatorios
+ * porque sin ellos `next/image` no reserva el hueco y la pagina salta al cargar.
+ */
+function toImage(media?: (number | null) | Media): ProposalImage | null {
+  if (!media || typeof media === 'number') return null;
+  if (!media.url || !media.width || !media.height) return null;
+
+  return { url: media.url, alt: media.alt ?? '', width: media.width, height: media.height };
 }
 
 /**
  * El total se CALCULA al leer, no se guarda. Un total almacenado puede acabar
  * contradiciendo a sus renglones —basta con editar uno y que falle el hook— y
  * entonces la cotizacion dice dos cosas a la vez.
+ *
+ * Con paquetes no hay total del documento: hay un precio por ruta. Nada que sumar.
  */
 export function toView(doc: Proposal, now = new Date()): ProposalView {
   const items: ProposalItem[] = (doc.scopeItems ?? []).map((item) => ({
@@ -42,14 +179,77 @@ export function toView(doc: Proposal, now = new Date()): ProposalView {
     amountCents: item.amountCents,
   }));
 
+  const criteria: ProposalCriterion[] = (doc.criteria ?? [])
+    .filter((c) => Boolean(c.key))
+    .map((c) => ({ key: c.key as string, label: c.label }));
+
   return {
     client: doc.client,
     status: doc.status as ProposalStatus,
-    items,
-    totalCents: items.reduce((sum, item) => sum + item.amountCents, 0),
     currency: doc.currency as 'MXN' | 'USD',
     validUntil: doc.validUntil ?? null,
     expired: Boolean(doc.validUntil && new Date(doc.validUntil) < now),
+
+    items,
+    totalCents: items.reduce((sum, item) => sum + item.amountCents, 0),
+
+    serviceTitle: doc.serviceTitle ?? null,
+    tagline: lines(doc.tagline),
+    cover: toImage(doc.coverImage),
+    headline: doc.headline ?? null,
+    context: doc.context ?? null,
+    // La clave la acuna el hook al guardar, asi que un hallazgo sin ella solo puede
+    // venir de una fila escrita antes de S9a. Se descarta en vez de renderizarse con
+    // clave vacia: a partir de S9b esa clave es lo que ata el entregable a su hallazgo.
+    findings: (doc.findings ?? [])
+      .filter((f) => Boolean(f.key))
+      .map((f) => ({ key: f.key as string, area: f.area, title: f.title, cost: f.cost })),
+    figures: (doc.figures ?? []).map((f) => ({
+      value: f.value,
+      label: f.label,
+      source: f.source,
+    })),
+
+    baseTitle: doc.baseTitle ?? null,
+    deliverables: (doc.deliverables ?? []).map((d) => ({
+      name: d.name,
+      description: d.description,
+    })),
+    includedInAll: lines(doc.includedInAll),
+
+    routesEyebrow: doc.routesEyebrow ?? null,
+    criteria,
+    packages: (doc.packages ?? []).map((p) => ({
+      name: p.name,
+      accent: p.accent,
+      price: toPrice(p),
+      deliveryWeeks: p.deliveryWeeks ?? null,
+      body: paragraphs(p.body),
+      // Se recorren los CRITERIOS y no los valores guardados: asi el orden de las
+      // celdas es siempre el de la matriz, y un valor huerfano de un criterio ya
+      // borrado no se cuela en una columna.
+      values: criteria.map((c) => ({
+        key: c.key,
+        value: (p.values ?? []).find((v) => v.key === c.key)?.value ?? '',
+      })),
+      recommended: Boolean(doc.recommendedPackage && doc.recommendedPackage === p.name),
+    })),
+
+    addOnsTitle: doc.addOnsTitle ?? null,
+    addOnsIntro: doc.addOnsIntro ?? null,
+    addOns: (doc.addOns ?? []).map((a) => ({
+      name: a.name,
+      description: a.description,
+      price: toPrice(a),
+    })),
+
+    recHeadline: doc.recHeadline ?? null,
+    recBody: doc.recBody ?? null,
+    technicalNote: doc.technicalNote ?? null,
+
+    termsTitle: doc.termsTitle ?? null,
+    terms: (doc.terms ?? []).map((t) => ({ label: t.label, value: t.value })),
+    closing: doc.closing ?? null,
   };
 }
 
@@ -76,8 +276,10 @@ export function toView(doc: Proposal, now = new Date()): ProposalView {
  *   2. `limit: 1` — no hay forma de enumerar
  *   3. el mapeo es campo a campo en `toView` — `notes` no cruza
  *
- * `depth: 0` de propina: sin relaciones pobladas no hay nada de otra coleccion
- * que se pueda arrastrar por accidente.
+ * `depth: 1` y no 0: la portada es una relacion a `media` y sin poblarla no hay
+ * imagen que pintar. Un nivel y no mas — `media` es contenido publico y `toImage`
+ * se queda con cuatro campos de el, asi que nada de otra coleccion viaja por
+ * accidente.
  */
 export async function getProposalByToken(token: string): Promise<ProposalView | null> {
   // Frontera de confianza: se comprueba el TIPO y no solo la verdad. Hoy el
@@ -92,7 +294,7 @@ export async function getProposalByToken(token: string): Promise<ProposalView | 
   const { docs } = await payload.find({
     collection: 'proposals',
     where: { accessToken: { equals: token } },
-    depth: 0,
+    depth: 1,
     limit: 1,
   });
 
