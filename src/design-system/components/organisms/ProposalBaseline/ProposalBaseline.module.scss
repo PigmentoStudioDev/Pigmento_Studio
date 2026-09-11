@@ -1,0 +1,9 @@
+@use '../../../styles/carbon-config';
+
+@use '@carbon/react/scss/spacing';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-07;
+}

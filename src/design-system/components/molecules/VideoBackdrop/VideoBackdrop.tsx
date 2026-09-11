@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { DEFAULT_BACKDROP_PARALLAX } from "../../../motion/backdrop";
 import { useParallax, type ParallaxOptions } from "../../../motion/useParallax";
 import styles from "./VideoBackdrop.module.scss";
 
@@ -19,34 +20,6 @@ import styles from "./VideoBackdrop.module.scss";
  * Props serializables — `src` y `poster` son URLs, asi que un bloque de Payload lo
  * alimenta 1:1 el dia que entre.
  */
-/**
- * Alto del objetivo respecto a la mascara, en %. **Espeja `$target-overflow` de la
- * hoja**, y su test comprueba que los dos numeros siguen siendo el mismo: si se
- * separan, el recorrido deja de cuadrar con el sobrante y aparece una franja vacia
- * en el borde — que es un fallo mudo, porque solo se ve al final del scroll.
- */
-export const TARGET_OVERFLOW = 120;
-
-/**
- * Recorrido maximo sin descubrir hueco, en % del alto del OBJETIVO.
- *
- * El sobrante es `overflow - 100` puntos de la mascara, pero yPercent mide sobre el
- * propio objetivo, que es mas alto — de ahi la division. Con 120% son 16.67%, no 20:
- * pasarse de aqui saca el borde del video por arriba.
- */
-export const MAX_TRAVEL = ((TARGET_OVERFLOW - 100) / TARGET_OVERFLOW) * 100;
-
-/**
- * Empieza pegado arriba y baja el recorrido entero mientras el hero cruza la
- * pantalla. `top top` porque un hero arranca ya en el borde superior: con el
- * `top bottom` por defecto la animacion habria terminado antes de empezar a bajar.
- */
-const DEFAULT_PARALLAX = {
-  start: 0,
-  end: MAX_TRAVEL,
-  scrollStart: "top top",
-} as const;
-
 export interface VideoBackdropProps {
   src: string;
   /**
@@ -60,7 +33,7 @@ export interface VideoBackdropProps {
 
 export function VideoBackdrop({ src, poster, parallax }: VideoBackdropProps) {
   const { triggerRef, targetRef } = useParallax<HTMLDivElement, HTMLDivElement>({
-    ...DEFAULT_PARALLAX,
+    ...DEFAULT_BACKDROP_PARALLAX,
     ...parallax,
   });
   const videoRef = useRef<HTMLVideoElement>(null);

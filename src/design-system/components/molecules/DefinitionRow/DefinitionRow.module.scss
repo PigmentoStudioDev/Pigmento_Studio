@@ -1,0 +1,69 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.root {
+  margin: 0;
+}
+
+/**
+ * La proporcion de una sola variable, prestada de la tabla comparativa: el termino
+ * ocupa una parte y la definicion el resto. Cambiarla realinea las cuatro filas sin
+ * tocar anchos a mano.
+ */
+.row {
+  // La lista de pistas entera en una variable, no los numeros sueltos: `var(--x) fr`
+  // no es CSS valido —no se concatena una variable con una unidad— y `calc()` no
+  // admite `fr`. Quien quiera otra proporcion redefine la variable.
+  --definition-columns: minmax(0, 1fr) minmax(0, 2fr);
+
+  display: grid;
+  grid-template-columns: var(--definition-columns);
+  gap: spacing.$spacing-05;
+  padding-block: spacing.$spacing-05;
+  border-block-end: 1px solid theme.$border-subtle;
+}
+
+.term {
+  @include brandtype.style('body');
+
+  margin: 0;
+  font-weight: 600;
+}
+
+.termLabel {
+  @include brandtype.style('label');
+
+  text-transform: uppercase;
+}
+
+.description {
+  @include brandtype.style('body');
+
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-02;
+  color: theme.$text-secondary;
+}
+
+.aside {
+  @include brandtype.style('label');
+
+  color: theme.$text-primary;
+}
+
+// En pantalla estrecha la pareja se apila. Un `<dl>` no pierde nada por hacerlo:
+// la asociacion entre dt y dd es del marcado, no de que esten uno al lado del otro.
+@include breakpoint.breakpoint-down('md') {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: spacing.$spacing-02;
+  }
+}

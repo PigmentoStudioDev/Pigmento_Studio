@@ -1,0 +1,62 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+
+// Los hijos los CREA el hook en tiempo de ejecucion, asi que se les llega por
+// atributo y no por clase: una clase de modulo lleva hash y el JS no lo conoce.
+// Van anidados bajo .root para que el selector de atributo no se escape a global.
+// Mientras rueda se ve la pista y se esconde el texto; el resto del tiempo, al
+// reves. `display: none` y no `visibility`: la pista vacia ocuparia una caja de
+// linea y separaria la cifra de lo que lleve al lado.
+.root {
+  display: inline-flex;
+  align-items: center;
+  // Sin ancho fijo por digito, cada vuelta del rodillo cambiaria el ancho de la
+  // cifra y la linea entera bailaria mientras rueda.
+  font-variant-numeric: tabular-nums;
+}
+
+.rollers {
+  display: none;
+}
+
+.root[data-rolling='true'] {
+  .plain {
+    display: none;
+  }
+
+  .rollers {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+.rollers {
+  [data-roll-part='mask'] {
+    display: inline-block;
+    // `clip` y no `hidden`: hidden crea un contenedor de scroll y con el rodillo
+    // dentro el navegador puede saltar a el al enfocar algo de al lado.
+    overflow: clip;
+    // El recorte a ras del glifo come los remates de algunas tipografias. Este par
+    // ensancha la caja de recorte sin mover nada de sitio.
+    padding: brand.$clip-bleed;
+    // Sass lee `-brand` como un namespace, asi que la negacion va multiplicando.
+    margin: brand.$clip-bleed * -1;
+  }
+
+  [data-roll-part='static'] {
+    display: inline-block;
+  }
+
+  [data-roll-part='roller'] {
+    display: block;
+    // Los diez digitos van en un solo nodo separados por saltos de linea, asi que
+    // el salto tiene que respetarse para que cada uno ocupe su celda.
+    white-space: pre;
+    text-align: center;
+    will-change: transform;
+  }
+}

@@ -1,0 +1,65 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/a11y' as a11y;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+}
+
+.title {
+  @include brandtype.style('label');
+
+  margin: 0;
+  text-transform: uppercase;
+  color: theme.$text-secondary;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-04;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: spacing.$spacing-04;
+}
+
+// El icono ocupa lo que mide su caja de texto para que la palomita quede sobre la
+// primera linea del renglon y no centrada respecto a un texto de dos lineas.
+.markIncluded,
+.markExcluded {
+  flex: 0 0 auto;
+  inline-size: spacing.$spacing-05;
+  block-size: spacing.$spacing-05;
+}
+
+.markIncluded {
+  color: theme.$text-primary;
+}
+
+// La ausencia se apaga, pero el DIBUJO ya es distinto: el color es refuerzo y no
+// la unica senal.
+.markExcluded {
+  color: theme.$text-placeholder;
+}
+
+.text {
+  @include brandtype.style('body');
+}
+
+.srOnly {
+  @include a11y.visually-hidden;
+}

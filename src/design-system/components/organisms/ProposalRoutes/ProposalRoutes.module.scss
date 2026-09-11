@@ -1,0 +1,63 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-09;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: spacing.$spacing-04;
+}
+
+/**
+ * Las rutas en columnas iguales. `auto-fit` con un minimo en vez de un numero fijo:
+ * una propuesta puede traer dos rutas o cuatro, y una reticula de tres fijas dejaria
+ * un hueco o apretaria la cuarta.
+ */
+.routes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(brand.$track-card, 1fr));
+  gap: spacing.$spacing-08;
+}
+
+.route {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+  background-color: theme.$layer;
+  padding: spacing.$spacing-06;
+  border-radius: brand.$radius-05;
+}
+
+.routeHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: spacing.$spacing-04;
+}
+
+.paragraph {
+  @include brandtype.style('body');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+@include breakpoint.breakpoint-down('md') {
+  .routes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

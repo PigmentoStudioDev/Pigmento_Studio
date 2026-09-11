@@ -26,7 +26,9 @@ export type IconName =
   | "arrow"
   | "chevron"
   | "sound"
-  | "mute";
+  | "mute"
+  | "check"
+  | "dash";
 
 /**
  * Un icono es una LISTA de trazados: los de marca no son una sola figura. El de
@@ -112,6 +114,27 @@ const ICONS: Record<IconName, IconDefinition> = {
   mute: {
     stroke: true,
     paths: ["M4 9.5H7L11.5 6V18L7 14.5H4V9.5Z", "M15 10L19 14", "M19 10L15 14"],
+  },
+
+  /**
+   * Incluido / no incluido, la pareja de la lista y de la comparativa.
+   *
+   * Son dos dibujos y no uno tachado: una palomita con una raya encima obliga a
+   * distinguir dos formas casi iguales, y a 16px eso ya no se ve. La raya sola se
+   * lee de un vistazo como ausencia.
+   *
+   * Ninguno lleva color propio: quien los use decide si el "no" va apagado. Un
+   * verde y un rojo aqui dejarian la unica senal en el color, y quien no distingue
+   * esos dos ve la misma celda dos veces.
+   */
+  check: {
+    stroke: true,
+    paths: ["M5 12.5L9.5 17L19 7.5"],
+  },
+
+  dash: {
+    stroke: true,
+    paths: ["M6 12H18"],
   },
 
   moon: {

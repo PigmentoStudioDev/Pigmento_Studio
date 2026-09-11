@@ -13,6 +13,12 @@
   @include brandtype.style('label');
 
   display: inline-flex;
+  // Se contiene a si mismo. `inline-flex` basta en un contenedor normal, pero dentro
+  // de una columna flex con `align-items: stretch` el chip se estiraba de borde a
+  // borde y dejaba de leerse como pildora. `fit-content` gana a stretch —que solo
+  // actua cuando el tamano transversal es `auto`— y da igual donde se ponga: en
+  // flex, en grid o suelto, un chip mide lo que mide su texto.
+  inline-size: fit-content;
   align-items: center;
   gap: spacing.$spacing-03;
   block-size: brand.$chip-block-size;

@@ -56,13 +56,27 @@ function withoutUrls(css: string): string {
   return css.replace(/url\((?:'[^']*'|"[^"]*"|[^)]*)\)/g, '');
 }
 
+/**
+ * Un comentario tampoco declara nada, y los de bloque SOBREVIVEN a la compilacion —
+ * los `//` no, por eso esto no hacia falta hasta ahora. Una prosa que mencione
+ * `index.scss` o `theme.theme(` se leia como si la hoja declarase `.scss` y
+ * `.theme`, y el gate exigia que alguien usara dos clases que no existen.
+ *
+ * Es el mismo agujero que ya se tapo en el gate de lecturas de `proposals`: un
+ * escaner que no distingue codigo de prosa falla en las dos direcciones — alli
+ * dejaba pasar lo que tenia que atrapar, aqui atrapa lo que no deberia.
+ */
+function withoutComments(css: string): string {
+  return css.replace(/\/\*[\s\S]*?\*\//g, '');
+}
+
 const PAIRS: Pair[] = modules(DS).map((sheet) => {
   const tsx = sheet.replace('.module.scss', '.tsx');
 
   return {
     rel: sheet.slice(DS.length + 1),
     declared: new Set(
-      [...withoutGlobals(withoutUrls(compile(sheet, SASS).css)).matchAll(/\.([a-zA-Z][\w]*)/g)].map(
+      [...withoutGlobals(withoutUrls(withoutComments(compile(sheet, SASS).css))).matchAll(/\.([a-zA-Z][\w]*)/g)].map(
         ([, name]) => name,
       ),
     ),
