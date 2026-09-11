@@ -369,3 +369,275 @@ tocarlos, la forma cambio y eso es un hallazgo que va al handoff.
 
 **DoD.** `/admin` responde en produccion, `migrate:status` sin pendientes, la home
 publica sirve contenido del CMS, y `/propuesta/<token-inventado>` responde 404.
+
+---
+
+## S8 — La propuesta como documento comparativo. **Dos sesiones.**
+
+**Origen.** Auditado contra una propuesta real de Pigmento (`PROPUESTA_MOEASY.pdf`, 9
+paginas, septiembre 2026). Ningun campo de aqui es especulativo: cada uno esta escrito
+en alguna de esas paginas. La pagina 9 es cierre de marca y no aporta dato.
+
+**El hallazgo.** Lo que S5 modelo es *una cotizacion con renglones y un total*. Lo que
+Pigmento manda es **un documento que compara tres rutas**, donde el precio es atributo
+de cada ruta y no del documento. No es que falten campos: cambia la forma.
+
+**Decisiones de Karen (2026-09-10).**
+1. **Se extiende `Proposals`**, no se crea otra coleccion. Es el mismo documento y
+   hereda entera la maquina de S5: token acunado por el servidor, 404, noindex,
+   `force-dynamic` y los gates. `scopeItems` **se queda** para la cotizacion simple de
+   una sola ruta; hoy lo lee `toView` y tiene test.
+2. **Los criterios de la comparativa se declaran UNA VEZ** en la propuesta y cada
+   paquete rellena su valor.
+3. **Los terminos van en cada propuesta**, sin global. Maxima libertad por cliente; el
+   riesgo de que dos propuestas del mismo mes se contradigan es aceptado a proposito.
+
+### El schema
+
+Se agrupa en **tabs** de Payload. No es cosmetica: un formulario plano de ~40 campos es
+inservible para quien edita sin codigo, que es justo el publico de esta coleccion.
+
+```
+Cliente        client · contactEmail · status · validUntil · accessToken(ro) · notes
+Portada        serviceTitle · tagline
+Diagnostico    coverImage → Media · headline · context
+Base comun     baseTitle · deliverables[{ name, description }]
+               · includedInAll[{ text }]
+Rutas          criteria[{ key, label }]
+               · packages[{ eyebrow, name, accent, <precio>, deliveryWeeks,
+                            body[{ paragraph }], values[{ key, value }] }]
+Modulos        addOns[{ name, <precio>, description }]
+Recomendacion  recommendedPackage · recHeadline · recBody · technicalNote
+Terminos       terms[{ label, value }] · closing
+```
+
+### El precio no es un numero
+
+Las tres formas conviven en el mismo PDF: fijo por proyecto (`$48,000 MXN / proyecto`),
+recurrente (`$10,000 / mes`) y **rango por unidad** (`$200 - $350 c/u`). El grupo
+`<precio>` es:
+
+```ts
+priceKind      select   'fijo' | 'mensual' | 'rango'
+amountCents    number   required, min 0
+amountMaxCents number   min 0, solo visible si priceKind === 'rango'
+unit           select   'proyecto' | 'mes' | 'pieza'
+```
+
+**Trampa del gate B9, y hay que escribirla antes de caer en ella.** `dinero-en-centavos`
+lee **solo `src/collections/Proposals.ts`**. Extraer el grupo de precio a
+`collections/fields/price.ts` —que es lo que pide el instinto, porque se repite en
+`packages` y en `addOns`— deja el gate **verde vigilando un archivo donde ya no hay
+ningun campo `*Cents`**. O el grupo se queda en el mismo archivo, o el gate aprende a
+seguir el import. Decidir a proposito y verificarlo en rojo.
+
+### La comparativa: por que criterios declarados
+
+En el PDF las tres rutas comparten cinco criterios —INVENTARIO, CARGA DE PROPIEDADES,
+BUSCADOR, FICHA DE PROPIEDAD, CRECIMIENTO— y **la tercera cambia OPERACION por
+PERMISOS**. Con listas libres por paquete eso no da error: las columnas dejan de
+compararse fila con fila y nadie lo nota, que es exactamente como llego al PDF.
+
+Payload no puede relacionar una fila de array con otra del mismo documento, y un
+`select` no lee opciones de sus hermanos sin componente propio. Asi que la alineacion
+la sostiene **un hook `beforeValidate` que rechaza todo `values[].key` que no este en
+`criteria[]`**, escrito como funcion pura y probado como tal — el mismo patron que
+`mintAccessToken` en S5. Un criterio que solo tiene una ruta deja celda vacia, y eso es
+informacion: "solo la plataforma conectada define permisos".
+
+### Restricciones
+
+1. **El acento del paquete no es un color.** `accent` guarda un nombre de rol, nunca un
+   hex: el gate `style` prohibe literales de color y la capa de marca dejaria de
+   re-tematizar. La traduccion a token vive en el organismo.
+2. **Nada localizado en v1.** La config tiene es/en, pero una propuesta se manda en un
+   idioma. Localizar los ~40 campos duplica el trabajo de captura de un documento que
+   nunca se lee en los dos. Se anota como decision, no como olvido.
+3. **Dinero en centavos enteros**, tambien en los rangos. Regla de S5, gate B9.
+4. **El total no se guarda.** Con paquetes no hay un total del documento: hay un precio
+   por ruta. Nada que sumar y nada que pueda contradecirse.
+5. `notes` sigue sin cruzar a `ProposalView`, y el mapeo sigue siendo campo a campo.
+6. La ruta elige plantilla por los datos: **con `packages` vacio renderiza la
+   `ProposalSheet` de S5**; con paquetes, el documento completo. Sin campo de "tipo"
+   que se pueda desincronizar del contenido.
+
+### S8a — schema, adaptador y gates
+
+**Archivos.** `src/collections/Proposals.ts` · `src/cms/proposals.ts` + `.test.ts` ·
+`src/collections/Proposals.test.ts` · `conformance/payload-contract.json` ·
+`scripts/conformance.mjs` · `src/migrations/**`
+
+**DoD.**
+1. Los ocho bloques del PDF capturables desde `/admin`, en tabs.
+2. El hook de criterios **rechaza** un `values[].key` inventado, con test en rojo.
+3. B9 sigue vigilando de verdad los campos `*Cents`, **verificado en rojo tras la
+   decision sobre el archivo**.
+4. `toView` mapea los paquetes sin filtrar `notes`, con test.
+5. Los cinco gates verdes.
+
+### S8b — los organismos y la pagina
+
+**Siete organismos**, uno por bloque, que es la correspondencia de la casa —
+`ProposalCover`, `ProposalDiagnosis`, `ProposalBaseline`, `ProposalRoutes`,
+`ProposalAddOns`, `ProposalRecommendation`, `ProposalTerms`. `ProposalSheet` de S5 se
+queda como la plantilla de la cotizacion simple.
+
+`ProposalRoutes` es el unico con dificultad real: es una **matriz** y tiene que seguir
+siendo tabla accesible en movil, donde tres columnas no caben.
+
+**DoD.** La propuesta de MoEasy reproducida desde el CMS, `axe` limpio en los siete,
+contrato de modulos verde, y la comparativa legible en movil.
+
+### Lo que este spec NO resuelve
+
+- **Exportar a PDF.** Hoy la propuesta se manda como PDF y esto la vuelve una URL. Si
+  el PDF sigue haciendo falta, es otro problema (y otra dependencia).
+- **Las erratas del PDF de MoEasy**, que son de la pieza y no del sistema: el ultimo
+  item de la pagina 3 sin palomita mientras los cinco de arriba la llevan, el rotulo
+  "EN✓LOS TRES PAQUETES" con el glifo encajado, y el pie que dice `PIGMENTO STUDIO` en
+  la pagina 3 y `pigmento STUDIO` en las 4 a 8.
+
+## S9 — La propuesta que argumenta antes de cotizar. **Dos sesiones.**
+
+**Origen.** Auditado contra la propuesta que Karen mando a Pigmento como
+subcontratista (`karenrebecaortiz.com/en/proposals/moeasy`, septiembre 2026). A Pigmento
+le gusto y pidio traer parte de ese contenido a SU propuesta para MoEasy. Este spec
+decide que puede cruzar y que no, y que de lo que cruza necesita schema.
+
+**El hallazgo.** S8 modelo el documento comparativo —tres rutas, criterios, precios— y
+funciona. Lo que falta esta ANTES del precio: hoy la propuesta abre con `headline` y
+`context` y salta a las rutas, o sea que pide $95,000 sin haber dicho todavia que esta
+roto. El documento de Karen dedica sus primeras cuatro pantallas a eso, y por eso
+convence.
+
+### La frontera, y va primero porque es la que puede costar dinero
+
+Son DOS documentos sobre el mismo cliente y no se parecen en publico: uno es
+Karen -> Pigmento y el otro Pigmento -> MoEasy. Lo que sigue **no cruza en ninguna
+forma, ni reescrito**:
+
+1. Los precios de Karen a Pigmento, la reventa sugerida y el margen.
+2. La tabla de lo que cobra el mercado. Es publica, pero puesta al lado del precio de
+   Pigmento le entrega al cliente la calculadora del margen.
+3. El argumento de venta *hacia* Pigmento: "la relacion es tuya", "el riesgo tecnico
+   no es tuyo".
+4. La tabla de objeciones **con su columna de concesion**. Los argumentos si sirven;
+   la concesion es el guion de hasta donde ceder.
+5. La autoria tecnica de Karen y el vinculo de subcontratacion.
+6. **El trato comercial que explica los add-ons** (ver abajo).
+
+**Por que SEO+GEO aparece en los dos documentos y no es una contradiccion**
+(aclaracion de Karen, 2026-09-11). Karen NO le cobra a Pigmento el SEO on-page, la
+capacitacion ni varias cosas que ya hace en todos sus proyectos: se las incluye para que
+Pigmento las revenda como adicionales y se quede el importe entero. Por eso en el
+documento de Karen viajan dentro de "en los tres paquetes" y en el de Pigmento son
+add-ons de pago — y **asi tiene que quedarse**.
+
+De ahi la unica regla operativa de esta seccion: **la lista `includedInAll` de Pigmento
+no se sincroniza con la de Karen**. Copiar esa lista tal cual regala $12,000 de SEO y
+$5,500 de capacitacion por documento. No es un detalle de redaccion, es el trato al
+reves.
+
+### El schema nuevo (S9a)
+
+Dos arrays y nada mas. Todo lo demas de esta ronda es contenido o cabe en campos que ya
+existen.
+
+```
+Diagnostico    findings[{ key, area, title, cost }]        <- nuevo
+               figures[{ value, label, source }]           <- nuevo
+```
+
+**`findings` — la auditoria.** Cuatro hallazgos del sitio actual, cada uno con su
+"lo que cuesta". `area` es la etiqueta corta de la columna (captacion, calificacion,
+descubrimiento, seguimiento); `title` la afirmacion; `cost` el parrafo que la traduce a
+dinero. **Sin campo de numero**: el `01..04` sale del orden del array. Un numero a mano
+se desincroniza en cuanto alguien reordena, y entonces el documento dice "responde al
+hallazgo 02" senalando a otro.
+
+`key` se acuna como el de `criteria`: **se reusa `criterionKey()`**, que ya existe,
+esta probada y normaliza acentos. S9b la necesita para atar entregables a hallazgos; se
+declara desde S9a para no migrar dos veces.
+
+**`figures` — las cifras de mercado.** Tres numeros del mercado y uno del cliente, que
+es el remate: el cuarto es `0` formularios de contacto. `source` es **`required`**, y esa
+es la decision: una cifra sin fuente en una propuesta de agencia es un pasivo, no un
+argumento, y el unico momento en que alguien la pone es cuando la escribe. Pedirla
+despues no pasa nunca.
+
+### Restricciones
+
+1. **Ninguna cifra se inventa ni se hereda de memoria.** Las del documento de Karen se
+   capturan leyendo SU original, no una transcripcion. Cuatro de ellas llevan fuente
+   citada y una es verificable en `moeasy.com.mx`.
+2. **La critica al sitio del cliente viaja con su prueba.** El documento de Karen
+   funciona porque dice "todo esto se puede verificar en moeasy.com.mx". Esa frase es lo
+   que convierte el reproche en servicio y va en el organismo, no en el contenido: si
+   depende de que quien captura se acuerde, un dia no esta.
+3. **`figures` no es una grafica.** Es un numero grande, su frase y su fuente. Nada de
+   libreria.
+4. Sigue todo lo de S8: dinero en centavos, `accent` como rol, nada localizado,
+   `notes` sin cruzar a `ProposalView`.
+
+### S9a — schema, adaptador y dos organismos
+
+**Archivos.** `src/collections/Proposals.ts` · `src/cms/proposals.ts` + `.test.ts` ·
+`src/design-system/components/organisms/ProposalAudit/**` ·
+`.../organisms/ProposalFigures/**` · `src/app/[locale]/propuesta/[token]/page.tsx` ·
+`src/migrations/**`
+
+**DoD.**
+1. Auditoria y cifras capturables desde `/admin`, dentro del tab Diagnostico.
+2. `source` vacio **rechaza** el guardado, verificado en rojo.
+3. Los dos organismos con `axe` limpio y el numero grande dimensionado con `figure` —
+   el estilo de escala que se mide contra su contenedor, no contra la ventana. Quien lo
+   use declara `container-type: inline-size` o vuelve a medirse contra la pantalla sin
+   avisar.
+4. `toView` los mapea campo a campo, con el test de fugas cubriendolos.
+5. Los cinco gates verdes.
+
+### S9b — el vinculo hallazgo -> solucion, y los limites por paquete
+
+Lo que hace que el alcance no se lea como una lista de features es que cada pieza diga a
+que hallazgo responde y que esperar de ella. Y lo que evita la discusion de la semana
+seis es que cada paquete diga en voz alta **donde esta el limite**.
+
+```
+Base comun     deliverables[{ ..., answersKey, expect, source }]
+Rutas          packages[{ ..., limits, excluded[{ text }], recurringCost, bestFor }]
+```
+
+`answersKey` apunta a `findings[].key`, y esa relacion tiene el mismo problema que ya
+resolvio S8 entre `criteria` y `packages[].values`: Payload no relaciona una fila de
+array con otra del mismo documento. **Se extiende `alignProposal`**, que ya es una
+funcion pura con tests, en vez de escribir un segundo hook que haga lo mismo.
+
+`recurringCost` tiene una consecuencia comercial que no es tecnica y se decide antes de
+escribirlo: publicarlo revela que las dos primeras rutas corren sobre Webflow, y eso le
+dice a MoEasy que construirlas es barato. Es decision de Pigmento, no del schema.
+
+**DoD.** Cada entregable resuelve a un hallazgo existente o el guardado falla; ningun
+`answersKey` huerfano puede quedar guardado; gates verdes.
+
+### Contenido de esta ronda que NO necesita schema
+
+Se captura desde `/admin` con lo que ya hay, y se anota aqui para que no se pierda entre
+lo que si lleva codigo:
+
+- **Cuatro clausulas que faltan en `terms`**: rondas y aprobaciones (tres rondas, ventana
+  de tres dias habiles, una ronda corrige y no reabre lo aprobado), garantia posterior al
+  lanzamiento, cancelacion, y transferencia de la propiedad del codigo contra pago total.
+  La de rondas es la que evita la revision infinita; la de propiedad la va a preguntar
+  cualquiera que compre plataforma a medida.
+- **Dos add-ons que se quedaron fuera**: traduccion a mandarin y fotografia o renders.
+- **La linea de retorno**, en `recBody`: la comision de un solo arrendamiento de 2,000 m2
+  ronda los 20,000 USD, asi que un trato adicional al ano paga el proyecto. Sigue siendo
+  cierta con el precio de Pigmento.
+- **La concesion que da autoridad**: decir en voz alta que un CRM inmobiliario con sitio
+  incluido seria la opcion correcta si MoEasy solo vendiera casas.
+
+### Lo que este spec NO resuelve
+
+- **La exportacion a PDF**, que sigue pendiente desde S8.
+- **El precio de las rutas.** Pigmento cotizo las tres en el piso de la banda sugerida
+  por Karen. Es su decision y su margen; aqui solo se anota que existe techo sin usar.
