@@ -28,20 +28,29 @@ describe('toView', () => {
    */
   it('no deja salir ningun campo interno', () => {
     const view = toView(
-      propuesta({ notes: 'no publicar', accessToken: 'no-publicar-tampoco' }),
+      propuesta({
+        notes: 'no publicar',
+        accessToken: 'no-publicar-tampoco',
+        contactEmail: 'interno@example.invalid',
+      }),
     );
 
-    expect(Object.keys(view)).toEqual([
-      'client',
-      'status',
-      'items',
-      'totalCents',
-      'currency',
-      'validUntil',
-      'expired',
-    ]);
-    expect(JSON.stringify(view)).not.toContain('no publicar');
-    expect(JSON.stringify(view)).not.toContain('no-publicar-tampoco');
+    // Se afirma sobre la AUSENCIA y no sobre la lista exacta de claves. La version
+    // anterior comparaba las siete claves de entonces contra un array literal, y se
+    // rompio entera al crecer la vista — un test que falla por anadir un campo
+    // publico entrena a actualizarlo sin leerlo, que es como se cuela el que si
+    // importaba. Lo que no puede pasar es que un `...doc` futuro arrastre un campo
+    // interno, y eso lo cubre esta lista.
+    const INTERNOS = ['notes', 'accessToken', 'contactEmail', 'id', 'createdAt', 'updatedAt'];
+
+    for (const campo of INTERNOS) {
+      expect(Object.keys(view), `${campo} cruzo al cliente`).not.toContain(campo);
+    }
+
+    const serializado = JSON.stringify(view);
+    expect(serializado).not.toContain('no publicar');
+    expect(serializado).not.toContain('no-publicar-tampoco');
+    expect(serializado).not.toContain('interno@example.invalid');
   });
 
   /**

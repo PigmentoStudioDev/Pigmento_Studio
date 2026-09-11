@@ -213,6 +213,176 @@ export interface Proposal {
   client: string;
   contactEmail?: string | null;
   status: 'borrador' | 'enviada' | 'aceptada' | 'rechazada' | 'vencida';
+  currency: 'MXN' | 'USD';
+  validUntil?: string | null;
+  /**
+   * Se genera solo. La URL privada de esta propuesta cuelga de el.
+   */
+  accessToken?: string | null;
+  /**
+   * Interno. NUNCA sale al cliente — el adaptador de cms/ no lo mapea.
+   */
+  notes?: string | null;
+  /**
+   * El servicio: "Digital Growth Strategy".
+   */
+  serviceTitle?: string | null;
+  /**
+   * Una linea por renglon.
+   */
+  tagline?: string | null;
+  coverImage?: (number | null) | Media;
+  /**
+   * El titular del diagnostico.
+   */
+  headline?: string | null;
+  /**
+   * Donde esta el cliente hoy y que proponen las rutas.
+   */
+  context?: string | null;
+  /**
+   * La auditoria del sitio actual, en orden de lo que cuesta. El numero sale del orden.
+   */
+  findings?:
+    | {
+        /**
+         * Se acuna sola desde el titulo. La usa S9b para atar entregables.
+         */
+        key?: string | null;
+        /**
+         * La etiqueta corta: captacion, calificacion, seguimiento.
+         */
+        area: string;
+        /**
+         * La afirmacion: "la ficha no capta ningun lead".
+         */
+        title: string;
+        /**
+         * Lo que cuesta hoy, en dinero o en tiempo del equipo.
+         */
+        cost: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Tres del mercado y una del cliente. Toda cifra va con su fuente.
+   */
+  figures?:
+    | {
+        /**
+         * El numero tal y como se lee: "247,680 USD", "80%", "0".
+         */
+        value: string;
+        /**
+         * Que es ese numero.
+         */
+        label: string;
+        /**
+         * De donde sale. Obligatorio a proposito.
+         */
+        source: string;
+        id?: string | null;
+      }[]
+    | null;
+  baseTitle?: string | null;
+  deliverables?:
+    | {
+        name: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Una linea por punto. Es una textarea y no una lista de filas: cada punto es UN dato, y seis filas plegables para seis frases es mas trabajo sin mas estructura.
+   */
+  includedInAll?: string | null;
+  /**
+   * El rotulo comun de las rutas.
+   */
+  routesEyebrow?: string | null;
+  /**
+   * Se declaran UNA vez. Cada ruta recibe su hueco automaticamente al guardar.
+   */
+  criteria?:
+    | {
+        label: string;
+        /**
+         * Se deriva de la etiqueta.
+         */
+        key?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  packages?:
+    | {
+        name: string;
+        /**
+         * El tinte que identifica la ruta. Numerado, no por color.
+         */
+        accent: 'uno' | 'dos' | 'tres';
+        priceKind: 'fijo' | 'mensual' | 'rango';
+        /**
+         * En CENTAVOS enteros. 4800000 son $48,000.00
+         */
+        amountCents: number;
+        /**
+         * Extremo alto del rango, en CENTAVOS.
+         */
+        amountMaxCents?: number | null;
+        unit: 'proyecto' | 'mes' | 'pieza';
+        deliveryWeeks?: number | null;
+        /**
+         * Un parrafo por bloque, separados por linea en blanco.
+         */
+        body?: string | null;
+        /**
+         * Se rellena solo a partir de los criterios. Solo hay que escribir el valor.
+         */
+        values?:
+          | {
+              key?: string | null;
+              value?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  addOnsTitle?: string | null;
+  addOnsIntro?: string | null;
+  addOns?:
+    | {
+        name: string;
+        priceKind: 'fijo' | 'mensual' | 'rango';
+        /**
+         * En CENTAVOS enteros. 4800000 son $48,000.00
+         */
+        amountCents: number;
+        /**
+         * Extremo alto del rango, en CENTAVOS.
+         */
+        amountMaxCents?: number | null;
+        unit: 'proyecto' | 'mes' | 'pieza';
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * El NOMBRE exacto de la ruta recomendada.
+   */
+  recommendedPackage?: string | null;
+  recHeadline?: string | null;
+  recBody?: string | null;
+  technicalNote?: string | null;
+  termsTitle?: string | null;
+  terms?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  closing?: string | null;
   scopeItems?:
     | {
         concept: string;
@@ -224,16 +394,6 @@ export interface Proposal {
         id?: string | null;
       }[]
     | null;
-  currency: 'MXN' | 'USD';
-  validUntil?: string | null;
-  /**
-   * Se genera solo. La URL privada de esta propuesta cuelga de el.
-   */
-  accessToken?: string | null;
-  /**
-   * Interno. NUNCA sale al cliente — el adaptador de cms/ no lo mapea.
-   */
-  notes?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -393,6 +553,95 @@ export interface ProposalsSelect<T extends boolean = true> {
   client?: T;
   contactEmail?: T;
   status?: T;
+  currency?: T;
+  validUntil?: T;
+  accessToken?: T;
+  notes?: T;
+  serviceTitle?: T;
+  tagline?: T;
+  coverImage?: T;
+  headline?: T;
+  context?: T;
+  findings?:
+    | T
+    | {
+        key?: T;
+        area?: T;
+        title?: T;
+        cost?: T;
+        id?: T;
+      };
+  figures?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        source?: T;
+        id?: T;
+      };
+  baseTitle?: T;
+  deliverables?:
+    | T
+    | {
+        name?: T;
+        description?: T;
+        id?: T;
+      };
+  includedInAll?: T;
+  routesEyebrow?: T;
+  criteria?:
+    | T
+    | {
+        label?: T;
+        key?: T;
+        id?: T;
+      };
+  packages?:
+    | T
+    | {
+        name?: T;
+        accent?: T;
+        priceKind?: T;
+        amountCents?: T;
+        amountMaxCents?: T;
+        unit?: T;
+        deliveryWeeks?: T;
+        body?: T;
+        values?:
+          | T
+          | {
+              key?: T;
+              value?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  addOnsTitle?: T;
+  addOnsIntro?: T;
+  addOns?:
+    | T
+    | {
+        name?: T;
+        priceKind?: T;
+        amountCents?: T;
+        amountMaxCents?: T;
+        unit?: T;
+        description?: T;
+        id?: T;
+      };
+  recommendedPackage?: T;
+  recHeadline?: T;
+  recBody?: T;
+  technicalNote?: T;
+  termsTitle?: T;
+  terms?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  closing?: T;
   scopeItems?:
     | T
     | {
@@ -401,10 +650,6 @@ export interface ProposalsSelect<T extends boolean = true> {
         amountCents?: T;
         id?: T;
       };
-  currency?: T;
-  validUntil?: T;
-  accessToken?: T;
-  notes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

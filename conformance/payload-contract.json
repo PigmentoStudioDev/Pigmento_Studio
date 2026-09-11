@@ -88,9 +88,10 @@
     ],
     "whyProhibe": "prerenderizar esto seria escribir cada cotizacion en el build y servirla desde la CDN, donde ya no la protege ningun token",
     "exigeDeclarado": [
-      "export const dynamic = 'force-dynamic'"
+      "export const dynamic",
+      "force-dynamic"
     ],
-    "whyDeclarado": "hoy la ruta ya es dinamica por no tener generateStaticParams ni llamadas cacheadas, pero eso es accidental: envolver la consulta en unstable_cache la vuelve cacheable sin que nada avise, y entonces una cotizacion se le sirve a otro. Declararlo hace que quitarlo sea un diff y no un descuido"
+    "whyDeclarado": "hoy la ruta ya es dinamica por no tener generateStaticParams ni llamadas cacheadas, pero eso es accidental: envolver la consulta en unstable_cache la vuelve cacheable sin que nada avise, y entonces una cotizacion se le sirve a otro. Declararlo hace que quitarlo sea un diff y no un descuido. Se comprueban dos fragmentos y no la linea entera: la comilla la decide el formateador, y un gate que exige comilla simple falla contra codigo correcto"
   },
   "dinero": {
     "why": "SQLite no tiene decimal. Un importe en coma flotante es un centavo que aparece o desaparece al sumar, y en una cotizacion lo ve el cliente. El nombre del campo es lo unico que impide reintroducirlo sin pensarlo",
