@@ -1,87 +1,92 @@
 {
-  "$comment": "Contrato de React/TSX. Vigila lo que ESLint NO puede o no trae: reglas de la casa sobre tipos y ruido, y la frontera servidor/cliente del App Router. Las reglas de hooks (rules-of-hooks, exhaustive-deps, jsx-key) NO se reimplementan aqui: necesitan AST y ya las cubre eslint-config-next/core-web-vitals, que corre en el Gate 2 de scripts/gates.sh. Un gate de regex que finge entender scope es un gate que miente.",
-  "scanDirs": [
-    "src"
-  ],
-  "ext": [
-    ".tsx",
-    ".ts"
-  ],
-  "rules": {
-    "react-fc": {
-      "why": "React.FC no aporta tipado util y estorba a los genericos; las props se declaran con una interface o type con nombre. Regla de la casa",
-      "pattern": "React\\.(?:FC|FunctionComponent)\\b"
-    },
-    "any-type": {
-      "why": "any apaga el compilador justo en la frontera donde hace falta. Lo externo entra como unknown y se estrecha antes de usarlo",
-      "pattern": ":\\s*any\\b|\\bas\\s+any\\b|<\\s*any\\s*>|,\\s*any\\b"
-    },
-    "console-noise": {
-      "why": "console.log/info/debug es salida de depuracion que sobrevive al commit y acaba en produccion. console.error queda FUERA de la regla a proposito: es el canal deliberado de los error boundaries (app/error.tsx, app/global-error.tsx), que registran el digest para cruzarlo con los logs del servidor",
-      "pattern": "\\bconsole\\.(?:log|info|debug|trace)\\("
-    },
-    "dangerous-html": {
-      "why": "dangerouslySetInnerHTML es XSS por defecto salvo que alguien haya escrito y revisado el saneado. Si hace falta de verdad, se exime por archivo con el motivo",
-      "pattern": "dangerouslySetInnerHTML"
-    },
-    "reference-name": {
-      "why": "la referencia de diseno se cita como 'la referencia', nunca por su nombre. Es una decision de Karen y no cosmetica: un comentario que nombra a otro estudio convierte 'nos inspiramos en su sistema' en 'copiamos su navbar', y eso viaja en el repo de una agencia de marca. El nombre vive en la conversacion, no en el codigo. El patron va en clases de caracter y no con una bandera de mayusculas porque las regex de JS no admiten (?i) en linea: el runner las compila solo con 'g'. Lleva includeComments porque el nombre vive justamente en los comentarios, y la vista normal del escaner los quita",
-      "pattern": "\\b[Oo][Ss][Mm][Oo]\\b",
-      "includeComments": true
-    }
+ "$comment": "Contrato de React/TSX. Vigila lo que ESLint NO puede o no trae: reglas de la casa sobre tipos y ruido, y la frontera servidor/cliente del App Router. Las reglas de hooks (rules-of-hooks, exhaustive-deps, jsx-key) NO se reimplementan aqui: necesitan AST y ya las cubre eslint-config-next/core-web-vitals, que corre en el Gate 2 de scripts/gates.sh. Un gate de regex que finge entender scope es un gate que miente.",
+ "scanDirs": [
+  "src"
+ ],
+ "ext": [
+  ".tsx",
+  ".ts"
+ ],
+ "rules": {
+  "react-fc": {
+   "why": "React.FC no aporta tipado util y estorba a los genericos; las props se declaran con una interface o type con nombre. Regla de la casa",
+   "pattern": "React\\.(?:FC|FunctionComponent)\\b"
   },
-  "directiveFirst": {
-    "why": "'use client' es un directive prologue: si algo que no sea un comentario lo precede, deja de ser una directiva y pasa a ser una expresion string sin efecto. El archivo se queda en server component SIN error de build, y el fallo aparece en runtime como un hook llamado en el servidor",
-    "directive": "use client"
+  "any-type": {
+   "why": "any apaga el compilador justo en la frontera donde hace falta. Lo externo entra como unknown y se estrecha antes de usarlo",
+   "pattern": ":\\s*any\\b|\\bas\\s+any\\b|<\\s*any\\s*>|,\\s*any\\b"
   },
-  "clientBoundary": {
-    "why": "cada 'use client' nuevo mueve arbol al bundle del navegador. El sitio es server-first y la frontera se declara AQUI, no se descubre en el budget de CSS/JS cuando ya duele. preview/ es herramienta de desarrollo y solo la carga /ds; los dos error boundaries necesitan estado de cliente por definicion. Los componentes del DS entran de UNO EN UNO, con su ruta completa y nunca por directorio: un permiso a design-system/components/ dejaria de contar cuantos componentes se han mudado al navegador, que es justo lo que esta lista mide. SiteHeader lo esta porque es interactiva de arriba abajo — estado de apertura, Escape, scroll y observador de tema. Button y NavLinkList entran al rodar su texto: partirlo en caracteres pide DOM, y repartirlo cuando llega la fuente buena pide escuchar. Lo que cruza es el modulo una vez, no una copia por instancia. useCharRoll es el hook que las dos comparten. RadialGallery entra porque su escaparate avanza solo: un intervalo y un observador para pararlo con el menu cerrado piden navegador. Lo que NO cruza con ella es el motion — el giro, el empuje y la onda son transiciones de su hoja, asi que el modulo que viaja es un contador, no una animacion. VideoBackdrop y useParallax entran por el scroll: ScrollTrigger mide posiciones reales de la caja y el autoplay del video se decide con matchMedia, que en servidor no existe. useParallax es el hook, VideoBackdrop el unico que lo usa hoy. ThemeToggle entra solo por su manejador de clic: lo que pinta el estado es el CSS desde --pg-mode-dark, no React. Sin esa decision harian falta un store suscrito, un suppressHydrationWarning y un fotograma con el icono equivocado — el servidor no conoce la preferencia. Lo que cruza son cuatro lineas de manejador, no el dibujo. LanguageToggle entra porque conmutar de idioma es navegar: necesita la ruta actual sin prefijo y el router de next-intl, y las dos son APIs de cliente. Es un boton y no dos enlaces porque con dos idiomas uno de ellos siempre apuntaria a donde ya estas. Marquee y useMarquee entran por dos motivos a la vez: el bucle es GSAP, y la tira resuelve su propia zona de tema — que necesita el modo, y el modo solo existe en el navegador. Manifesto y useMediaBurst entran por el gesto: la rafaga de piezas nace de un puntero encima de una palabra y la dibuja gsap, y ninguna de las dos cosas existe en servidor. Lo que cruza es el gesto, no el contenido — la frase entera y sus tres enlaces se renderizan en servidor y sin JS siguen leyendose y navegando. ScrollReveal y useScrollReveal entran una vez y por todos: son el gesto de entrada por scroll, que necesita saber cuando un bloque esta a la vista y —en texto— partirlo por lineas. Envolver en vez de pedirle el gesto a cada componente es justo lo que evita que cada parrafo del sitio se mude al navegador: los hijos de este envoltorio siguen renderizandose en servidor. Faq entra por su estado: que fila esta abierta es una decision del navegador y no hay forma de tenerla en servidor. Lo que cruza es UN numero — el vertido del panel, el giro del icono y la subida de la respuesta son transiciones de su hoja, donde el gate de motion las lee y donde reduced-motion se resuelve en una @media. Team y useMomentumHover entran por una fisica: la velocidad del puntero al entrar en un retrato se convierte en la velocidad inicial de un tiro con inercia, y una transicion de CSS no puede tomar una velocidad de entrada. Es la excepcion honesta al reparto de la casa; lo que no cambia es que gsap sigue entrando por su unica puerta. SmoothScroll y useSmoothScroll entran porque el scroll suavizado ES una API del navegador: intercepta la rueda y conduce la posicion de la pagina. Lo que cruza son cuatro lineas que no pintan nada — el componente existe justamente para que el layout, que es server component, no tenga que cruzar entero por instalar un comportamiento. El sonido de la interfaz entra en tres piezas y ninguna arrastra arbol: uisfx.ts es su unica puerta —carga la libreria solo cuando alguien enciende el sonido, igual que gsap.ts—, InterfaceSound es el instalador que devuelve null, y SoundToggle es el interruptor, que SI lee estado desde React porque el sonido no tiene representacion en la hoja de la que pintarse. Lo que NO cruza es el resto del sitio: los sonidos se declaran con un atributo que viaja en el HTML del servidor, asi que un boton renderizado en servidor suena sin volverse componente de cliente.",
-    "allow": [
-      "app/[locale]/error.tsx",
-      "app/global-error.tsx",
-      "design-system/components/atoms/Button/Button.tsx",
-      "design-system/components/molecules/LanguageToggle/LanguageToggle.tsx",
-      "design-system/components/molecules/NavLinkList/NavLinkList.tsx",
-      "design-system/components/molecules/RadialGallery/RadialGallery.tsx",
-      "design-system/components/molecules/ThemeToggle/ThemeToggle.tsx",
-      "design-system/components/molecules/VideoBackdrop/VideoBackdrop.tsx",
-      "design-system/components/organisms/SiteHeader/SiteHeader.tsx",
-      "design-system/motion/useCharRoll.ts",
-      "design-system/motion/useParallax.ts",
-      "design-system/preview/",
-      "design-system/motion/useMarquee.ts",
-      "design-system/components/molecules/Marquee/Marquee.tsx",
-      "design-system/components/organisms/Manifesto/Manifesto.tsx",
-      "design-system/motion/useMediaBurst.ts",
-      "design-system/components/layout/ScrollReveal/ScrollReveal.tsx",
-      "design-system/motion/useScrollReveal.ts",
-      "design-system/components/organisms/Faq/Faq.tsx",
-      "design-system/components/organisms/Team/Team.tsx",
-      "design-system/motion/useMomentumHover.ts",
-      "design-system/components/layout/SmoothScroll/SmoothScroll.tsx",
-      "design-system/motion/useSmoothScroll.ts",
-      "design-system/components/layout/InterfaceSound/InterfaceSound.tsx",
-      "design-system/components/molecules/SoundToggle/SoundToggle.tsx",
-      "design-system/sound/uisfx.ts"
-    ]
+  "console-noise": {
+   "why": "console.log/info/debug es salida de depuracion que sobrevive al commit y acaba en produccion. console.error queda FUERA de la regla a proposito: es el canal deliberado de los error boundaries (app/error.tsx, app/global-error.tsx), que registran el digest para cruzarlo con los logs del servidor",
+   "pattern": "\\bconsole\\.(?:log|info|debug|trace)\\("
   },
-  "routeExports": {
-    "why": "en el App Router el default export ES el contrato con el router: si falta en un archivo de ruta, Next da un error que no nombra la causa. Fuera de una ruta, un default rompe el rename-safety y hace que el import elija el nombre. Solo se miran .tsx: los route handlers (.ts) exportan GET/POST con nombre y no llevan default",
-    "ext": ".tsx",
-    "routeDir": "app",
-    "routeFiles": [
-      "page",
-      "layout",
-      "template",
-      "loading",
-      "error",
-      "global-error",
-      "not-found",
-      "default"
-    ]
+  "dangerous-html": {
+   "why": "dangerouslySetInnerHTML es XSS por defecto salvo que alguien haya escrito y revisado el saneado. Si hace falta de verdad, se exime por archivo con el motivo",
+   "pattern": "dangerouslySetInnerHTML"
   },
-  "exemptFiles": {
-    "app/(payload)/": "Codigo GENERADO por Payload, con su cabecera. Va a exemptFiles y NO a clientBoundary.allow a proposito: esa lista mide cuantos componentes NUESTROS se han mudado al navegador, y el panel del CMS no es uno de ellos — contarlo ahi haria que el numero dejara de significar nada. Es clave de PREFIJO (acaba en /) porque Payload anade archivos al arbol cuando cambia el config, y mantenerlos uno a uno seria una lista que se desincroniza sin avisar. Que sigan intactos lo vigila el gate `payload`."
-  },
-  "baseline": {}
+  "reference-name": {
+   "why": "la referencia de diseno se cita como 'la referencia', nunca por su nombre. Es una decision de Karen y no cosmetica: un comentario que nombra a otro estudio convierte 'nos inspiramos en su sistema' en 'copiamos su navbar', y eso viaja en el repo de una agencia de marca. El nombre vive en la conversacion, no en el codigo. El patron va en clases de caracter y no con una bandera de mayusculas porque las regex de JS no admiten (?i) en linea: el runner las compila solo con 'g'. Lleva includeComments porque el nombre vive justamente en los comentarios, y la vista normal del escaner los quita",
+   "pattern": "\\b[Oo][Ss][Mm][Oo]\\b",
+   "includeComments": true
+  }
+ },
+ "directiveFirst": {
+  "why": "'use client' es un directive prologue: si algo que no sea un comentario lo precede, deja de ser una directiva y pasa a ser una expresion string sin efecto. El archivo se queda en server component SIN error de build, y el fallo aparece en runtime como un hook llamado en el servidor",
+  "directive": "use client"
+ },
+ "clientBoundary": {
+  "why": "cada 'use client' nuevo mueve arbol al bundle del navegador. El sitio es server-first y la frontera se declara AQUI, no se descubre en el budget de CSS/JS cuando ya duele. preview/ es herramienta de desarrollo y solo la carga /ds; los dos error boundaries necesitan estado de cliente por definicion. Los componentes del DS entran de UNO EN UNO, con su ruta completa y nunca por directorio: un permiso a design-system/components/ dejaria de contar cuantos componentes se han mudado al navegador, que es justo lo que esta lista mide. SiteHeader lo esta porque es interactiva de arriba abajo — estado de apertura, Escape, scroll y observador de tema. Button y NavLinkList entran al rodar su texto: partirlo en caracteres pide DOM, y repartirlo cuando llega la fuente buena pide escuchar. Lo que cruza es el modulo una vez, no una copia por instancia. useCharRoll es el hook que las dos comparten. RadialGallery entra porque su escaparate avanza solo: un intervalo y un observador para pararlo con el menu cerrado piden navegador. Lo que NO cruza con ella es el motion — el giro, el empuje y la onda son transiciones de su hoja, asi que el modulo que viaja es un contador, no una animacion. Los dos fondos y useParallax entran por el scroll: ScrollTrigger mide posiciones reales de la caja, y en el de video el autoplay se decide ademas con matchMedia, que en servidor no existe. useParallax es el hook; VideoBackdrop e ImageBackdrop son los dos que lo usan, y son gemelos — misma geometria, sacada a motion/backdrop.ts justo para que no la copie cada uno. Lo que cruza es el fondo, nunca el hero: el titular, el distintivo y las frases de la portada siguen renderizandose en servidor. ThemeToggle entra solo por su manejador de clic: lo que pinta el estado es el CSS desde --pg-mode-dark, no React. Sin esa decision harian falta un store suscrito, un suppressHydrationWarning y un fotograma con el icono equivocado — el servidor no conoce la preferencia. Lo que cruza son cuatro lineas de manejador, no el dibujo. LanguageToggle entra porque conmutar de idioma es navegar: necesita la ruta actual sin prefijo y el router de next-intl, y las dos son APIs de cliente. Es un boton y no dos enlaces porque con dos idiomas uno de ellos siempre apuntaria a donde ya estas. Marquee y useMarquee entran por dos motivos a la vez: el bucle es GSAP, y la tira resuelve su propia zona de tema — que necesita el modo, y el modo solo existe en el navegador. Manifesto y useMediaBurst entran por el gesto: la rafaga de piezas nace de un puntero encima de una palabra y la dibuja gsap, y ninguna de las dos cosas existe en servidor. Lo que cruza es el gesto, no el contenido — la frase entera y sus tres enlaces se renderizan en servidor y sin JS siguen leyendose y navegando. ScrollReveal y useScrollReveal entran una vez y por todos: son el gesto de entrada por scroll, que necesita saber cuando un bloque esta a la vista y —en texto— partirlo por lineas. Envolver en vez de pedirle el gesto a cada componente es justo lo que evita que cada parrafo del sitio se mude al navegador: los hijos de este envoltorio siguen renderizandose en servidor. Faq entra por su estado: que fila esta abierta es una decision del navegador y no hay forma de tenerla en servidor. Lo que cruza es UN numero — el vertido del panel, el giro del icono y la subida de la respuesta son transiciones de su hoja, donde el gate de motion las lee y donde reduced-motion se resuelve en una @media. Team y useMomentumHover entran por una fisica: la velocidad del puntero al entrar en un retrato se convierte en la velocidad inicial de un tiro con inercia, y una transicion de CSS no puede tomar una velocidad de entrada. Es la excepcion honesta al reparto de la casa; lo que no cambia es que gsap sigue entrando por su unica puerta. SmoothScroll y useSmoothScroll entran porque el scroll suavizado ES una API del navegador: intercepta la rueda y conduce la posicion de la pagina. Lo que cruza son cuatro lineas que no pintan nada — el componente existe justamente para que el layout, que es server component, no tenga que cruzar entero por instalar un comportamiento. El sonido de la interfaz entra en tres piezas y ninguna arrastra arbol: uisfx.ts es su unica puerta —carga la libreria solo cuando alguien enciende el sonido, igual que gsap.ts—, InterfaceSound es el instalador que devuelve null, y SoundToggle es el interruptor, que SI lee estado desde React porque el sonido no tiene representacion en la hoja de la que pintarse. Lo que NO cruza es el resto del sitio: los sonidos se declaran con un atributo que viaja en el HTML del servidor, asi que un boton renderizado en servidor suena sin volverse componente de cliente. NumberRoll y useNumberRoll entran por el scroll y por el DOM: los rodillos de digitos se construyen a mano en tiempo de ejecucion y ScrollTrigger decide cuando. Lo que cruza es el rodado, nunca el dato — la cifra viaja en el HTML del servidor y se lee igual sin JS, con reduced-motion, o mientras gsap viene por la red. HighlightText y useScrollHighlight entran por lo mismo, y con la misma frontera: el texto entero se renderiza en servidor y lo unico que el navegador aporta es el relleno del subrayado, que ademas tiene su estado de reposo en la hoja para que no parpadee antes de que gsap llegue. Los dos son puertos de Portfolio2026 reescritos al reparto de la casa: props en vez de barrer el documento por atributos, y gsap por su unica puerta en vez de un import estatico que lo metia en el bundle compartido.",
+  "allow": [
+   "app/[locale]/error.tsx",
+   "app/global-error.tsx",
+   "design-system/components/atoms/Button/Button.tsx",
+   "design-system/components/molecules/LanguageToggle/LanguageToggle.tsx",
+   "design-system/components/molecules/NavLinkList/NavLinkList.tsx",
+   "design-system/components/molecules/RadialGallery/RadialGallery.tsx",
+   "design-system/components/molecules/ThemeToggle/ThemeToggle.tsx",
+   "design-system/components/molecules/ImageBackdrop/ImageBackdrop.tsx",
+   "design-system/components/molecules/VideoBackdrop/VideoBackdrop.tsx",
+   "design-system/components/organisms/SiteHeader/SiteHeader.tsx",
+   "design-system/motion/useCharRoll.ts",
+   "design-system/motion/useParallax.ts",
+   "design-system/preview/",
+   "design-system/motion/useMarquee.ts",
+   "design-system/components/molecules/Marquee/Marquee.tsx",
+   "design-system/components/organisms/Manifesto/Manifesto.tsx",
+   "design-system/motion/useMediaBurst.ts",
+   "design-system/components/layout/ScrollReveal/ScrollReveal.tsx",
+   "design-system/motion/useScrollReveal.ts",
+   "design-system/components/organisms/Faq/Faq.tsx",
+   "design-system/components/organisms/Team/Team.tsx",
+   "design-system/motion/useMomentumHover.ts",
+   "design-system/components/layout/SmoothScroll/SmoothScroll.tsx",
+   "design-system/motion/useSmoothScroll.ts",
+   "design-system/components/layout/InterfaceSound/InterfaceSound.tsx",
+   "design-system/components/molecules/SoundToggle/SoundToggle.tsx",
+   "design-system/sound/uisfx.ts",
+   "design-system/components/molecules/NumberRoll/NumberRoll.tsx",
+   "design-system/motion/useNumberRoll.ts",
+   "design-system/components/molecules/HighlightText/HighlightText.tsx",
+   "design-system/motion/useScrollHighlight.ts"
+  ]
+ },
+ "routeExports": {
+  "why": "en el App Router el default export ES el contrato con el router: si falta en un archivo de ruta, Next da un error que no nombra la causa. Fuera de una ruta, un default rompe el rename-safety y hace que el import elija el nombre. Solo se miran .tsx: los route handlers (.ts) exportan GET/POST con nombre y no llevan default",
+  "ext": ".tsx",
+  "routeDir": "app",
+  "routeFiles": [
+   "page",
+   "layout",
+   "template",
+   "loading",
+   "error",
+   "global-error",
+   "not-found",
+   "default"
+  ]
+ },
+ "exemptFiles": {
+  "app/(payload)/": "Codigo GENERADO por Payload, con su cabecera. Va a exemptFiles y NO a clientBoundary.allow a proposito: esa lista mide cuantos componentes NUESTROS se han mudado al navegador, y el panel del CMS no es uno de ellos — contarlo ahi haria que el numero dejara de significar nada. Es clave de PREFIJO (acaba en /) porque Payload anade archivos al arbol cuando cambia el config, y mantenerlos uno a uno seria una lista que se desincroniza sin avisar. Que sigan intactos lo vigila el gate `payload`."
+ },
+ "baseline": {}
 }
