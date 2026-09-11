@@ -1,6 +1,7 @@
 import config from '@payload-config';
 import { getPayload } from 'payload';
 import type { Media, Proposal } from '@/payload-types';
+import type { Locale } from '@/i18n/routing';
 
 /**
  * El adaptador de las propuestas. Es la frontera entre una coleccion PRIVADA y
@@ -56,6 +57,7 @@ export interface ProposalFigure {
 }
 
 export interface ProposalPackage {
+  key: string;
   name: string;
   accent: PriceAccent;
   price: ProposalPrice;
@@ -220,6 +222,7 @@ export function toView(doc: Proposal, now = new Date()): ProposalView {
     routesEyebrow: doc.routesEyebrow ?? null,
     criteria,
     packages: (doc.packages ?? []).map((p) => ({
+      key: p.key ?? '',
       name: p.name,
       accent: p.accent,
       price: toPrice(p),
@@ -232,7 +235,9 @@ export function toView(doc: Proposal, now = new Date()): ProposalView {
         key: c.key,
         value: (p.values ?? []).find((v) => v.key === c.key)?.value ?? '',
       })),
-      recommended: Boolean(doc.recommendedPackage && doc.recommendedPackage === p.name),
+      // Por CLAVE y no por nombre. El nombre se traduce y la clave no: comparando
+      // nombres, la insignia se apagaba en ingles sin dar error ni dejar hueco.
+      recommended: Boolean(doc.recommendedPackage && doc.recommendedPackage === p.key),
     })),
 
     addOnsTitle: doc.addOnsTitle ?? null,
@@ -280,8 +285,18 @@ export function toView(doc: Proposal, now = new Date()): ProposalView {
  * imagen que pintar. Un nivel y no mas — `media` es contenido publico y `toImage`
  * se queda con cuatro campos de el, asi que nada de otra coleccion viaja por
  * accidente.
+ *
+ * `locale` es OBLIGATORIO y no tiene valor por defecto. Ponerle uno seria repetir
+ * el fallo que arreglo: la propuesta se escribe en dos idiomas, y una lectura que
+ * no dice cual quiere recibe el de por defecto — con `fallback` encendido, sin
+ * error y sin hueco. El sintoma era una pagina en ingles con el texto en espanol.
+ * Exigirlo en la firma hace que el compilador pregunte por el idioma en cada
+ * llamada nueva, que es donde se decide.
  */
-export async function getProposalByToken(token: string): Promise<ProposalView | null> {
+export async function getProposalByToken(
+  token: string,
+  locale: Locale,
+): Promise<ProposalView | null> {
   // Frontera de confianza: se comprueba el TIPO y no solo la verdad. Hoy el
   // segmento `[token]` de Next siempre da un string —seria `[...token]` quien
   // diera un array— pero esta funcion esta exportada y no puede depender de que
@@ -293,6 +308,7 @@ export async function getProposalByToken(token: string): Promise<ProposalView | 
 
   const { docs } = await payload.find({
     collection: 'proposals',
+    locale,
     where: { accessToken: { equals: token } },
     depth: 1,
     limit: 1,
