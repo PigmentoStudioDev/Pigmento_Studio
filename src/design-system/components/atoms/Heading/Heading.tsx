@@ -22,7 +22,7 @@ import styles from "./Heading.module.scss";
  */
 export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
-export type HeadingSize = "display" | "heading" | "lead";
+export type HeadingSize = "display" | "heading" | "title" | "lead";
 
 export type HeadingTone = "primary" | "secondary";
 
@@ -42,6 +42,7 @@ export interface HeadingProps {
 const SIZE: Record<HeadingSize, string> = {
   display: styles.sizeDisplay,
   heading: styles.sizeHeading,
+  title: styles.sizeTitle,
   lead: styles.sizeLead,
 };
 

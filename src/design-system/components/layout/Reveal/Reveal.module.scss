@@ -27,6 +27,11 @@
 // desfase distintos conviviendo en el mismo sitio se notan aunque no se sepa
 // nombrar, y este es el mismo gesto un nivel mas arriba: piezas que entran una
 // detras de otra.
+// Mientras el preloader tapa la pagina, el gesto espera en su primer fotograma.
+[data-page-status='loading'] .root {
+  animation-play-state: paused;
+}
+
 .step0 {
   --pg-reveal-step: 0;
 }

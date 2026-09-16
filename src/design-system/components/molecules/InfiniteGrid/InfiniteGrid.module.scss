@@ -1,0 +1,73 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+
+// pan-y: arrastre horizontal mueve la reticula, el vertical scrollea la pagina.
+.root {
+  position: relative;
+  overflow: clip;
+  inline-size: 100%;
+  block-size: 100%;
+  touch-action: pan-y;
+  cursor: grab;
+  transition: opacity brand.$duration-base brand.$ease-default;
+}
+
+.root[data-infinite-grid-status='loading'] {
+  opacity: 0;
+}
+
+.root[data-infinite-grid-status='dragging'] {
+  cursor: grabbing;
+}
+
+.field {
+  position: absolute;
+  inset: 0;
+}
+
+// De una mascara solo cuenta el alfa: currentcolor es el extremo opaco, no un color.
+.clearingCenter .field {
+  mask-image: radial-gradient(
+    ellipse 58% 46% at 50% 50%,
+    transparent 28%,
+    currentcolor 100%
+  );
+}
+
+// Nace invisible: el behavior la descubre ya colocada.
+.item {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  display: flex;
+  aspect-ratio: 1;
+  inline-size: brand.$grid-tile-inline-size;
+  padding: brand.$grid-tile-gutter;
+  opacity: 0;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.card {
+  position: relative;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: clip;
+  border-radius: brand.$radius-04;
+  user-select: none;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.image {
+  object-fit: cover;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    cursor: auto;
+    transition: none;
+  }
+}

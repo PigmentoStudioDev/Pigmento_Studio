@@ -1,0 +1,31 @@
+@use '../../../styles/carbon-config';
+
+@use '@carbon/react/scss/spacing';
+
+// svh: 100vh en movil cuenta la barra de URL y el hero salta al primer scroll.
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: clip;
+  min-block-size: 100svh;
+  padding: spacing.$spacing-07;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+// fit-content: lo que sobre de esta caja es superficie que ya no arrastra el mosaico.
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: spacing.$spacing-05;
+  inline-size: fit-content;
+  max-inline-size: 30ch;
+  text-align: center;
+}

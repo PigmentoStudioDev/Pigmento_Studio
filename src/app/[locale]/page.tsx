@@ -7,7 +7,8 @@ import { Faq } from "@/design-system/components/organisms/Faq/Faq";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
 import { Team } from "@/design-system/components/organisms/Team/Team";
-import { HeroVideo } from "@/design-system/components/organisms/HeroVideo/HeroVideo";
+import { HeroStatement } from "@/design-system/components/organisms/HeroStatement/HeroStatement";
+import { HERO_PIECES } from "../hero";
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { getFinalCta } from "../cta";
 import { getFaq } from "../faq";
@@ -53,14 +54,17 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
 
   return (
     <main>
+      {/* Solo el hero A en la pagina. El B (HeroExpose, la reticula con el titular al
+          centro) sigue en el design system por si la comparativa vuelve: montarlo es
+          volver a importarlo aqui. */}
       <Section width="full" spacing="none">
-        <HeroVideo
-          eyebrow="Estudio de marca"
-          title="Pigmento Studio"
-          videoSrc="https://pub-689bd7bf1ef94ab08b150945eac861e5.r2.dev/hero-glitch-1080p.mp4"
-          videoPoster="/hero-glitch-poster.webp"
-          ctaLabel="Ver el trabajo"
-          ctaHref="/trabajo"
+        <HeroStatement
+          eyebrow="Diseño de marca y crecimiento"
+          title="Marcas que se reconocen en la calle."
+          subtitle="Cada pieza, cada píxel, cada decisión, probada frente a gente real."
+          ctaLabel="Empezar un proyecto"
+          ctaHref={`#${CTA_TITLE_ID}`}
+          pieces={HERO_PIECES}
         />
       </Section>
 
@@ -95,7 +99,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
 
       {/* Quien hace el trabajo, antes de las objeciones: la primera pregunta de
           cualquiera que va a contratar un estudio pequeno es con quien va a hablar. */}
-      <Section width="full" spacing="loose" labelledBy={TEAM_TITLE_ID}>
+      <Section width="strip" spacing="loose" labelledBy={TEAM_TITLE_ID}>
         <Team {...getTeam(tTeam)} titleId={TEAM_TITLE_ID} />
       </Section>
 
@@ -103,14 +107,14 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           esta decidiendo, no explorando. A sangre porque la lista se escanea de un
           borde al otro. `labelledBy` convierte el <section> en un landmark con
           nombre, y quien pone ese nombre es el titular del bloque. */}
-      <Section width="full" spacing="loose" labelledBy={FAQ_TITLE_ID}>
+      <Section width="strip" spacing="loose" labelledBy={FAQ_TITLE_ID}>
         <Faq {...getFaq(tFaq)} titleId={FAQ_TITLE_ID} />
       </Section>
 
       {/* La ultima llamada, pegada al pie. La placa se despega de la pagina con el rol
           invertido: oscura sobre claro y clara sobre oscuro — lo que la hace placa es
           el contraste, no un color fijo. */}
-      <Section width="full" spacing="loose" labelledBy={CTA_TITLE_ID}>
+      <Section width="strip" spacing="loose" labelledBy={CTA_TITLE_ID}>
         <FinalCta {...getFinalCta(tCta)} titleId={CTA_TITLE_ID} />
       </Section>
 

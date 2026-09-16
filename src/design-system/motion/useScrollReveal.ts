@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type Motion } from "./gsap";
+import { isPageLoading, whenPageReady } from "./pageReady";
 
 /**
  * El gesto de entrada por scroll: lo que hay debajo del pliegue llega cuando le toca.
@@ -187,7 +188,14 @@ export function useScrollReveal<T extends HTMLElement>({
     };
 
     if (by === "block") {
-      watch();
+      // Sincrono salvo con preloader: el estado tiene que estar puesto al montar.
+      if (isPageLoading()) {
+        void whenPageReady().then(() => {
+          if (!cancelled) watch();
+        });
+      } else {
+        watch();
+      }
     } else {
       /**
        * Medir antes de que llegue la fuente buena parte por lineas que despues no son
@@ -195,7 +203,7 @@ export function useScrollReveal<T extends HTMLElement>({
        * recolocan a mitad del gesto. `autoSplit` lo corregiria solo, pero se ahorra el
        * doble trabajo esperando.
        */
-      void Promise.all([loadMotion(), document.fonts?.ready ?? Promise.resolve()]).then(
+      void Promise.all([loadMotion(), document.fonts?.ready ?? Promise.resolve(), whenPageReady()]).then(
         ([{ SplitText }]) => {
           if (cancelled) return;
 
