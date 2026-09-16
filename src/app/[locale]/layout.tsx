@@ -8,11 +8,15 @@ import { InterfaceSound } from "@/design-system/components/layout/InterfaceSound
 import { SmoothScroll } from "@/design-system/components/layout/SmoothScroll/SmoothScroll";
 import { SiteFooter } from "@/design-system/components/organisms/SiteFooter/SiteFooter";
 import { SiteHeader } from "@/design-system/components/organisms/SiteHeader/SiteHeader";
+import { TopBar } from "@/design-system/components/organisms/TopBar/TopBar";
+import { Preloader } from "@/design-system/components/organisms/Preloader/Preloader";
+import { pageStatusScript } from "@/design-system/motion/pageReady";
 import { themeModeScript } from "@/design-system/theme/mode";
 import { routing } from "@/i18n/routing";
 import { getFooter } from "../footer";
 import { getFeaturedPieces } from "@/cms/projects";
 import { getNavigation } from "../navigation";
+import { getTopBar } from "../topbar";
 import { IBM_Plex_Mono, IBM_Plex_Serif } from "next/font/google";
 import localFont from "next/font/local";
 import "@/design-system/styles/index.scss";
@@ -110,6 +114,7 @@ export default async function RootLayout({
   // fallback silencioso convierte "el CMS no responde" en "el sitio se ve bien".
   const pieces = await getFeaturedPieces(locale);
   const tFooter = await getTranslations("footer");
+  const tTopBar = await getTranslations("topbar");
 
   return (
     <html
@@ -142,6 +147,9 @@ export default async function RootLayout({
             inline es la unica forma de correr algo antes de la primera pintura,
             que es el requisito completo de esta linea. */}
         <Script id="pg-theme-mode" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: themeModeScript() }} />{/* conformance-exempt: constante del DS sin datos de entrada, ver arriba */}
+        {/* Marca la pagina como loading antes de pintar, solo si el preloader va a
+            correr. Misma naturaleza que el script de arriba: constante sin entrada. */}
+        <Script id="pg-page-status" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: pageStatusScript() }} />{/* conformance-exempt: constante del DS sin datos de entrada */}
       </head>
       <body>
         {/* Solo el proveedor de cliente, sin volcar los diccionarios enteros: lo
@@ -151,6 +159,7 @@ export default async function RootLayout({
           {/* No pinta nada: cambia como se desplaza la pagina entera. Va antes que
               todo lo demas para que el scroll ya este suavizado cuando el primer
               bloque se registre a el. */}
+          <Preloader />
           <SmoothScroll />
           {/* Tampoco pinta nada: enlaza los sonidos de la interfaz con los atributos
               que ya viajan en el HTML. Con el sonido apagado —que es como arranca— no
@@ -161,6 +170,10 @@ export default async function RootLayout({
               propio sobre un hero de video. Detras de ella tambien por z-index
               (90 contra 100) — encima la difuminaria a ella. */}
           <ProgressiveBlur />
+          {/* Encima de la cabecera y fija: promos y avisos del estudio. La cabecera y
+              el hero bajan lo que ella mide por --pg-topbar-offset, que vale cero si
+              esta linea se quita. */}
+          <TopBar {...getTopBar(tTopBar)} />
           <SiteHeader {...getNavigation(t, pieces)} />
           {children}
           {/* Chrome de pagina, como la cabecera: va aqui y no envuelto en un

@@ -147,5 +147,9 @@
     "unitProyecto": "per project",
     "unitMes": "per month",
     "unitPieza": "each"
+  },
+  "topbar": {
+    "promo": "Brand design and growth from Mexico City",
+    "agency": "Let's talk about your next project"
   }
 }

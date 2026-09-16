@@ -72,7 +72,9 @@
    "design-system/components/molecules/NumberRoll/NumberRoll.tsx",
    "design-system/motion/useNumberRoll.ts",
    "design-system/components/molecules/HighlightText/HighlightText.tsx",
-   "design-system/motion/useScrollHighlight.ts"
+   "design-system/motion/useScrollHighlight.ts",
+   "design-system/components/organisms/TopBar/TopBar.tsx",
+   "design-system/motion/useTopBar.ts"
   ]
  },
  "routeExports": {
