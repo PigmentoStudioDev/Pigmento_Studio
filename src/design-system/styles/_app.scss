@@ -25,6 +25,17 @@
 // y la barra tiene que quedar SOBRE el video, no encima de un hueco reservado. Por
 // eso el body ya no deja sitio para ella — el aire de cabecera, donde haga falta, lo
 // pone la seccion que abre cada ruta.
+// Cuanto baja el chrome fijo por la barra de promos. Cero sin barra: asi la cabecera
+// y el hero no necesitan saber si esta montada, y quitarla del layout no deja un
+// hueco reservado para nada.
+:root {
+  --pg-topbar-offset: 0rem;
+}
+
+:root:has([data-topbar]) {
+  --pg-topbar-offset: #{brand.$topbar-block-size};
+}
+
 body {
   font-family: type.font-family('sans');
 
@@ -90,7 +101,9 @@ body {
   display: block;
   translate: 0 110%;
   transition: translate brand.$duration-onehalf brand.$ease-default;
-  transition-delay: calc(var(--line, var(--word, 0)) * #{brand.$stagger-slice});
+  // `--pg-reveal-step` y `--pg-reveal-offset` los pone un organismo que necesite otro
+  // ritmo entre lineas o retrasar el bloque entero.
+  transition-delay: calc(var(--line, var(--word, 0)) * var(--pg-reveal-step, #{brand.$stagger-slice}) + var(--pg-reveal-offset, 0s));
 }
 
 // La palabra, en cambio, tiene que seguir fluyendo en la linea: a bloque, cada una

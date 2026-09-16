@@ -1,0 +1,85 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+
+@keyframes pg-band-drift {
+  from {
+    translate: var(--pg-band-from) 0;
+  }
+
+  to {
+    translate: var(--pg-band-to) 0;
+  }
+}
+
+.root {
+  position: relative;
+  overflow: clip;
+  inline-size: 100%;
+}
+
+// Oculta hasta que el hook la suelta: antes, las fotos estan en su punto de salida.
+.root:not([data-hero-band]) .track {
+  visibility: hidden;
+}
+
+.track {
+  display: flex;
+  column-gap: spacing.$spacing-05;
+  inline-size: max-content;
+  translate: var(--pg-band-from, 0) 0;
+}
+
+// La deriva es velocidad, no un gesto: va sin curva.
+.root[data-hero-band] .track {
+  animation: pg-band-drift var(--pg-band-loop, 0s) linear infinite;
+}
+
+.card {
+  position: relative;
+  flex: none;
+  block-size: brand.$band-card-block-size;
+  aspect-ratio: 3 / 4;
+  overflow: clip;
+  border-radius: brand.$radius-01;
+
+  @include breakpoint.breakpoint-down('md') {
+    block-size: brand.$band-card-block-size-compact;
+  }
+}
+
+// La transicion se declara entera desde el principio (el hook lee sus tiempos) pero no
+// se activa hasta la entrada: colocar la foto en su salida no debe animarse.
+.card[data-hero-band-card='fly'] {
+  translate: var(--pg-band-travel, 0) 0;
+  transition-property: none;
+  transition-duration: calc(2 * #{brand.$duration-onehalf});
+  transition-timing-function: brand.$ease-default;
+  transition-delay: calc(var(--pg-band-order, 0) * 3 * #{brand.$stagger-char});
+}
+
+.root[data-hero-band] .card[data-hero-band-card='fly'] {
+  translate: 0 0;
+  transition-property: translate;
+}
+
+.image {
+  object-fit: cover;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .root[data-hero-band] .track {
+    translate: none;
+    animation: none;
+  }
+
+  .card[data-hero-band-card='fly'],
+  .root[data-hero-band] .card[data-hero-band-card='fly'] {
+    translate: none;
+    transition: none;
+  }
+}

@@ -15,7 +15,7 @@ const declared = new Set(
 
 const LEVELS: HeadingLevel[] = [1, 2, 3, 4, 5, 6];
 
-const SIZES: HeadingSize[] = ["display", "heading", "lead"];
+const SIZES: HeadingSize[] = ["display", "heading", "title", "lead"];
 
 const TONES: HeadingTone[] = ["primary", "secondary"];
 

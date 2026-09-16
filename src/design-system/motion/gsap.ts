@@ -82,3 +82,20 @@ export function loadInertia(): Promise<void> {
 
   return inertia;
 }
+
+/** Aparte como la inercia: solo lo usa la reticula del hero. Devuelve la clase porque se llama por nombre. */
+export type ObserverPlugin = typeof import("gsap/Observer").Observer;
+
+let observer: Promise<ObserverPlugin> | null = null;
+
+export function loadObserver(): Promise<ObserverPlugin> {
+  observer ??= (async () => {
+    const [{ gsap }, plugin] = await Promise.all([import("gsap"), import("gsap/Observer")]);
+
+    gsap.registerPlugin(plugin.Observer);
+
+    return plugin.Observer;
+  })();
+
+  return observer;
+}

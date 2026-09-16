@@ -129,6 +129,38 @@ $container-full: 120rem;
 /// una medida de la reticula, y la reticula es del sistema.
 $track-card: 22rem;
 
+/// Unidad de la reticula del hero. Lado y aire salen de ella, como en la referencia,
+/// para que la proporcion pieza/hueco sea la misma en cualquier pantalla.
+$grid-tile-unit: clamp(1.5rem, 2vw, 3rem);
+$grid-tile-inline-size: calc(#{$grid-tile-unit} * 13);
+/// Fuera de la escala de Carbon a proposito: un escalon fijo no escala con la pieza.
+$grid-tile-gutter: calc(#{$grid-tile-unit} * 2.25);
+
+/// Capas de chrome. La cabecera va a 100 y su difuminado a 90 (en sus hojas); el
+/// preloader tiene que tapar a las dos.
+$z-preloader: 200;
+
+/// La barra de promos va ENCIMA de la cabecera (100): al esconderse, la pildora sale
+/// por arriba pasando por detras de la barra en vez de montarse sobre ella. El precio
+/// es que el fondo del menu abierto no la tapa, y es aceptable: la barra sigue siendo
+/// un enlace valido con el menu abierto. Debajo del preloader (200).
+$z-topbar: 110;
+
+/// Cuanto sube el logo del preloader mientras el panel se retira. Va por detras del
+/// borde, asi que el borde lo alcanza y lo corta.
+$preloader-lift: 20svh;
+
+/// Alto de una foto en la tira del hero: un tercio de pantalla, pero acotado.
+///
+/// En svh puro la tira no tenia techo ni suelo: 410px en un 1080, mas de 1200 en un
+/// monitor vertical, y en un portatil de 720 se comia el aire que separa el titular.
+/// El techo y el suelo son los que ya resolvieron el mismo hero en la landing de ATFX.
+$band-card-block-size: clamp(13.75rem, 32svh, 22.5rem);
+
+/// La misma foto por debajo de md: a 38svh un movil ensenaba foto y media, y la tira
+/// dejaba de leerse como tira.
+$band-card-block-size-compact: clamp(10rem, 28svh, 15rem);
+
 /// El sangrado de una caja que RECORTA texto, en em.
 ///
 /// `overflow: clip` corta a ras de la caja de linea, y los glifos se salen de ella:
@@ -155,6 +187,10 @@ $container-mega: 112.5rem;
 // come pantalla en movil, y el escalon existe justo para no tener que decidir esto
 // a ojo cada vez.
 $header-block-size: spacing.$spacing-10;
+
+/// Alto de la barra de promos. Fina a proposito: es un aviso, no una seccion, y en
+/// movil cada pixel fijo arriba es uno menos para la pagina.
+$topbar-block-size: spacing.$spacing-07;
 
 /// Pildora EXACTA de la barra compacta: aqui la altura SI se conoce, asi que el
 /// radio se deriva de ella en vez de dejar que lo recorte el navegador. Un radio
@@ -276,6 +312,15 @@ $stagger-char: 0.024s;
 /// leerian como una sola, y con un paso suelto habria dos ritmos de desfase en el
 /// sitio sin nada que los relacione.
 $stagger-slice: $stagger-char * 2;
+
+/// Cuando entra el chrome de pagina —barra de promos y cabecera— contado desde que
+/// la cortina del preloader empieza a abrirse (o desde la carga, sin preloader).
+///
+/// UN token para las dos piezas: cada una llevaba el suyo y la cabecera entraba 1.2s
+/// despues que la barra, en mitad del vuelo de la tira del hero. El chrome va PRIMERO
+/// y junto — la navegacion tiene que estar disponible antes que el texto del hero,
+/// que espera a que la tira aterrice.
+$chrome-enter-delay: $duration-quarter;
 
 /// Cuanto baja la copia de la letra, que es lo mismo que sube la letra al rodar —
 /// un solo valor porque si dejan de ser la misma distancia, la copia no aterriza

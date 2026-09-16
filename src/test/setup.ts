@@ -27,3 +27,23 @@ if (!window.matchMedia) {
       dispatchEvent: () => false,
     }) as MediaQueryList;
 }
+
+/**
+ * jsdom tampoco trae AnimationEvent, y React lo comprueba al cargar: sin la clase,
+ * escucha `webkitAnimationEnd` y un `fireEvent.animationEnd` no llega a ningun
+ * `onAnimationEnd`. Mismo criterio que matchMedia: es un hueco del runner.
+ */
+if (!window.AnimationEvent) {
+  window.AnimationEvent = class AnimationEvent extends Event {
+    readonly animationName: string;
+    readonly elapsedTime: number;
+    readonly pseudoElement: string;
+
+    constructor(type: string, init: AnimationEventInit = {}) {
+      super(type, init);
+      this.animationName = init.animationName ?? '';
+      this.elapsedTime = init.elapsedTime ?? 0;
+      this.pseudoElement = init.pseudoElement ?? '';
+    }
+  } as unknown as typeof AnimationEvent;
+}

@@ -1,0 +1,99 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/theme';
+
+/// El logo de la cabecera esta medido para la barra; en el panel preside la pantalla.
+$-mark-scale: 1.75;
+
+@keyframes pg-preloader-rise {
+  from {
+    translate: 0 110%;
+    opacity: 0;
+  }
+}
+
+// El vertice izquierdo arranca por debajo del panel: primero solo sube la esquina
+// derecha, y la inclinacion se aplana a la vez que el borde llega arriba.
+@keyframes pg-preloader-leave {
+  from {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 130%);
+  }
+
+  to {
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+  }
+}
+
+@keyframes pg-preloader-lift {
+  to {
+    translate: 0 calc(-1 * #{brand.$preloader-lift});
+    opacity: 0;
+  }
+}
+
+// Solo existe mientras la pagina esta marcada como loading: sin el atributo no se
+// pinta, y asi ni el sin-JS ni la segunda visita ven un panel.
+.panel {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: brand.$z-preloader;
+  place-items: center;
+  background-color: theme.$background;
+  color: theme.$text-primary;
+}
+
+// Durante la salida la pagina ya esta `ready`: sin la segunda regla el panel se
+// esconde al empezar a abrirse y la salida se cancela antes de verse.
+[data-page-status='loading'] .panel,
+.panel[data-preloader='leaving'] {
+  display: grid;
+}
+
+// La escala va en la mascara y no en el logo: escalado dentro de ella, el recorte
+// seguiria midiendo la caja pequena.
+.mask {
+  display: block;
+  overflow: clip;
+  scale: $-mark-scale;
+}
+
+.mark {
+  display: block;
+}
+
+.panel[data-preloader='entering'] .mark {
+  animation: pg-preloader-rise brand.$duration-base brand.$ease-default backwards;
+  animation-delay: brand.$duration-half;
+}
+
+.panel[data-preloader='leaving'] {
+  animation: pg-preloader-leave brand.$duration-base brand.$ease-default both;
+  animation-delay: brand.$duration-onehalf;
+}
+
+// Al salir, al logo lo corta el borde del panel, no su mascara.
+.panel[data-preloader='leaving'] .mask {
+  overflow: visible;
+}
+
+.panel[data-preloader='leaving'] .mark {
+  animation: pg-preloader-lift brand.$duration-base brand.$ease-default both;
+  animation-delay: brand.$duration-onehalf;
+}
+
+// El script no marca loading con esta preferencia, asi que el panel nunca se pinta;
+// el bloque existe para que, si se pintara, no se quedara puesto.
+@media (prefers-reduced-motion: reduce) {
+  [data-page-status='loading'] .panel,
+  .panel[data-preloader='leaving'] {
+    display: none;
+  }
+
+  .panel[data-preloader='leaving'],
+  .panel[data-preloader='entering'] .mark,
+  .panel[data-preloader='leaving'] .mark {
+    animation: none;
+  }
+}

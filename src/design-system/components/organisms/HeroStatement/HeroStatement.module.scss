@@ -1,0 +1,109 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+
+// La tira va al pie y no a sangre por abajo: sin aire bajo las fotos, el borde de la
+// ventana las cortaba y el hero parecia seguir en vez de terminar.
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-07;
+  overflow: clip;
+  min-block-size: 100svh;
+  padding-block: calc(brand.$header-block-size + var(--pg-topbar-offset) + spacing.$spacing-07) spacing.$spacing-07;
+}
+
+// El bloque ocupa lo que la tira deja libre y se centra ahi en los dos ejes: con la
+// tira acotada, pegarlo arriba dejaba medio hero vacio en cualquier pantalla alta.
+// El aire lateral es el de `Section`, para que en movil el texto no toque el borde.
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: spacing.$spacing-05;
+  padding-inline: spacing.$spacing-05;
+  text-align: center;
+}
+
+// Balance en las dos piezas de texto: centradas, una ultima linea con una palabra
+// sola se ve como un error. La medida en ch va sobre el propio texto y no sobre el
+// envoltorio: el ch del envoltorio mediria su letra, no la del titular.
+.title {
+  --pg-reveal-step: #{brand.$duration-quarter};
+
+  text-wrap: balance;
+}
+
+.title h1 {
+  max-inline-size: 18ch;
+}
+
+// La entradilla entra despues del titular, y el CTA el ultimo: es lo que se lee al
+// final, asi que no puede aparecer antes que la frase que lo justifica.
+.subtitle {
+  --pg-reveal-offset: calc(8 * #{brand.$stagger-slice});
+
+  text-wrap: balance;
+}
+
+// Una linea en escritorio: partida en dos, el bloque no cabia sobre la tira en un
+// portatil de 720 de alto.
+.subtitle p {
+  max-inline-size: 48ch;
+
+  // La entradilla es fija y el titular fluido: por debajo de md el titular baja a su
+  // suelo y la entradilla lo superaba, con la jerarquia al reves.
+  @include breakpoint.breakpoint-down('md') {
+    @include brandtype.style('body');
+  }
+}
+
+.cta {
+  margin-block-start: spacing.$spacing-03;
+}
+
+// El retardo va sobre el bloque y no por `--pg-reveal-index`: esa variable la escribe
+// el hook en linea sobre el propio boton, y una en linea gana a cualquier herencia.
+.cta [data-reveal-mode='block'] {
+  transition-delay: calc(12 * #{brand.$stagger-slice});
+}
+
+.band {
+  flex: none;
+}
+
+// Todo el texto espera hasta que la tira aterriza. Sin JS no hay lineas partidas ni
+// estado de bloque, y el texto se lee entero.
+.root:not(:has([data-hero-band-landed])) :global(.pg-line) {
+  translate: 0 110%;
+}
+
+// Sin transicion mientras espera. El hook marca los bloques DESPUES de que ya se
+// pintaron visibles, y con la transicion puesta el pill y el CTA se animaban hacia
+// oculto al abrirse la cortina —se veian desvanecerse— para volver a entrar al
+// aterrizar la tira. Asi se esconden de golpe, y la transicion vuelve justo en el
+// cambio de estilo que los trae: el navegador anima con la del estado de llegada.
+.root:not(:has([data-hero-band-landed])) [data-reveal-mode='block'] {
+  opacity: 0;
+  translate: 0 brand.$reveal-distance;
+  transition: none;
+}
+
+// El hook ya no marca nada con esta preferencia, asi que estas reglas son la segunda
+// defensa: si alguien la activa con la pagina ya marcada, nada se queda escondido.
+@media (prefers-reduced-motion: reduce) {
+  .cta [data-reveal-mode='block'] {
+    transition: none;
+  }
+
+  .root:not(:has([data-hero-band-landed])) [data-reveal-mode='block'] {
+    opacity: 1;
+    translate: none;
+  }
+}
