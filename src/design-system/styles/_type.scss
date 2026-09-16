@@ -143,9 +143,14 @@ $-styles: (
   // baja.
   'label': (size: 0.8125rem, height: 1, tracking: 0.02em, weight: 500, family: 'mono', upper: true),
 
-  // Etiquetas de control — boton, conmutador de menu. Comparten familia y caja con
-  // el metadato: en la pagina solo hay DOS familias y cada una dice una cosa, mono
+  // Etiquetas de control — boton, conmutador de menu. Comparten FAMILIA con el
+  // metadato: en la pagina solo hay DOS familias y cada una dice una cosa, mono
   // para lo que es maquina, accion o etiqueta, y la sans para el contenido.
+  //
+  // Pero no la caja: van en caja baja desde 2026-09-16, decision de Karen. Un boton
+  // se lee como frase ("Empezar un proyecto"), no como rotulo, y la mono ya basta
+  // para separarlo del contenido. Sin caja alta el tracking positivo sobra — existia
+  // para separar mayusculas — y vuelve a cero.
   //
   // Son TRES y no uno. Con uno solo, los tamanos que no encajaban caian a un estilo
   // de CUERPO — y eso ponia el mismo componente a peso 400 en sm y lg y a 500 en md.
@@ -155,9 +160,9 @@ $-styles: (
   //
   // El interlineado 1 es de los tres, y no es cosmetico: es la caja de 1em que
   // roll.surface() da por supuesta para calcular el recorte.
-  'control-s': (size: 1rem, height: 1, tracking: 0.02em, weight: 500, family: 'mono', upper: true),
-  'control-m': (size: 1.125rem, height: 1, tracking: 0.02em, weight: 500, family: 'mono', upper: true),
-  'control-l': (size: 1.25rem, height: 1, tracking: 0.02em, weight: 500, family: 'mono', upper: true)
+  'control-s': (size: 1rem, height: 1, tracking: 0, weight: 500, family: 'mono'),
+  'control-m': (size: 1.125rem, height: 1, tracking: 0, weight: 500, family: 'mono'),
+  'control-l': (size: 1.25rem, height: 1, tracking: 0, weight: 500, family: 'mono')
 );
 
 /// Aplica un estilo de la escala de marca.
