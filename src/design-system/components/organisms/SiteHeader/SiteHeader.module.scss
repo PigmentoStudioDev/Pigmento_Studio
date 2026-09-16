@@ -19,11 +19,25 @@ $hidden-scale: 0.95;
 // a quedarse sin clics, y el fallo no se ve: el elemento esta, se pinta, y no
 // responde. Aqui el unico que cubre la ventana es el fondo oscuro, y solo existe
 // mientras el panel esta abierto.
+@keyframes pg-header-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 .root {
   position: fixed;
-  inset-block-start: 0;
+  // Debajo de la barra de promos cuando existe; sin ella el offset es cero.
+  inset-block-start: var(--pg-topbar-offset);
   inset-inline: 0;
   z-index: 100;
+  // backwards y no both: al terminar, la opacidad vuelve a la cascada.
+  animation: pg-header-enter brand.$duration-base brand.$ease-default backwards;
+  animation-delay: brand.$chrome-enter-delay;
   // El aire exterior vive AQUI: es externo a la pieza, no padding de la barra. En
   // la barra separaria los controles del borde de la placa; aqui separa la placa
   // entera del borde de la ventana, que es otra cosa.
@@ -85,10 +99,13 @@ $hidden-scale: 0.95;
 // dentro, asi que queda una franja asomando por el borde — el fallo tipico de este
 // patron, y solo se ve en el ultimo pixel del recorrido.
 //
+// Y descuenta el offset de la barra de promos por lo mismo: .root ya baja ese alto,
+// y sin restarlo la barra se quedaba a medio salir, montada sobre las promos.
+//
 // La escala no es decoracion: irse mas pequena lee como alejarse, y una barra que
 // solo se desliza parece cortada por el borde en vez de retirada.
 .isHidden {
-  transform: translateY(calc(-100% - #{spacing.$spacing-06}));
+  transform: translateY(calc(-100% - #{spacing.$spacing-06} - var(--pg-topbar-offset)));
   scale: $hidden-scale;
 }
 
@@ -246,7 +263,7 @@ $hidden-scale: 0.95;
   // pagina al desplazarse cierra el panel, desplazarse DENTRO del panel acabaria
   // cerrandolo. El gesto se comeria a si mismo.
   overscroll-behavior: contain;
-  max-block-size: calc(100dvh - #{brand.$header-block-size});
+  max-block-size: calc(100dvh - #{brand.$header-block-size} - var(--pg-topbar-offset));
 }
 
 // El desfase: las columnas no entran a la vez.
@@ -383,7 +400,15 @@ $hidden-scale: 0.95;
 
 // Se apaga TODO el motion, no se acorta. Una coreografia de 1.2s reducida a 0.2s
 // sigue siendo movimiento, y quien pide reduced-motion no esta pidiendo prisa.
+[data-page-status='loading'] .root {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .root {
+    animation: none;
+  }
+
   .backdrop,
   .nav,
   .plate,

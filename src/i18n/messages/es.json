@@ -147,5 +147,9 @@
     "unitProyecto": "por proyecto",
     "unitMes": "al mes",
     "unitPieza": "cada uno"
+  },
+  "topbar": {
+    "promo": "Diseño de marca y crecimiento desde Ciudad de México",
+    "agency": "Hablemos de tu próximo proyecto"
   }
 }

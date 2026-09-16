@@ -1,0 +1,104 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+@keyframes pg-topbar-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+// El rol invertido y no un color fijo: oscura sobre la pagina clara y clara sobre la
+// oscura. Lo que la separa del contenido es el contraste, igual que la placa del CTA.
+.root {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: brand.$z-topbar;
+  display: block;
+  block-size: brand.$topbar-block-size;
+  overflow: clip;
+  background-color: theme.$background-inverse;
+  color: theme.$text-inverse;
+  text-decoration: none;
+  transition: background-color brand.$duration-quarter brand.$ease-default;
+  // Entra con la cabecera, mismo gesto y mismo retraso: son una sola pieza de chrome.
+  // backwards y no both: al terminar, la opacidad vuelve a la cascada.
+  animation: pg-topbar-enter brand.$duration-base brand.$ease-default backwards;
+  animation-delay: brand.$chrome-enter-delay;
+}
+
+// Quieta y oculta mientras la cortina esta cerrada, como la cabecera.
+[data-page-status='loading'] .root {
+  animation-play-state: paused;
+}
+
+.root:hover {
+  background-color: theme.$background-inverse-hover;
+}
+
+// Por dentro del borde: por fuera lo cortaria el overflow, y arriba no hay nada.
+.root:focus-visible {
+  outline: 2px solid theme.$focus-inverse;
+  outline-offset: -2px;
+}
+
+.rows {
+  position: relative;
+  display: block;
+  block-size: 100%;
+}
+
+.row {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+}
+
+// La segunda fila espera debajo, fuera de cuadro. Va en `translate` y no en
+// `transform`: el hook la sube con transform, y las dos propiedades se suman, asi
+// que llega a su sitio sin que el JS tenga que saber donde empezaba.
+.row + .row {
+  translate: 0 100%;
+}
+
+.collection {
+  display: flex;
+  flex: none;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-03;
+  padding-inline: spacing.$spacing-05;
+  white-space: nowrap;
+}
+
+.text {
+  @include brandtype.style('label');
+}
+
+// El radio es la mitad de su propio tamano, como el punto del SectionChip.
+.dot {
+  flex: none;
+  inline-size: 0.375rem;
+  block-size: 0.375rem;
+  border-radius: brand.$radius-02;
+  background-color: currentcolor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none;
+    animation: none;
+  }
+}
