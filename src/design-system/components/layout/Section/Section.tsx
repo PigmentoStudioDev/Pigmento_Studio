@@ -17,7 +17,12 @@ import styles from "./Section.module.scss";
  * para moleculas y organismos, que son los que alimenta el CMS.
  */
 export type SectionTheme = ThemeRole;
-export type SectionWidth = "content" | "wide" | "full";
+/**
+ * `full` va a sangre sin techo, para lo que tiene que llegar de borde a borde (una
+ * tira, un marquee). `strip` es la seccion a sangre cuyo CONTENIDO si para: el fondo
+ * sigue a todo lo ancho y lo de dentro se centra bajo $container-full.
+ */
+export type SectionWidth = "content" | "wide" | "full" | "strip";
 export type SectionSpacing = "none" | "compact" | "default" | "loose";
 
 export interface SectionProps {
@@ -45,6 +50,7 @@ const WIDTH: Record<SectionWidth, string> = {
   content: styles.widthContent,
   wide: styles.widthWide,
   full: styles.widthFull,
+  strip: styles.widthStrip,
 };
 
 const SPACING: Record<SectionSpacing, string> = {

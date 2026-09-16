@@ -19,7 +19,7 @@ import { compile, type Options } from "sass";
 import { describe, expect, it } from "vitest";
 import { Section, type SectionSpacing, type SectionTheme, type SectionWidth } from "./Section";
 
-const WIDTHS: SectionWidth[] = ["content", "wide", "full"];
+const WIDTHS: SectionWidth[] = ["content", "wide", "full", "strip"];
 const SPACINGS: SectionSpacing[] = ["none", "compact", "default", "loose"];
 const THEMES: SectionTheme[] = ["base", "alt"];
 

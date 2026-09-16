@@ -52,6 +52,14 @@
   padding-inline: 0;
 }
 
+// A sangre como `full` y sin aire propio —el lateral lo pone el organismo, igual que
+// en `full`—, pero con techo. En un monitor de 2560 una rejilla o una lista de borde a
+// borde deja de leerse como bloque. Por debajo de 1920 es identica a `full`.
+.widthStrip .inner {
+  max-inline-size: brand.$container-full;
+  padding-inline: 0;
+}
+
 // El ritmo vertical es de la seccion, nunca del organismo. Un organismo que trae
 // su propio margin-block deja de poder colocarse en cualquier orden: el hueco
 // entre dos bloques pasaria a depender de cuales sean, no de la pagina.
