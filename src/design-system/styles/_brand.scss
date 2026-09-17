@@ -414,13 +414,10 @@ $grain-frequency: 0.8;
 /// generado.
 $grain-octaves: 3;
 
-/// Los dos pesos, y son DOS por la misma razon que el cristal lleva dos reflejos: el
-/// ruido oscuro solo se ve sobre fondo claro y el claro solo sobre fondo oscuro. Con
-/// uno solo, la textura desaparece en la mitad de los modos del sitio.
-///
-/// El oscuro pesa mas porque multiplicar reparte sobre lo que ya hay; aclarar suma.
+/// El peso del ruido. Uno solo, oscuro: el grano texturiza las superficies claras y
+/// las oscuras quedan lisas. Hubo un peso claro para texturizar tambien el oscuro, y
+/// aclarar sobre negro lo volvia gris (ver _grain.scss).
 $grain-dark-opacity: 0.5;
-$grain-light-opacity: 0.28;
 
 /// Altura a la que se normaliza un logo dentro de una tira. Es lo unico que se
 /// puede igualar por CSS entre marcas: sus proporciones y su peso optico son
