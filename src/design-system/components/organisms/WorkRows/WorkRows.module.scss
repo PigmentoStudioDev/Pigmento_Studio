@@ -1,0 +1,180 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// El hueco entre piezas y entre filas, el mismo en los dos ejes: con uno distinto
+/// en cada eje, las dos filas se leen como dos tiras sueltas y no como un muro.
+$piece-gap: spacing.$spacing-03;
+
+// El aire lateral lo pone el organismo: la seccion va a sangre (`full`). Al margen se
+// le descuenta el hueco del marco, que ya separa el titular de la primera fila.
+.header {
+  position: relative;
+  margin-block-end: spacing.$spacing-09 - $piece-gap;
+  padding-inline: spacing.$spacing-06;
+}
+
+// En la linea del titular, al otro extremo: el titulo dice que es y el boton lleva al
+// resto, y los dos se leen de un solo vistazo. En movil el titular ocupa el ancho y el
+// boton baja a su propia linea, debajo de la entradilla.
+.cta {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: spacing.$spacing-06;
+
+  @include breakpoint.breakpoint-down('md') {
+    position: static;
+  }
+}
+
+.frame {
+  display: flex;
+  flex-direction: column;
+  gap: $piece-gap;
+}
+
+// Sin motion cada fila es un carril: se arrastra o se desplaza a mano, y el snap deja
+// cada pieza entera contra el borde en vez de cortada por la mitad.
+.row {
+  position: relative;
+  display: flex;
+  gap: $piece-gap;
+  margin: 0;
+  padding-block: 0;
+  padding-inline: spacing.$spacing-06;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: spacing.$spacing-06;
+  list-style: none;
+}
+
+// El ancho sale del alto y de la proporcion de su imagen, que viaja en las props: la
+// pieza ocupa su sitio antes de que la imagen cargue.
+.piece {
+  position: relative;
+  flex: none;
+  block-size: brand.$band-card-block-size;
+  aspect-ratio: var(--pg-piece-ratio);
+  scroll-snap-align: start;
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: clip;
+  border-radius: brand.$radius-06;
+  background-color: theme.$layer-01;
+  color: theme.$text-primary;
+  text-decoration: none;
+}
+
+.card:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+.image {
+  object-fit: cover;
+}
+
+// Superficie de la zona y no un velo sobre la foto: sobre una imagen clara, un fondo
+// translucido no garantiza el contraste del texto.
+.caption {
+  position: absolute;
+  inset-block-end: spacing.$spacing-03;
+  inset-inline-start: spacing.$spacing-03;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-02;
+  padding-block: spacing.$spacing-03;
+  padding-inline: spacing.$spacing-04;
+  border-radius: brand.$radius-05;
+  background-color: theme.$background;
+}
+
+.client {
+  @include brandtype.style('body');
+
+  font-weight: brandtype.$weight-medium;
+}
+
+.discipline {
+  @include brandtype.style('label');
+
+  color: theme.$text-secondary;
+}
+
+// Solo con un puntero que pueda pasar por encima. En tactil no hay hover, y un texto
+// que solo aparece al pasar el cursor no apareceria nunca.
+@media (hover: hover) {
+  .caption {
+    opacity: 0;
+    translate: 0 spacing.$spacing-03;
+    transition:
+      opacity brand.$duration-half brand.$ease-default,
+      translate brand.$duration-half brand.$ease-default;
+  }
+
+  .card:hover .caption,
+  .card:focus-visible .caption {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+// ---------------------------------------------------------------------------------
+// Con motion. `data-rows-motion` lo pone el hook solo en escritorio y sin
+// reduced-motion; todo lo de arriba es lo que se ve en cualquier otro caso.
+// ---------------------------------------------------------------------------------
+
+// La seccion se alarga lo que recorre la fila mas larga, y el marco se queda fijo
+// mientras tanto. Sticky y no un pin de ScrollTrigger: no mete un envoltorio en el
+// DOM ni pelea con el scroll suavizado.
+.root[data-rows-motion] .stage {
+  block-size: calc(100svh + var(--pg-rows-travel, 0px));
+}
+
+// Fijo desde el titular: el bloque entero se queda y las dos filas reparten lo que el
+// titular deja libre. El aire de arriba descuenta la barra de promos y la cabecera,
+// que son fijas y taparian el titulo al volver a subir.
+.root[data-rows-motion] .frame {
+  position: sticky;
+  inset-block-start: 0;
+  box-sizing: border-box;
+  block-size: 100svh;
+  padding-block: calc(var(--pg-topbar-offset) + #{brand.$header-block-size} + #{spacing.$spacing-05}) $piece-gap;
+  overflow: clip;
+}
+
+// Con la pantalla ya repartida, el aire del titular a las filas se aprieta: el de la
+// version estatica se comia media fila.
+.root[data-rows-motion] .header {
+  flex: none;
+  margin-block-end: spacing.$spacing-05;
+}
+
+// Sin transicion: la posicion ya la suaviza el scroll. La fila mide su contenido y no
+// la ventana, porque lo que se desplaza es justo lo que no cabe.
+.root[data-rows-motion] .row {
+  flex: 1 1 0;
+  min-block-size: 0;
+  inline-size: max-content;
+  overflow: visible;
+  scroll-snap-type: none;
+  translate: calc(var(--pg-rows-progress, 0) * var(--pg-row-distance, 0px) * -1) 0;
+}
+
+.root[data-rows-motion] .piece {
+  block-size: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caption {
+    transition: none;
+  }
+}

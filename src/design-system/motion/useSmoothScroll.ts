@@ -22,6 +22,22 @@ import { loadMotion } from "./gsap";
  * `anchors: true` para que un enlace a `#faq` llegue con el mismo gesto que el resto
  * del scroll. Sin eso, los anclas saltan en seco dentro de una pagina que se desliza.
  */
+/**
+ * La instancia viva, para quien necesite desplazar la pagina a mano. Con Lenis
+ * activo, un `window.scrollTo` nativo compite con su interpolacion y la pagina da un
+ * tiron; sin Lenis (reduced-motion, antes de cargar) el nativo es lo correcto.
+ */
+let active: { scrollTo: (target: number) => void } | undefined;
+
+export function scrollToY(y: number): void {
+  if (active) {
+    active.scrollTo(y);
+    return;
+  }
+
+  window.scrollTo({ top: y, behavior: "smooth" });
+}
+
 export function useSmoothScroll() {
   useEffect(() => {
     if (window.matchMedia(REDUCED_MOTION).matches) return;
@@ -47,6 +63,7 @@ export function useSmoothScroll() {
         if (cancelled) return;
 
         const lenis = new Lenis({ anchors: true });
+        active = lenis;
         const advance = (time: number) => {
           // El ticker de gsap cuenta en segundos y Lenis en milisegundos.
           lenis.raf(time * 1000);
@@ -61,6 +78,7 @@ export function useSmoothScroll() {
           // Los valores de fabrica de gsap: sin devolverlos, cualquier cosa que anime
           // despues de desmontar esto se queda sin correccion de saltos.
           gsap.ticker.lagSmoothing(500, 33);
+          if (active === lenis) active = undefined;
           lenis.destroy();
         };
       },
