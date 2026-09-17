@@ -69,13 +69,11 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       </Section>
 
       {/* Debajo del hero, y a sangre: una tira que se cortara contra un contenedor
-          dejaria de leerse como una cinta continua. `base` y no `alt`: un rol alt es
-          la zona INVERTIDA — fondo oscuro en modo claro — y la tira tiene que seguir
-          al modo, no contradecirlo. */}
+          dejaria de leerse como una cinta continua. Sin tema asignado: la tira sigue
+          al modo del sitio en los dos. */}
       <Section width="full" spacing="none">
         <Marquee
           kind="logos"
-          theme="base"
           direction="left"
           items={[
             { src: "/logos/twitter.svg", alt: "Twitter", width: 100, height: 81 },

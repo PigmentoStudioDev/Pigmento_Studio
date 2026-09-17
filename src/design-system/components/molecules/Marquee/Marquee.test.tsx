@@ -57,18 +57,18 @@ describe("Marquee", () => {
   });
 
   /**
-   * El tema entra como ROL y se resuelve contra el modo, que es el metodo de la
-   * cabecera. Sin rol no se pone zona ninguna: hereda la de su seccion, que es lo
-   * que tiene que pasar cuando nadie pide nada.
+   * El tema entra como ASIGNACION por modo y se resuelve contra el modo, que es el
+   * metodo de la cabecera. Sin asignacion no se pone zona ninguna: hereda la de su
+   * seccion, que es lo que tiene que pasar cuando nadie pide nada.
    */
-  it("sin rol de tema no declara zona", () => {
+  it("sin tema asignado no declara zona", () => {
     const { container } = render(<Marquee kind="text" items={TEXT} />);
 
     expect(container.firstElementChild?.className).not.toMatch(/cds--/);
   });
 
-  it("con rol de tema resuelve una zona de Carbon", () => {
-    const { container } = render(<Marquee kind="text" items={TEXT} theme="alt" />);
+  it("con tema asignado resuelve una zona de Carbon", () => {
+    const { container } = render(<Marquee kind="text" items={TEXT} theme={{ light: "dark" }} />);
 
     expect(container.firstElementChild?.className).toMatch(/cds--(white|g10|g90|g100)/);
   });
@@ -82,33 +82,30 @@ describe("Marquee", () => {
    * el que se rompe primero.
    */
   it("invierte los logos sobre una zona clara", () => {
-    const { container } = render(<Marquee kind="logos" items={LOGOS} theme="base" />);
+    const { container } = render(<Marquee kind="logos" items={LOGOS} theme={{ light: "light" }} />);
 
     expect(container.firstElementChild?.className).toMatch(/onLight/);
   });
 
   /**
-   * La inversion sigue a la ZONA RESUELTA, no al rol. Un rol no dice un color, y
-   * tomarlo por uno es el error que este caso fija.
-   *
-   * Desde que `alt` es la zona INVERTIDA y no un escalon, los dos roles del mismo
-   * modo caen en zonas de signo contrario — white y g100 — y por eso el caso
-   * distingue de verdad. Antes las dos ramas daban la misma respuesta: un
-   * componente que mirase el rol en vez de la zona pasaba este test en verde.
+   * La inversion de los logos sigue a la ZONA RESUELTA en el modo actual, no a lo que
+   * la asignacion pida en el otro modo. El snapshot de servidor del modo es claro:
+   * una tira que pide oscuro solo en modo oscuro sigue siendo clara aqui, y un
+   * componente que mirase la asignacion entera en vez de la zona se equivocaria.
    *
    * Que zonas son claras lo decide theme/zone.ts; aqui solo se comprueba que el
    * componente lo consulta en vez de deducirlo.
    */
-  it("la inversion sigue a la zona, no al rol", () => {
-    const base = render(<Marquee kind="logos" items={LOGOS} theme="base" />);
-    const alt = render(<Marquee kind="logos" items={LOGOS} theme="alt" />);
+  it("la inversion sigue a la zona del modo actual", () => {
+    const light = render(<Marquee kind="logos" items={LOGOS} theme={{ dark: "dark" }} />);
+    const dark = render(<Marquee kind="logos" items={LOGOS} theme={{ light: "dark" }} />);
 
-    expect(base.container.firstElementChild?.className).toMatch(/onLight/);
-    expect(alt.container.firstElementChild?.className).not.toMatch(/onLight/);
+    expect(light.container.firstElementChild?.className).toMatch(/onLight/);
+    expect(dark.container.firstElementChild?.className).not.toMatch(/onLight/);
   });
 
   it("no tiene violaciones de accesibilidad", async () => {
-    const { container } = render(<Marquee kind="logos" items={LOGOS} theme="alt" />);
+    const { container } = render(<Marquee kind="logos" items={LOGOS} theme={{ light: "dark" }} />);
 
     expect(await axe(container)).toHaveNoViolations();
   });

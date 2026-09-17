@@ -21,7 +21,7 @@ import { Section, type SectionSpacing, type SectionTheme, type SectionWidth } fr
 
 const WIDTHS: SectionWidth[] = ["content", "wide", "full", "strip"];
 const SPACINGS: SectionSpacing[] = ["none", "compact", "default", "loose"];
-const THEMES: SectionTheme[] = ["base", "alt"];
+const THEMES: SectionTheme[] = [{ light: "dark", dark: "dark" }, { dark: "light" }];
 
 const SASS: Options<"sync"> = { loadPaths: ["node_modules"], quietDeps: true };
 
@@ -77,33 +77,42 @@ describe("Section", () => {
 
   /**
    * Y CON theme tampoco. Es el cambio que trajo el modo claro/oscuro: la zona ya
-   * no la elige la seccion, la resuelve el CSS desde data-theme-section bajo la
-   * zona del documento. Poner aqui una clase de Carbon volveria a fijar un color
+   * no la pone la seccion como clase, la aplica el CSS desde los atributos de tema
+   * bajo la zona del documento. Poner aqui una clase de Carbon volveria a fijar un color
    * y la seccion dejaria de seguir al modo — que es justo el bug que este caso
    * impide reintroducir.
    */
-  it.each(THEMES)("con theme %s tampoco emite clase de Carbon: la zona la pone el CSS", (theme) => {
+  it.each(THEMES)("con theme %o tampoco emite clase de Carbon: la zona la pone el CSS", (theme) => {
     const { container } = render(<Section theme={theme}>x</Section>);
 
     expect(sectionOf(container).className).not.toContain("cds--");
   });
 
   /**
-   * El contrato con la cabecera: la seccion publica su ROL en un atributo propio.
-   * La cabecera lo observa para adoptar el tema de lo que tiene debajo, y lo
-   * resuelve contra el modo — leer en su lugar las clases de Carbon la ataria a
+   * El contrato con la cabecera: la seccion publica su ASIGNACION en un atributo
+   * por modo, y solo los modos que asigna. La cabecera los observa para adoptar el
+   * tema de lo que tiene debajo — leer en su lugar las clases de Carbon la ataria a
    * nombres que son de Carbon.
    */
-  it.each(THEMES)("con theme %s publica su rol en data-theme-section", (theme) => {
-    const { container } = render(<Section theme={theme}>x</Section>);
+  it("publica el tono de cada modo asignado en su atributo", () => {
+    const { container } = render(<Section theme={{ light: "dark", dark: "dark" }}>x</Section>);
 
-    expect(sectionOf(container)).toHaveAttribute("data-theme-section", theme);
+    expect(sectionOf(container)).toHaveAttribute("data-theme-light", "dark");
+    expect(sectionOf(container)).toHaveAttribute("data-theme-dark", "dark");
   });
 
-  it("sin theme no publica rol: no hay nada que observar", () => {
+  it("el modo que no se asigna no se publica: sigue al sitio", () => {
+    const { container } = render(<Section theme={{ dark: "light" }}>x</Section>);
+
+    expect(sectionOf(container)).not.toHaveAttribute("data-theme-light");
+    expect(sectionOf(container)).toHaveAttribute("data-theme-dark", "light");
+  });
+
+  it("sin theme no publica nada: no hay nada que observar", () => {
     const { container } = render(<Section>x</Section>);
 
-    expect(sectionOf(container)).not.toHaveAttribute("data-theme-section");
+    expect(sectionOf(container)).not.toHaveAttribute("data-theme-light");
+    expect(sectionOf(container)).not.toHaveAttribute("data-theme-dark");
   });
 
   /**
@@ -139,7 +148,7 @@ describe("Section", () => {
 
   it.each([
     { label: "sin tema", props: {} },
-    { label: "con tema propio", props: { theme: "alt" as const } },
+    { label: "con tema propio", props: { theme: { light: "dark", dark: "dark" } as const } },
   ])("$label no tiene violaciones de accesibilidad", async ({ props }) => {
     const { container } = render(
       <Section {...props} labelledBy="titulo">

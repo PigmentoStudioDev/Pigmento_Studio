@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { ThemeRole } from "../../../theme/zone";
+import { themeAttributes, type ThemeAssignment } from "../../../theme/zone";
 import styles from "./Section.module.scss";
 
 /**
@@ -16,7 +16,7 @@ import styles from "./Section.module.scss";
  * ReactNode porque esta capa COMPONE, no mapea contenido. La regla sigue firme
  * para moleculas y organismos, que son los que alimenta el CMS.
  */
-export type SectionTheme = ThemeRole;
+export type SectionTheme = ThemeAssignment;
 /**
  * `full` va a sangre sin techo, para lo que tiene que llegar de borde a borde (una
  * tira, un marquee). `strip` es la seccion a sangre cuyo CONTENIDO si para: el fondo
@@ -28,11 +28,12 @@ export type SectionSpacing = "none" | "compact" | "default" | "loose";
 export interface SectionProps {
   children: ReactNode;
   /**
-   * Papel de la seccion dentro del modo: 'base' es el fondo de la pagina y 'alt'
-   * una franja que se despega de el. Sin valor hereda el del documento.
+   * El tono de la seccion en cada modo: `{ light: "dark", dark: "dark" }` es oscura
+   * siempre. El modo que se omite sigue al sitio, y sin valor la seccion sigue al
+   * sitio en los dos.
    *
-   * Es un ROL y no una zona de Carbon a proposito. Una seccion que declarase
-   * `g100` mentiria en modo claro — la prop diria una cosa y el CSS pintaria otra.
+   * Asignado y no un rol relativo: el modo oscuro no le da la vuelta a nada. Lo que
+   * se ve en cada modo es lo que la pagina escribio para ese modo.
    */
   theme?: SectionTheme;
   width?: SectionWidth;
@@ -68,24 +69,19 @@ export function Section({
   id,
   labelledBy,
 }: SectionProps) {
-  // Sin clase de tema: la zona la resuelve el CSS desde data-theme-section, bajo
+  // Sin clase de tema: la zona la resuelve el CSS desde los atributos de tema, bajo
   // la del documento. Resolverla aqui obligaria a conocer el modo, y el modo solo
   // existe en el navegador — Section se quedaria sin poder ser server component
   // por una cuenta que la cascada ya sabe hacer.
   const className = [styles.root, WIDTH[width], SPACING[spacing]].filter(Boolean).join(" ");
 
   return (
-    // data-theme-section hace dos trabajos con un solo atributo. Para el CSS es lo
-    // que resuelve el rol contra el modo del documento; para la cabecera es la
-    // marca legible desde JS del papel que ocupa esta seccion, que observa para
-    // adoptar el tema de lo que tiene debajo — sin conocer ninguna seccion
-    // concreta y sin leer las clases internas de Carbon, que son suyas.
-    <section
-      id={id}
-      aria-labelledby={labelledBy}
-      data-theme-section={theme}
-      className={className}
-    >
+    // Los atributos de tema hacen dos trabajos. Para el CSS son lo que aplica el
+    // tono asignado bajo el modo del documento; para la cabecera, la marca legible
+    // desde JS de lo que pide esta seccion, que observa para adoptar el tema de lo
+    // que tiene debajo — sin conocer ninguna seccion concreta y sin leer las clases
+    // internas de Carbon, que son suyas.
+    <section id={id} aria-labelledby={labelledBy} className={className} {...themeAttributes(theme)}>
       <div className={styles.inner}>{children}</div>
     </section>
   );

@@ -63,9 +63,9 @@ const ANCHO = "wide" as const;
  * dicen con el unico recurso que no pinta nada: quien ABRE un movimiento se separa
  * con `loose`, quien lo CONTINUA con `default`.
  *
- * No se hace invirtiendo la zona de tema. El rol 'alt' de Section es la zona
- * contraria, no un escalon del mismo cluster: marcaria el bloque a base de darle la
- * vuelta al documento entero, que es mas ruido, no menos.
+ * No se hace cambiando el tono de las secciones. Asignarle a un bloque el tono
+ * contrario al del documento lo marcaria a base de darle la vuelta a la pagina, que
+ * es mas ruido, no menos.
  */
 const ABRE = "loose" as const;
 const SIGUE = "default" as const;

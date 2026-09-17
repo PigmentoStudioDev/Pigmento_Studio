@@ -3,16 +3,15 @@
 import { useSyncExternalStore } from "react";
 import { useMarquee, type MarqueeDirection } from "../../../motion/useMarquee";
 import { getServerThemeMode, getThemeMode, subscribeThemeMode } from "../../../theme/mode";
-import { isLightZone, resolveZone, themeZoneClass, type ThemeRole } from "../../../theme/zone";
+import { isLightZone, resolveZone, themeZoneClass, type ThemeAssignment } from "../../../theme/zone";
 import styles from "./Marquee.module.scss";
 
 /**
  * Tira infinita que invierte su sentido segun hacia donde se desplace la pagina.
  *
- * **El tema se declara como ROL, no como claro u oscuro**, que es el metodo de la
- * cabecera: un rol es relativo al modo y por eso sigue siendo cierto en los dos —
- * `alt` es g10 en claro y g90 en oscuro. Una prop `light`/`dark` diria una cosa y
- * el CSS pintaria otra en cuanto alguien tocara el conmutador.
+ * **El tema se ASIGNA por modo**, igual que en Section y la cabecera: que tono lleva
+ * la tira en claro y cual en oscuro, y el modo que se omite sigue al sitio. Un solo
+ * `light`/`dark` fijo diria una cosa y el sitio en el otro modo pintaria otra.
  *
  * La zona se resuelve AQUI y no en el CSS, al reves que en Section: el modo solo
  * existe en el navegador, y Section es server component. Este ya cruzo la frontera
@@ -40,8 +39,8 @@ interface MarqueeBase {
    * una decision, y depende del ancho de la pantalla y de lo larga que sea la lista.
    */
   copies?: number;
-  /** `base` es el fondo de la pagina; `alt` la franja que se despega de el. */
-  theme?: ThemeRole;
+  /** El tono de la tira en cada modo. Sin valor, hereda el de su seccion. */
+  theme?: ThemeAssignment;
 }
 
 export type MarqueeProps = MarqueeBase &
@@ -66,9 +65,9 @@ export function Marquee({
 
   const mode = useSyncExternalStore(subscribeThemeMode, getThemeMode, getServerThemeMode);
 
-  // Sin rol, la tira hereda la zona de su seccion — que en una pagina normal es la
-  // del documento, o sea la del modo. `base` da exactamente esa.
-  const zone = resolveZone(mode, theme ?? "base");
+  // Sin asignacion, la tira hereda la zona de su seccion — que en una pagina normal
+  // es la del documento, o sea la del modo, y es la que resuelve una asignacion vacia.
+  const zone = resolveZone(mode, theme);
 
   const className = [
     styles.root,
