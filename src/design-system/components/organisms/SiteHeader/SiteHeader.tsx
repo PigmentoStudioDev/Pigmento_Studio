@@ -246,34 +246,42 @@ export function SiteHeader({
   /**
    * La cabecera adopta el tema de la seccion que tiene debajo.
    *
-   * Lee `data-theme-section`, que emite Section cuando la pagina le da un tema:
-   * la cabecera no conoce ninguna seccion concreta, solo el atributo. El origen
+   * Lee los atributos de tema, que emite Section cuando la pagina le da uno: la
+   * cabecera no conoce ninguna seccion concreta, solo los atributos. El origen
    * recorria todas las secciones en cada evento de scroll midiendo rectangulos;
    * aqui la deteccion la hace el navegador con un IntersectionObserver cuya zona
    * sensible es la franja de la barra.
    */
   useEffect(() => {
-    const sections = document.querySelectorAll<HTMLElement>("[data-theme-section]");
+    const sections = document.querySelectorAll<HTMLElement>(THEMED_SELECTOR);
     if (sections.length === 0) return;
 
-    // La altura se MIDE de la barra en vez de repetir aqui el token de Sass: dos
+    // El borde se MIDE de la barra en vez de repetir aqui el token de Sass: dos
     // sitios escribiendo 4rem se desincronizan en cuanto uno cambie, y el sintoma
     // seria un tema que cambia unos pixeles antes o despues de tiempo — de los que
-    // se miran diez veces sin ver nada.
-    const barHeight = barRef.current?.getBoundingClientRect().height ?? 0;
+    // se miran diez veces sin ver nada. El borde INFERIOR y no el alto: la barra no
+    // empieza arriba del todo, va debajo de la de promos, y con el alto la franja
+    // quedaba por encima de la barra y el tema cambiaba tarde.
+    const barBottom = barRef.current?.getBoundingClientRect().bottom ?? 0;
+
+    // Las que cruzan la franja AHORA, y no solo la ultima que entro. Al salir de una
+    // seccion con tema hacia una sin tema no entra nada —la de sin tema no se observa—
+    // y la cabecera se quedaba con el tema de la que ya se fue.
+    const under = new Set<Element>();
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const hit = entries.find((entry) => entry.isIntersecting);
-        if (!hit) return;
-        setRole(
-          (hit.target.getAttribute("data-theme-section") as ThemeRole | null) ?? undefined,
-        );
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) under.add(entry.target);
+          else under.delete(entry.target);
+        });
+        const [current] = under;
+        setAssignment(current ? readThemeAssignment(current) : undefined);
       },
       // Franja de un pixel justo bajo la barra: la seccion que la cruza es la que
       // tiene debajo. Con un umbral normal ganaria la seccion mas visible, que en
       // mitad del scroll no es la de arriba del todo.
-      { rootMargin: `-${barHeight}px 0px -100% 0px`, threshold: 0 },
+      { rootMargin: `-${barBottom}px 0px -100% 0px`, threshold: 0 },
     );
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
