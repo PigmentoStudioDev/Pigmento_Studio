@@ -60,6 +60,19 @@
       "motion": "motion",
       "close": " que nadie se salta."
     },
+    "work": {
+      "title": "Trabajo destacado",
+      "label": "Casos",
+      "intro": "Identidades, sitios, piezas de motion y campañas. Una muestra de lo que sale del estudio cuando el encargo se toma en serio.",
+      "cta": "Ver todo el trabajo",
+      "placeholderClient": "Cliente",
+      "disciplines": {
+        "branding": "Branding",
+        "web": "Desarrollo web",
+        "motion": "Motion",
+        "marketing": "Marketing"
+      }
+    },
     "team": {
       "title": "Equipo",
       "label": "Quién lo hace",

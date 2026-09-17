@@ -7,6 +7,7 @@ import { Faq } from "@/design-system/components/organisms/Faq/Faq";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
 import { Team } from "@/design-system/components/organisms/Team/Team";
+import { WorkRows } from "@/design-system/components/organisms/WorkRows/WorkRows";
 import { HeroStatement } from "@/design-system/components/organisms/HeroStatement/HeroStatement";
 import { HERO_PIECES } from "../hero";
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
@@ -15,6 +16,7 @@ import { getFaq } from "../faq";
 import { getFeaturedPieces } from "@/cms/projects";
 import { getManifesto } from "../manifesto";
 import { getTeam } from "../team";
+import { getWork } from "../work";
 
 /**
  * El hero va en la RUTA y no en `app/layout.tsx`: en el layout raiz saldria tambien
@@ -26,6 +28,7 @@ import { getTeam } from "../team";
  * arme la pagina el espacio entre bloques dependa del orden y no de cuales sean.
  */
 /** Las anclas que atan cada <section> con su titular. */
+const WORK_TITLE_ID = "trabajo";
 const TEAM_TITLE_ID = "equipo";
 const FAQ_TITLE_ID = "faq";
 const CTA_TITLE_ID = "contacto";
@@ -48,6 +51,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
   // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
   const pieces = await getFeaturedPieces(locale);
+  const tWork = await getTranslations("home.work");
   const tTeam = await getTranslations("home.team");
   const tFaq = await getTranslations("home.faq");
   const tCta = await getTranslations("home.cta");
@@ -93,6 +97,15 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           trabajo dos bloques mas abajo. */}
       <Section spacing="loose" width="wide">
         <Manifesto {...getManifesto(t, pieces)} />
+      </Section>
+
+      {/* El trabajo, despues de decir que hacemos. Cuando exista el strip de
+          servicios va entre los dos: primero la oferta, luego como se ve. A sangre y
+          sin techo: las filas salen por el borde de la ventana, y cortadas contra un
+          contenedor de 1920 dejarian de leerse como algo que pasa por delante. Sin
+          tema asignado: sigue al modo del sitio, como el resto de strips. */}
+      <Section width="full" spacing="loose" labelledBy={WORK_TITLE_ID}>
+        <WorkRows {...getWork(tWork)} titleId={WORK_TITLE_ID} />
       </Section>
 
       {/* Quien hace el trabajo, antes de las objeciones: la primera pregunta de

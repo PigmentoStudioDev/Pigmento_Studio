@@ -60,6 +60,19 @@
       "motion": "motion",
       "close": " nobody skips."
     },
+    "work": {
+      "title": "Featured work",
+      "label": "Cases",
+      "intro": "Identities, websites, motion pieces and campaigns. A sample of what leaves the studio when the brief is taken seriously.",
+      "cta": "See all work",
+      "placeholderClient": "Client",
+      "disciplines": {
+        "branding": "Branding",
+        "web": "Web development",
+        "motion": "Motion",
+        "marketing": "Marketing"
+      }
+    },
     "team": {
       "title": "Team",
       "label": "Who does it",
