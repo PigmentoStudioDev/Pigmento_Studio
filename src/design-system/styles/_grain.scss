@@ -36,16 +36,15 @@
 
 /// Va en el elemento que pinta el color del tema, JUNTO a su background-color.
 ///
-/// Son dos baldosas del mismo ruido fundidas al reves la una de la otra: la de abajo
-/// multiplica —solo puede oscurecer, asi que es la que se ve sobre fondo claro— y la
-/// de arriba aclara, que es la que se ve sobre fondo oscuro. La de abajo se funde
-/// contra el color del tema, y por eso el orden importa.
-///
-/// Con una sola capa habria que elegir modo, y el sitio tiene dos: la textura
-/// desapareceria en uno de los dos sin que nada avisara.
+/// UNA capa, que multiplica: solo puede oscurecer, asi que texturiza las superficies
+/// claras y sobre las oscuras casi no se nota — y ahi esta la decision. Hubo una
+/// segunda capa en `screen` para que el oscuro tambien tuviera grano, y aclarar
+/// sobre negro no texturiza: SUBE el fondo entero a gris. Las secciones oscuras se
+/// leian grises en vez de negras. Un oscuro liso es un oscuro; uno con grano claro
+/// es otro color.
 @mixin surface {
-  background-image: texture(brand.$grain-light-opacity), texture(brand.$grain-dark-opacity);
+  background-image: texture(brand.$grain-dark-opacity);
   background-repeat: repeat;
   background-size: brand.$grain-tile;
-  background-blend-mode: screen, multiply;
+  background-blend-mode: multiply;
 }
