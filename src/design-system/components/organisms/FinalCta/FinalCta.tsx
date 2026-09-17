@@ -1,3 +1,4 @@
+import { themeAttributes, type ThemeAssignment } from "../../../theme/zone";
 import { Button } from "../../atoms/Button/Button";
 import { Heading } from "../../atoms/Heading/Heading";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
@@ -11,13 +12,13 @@ import styles from "./FinalCta.module.scss";
  * deja de ser una llamada y pasa a ser un menu: quien llega hasta aqui ya decidio, y
  * lo unico que hace falta es no ponerle a elegir otra vez.
  *
- * La placa se pinta con el rol `alt`, que es la zona INVERTIDA del modo: oscura sobre
- * la pagina clara y clara sobre la oscura. No es "siempre oscura" a proposito — lo que
- * hace que esto se lea como una placa es el CONTRASTE con lo que tiene alrededor, y en
- * modo oscuro una placa oscura sobre fondo oscuro no se despega de nada.
+ * La placa pide oscuro en claro y claro en oscuro. No por invertir el modo —el sistema
+ * no invierte nada— sino por decision de esta pieza: lo que hace que se lea como una
+ * placa es el CONTRASTE con lo que tiene alrededor, y en modo oscuro una placa oscura
+ * sobre fondo oscuro no se despega de nada. Por eso lo escribe para los dos modos.
  *
- * Y se resuelve sin JavaScript: `data-theme-section` es el mismo atributo que publica
- * Section, y la hoja global lo lee bajo la clase de modo del documento. Por eso este
+ * Y se resuelve sin JavaScript: publica los mismos atributos de tema que Section, y la
+ * hoja global los lee bajo la clase de modo del documento. Por eso este
  * organismo se queda en el servidor mientras Marquee —que resuelve su zona en JS—
  * tuvo que cruzar al navegador.
  *
@@ -33,12 +34,15 @@ export interface FinalCtaProps {
   titleId?: string;
 }
 
+/** Destaca en los dos modos: oscura sobre la pagina clara, clara sobre la oscura. */
+const PANEL_THEME: ThemeAssignment = { light: "dark", dark: "light" };
+
 export function FinalCta({ label, title, cta, href, titleId }: FinalCtaProps) {
   return (
-    // La placa publica su rol y la hoja global resuelve la zona contra el modo del
+    // La placa publica su asignacion y la hoja global la aplica bajo el modo del
     // documento. Es el mismo contrato que usa la cabecera para adoptar el tema de lo
     // que tiene debajo, asi que al pasar por delante de esta placa se adapta sola.
-    <div className={styles.panel} data-theme-section="alt">
+    <div className={styles.panel} {...themeAttributes(PANEL_THEME)}>
       <ScrollReveal by="words">
         <p className={styles.label}>{label}</p>
       </ScrollReveal>

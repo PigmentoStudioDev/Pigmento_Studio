@@ -64,18 +64,20 @@
 // No hay clase de modo ni atributo propio — inventarlos habria dejado dos formas
 // de tematizar conviviendo, que es exactamente lo que la regla 3 prohibe.
 //
-// EL ROL SE RESUELVE DEBAJO. Una seccion no declara un color, declara si es el
-// fondo de la pagina ('base') o una franja que se despega de el ('alt'), y el par
-// de zonas de su modo la resuelve por descendencia. La misma seccion sale g10 en
-// claro y g90 en oscuro sin que la pagina se entere.
+// EL TEMA DE UNA SECCION SE ASIGNA POR MODO. Una seccion que no pide nada sigue al
+// sitio. La que pide, lo dice para cada modo con un atributo por modo
+// (data-theme-light, data-theme-dark), y la hoja lo aplica bajo la clase de modo
+// del documento. No hay inversion: una franja oscura en claro solo es oscura en
+// oscuro si lo dice, y una placa que destaca en claro sobre la pagina oscura lo
+// tiene que pedir.
 //
-// Cada zona se emite UNA vez. Los selectores de rol son alias en la misma lista,
-// no una segunda emision: 235 tokens repetidos cuatro veces habrian sido unos
-// 40kb de CSS para decir lo que ya estaba dicho.
+// Cada zona se emite UNA vez. Los selectores de asignacion son alias en la misma
+// lista, no una segunda emision: 235 tokens repetidos cuatro veces habrian sido
+// unos 40kb de CSS para decir lo que ya estaba dicho.
 //
 // La especificidad sale sola y por eso no hay !important en ninguna parte: el
-// selector de rol lleva dos clases (.cds--g100 [data-theme-section='alt']) y el de
-// zona suelta una, asi que dentro de un modo el rol siempre gana.
+// selector de asignacion lleva clase y atributo (.cds--white [data-theme-light='dark'])
+// y el de zona suelta una clase, asi que dentro de un modo la asignacion siempre gana.
 //
 // --pg-on-dark no es un token de tema: es una BANDERA derivada, 1 en las dos zonas
 // oscuras y 0 en las dos claras. Vive aqui porque este es el unico archivo que sabe
@@ -109,21 +111,19 @@
 // Claro base. Es tambien el default del documento: el HTML del servidor sale sin
 // clase de modo, asi que sin JS el sitio es el claro entero y coherente, no un
 // oscuro a medio pintar.
-// El rol 'alt' es la zona INVERTIDA y no un escalon: una franja que se despega lo
-// hace cambiando de lado, no subiendo un gris. Por eso el alias de 'alt' del modo
-// oscuro vive en el bloque CLARO y el del modo claro en el oscuro. El mapa gemelo
-// en theme/zone.ts dice lo mismo para el JS, y el contrato de tema comprueba que
-// los dos coincidan.
+// Los alias son las secciones que piden tono claro, en cada modo. El mapa gemelo en
+// theme/zone.ts dice lo mismo para el JS, y el contrato de tema comprueba que los
+// dos coincidan.
 :root,
 .cds--white,
-.cds--white [data-theme-section='base'],
-.cds--g100 [data-theme-section='alt'] {
+.cds--white [data-theme-light='light'],
+.cds--g100 [data-theme-dark='light'] {
   @include theme.theme(themes.$white, pigmento.$overrides-light);
 
   --pg-on-dark: 0;
 }
 
-// Claro elevado. Ya no lo ata ningun rol: queda para quien pida la zona por su
+// Claro elevado. No lo ata ninguna asignacion: queda para quien pida la zona por su
 // clase, que es como Carbon la ofrece.
 .cds--g10 {
   @include theme.theme(themes.$g10, pigmento.$overrides-light);
@@ -131,16 +131,16 @@
   --pg-on-dark: 0;
 }
 
-// Oscuro base.
+// Oscuro base, y las secciones que piden tono oscuro en cada modo.
 .cds--g100,
-.cds--g100 [data-theme-section='base'],
-.cds--white [data-theme-section='alt'] {
+.cds--g100 [data-theme-dark='dark'],
+.cds--white [data-theme-light='dark'] {
   @include theme.theme(themes.$g100, pigmento.$overrides-dark);
 
   --pg-on-dark: 1;
 }
 
-// Oscuro elevado. Sin rol que lo ate, igual que g10.
+// Oscuro elevado. Sin asignacion que lo ate, igual que g10.
 .cds--g90 {
   @include theme.theme(themes.$g90, pigmento.$overrides-dark);
 

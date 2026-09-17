@@ -28,17 +28,18 @@ describe("FinalCta", () => {
   });
 
   /**
-   * EL gate de la placa. El rol viaja como atributo y lo resuelve la hoja global bajo
-   * la clase de modo del documento: es lo que permite que esto se pinte invertido sin
-   * cruzar al navegador a preguntar en que modo esta el sitio.
+   * EL gate de la placa. La asignacion viaja como atributos y la aplica la hoja global
+   * bajo la clase de modo del documento: es lo que permite que destaque en los dos
+   * modos sin cruzar al navegador a preguntar en que modo esta el sitio.
    *
    * Si el atributo desapareciera, la placa no fallaria — se pintaria del mismo color
    * que la pagina y dejaria de ser una placa, sin un solo error.
    */
-  it("publica el rol invertido para que la hoja lo resuelva", () => {
+  it("pide oscuro en claro y claro en oscuro, para que la hoja lo aplique", () => {
     const { container } = render(<FinalCta {...PROPS} />);
 
-    expect(container.firstElementChild).toHaveAttribute("data-theme-section", "alt");
+    expect(container.firstElementChild).toHaveAttribute("data-theme-light", "dark");
+    expect(container.firstElementChild).toHaveAttribute("data-theme-dark", "light");
   });
 
   it("no tiene violaciones de accesibilidad", async () => {

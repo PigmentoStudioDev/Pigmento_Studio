@@ -29,59 +29,88 @@ export function themeZoneClass(zone: ThemeZone): string {
 export type ThemeMode = "light" | "dark";
 
 /**
- * El papel que juega una seccion DENTRO de su modo, que es lo que una pagina
- * declara. No dice un color: dice si es el fondo de la pagina o una franja que se
- * despega de el.
- *
- * Es relativo a proposito. Una seccion que declarase una zona literal — `g100` —
- * mentiria en cuanto existiera el modo claro: la prop diria una cosa y el CSS
- * pintaria otra. Un rol es cierto en los dos modos.
+ * El tono de una superficie: claro u oscuro. Tiene los mismos dos valores que el modo,
+ * pero no dice lo mismo — el modo es lo que ELIGE quien visita; el tono es lo que una
+ * seccion PIDE en cada modo.
  */
-export type ThemeRole = "base" | "alt";
+export type ThemeTone = "light" | "dark";
 
 /**
- * La zona que carga el DOCUMENTO en cada modo.
+ * El tema de una seccion, ASIGNADO por modo: que tono lleva cuando el sitio esta en
+ * claro y cual cuando esta en oscuro. El modo que se omite sigue al sitio.
+ *
+ * Asignacion y no inversion, y esa es la decision. Hubo un rol `alt` que valia "la
+ * zona contraria al modo": en claro salia oscuro y en oscuro claro, lo pidiera la
+ * seccion o no. Una franja oscura por diseno —el trabajo sobre negro— se volvia
+ * blanca al pasar a oscuro, y la cabecera con ella. El modo oscuro no es darle la
+ * vuelta a la pagina: cada seccion dice que es en cada contexto, y nada cambia de
+ * lado sin que alguien lo haya escrito.
+ *
+ * Datos planos a proposito: un bloque de Payload lo alimenta con dos selects.
+ */
+export type ThemeAssignment = Partial<Record<ThemeMode, ThemeTone>>;
+
+/**
+ * La zona de Carbon de cada tono. Tambien es la que carga el DOCUMENTO en cada modo:
+ * un sitio en oscuro es una pagina de tono oscuro.
  *
  * El modo no es un vocabulario nuevo ni un atributo propio: es cual de las cuatro
  * zonas lleva <html>. Asi el mecanismo sigue siendo entero el de Carbon — una de
  * sus clases, en la raiz — y no hay una segunda forma de tematizar conviviendo con
- * la suya.
+ * la suya. g10 y g90 quedan fuera de la asignacion y disponibles por su clase.
  */
-const MODE_ZONE: Record<ThemeMode, ThemeZone> = {
+const TONE_ZONE: Record<ThemeTone, ThemeZone> = {
   light: "white",
   dark: "g100",
 };
 
 export function themeModeClass(mode: ThemeMode): string {
-  return themeZoneClass(MODE_ZONE[mode]);
+  return themeZoneClass(TONE_ZONE[mode]);
+}
+
+/** La zona de una superficie en un modo: la asignada, o la del sitio si no hay. */
+export function resolveZone(mode: ThemeMode, assignment?: ThemeAssignment): ThemeZone {
+  return TONE_ZONE[assignment?.[mode] ?? mode];
 }
 
 /**
- * El par de zonas de cada modo. `base` es la del documento y `alt` la que se
- * despega de ella.
- *
- * `alt` es la zona INVERTIDA, no un escalon: en modo claro una franja alt sale
- * oscura y en oscuro sale clara. Antes era un escalon suave —g10 en claro, g90 en
- * oscuro— y eso hacia que dos secciones seguidas se distinguieran por un gris de
- * diferencia que en una pantalla mal calibrada no existe. Un rol que solo se ve en
- * un monitor bueno no esta separando nada.
- *
- * Y es simetrico a proposito. El rol tiene que querer decir lo mismo en los dos
- * modos: con la inversion en claro y el escalon en oscuro, `alt` seria un corte
- * duro o un matiz segun donde caiga, y la pagina que lo usa no puede saber cual le
- * va a tocar.
- *
- * Las cuatro zonas de Carbon se siguen emitiendo; lo que cambia es cuales ata un
- * rol. g10 y g90 quedan disponibles para quien las pida por su clase.
+ * El atributo que publica la asignacion de cada modo. Dos y no uno con las dos
+ * mitades dentro: la hoja global los lee con un selector de atributo exacto bajo la
+ * clase de modo, y un valor compuesto no se puede partir en CSS.
  */
-const ROLE_ZONE: Record<ThemeMode, Record<ThemeRole, ThemeZone>> = {
-  light: { base: "white", alt: "g100" },
-  dark: { base: "g100", alt: "white" },
+export const THEME_ATTRIBUTE: Record<ThemeMode, string> = {
+  light: "data-theme-light",
+  dark: "data-theme-dark",
 };
 
-export function resolveZone(mode: ThemeMode, role: ThemeRole): ThemeZone {
-  return ROLE_ZONE[mode][role];
+/** Los atributos de una asignacion, listos para esparcir en un elemento. */
+export function themeAttributes(assignment: ThemeAssignment | undefined): Record<string, ThemeTone> {
+  if (!assignment) return {};
+
+  return Object.fromEntries(
+    (Object.keys(THEME_ATTRIBUTE) as ThemeMode[])
+      .filter((mode) => assignment[mode])
+      .map((mode) => [THEME_ATTRIBUTE[mode], assignment[mode] as ThemeTone]),
+  );
 }
+
+function toTone(value: string | null): ThemeTone | undefined {
+  return value === "light" || value === "dark" ? value : undefined;
+}
+
+/** Lee de vuelta la asignacion que un elemento publica. Sin atributos, ninguna. */
+export function readThemeAssignment(element: Element): ThemeAssignment | undefined {
+  const light = toTone(element.getAttribute(THEME_ATTRIBUTE.light));
+  const dark = toTone(element.getAttribute(THEME_ATTRIBUTE.dark));
+  if (!light && !dark) return undefined;
+
+  return { ...(light ? { light } : {}), ...(dark ? { dark } : {}) };
+}
+
+/** El selector de todo lo que publica una asignacion, para quien lo observe. */
+export const THEMED_SELECTOR = Object.values(THEME_ATTRIBUTE)
+  .map((name) => `[${name}]`)
+  .join(", ");
 
 /**
  * Las dos zonas CLARAS de Carbon.

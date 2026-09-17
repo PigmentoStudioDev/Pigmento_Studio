@@ -145,10 +145,15 @@ Sin `theme` no se envuelve en `<Theme>`, y no es un atajo: `<Theme>` es componen
 cliente (`usePrefix`) y anade SIEMPRE `cds--layer-one`, que reinicia la capa aunque no
 haya cambio de tema.
 
-Con `theme`, ademas, **publica `data-theme-section`**. Es el contrato con la cabecera,
-que lo observa para adoptar el tema de la seccion que tiene debajo. Un atributo propio
-y no las clases `.cds--*`: esas son de Carbon y pueden cambiar en cualquier minor, y
-la cabecera no debe conocer ninguna seccion concreta.
+`theme` es una **asignacion por modo**, no un rol que se invierte:
+`theme={{ light: "dark", dark: "dark" }}` es oscura en los dos modos, y el modo que se
+omite sigue al sitio. El modo oscuro no le da la vuelta a ninguna seccion; lo que se ve
+en cada modo es lo que la pagina escribio para ese modo.
+
+Con `theme`, ademas, **publica `data-theme-light` / `data-theme-dark`**. Es el contrato
+con la cabecera, que los observa para adoptar el tema de la seccion que tiene debajo.
+Atributos propios y no las clases `.cds--*`: esas son de Carbon y pueden cambiar en
+cualquier minor, y la cabecera no debe conocer ninguna seccion concreta.
 
 ### Nada de capas que cubren la ventana para devolver el puntero mas adentro
 

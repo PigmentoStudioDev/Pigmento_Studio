@@ -3,7 +3,13 @@
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { getServerThemeMode, getThemeMode, subscribeThemeMode } from "../../../theme/mode";
-import { resolveZone, themeZoneClass, type ThemeRole } from "../../../theme/zone";
+import {
+  readThemeAssignment,
+  resolveZone,
+  THEMED_SELECTOR,
+  themeZoneClass,
+  type ThemeAssignment,
+} from "../../../theme/zone";
 import { Button, type ButtonEmphasis } from "../../atoms/Button/Button";
 import { IconButton } from "../../atoms/IconButton/IconButton";
 import type { IconName } from "../../atoms/Icon/Icon";
@@ -150,13 +156,13 @@ export function SiteHeader({
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [role, setRole] = useState<ThemeRole | undefined>(undefined);
+  const [assignment, setAssignment] = useState<ThemeAssignment | undefined>(undefined);
 
   // El modo se lee del store y no de un estado propio: lo cambia tambien el
   // sistema operativo y el conmutador, que estan en otras ramas del arbol. La
-  // cabecera adopta el ROL de la seccion que tiene debajo, y el rol solo se
-  // convierte en una zona una vez que se sabe el modo — la misma seccion es g10
-  // en claro y g90 en oscuro.
+  // cabecera adopta la ASIGNACION de la seccion que tiene debajo, y la asignacion
+  // solo se convierte en una zona una vez que se sabe el modo: una seccion puede
+  // pedir oscuro en claro y dejar que el oscuro siga al sitio.
   const mode = useSyncExternalStore(subscribeThemeMode, getThemeMode, getServerThemeMode);
 
   // Escape cierra. Va en el documento y no en el panel porque el foco puede estar
@@ -281,7 +287,7 @@ export function SiteHeader({
         styles.root,
         open ? styles.isOpen : undefined,
         scrolled ? styles.isScrolled : undefined,
-        role ? themeZoneClass(resolveZone(mode, role)) : undefined,
+        assignment ? themeZoneClass(resolveZone(mode, assignment)) : undefined,
       ]
         .filter(Boolean)
         .join(" ")}

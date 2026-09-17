@@ -11,7 +11,7 @@
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import postcss, { type Rule } from 'postcss';
-import { resolveZone, themeModeClass } from '../../theme/zone';
+import { resolveZone, THEME_ATTRIBUTE, themeModeClass } from '../../theme/zone';
 import { compile, compileString, type Options } from 'sass';
 import { describe, expect, it } from 'vitest';
 
@@ -212,28 +212,28 @@ describe('index.scss emite las cuatro zonas de Carbon con la marca encima', () =
    * La regla nacio contra un `data-theme` que hubo y se retiro: un mecanismo de
    * tema PARALELO al de Carbon, que sus componentes no leen. Sigue prohibido.
    *
-   * `data-theme-section` no es eso y por eso se nombra en vez de permitirse a
-   * ciegas. No es un segundo sistema de tokens: bajo el se emiten los mismos
-   * `--cds-*` de siempre, asi que cualquier pieza que lea la plantilla dentro de
-   * una seccion la encuentra entera. Es lo que resuelve el ROL de la seccion
-   * ('base' | 'alt') contra la zona que lleva el documento, y no puede ser una
-   * clase: la zona depende del modo, el modo solo existe en el navegador, y
+   * `data-theme-light` y `data-theme-dark` no son eso y por eso se nombran en vez de
+   * permitirse a ciegas. No son un segundo sistema de tokens: bajo ellos se emiten
+   * los mismos `--cds-*` de siempre, asi que cualquier pieza que lea la plantilla
+   * dentro de una seccion la encuentra entera. Son la ASIGNACION de tono de la
+   * seccion en cada modo, aplicada bajo la zona que lleva el documento, y no pueden
+   * ser una clase: la zona depende del modo, el modo solo existe en el navegador, y
    * resolverlo en React costaria convertir Section en componente de cliente.
    *
    * Se afirma por igualdad y no por inclusion a proposito — asi un `data-theme`
    * nuevo, o cualquier variante, sigue rompiendo este caso.
    */
-  it('el unico atributo de tema del CSS es data-theme-section', () => {
+  it('los unicos atributos de tema del CSS son los de asignacion por modo', () => {
     const attrs = [...source.matchAll(/\[(data-theme[\w-]*)/g)].map(([, name]) => name);
 
-    expect([...new Set(attrs)]).toEqual(['data-theme-section']);
+    expect([...new Set(attrs)].sort()).toEqual(Object.values(THEME_ATTRIBUTE).sort());
   });
 
   /**
-   * El mapa de roles vive DOS veces: como selectores aqui y como ROLE_ZONE en
+   * El mapa de asignacion vive DOS veces: como selectores aqui y como resolveZone en
    * theme/zone.ts, que es de donde lo leen la cabecera y la tira al resolver su
    * propia zona. No se puede unificar — el CSS no puede importar de TypeScript y
-   * resolver el rol en React costaria convertir Section en componente de cliente —
+   * resolverlo en React costaria convertir Section en componente de cliente —
    * asi que lo que queda es comprobar que los dos digan lo mismo.
    *
    * El sintoma de una desincronizacion no es un error: la seccion se pinta con una
@@ -242,14 +242,14 @@ describe('index.scss emite las cuatro zonas de Carbon con la marca encima', () =
    */
   it.each(
     (['light', 'dark'] as const).flatMap((mode) =>
-      (['base', 'alt'] as const).map(
-        (role) => [`${mode}/${role}`, mode, role, resolveZone(mode, role)] as const,
+      (['light', 'dark'] as const).map(
+        (tone) => [`${mode}/${tone}`, mode, tone, resolveZone(mode, { [mode]: tone })] as const,
       ),
     ),
-  )('%s: el CSS resuelve la misma zona que ROLE_ZONE', (_label, mode, role, zone) => {
+  )('%s: el CSS aplica la misma zona que resolveZone', (_label, mode, tone, zone) => {
     // Sin comillas: Sass las quita al emitir, y cascade() compara el selector
     // literal contra el del CSS ya compilado.
-    const selector = `.${themeModeClass(mode)} [data-theme-section=${role}]`;
+    const selector = `.${themeModeClass(mode)} [${THEME_ATTRIBUTE[mode]}=${tone}]`;
     const emitted = cascade(source, selector);
     const stock = stockTheme(zone);
 
