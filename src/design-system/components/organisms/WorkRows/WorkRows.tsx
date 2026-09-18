@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import type { CSSProperties } from "react";
+import { cursorAttributes } from "../../../motion/cursor";
 import { useWorkRows } from "../../../motion/useWorkRows";
 import { Button } from "../../atoms/Button/Button";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
@@ -31,19 +32,33 @@ export interface WorkPiece {
 
 export interface WorkRowsProps {
   title: string;
+  /** El trozo del titular que se resalta con el scroll. */
+  titleHighlight?: string;
   label: string;
   intro: string;
   rows: WorkPiece[][];
   /** El atajo al portafolio entero: las filas son una muestra, no el archivo. */
   ctaLabel: string;
   ctaHref: string;
+  /** Lo que dice el cursor sobre cada pieza: "Ver caso". */
+  cursorLabel?: string;
   titleId?: string;
 }
 
 /** Una fila mide media ventana, menos el titular; en movil, un carril de altura fija. */
 const PIECE_SIZES = "(max-width: 42rem) 60vw, 25vw";
 
-export function WorkRows({ title, label, intro, rows, ctaLabel, ctaHref, titleId }: WorkRowsProps) {
+export function WorkRows({
+  title,
+  titleHighlight,
+  label,
+  intro,
+  rows,
+  ctaLabel,
+  ctaHref,
+  cursorLabel,
+  titleId,
+}: WorkRowsProps) {
   const rootRef = useWorkRows<HTMLDivElement>();
 
   const filled = rows.filter((row) => row.length > 0);
@@ -54,11 +69,11 @@ export function WorkRows({ title, label, intro, rows, ctaLabel, ctaHref, titleId
       <div className={styles.stage} data-rows-stage="">
         <div className={styles.frame} data-rows-frame="">
           <div className={styles.header}>
-            <StripHeader title={title} label={label} intro={intro} titleId={titleId} />
+            <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
             {/* Arriba y no al final de las filas: el bloque entero se queda fijo mientras
                 pasan, y un boton al final solo se veria cuando ya se ha terminado. */}
             <div className={styles.cta}>
-              <Button href={ctaHref} size="lg">
+              <Button href={ctaHref} size="lg" icon="arrow-up-right">
                 {ctaLabel}
               </Button>
             </div>
@@ -73,7 +88,7 @@ export function WorkRows({ title, label, intro, rows, ctaLabel, ctaHref, titleId
                   style={{ "--pg-piece-ratio": piece.image.width / piece.image.height } as CSSProperties}
                   data-rows-piece=""
                 >
-                  <a className={styles.card} href={piece.href}>
+                  <a className={styles.card} href={piece.href} {...cursorAttributes("scramble", cursorLabel)}>
                     {/* Decorativa: el nombre del enlace lo ponen los textos de abajo. */}
                     <Image className={styles.image} src={piece.image.src} alt="" fill sizes={PIECE_SIZES} />
                     <span className={styles.caption}>

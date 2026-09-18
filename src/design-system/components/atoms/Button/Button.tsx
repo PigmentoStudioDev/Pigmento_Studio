@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCharRoll } from "../../../motion/useCharRoll";
+import { Icon, type IconName } from "../Icon/Icon";
 import styles from "./Button.module.scss";
 
 /**
@@ -27,6 +28,15 @@ interface ButtonBase {
   children: string;
   emphasis?: ButtonEmphasis;
   size?: ButtonSize;
+  /**
+   * Acompana a la etiqueta, detras de ella. Opcional a proposito: la flecha promete
+   * que esto lleva a otro sitio, y un "Enviar" de formulario con flecha promete un
+   * destino que no existe. Lo decide quien conoce la accion, no el atomo.
+   *
+   * Por NOMBRE y no como nodo, como en todo el sistema: asi un bloque de Payload
+   * puede pedir su icono con una cadena.
+   */
+  icon?: IconName;
   /**
    * Estira el control hasta el ancho de su contenedor. Por defecto mide lo que su
    * etiqueta: un boton siempre estirado deja de leerse como boton.
@@ -64,7 +74,7 @@ const SIZE: Record<ButtonSize, string> = {
 };
 
 export function Button(props: ButtonProps) {
-  const { children, emphasis = "primary", size = "md", fullWidth = false, className } = props;
+  const { children, emphasis = "primary", size = "md", icon, fullWidth = false, className } = props;
   const textRef = useCharRoll<HTMLSpanElement>(children);
 
   const classes = [
@@ -88,6 +98,13 @@ export function Button(props: ButtonProps) {
         <span aria-hidden="true" ref={textRef} className={styles.text}>
           {children}
         </span>
+        {/* El icono ya se dibuja oculto al arbol: el nombre del control sigue siendo
+            uno solo, el de su etiqueta. */}
+        {icon ? (
+          <span className={styles.icon}>
+            <Icon name={icon} />
+          </span>
+        ) : null}
       </span>
     </>
   );

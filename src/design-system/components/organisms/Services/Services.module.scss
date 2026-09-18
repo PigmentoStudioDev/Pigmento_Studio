@@ -1,0 +1,150 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// La vista previa, en ancho de ventana como en la referencia: acompana a la lista a
+/// sangre, no a una columna.
+$preview-size: 24vw;
+
+// La referencia de la caja: su Y se mide contra esta raiz.
+.root {
+  position: relative;
+}
+
+.header {
+  margin-block-end: spacing.$spacing-09;
+  padding-inline: spacing.$spacing-06;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-block-end: 1px solid theme.$border-subtle;
+}
+
+.row {
+  border-block-start: 1px solid theme.$border-subtle;
+}
+
+// La fila entera es el enlace, y la pulsacion ocupa todo su ancho.
+.link {
+  @include brandtype.style('body');
+
+  display: flex;
+  gap: spacing.$spacing-05;
+  align-items: baseline;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding-block: spacing.$spacing-05;
+  padding-inline: spacing.$spacing-06;
+  color: theme.$text-primary;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.link:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+.name {
+  inline-size: 25%;
+  margin: 0;
+  font: inherit;
+}
+
+.scope {
+  color: theme.$text-secondary;
+}
+
+// Oculta con visibility y no con display: la fila no cambia de alto ni de reparto al
+// aparecer.
+.cta {
+  flex: 1;
+  text-align: end;
+  visibility: hidden;
+}
+
+.link:hover .cta,
+.link:focus-visible .cta {
+  visibility: visible;
+}
+
+// Con el cursor propio, la pista la dice el cursor: repetida en la fila serian dos
+// textos iguales a unos centimetros.
+:root[data-custom-cursor] .link:hover .cta {
+  visibility: hidden;
+}
+
+.container {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 16%;
+  inline-size: $preview-size;
+  block-size: $preview-size;
+  overflow: hidden;
+  border-radius: brand.$radius-05;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.container[data-preview-on] {
+  visibility: visible;
+}
+
+// Las capas las crea el hook sin clase: se estilan por posicion, como en la referencia.
+.container > div {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  // Arranca por encima de la mascara.
+  transform: translate(0, -100%);
+}
+
+.container img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  // Arranca casi entera por debajo de su marco.
+  transform: translate(0, 90%);
+}
+
+.medias img {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 1px;
+  block-size: 1px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@include breakpoint.breakpoint-down('md') {
+  .name {
+    flex: 2;
+    inline-size: auto;
+  }
+
+  .scope {
+    display: none;
+  }
+
+  .cta {
+    visibility: visible;
+  }
+}
+
+// Sin puntero que pase por encima, la pista no tiene gesto que la muestre.
+@media (hover: none) {
+  .cta {
+    visibility: visible;
+  }
+}

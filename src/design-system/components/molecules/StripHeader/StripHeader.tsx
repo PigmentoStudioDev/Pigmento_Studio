@@ -1,4 +1,5 @@
 import { Heading } from "../../atoms/Heading/Heading";
+import { ScrollHighlight } from "../../layout/ScrollHighlight/ScrollHighlight";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import styles from "./StripHeader.module.scss";
 
@@ -34,16 +35,20 @@ export interface StripHeaderProps {
    * apuntar.
    */
   titleId?: string;
+  /** El trozo del titular que se resalta con el scroll. */
+  titleHighlight?: string;
 }
 
-export function StripHeader({ title, label, intro, titleId }: StripHeaderProps) {
+export function StripHeader({ title, label, intro, titleId, titleHighlight }: StripHeaderProps) {
   return (
     <>
-      <ScrollReveal>
-        <Heading level={2} size="heading" id={titleId}>
-          {title}
-        </Heading>
-      </ScrollReveal>
+      <ScrollHighlight>
+        <ScrollReveal>
+          <Heading level={2} size="heading" id={titleId} highlight={titleHighlight}>
+            {title}
+          </Heading>
+        </ScrollReveal>
+      </ScrollHighlight>
 
       <div className={styles.band}>
         <ScrollReveal by="words">

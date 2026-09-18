@@ -37,6 +37,8 @@ export interface FaqItem {
 export interface FaqProps {
   /** El titular del bloque. En la referencia, tres letras. */
   title: string;
+  /** El trozo del titular que se resalta con el scroll. */
+  titleHighlight?: string;
   /** La etiqueta de la columna izquierda, en la voz de metadato del sitio. */
   label: string;
   /** El parrafo que presenta la lista. */
@@ -54,6 +56,7 @@ export interface FaqProps {
 
 export function Faq({
   title,
+  titleHighlight,
   label,
   intro,
   items,
@@ -97,7 +100,7 @@ export function Faq({
 
   return (
     <div className={styles.root}>
-      <StripHeader title={title} label={label} intro={intro} titleId={titleId} />
+      <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
 
       {/* Las filas cuelgan de la raiz sin envoltorio: cada una trae su filete, asi
           que un contenedor intermedio no tendria nada que declarar. */}

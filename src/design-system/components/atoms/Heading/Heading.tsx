@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import styles from "./Heading.module.scss";
 
 /**
@@ -37,6 +38,16 @@ export interface HeadingProps {
    * quien apuntar.
    */
   id?: string;
+  /**
+   * El trozo del titular que se resalta, escrito tal cual aparece en el. Un trozo y no
+   * el titular marcado: quien traduce ve texto y no sintaxis, y si el trozo no esta
+   * —una traduccion que lo cambio— el titular sale entero y sin resalte en vez de roto.
+   *
+   * La marca se pinta aqui y sigue siendo server component; el relleno con el scroll
+   * lo pone un `ScrollHighlight` por encima. Solo en titulares de seccion: repartido
+   * por texto corrido el enfasis deja de senalar nada.
+   */
+  highlight?: string;
 }
 
 const SIZE: Record<HeadingSize, string> = {
@@ -70,13 +81,28 @@ const SIZE_FOR_LEVEL: Record<HeadingLevel, HeadingSize> = {
   6: "lead",
 };
 
-export function Heading({ children, level, size, tone = "primary", id }: HeadingProps) {
+function withHighlight(text: string, highlight: string | undefined): ReactNode {
+  const start = highlight ? text.indexOf(highlight) : -1;
+  if (!highlight || start < 0) return text;
+
+  const end = start + highlight.length;
+
+  return (
+    <>
+      {text.slice(0, start)}
+      <mark className={styles.mark}>{text.slice(start, end)}</mark>
+      {text.slice(end)}
+    </>
+  );
+}
+
+export function Heading({ children, level, size, tone = "primary", id, highlight }: HeadingProps) {
   const Element: `h${HeadingLevel}` = `h${level}`;
   const classes = [styles.root, SIZE[size ?? SIZE_FOR_LEVEL[level]], TONE[tone]].join(" ");
 
   return (
     <Element id={id} className={classes}>
-      {children}
+      {withHighlight(children, highlight)}
     </Element>
   );
 }

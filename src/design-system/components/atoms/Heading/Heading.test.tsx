@@ -20,6 +20,28 @@ const SIZES: HeadingSize[] = ["display", "heading", "title", "lead"];
 const TONES: HeadingTone[] = ["primary", "secondary"];
 
 describe("Heading", () => {
+  it("resalta el trozo pedido en un <mark> sin cambiar el nombre del titular", () => {
+    render(
+      <Heading level={2} highlight="destacado">
+        Trabajo destacado
+      </Heading>,
+    );
+
+    expect(screen.getByRole("heading", { level: 2, name: "Trabajo destacado" })).toBeInTheDocument();
+    expect(screen.getByText("destacado").tagName).toBe("MARK");
+  });
+
+  it("si el trozo no esta en el titular, sale entero y sin marca", () => {
+    const { container } = render(
+      <Heading level={2} highlight="featured">
+        Trabajo destacado
+      </Heading>,
+    );
+
+    expect(container.querySelector("mark")).toBeNull();
+    expect(container.textContent).toBe("Trabajo destacado");
+  });
+
   it.each(LEVELS)("con level %i sale como encabezado de ese nivel", (level) => {
     render(<Heading level={level}>Estudio de marca</Heading>);
 

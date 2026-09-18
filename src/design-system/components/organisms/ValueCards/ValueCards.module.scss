@@ -1,0 +1,223 @@
+@use 'sass:map';
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/a11y';
+@use '../../../styles/brand' as brand;
+@use '../../../styles/candy';
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// La tarjeta. Mide lo que pide su texto mas largo a cuerpo de lectura, no una
+/// proporcion de foto: aqui no hay imagen que encuadrar.
+$card-inline-size: 22rem;
+$card-block-size: 28rem;
+$card-inline-size-compact: 18rem;
+$card-block-size-compact: 26rem;
+
+// El angulo entre tarjetas y el pivote de la corona, en alto de tarjeta por debajo
+// de su borde superior. En estrecho se abre el radio y se cierra el angulo: con el de
+// escritorio, la vecina quedaba fuera de pantalla y la corona se leia como una sola
+// tarjeta. El hook lee los dos de aqui para convertir el arrastre en grados.
+.root {
+  --pg-radial-angle: 18deg;
+  --pg-radial-radius: 375%;
+
+  @include breakpoint.breakpoint-down('md') {
+    --pg-radial-angle: 9deg;
+    --pg-radial-radius: 475%;
+  }
+}
+
+.title {
+  @include a11y.visually-hidden;
+}
+
+// Recorta en los dos ejes: las vecinas lejanas caen por debajo del borde y asoman
+// girando, en vez de colgar sobre el bloque siguiente.
+.stage {
+  position: relative;
+  overflow: clip;
+  padding-block-end: spacing.$spacing-11;
+  // El gesto es horizontal: el vertical sigue siendo el scroll de la pagina.
+  touch-action: pan-y;
+  user-select: none;
+}
+
+// La mano del sistema solo mientras NO hay cursor propio: con el disco a la vista, el
+// gesto ya esta dicho, y las dos pistas a la vez es una de mas.
+:root:not([data-custom-cursor]) .stage {
+  cursor: grab;
+}
+
+:root:not([data-custom-cursor]) .stage[data-dragging='true'] {
+  cursor: grabbing;
+}
+
+// Todas las tarjetas giran alrededor del MISMO pivote, muy por debajo de la
+// tarjeta: por eso se reparten en arco y no en abanico. Girar el conjunto es mover un
+// solo elemento, y el reparto de cada tarjeta es maquetacion, no movimiento.
+.track {
+  position: relative;
+  inline-size: $card-inline-size;
+  block-size: $card-block-size;
+  margin-inline: auto;
+  transform-origin: 50% var(--pg-radial-radius);
+  transform: rotate(
+    calc(var(--pg-radial-step, 0) * var(--pg-radial-angle) * -1 + var(--pg-radial-drag, 0) * 1deg)
+  );
+  transition: transform brand.$duration-base brand.$ease-default;
+
+  @include breakpoint.breakpoint-down('md') {
+    inline-size: $card-inline-size-compact;
+    block-size: $card-block-size-compact;
+  }
+}
+
+// Con el dedo abajo la corona va 1:1 con el puntero, y la vuelta al centro tras un
+// giro largo tiene que ser invisible: en los dos casos, sin transicion.
+.stage[data-dragging='true'] .track,
+.track[data-radial-jumping='true'] {
+  transition: none;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% var(--pg-radial-radius);
+  transform: rotate(calc(var(--pg-radial-position, 0) * var(--pg-radial-angle)));
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  block-size: 100%;
+  padding: spacing.$spacing-06;
+  border-radius: brand.$radius-07;
+}
+
+@each $family in map.keys(brand.$candy-families) {
+  .card[data-family='#{$family}'] {
+    @include candy.surface($family);
+  }
+}
+
+.index {
+  @include brandtype.style('label');
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-04;
+}
+
+.cardTitle {
+  @include brandtype.style('lead');
+
+  margin: 0;
+}
+
+.text {
+  @include brandtype.style('body');
+
+  margin: 0;
+}
+
+.status {
+  @include a11y.visually-hidden;
+}
+
+.controls {
+  display: flex;
+  gap: spacing.$spacing-05;
+  align-items: center;
+  justify-content: center;
+  padding-inline: spacing.$spacing-06;
+}
+
+.previous {
+  display: inline-flex;
+  scale: -1 1;
+}
+
+.dots {
+  display: flex;
+}
+
+// El area de pulsado es el boton entero y el dibujo es un trazo dentro: un trazo de
+// dos pixeles como objetivo tactil no se acierta con el dedo.
+.dot {
+  display: grid;
+  place-items: center;
+  inline-size: spacing.$spacing-07;
+  block-size: spacing.$spacing-07;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.dot::before {
+  content: '';
+  inline-size: spacing.$spacing-05;
+  block-size: 0.125rem;
+  background-color: theme.$border-strong-01;
+  transition: background-color brand.$duration-quarter brand.$ease-default;
+}
+
+.dot[aria-current='true']::before {
+  background-color: theme.$text-primary;
+}
+
+.dot:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+// Sin giro: una fila de tarjetas con scroll nativo. Las copias sobran —ya no hay
+// vuelta que cerrar— y los controles tambien, porque no hay corona que girar.
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    padding-block-end: 0;
+    touch-action: auto;
+  }
+
+  :root:not([data-custom-cursor]) .stage {
+    cursor: auto;
+  }
+
+  .track {
+    display: flex;
+    gap: spacing.$spacing-05;
+    inline-size: auto;
+    block-size: auto;
+    padding-inline: spacing.$spacing-06;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: spacing.$spacing-06;
+    transform: none;
+    transition: none;
+  }
+
+  .slide {
+    position: relative;
+    flex: none;
+    inline-size: $card-inline-size-compact;
+    block-size: $card-block-size-compact;
+    scroll-snap-align: start;
+    transform: none;
+  }
+
+  .slide[data-clone='true'],
+  .controls {
+    display: none;
+  }
+
+  .dot::before {
+    transition: none;
+  }
+}
