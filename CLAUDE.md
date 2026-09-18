@@ -226,6 +226,114 @@ y **la pildora solo la usan los controles**. Un radio incoherente no rompe nada 
 hay error ni aviso, la pieza se pinta y lo unico que pasa es que el conjunto deja de
 parecer del mismo sistema.
 
+### Gradientes candy
+
+El fondo de las tarjetas que se **destacan**. Viene del sistema de propuestas de
+Pigmento y se conserva tal cual: es un patron, no siete colores sueltos.
+
+**La forma es lo que lo hace patron.** `linear-gradient(150deg, clara 0%, media 52%,
+saturada 100%)`, las tres paradas de UNA misma familia. Un gradiente entre dos tonos
+distintos se lee como efecto; uno que solo gana saturacion hacia la esquina se lee
+como luz sobre un material. El texto va en la misma familia, casi negra, nunca en el
+gris del tema.
+
+| Familia | 0% | Media | 100% | Texto |
+|---|---|---|---|---|
+| `periwinkle` | `#d9c4ff` | `#a7b6ff` 52% | `#6f8cff` | `#171a52` |
+| `orchid` | `#e7cef5` | `#c08fee` 50% | `#8a4fe6` | `#260b52` |
+| `tangerine` | `#ffd9b0` | `#ff9d5c` 52% | `#ff7a33` | `#5a2408` |
+| `pink` | `#ffd2ec` | `#ff9ecb` 52% | `#ff5fa8` | `#52102f` |
+| `lime` | `#ddf2a8` | `#b9e85f` 52% | `#93d62f` | `#2c4014` |
+| `cyan` | `#bdeffe` | `#7fd6f4` 52% | `#33b6ec` | `#0a3a52` |
+| `amber` | `#ffe7b0` | `#ffbf5c` 52% | `#ff9a33` | `#5a3408` |
+
+- **Donde vive:** los colores en `_brand.scss` (`$candy-families`, `$candy-angle`), la
+  forma en `_candy.scss`. Un componente nunca escribe su `linear-gradient`: usa
+  `@include candy.surface($family)`, que pone fondo Y texto juntos.
+- **No re-tematiza.** Es igual en claro y en oscuro, por lo mismo que las bandas de
+  ruta: fondo fijo, primer plano fijo.
+- **Se reparte por posicion**, con `candyAt(index)` de `theme/candy.ts`, que alterna
+  calidos y frios. En las props viaja el NOMBRE de la familia.
+- **Orquidea no entra en el ciclo.** Su esquina saturada no llega a 4.5:1 con ningun
+  texto — ni el negro —, asi que solo admite texto grande.
+- **Nunca como fondo de seccion** ni debajo de texto corrido largo: siete familias a
+  pantalla completa dejan de destacar nada.
+
+**Lo que se reutiliza es la FORMA, no siempre el tono.** `candy.shape()` es el unico
+sitio donde se escribe el `linear-gradient`, y tiene dos consumidores:
+
+| | Tarjetas (`candy.surface`) | Control primario (`candy.control`) |
+|---|---|---|
+| Paradas | las tres de la familia | `$control-ink-light` → `-mid` → `-dark` (gray-80 → gray-90 → carbon) |
+| Tono | el de la familia | ninguno |
+| Texto | el casi negro de la familia (`candy.ink`) | blanco fijo (`$text-on-control-ink`) |
+
+El color se queda en las tarjetas a proposito. Un control pequeno relleno de color se
+lee como una etiqueta, y encima compite con lo que tiene alrededor, que es justo lo
+que el boton tiene que ganar. Lo que el patron le presta es el cuerpo: a 44px de alto
+un negro plano se lee como un rectangulo, y el gradiente que solo gana profundidad
+hacia la esquina se lee como un material.
+
+- El hover **aclara la placa entera** en vez de cambiarle el color. Los tokens
+  `button-primary-hover/-active` se quedan fuera: sustituirle el color a un gradiente
+  de tres paradas lo convierte en otro material a medio gesto.
+- `control` va SIN el texto, al reves que `surface`: en una tarjeta fondo y primer
+  plano son el mismo nodo; en el control son dos, porque la placa escala al hover y la
+  etiqueta no.
+- Apagar un control pide `background-image: none`. El color de deshabilitado es un
+  `background-color` y va por DEBAJO del gradiente, asi que sin eso el boton apagado
+  sigue pintado.
+
+Lo vigila `__tests__/candy-contract.test.ts`, verificado en rojo: cada familia del
+ciclo existe en la hoja y aguanta texto normal en las tres paradas, todas aguantan al
+menos texto grande, y —sobre el CSS COMPILADO del mixin— el blanco de la placa aguanta
+en sus tres paradas. Ese ultimo salta al aclarar la parada de arriba para que el
+gradiente "se note mas": a partir de gray-50 el blanco ya no llega, y el sintoma es una
+etiqueta que se lee peor solo en un extremo del boton.
+
+### Cursores
+
+Un solo cursor para todo el sitio, montado una vez en el layout (`layout/CustomCursor`).
+Lo que cambia su forma es un **atributo** del elemento que tiene debajo, no el
+componente: un bloque de servidor pide su cursor sin cruzar al navegador.
+
+| Atributo | Efecto |
+|---|---|
+| (ninguno) | `default`: la flecha, que gira hacia donde se mueve y crece sobre `a`, `button` y `[role=button]` |
+| `data-cursor="scramble"` | Pastilla con texto que cambia con ScrambleText; se voltea a la izquierda en el borde derecho |
+| `data-cursor="drag"` | Disco centrado en el puntero, con dos flechas y la etiqueta del gesto; se aprieta con el boton abajo |
+| `data-cursor-text="Ver caso"` | El texto de la variante |
+| `data-cursor="default"` | Vuelve a la flecha dentro de un bloque que pida otra |
+
+- Gana el ancestro con `data-cursor` mas cercano. Un valor que no es variante deja la flecha.
+- En componentes, `cursorAttributes("scramble", texto)` de `motion/cursor.ts`.
+- **`scramble` promete navegacion y `drag` promete un gesto.** La pastilla cuelga a la
+  derecha del puntero porque nombra el destino de un enlace; el disco va centrado porque
+  ES el agarre de lo que se va a mover, y por eso el borde derecho no lo voltea. En una
+  superficie que se arrastra, el disco es la unica pista del gesto para quien usa raton:
+  la mano del sistema (`cursor: grab`) se scopea con `:root:not([data-custom-cursor])`
+  para no dar dos pistas a la vez.
+- El disco deriva su circulo de su lado declarado (`$cursor-disc-size` /
+  `$radius-cursor-disc`), no de `$radius-full`: se aprieta al pulsar, y un radio que el
+  navegador recorta saltaria en ese gesto. El gate de radios lo vigila.
+- **Toma el tema de lo que tiene debajo** con el mismo contrato que la cabecera
+  (`data-theme-light` / `data-theme-dark`): se pone la zona de Carbon que toca y sus
+  colores son tokens.
+- Solo con `(hover: hover) and (pointer: fine)` y sin reduced-motion. Mientras esta a la
+  vista marca `<html data-custom-cursor>`, que esconde el del sistema salvo en campos de
+  texto.
+- **Esconder el del sistema y pintar el propio son el mismo instante**, y para pintarlo
+  hace falta saber donde esta el puntero, que solo llega en un evento. El hook apunta la
+  posicion desde el mount —la rueda tambien cuenta: trae coordenadas sin mover el raton—
+  para que el cambio ocurra en el primer gesto y no en el primero POSTERIOR a que cargue
+  gsap. Lo que queda, a proposito: si nadie ha movido el raton ni hecho scroll desde la
+  carga, el del sistema sigue ahi, porque esconderlo sin poder dibujar el nuestro deja la
+  pantalla sin cursor.
+- **Agregar una variante:** su nombre en `CURSOR_VARIANTS`, su capa en `CustomCursor.tsx`,
+  su estilo en la hoja (que se ve por `[data-cursor-variant]` en la raiz del componente) y
+  su estado en `useCustomCursor`. Una capa con texto solo necesita su
+  `[data-cursor-text-target]`: el hook escribe todos a la vez y no sabe cual se ve.
+
 ### Motion
 
 **El navbar de la referencia no toca GSAP.** Se comprobo en su fuente: su coreografia

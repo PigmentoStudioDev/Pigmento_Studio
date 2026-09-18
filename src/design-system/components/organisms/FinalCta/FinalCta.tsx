@@ -1,6 +1,7 @@
 import { themeAttributes, type ThemeAssignment } from "../../../theme/zone";
 import { Button } from "../../atoms/Button/Button";
 import { Heading } from "../../atoms/Heading/Heading";
+import { ScrollHighlight } from "../../layout/ScrollHighlight/ScrollHighlight";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import styles from "./FinalCta.module.scss";
 
@@ -28,6 +29,8 @@ export interface FinalCtaProps {
   /** La etiqueta corta de encima del titular, en la voz de metadato del sitio. */
   label: string;
   title: string;
+  /** El trozo del titular que se resalta con el scroll. */
+  titleHighlight?: string;
   /** El texto del boton. Un verbo y lo que se consigue, nunca "enviar". */
   cta: string;
   href: string;
@@ -37,7 +40,7 @@ export interface FinalCtaProps {
 /** Destaca en los dos modos: oscura sobre la pagina clara, clara sobre la oscura. */
 const PANEL_THEME: ThemeAssignment = { light: "dark", dark: "light" };
 
-export function FinalCta({ label, title, cta, href, titleId }: FinalCtaProps) {
+export function FinalCta({ label, title, titleHighlight, cta, href, titleId }: FinalCtaProps) {
   return (
     // La placa publica su asignacion y la hoja global la aplica bajo el modo del
     // documento. Es el mismo contrato que usa la cabecera para adoptar el tema de lo
@@ -47,16 +50,18 @@ export function FinalCta({ label, title, cta, href, titleId }: FinalCtaProps) {
         <p className={styles.label}>{label}</p>
       </ScrollReveal>
 
-      <ScrollReveal>
-        <Heading level={2} size="heading" id={titleId}>
-          {title}
-        </Heading>
-      </ScrollReveal>
+      <ScrollHighlight>
+        <ScrollReveal>
+          <Heading level={2} size="heading" id={titleId} highlight={titleHighlight}>
+            {title}
+          </Heading>
+        </ScrollReveal>
+      </ScrollHighlight>
 
       {/* El boton llega como CAJA: no hay texto que partir en una pildora — su
           etiqueta ya se parte en caracteres para rodarla al pasar por encima. */}
       <ScrollReveal by="block">
-        <Button href={href} size="lg">
+        <Button href={href} size="lg" icon="arrow-up-right">
           {cta}
         </Button>
       </ScrollReveal>

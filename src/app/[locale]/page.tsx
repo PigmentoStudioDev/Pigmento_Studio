@@ -6,7 +6,9 @@ import { Section } from "@/design-system/components/layout/Section/Section";
 import { Faq } from "@/design-system/components/organisms/Faq/Faq";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
+import { Services } from "@/design-system/components/organisms/Services/Services";
 import { Team } from "@/design-system/components/organisms/Team/Team";
+import { ValueCards } from "@/design-system/components/organisms/ValueCards/ValueCards";
 import { WorkRows } from "@/design-system/components/organisms/WorkRows/WorkRows";
 import { HeroStatement } from "@/design-system/components/organisms/HeroStatement/HeroStatement";
 import { HERO_PIECES } from "../hero";
@@ -15,7 +17,9 @@ import { getFinalCta } from "../cta";
 import { getFaq } from "../faq";
 import { getFeaturedPieces } from "@/cms/projects";
 import { getManifesto } from "../manifesto";
+import { getServices } from "../services";
 import { getTeam } from "../team";
+import { getValues } from "../values";
 import { getWork } from "../work";
 
 /**
@@ -28,7 +32,9 @@ import { getWork } from "../work";
  * arme la pagina el espacio entre bloques dependa del orden y no de cuales sean.
  */
 /** Las anclas que atan cada <section> con su titular. */
+const VALUES_TITLE_ID = "valores";
 const WORK_TITLE_ID = "trabajo";
+const SERVICES_TITLE_ID = "servicios";
 const TEAM_TITLE_ID = "equipo";
 const FAQ_TITLE_ID = "faq";
 const CTA_TITLE_ID = "contacto";
@@ -51,7 +57,9 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
   // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
   const pieces = await getFeaturedPieces(locale);
+  const tValues = await getTranslations("home.values");
   const tWork = await getTranslations("home.work");
+  const tServices = await getTranslations("home.services");
   const tTeam = await getTranslations("home.team");
   const tFaq = await getTranslations("home.faq");
   const tCta = await getTranslations("home.cta");
@@ -64,8 +72,9 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       <Section width="full" spacing="none">
         <HeroStatement
           eyebrow="Diseño de marca y crecimiento"
-          title="Marcas que se reconocen en la calle."
-          subtitle="Cada pieza, cada píxel, cada decisión, probada frente a gente real."
+          title="Diseñamos marcas con visión de futuro."
+          titleHighlight="visión de futuro"
+          subtitle="Estrategia, diseño y tecnología trabajando juntos para convertir ideas en marcas que crecen, evolucionan y perduran."
           ctaLabel="Empezar un proyecto"
           ctaHref={`#${CTA_TITLE_ID}`}
           pieces={HERO_PIECES}
@@ -99,13 +108,26 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <Manifesto {...getManifesto(t, pieces)} />
       </Section>
 
-      {/* El trabajo, despues de decir que hacemos. Cuando exista el strip de
-          servicios va entre los dos: primero la oferta, luego como se ve. A sangre y
+      {/* Como trabaja el estudio, justo despues de decir que hace: las tarjetas siguen
+          la frase sin cabecera de por medio y la contestan antes de ensenar el trabajo.
+          A sangre por lo mismo que las filas: la corona sale por los bordes. */}
+      <Section width="full" spacing="loose" spacingEnd="none" labelledBy={VALUES_TITLE_ID}>
+        <ValueCards {...getValues(tValues)} titleId={VALUES_TITLE_ID} />
+      </Section>
+
+      {/* El trabajo, despues de decir que hacemos y antes de lo que se puede
+          contratar: primero como se ve, luego la oferta. A sangre y
           sin techo: las filas salen por el borde de la ventana, y cortadas contra un
           contenedor de 1920 dejarian de leerse como algo que pasa por delante. Sin
           tema asignado: sigue al modo del sitio, como el resto de strips. */}
-      <Section width="full" spacing="loose" labelledBy={WORK_TITLE_ID}>
+      <Section width="full" spacing="loose" spacingStart="none" surface="solid" labelledBy={WORK_TITLE_ID}>
         <WorkRows {...getWork(tWork)} titleId={WORK_TITLE_ID} />
+      </Section>
+
+      {/* Lo que se puede contratar, justo despues de ver como se ve: quien acaba de
+          mirar las piezas se pregunta que les puede pedir. */}
+      <Section width="strip" spacing="loose" labelledBy={SERVICES_TITLE_ID}>
+        <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} />
       </Section>
 
       {/* Quien hace el trabajo, antes de las objeciones: la primera pregunta de

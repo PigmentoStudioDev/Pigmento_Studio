@@ -11,6 +11,7 @@ export function getFinalCta(t: Translate): FinalCtaProps {
   return {
     label: t("label"),
     title: t("title"),
+    titleHighlight: t("titleHighlight"),
     cta: t("cta"),
     href: "/contacto",
   };

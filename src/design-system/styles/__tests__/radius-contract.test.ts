@@ -40,6 +40,7 @@ const SCALE_VARS = [
   'radius-header',
   'radius-control-m',
   'radius-control-square',
+  'radius-cursor-disc',
 ];
 
 const scale = new Set(

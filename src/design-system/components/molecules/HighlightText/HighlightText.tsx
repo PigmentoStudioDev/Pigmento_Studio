@@ -1,6 +1,6 @@
 "use client";
 
-import { HIGHLIGHT_ATTR, useScrollHighlight } from "../../../motion/useScrollHighlight";
+import { useScrollHighlight } from "../../../motion/useScrollHighlight";
 import styles from "./HighlightText.module.scss";
 
 export interface HighlightPart {
@@ -20,6 +20,9 @@ export interface HighlightTextProps {
 /**
  * Una frase donde las palabras marcadas se van subrayando al hacer scroll.
  *
+ * Fuera de los titulares de seccion, que lo llevan con `Heading highlight` dentro de
+ * un `ScrollHighlight`: esta pieza es para una frase suelta que no parte el reveal.
+ *
  * El trozo marcado va en `<mark>`, que es el elemento que significa exactamente eso
  * —texto resaltado por relevancia en su contexto— y no un `<span>` con fondo. La
  * diferencia se oye: un lector de pantalla puede anunciar el resalte.
@@ -34,11 +37,7 @@ export function HighlightText({ parts }: HighlightTextProps) {
     <span ref={ref} className={styles.root}>
       {parts.map((part, i) =>
         part.highlight ? (
-          <mark
-            className={styles.mark}
-            key={`${part.text}-${i}`}
-            {...{ [HIGHLIGHT_ATTR]: true }}
-          >
+          <mark className={styles.mark} key={`${part.text}-${i}`}>
             {part.text}
           </mark>
         ) : (

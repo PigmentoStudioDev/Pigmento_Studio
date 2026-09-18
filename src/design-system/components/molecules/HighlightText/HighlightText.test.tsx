@@ -25,7 +25,6 @@ describe("HighlightText", () => {
     const marca = screen.getByText("un solo tipo de inmueble");
 
     expect(marca.tagName).toBe("MARK");
-    expect(marca).toHaveAttribute("data-highlight");
   });
 
   it("sin nada marcado no hay ningun <mark>", () => {

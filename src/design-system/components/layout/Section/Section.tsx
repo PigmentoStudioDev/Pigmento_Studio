@@ -24,6 +24,8 @@ export type SectionTheme = ThemeAssignment;
  */
 export type SectionWidth = "content" | "wide" | "full" | "strip";
 export type SectionSpacing = "none" | "compact" | "default" | "loose";
+/** `solid` pinta solo el color del tema, sin grano. */
+export type SectionSurface = "grain" | "solid";
 
 export interface SectionProps {
   children: ReactNode;
@@ -38,6 +40,23 @@ export interface SectionProps {
   theme?: SectionTheme;
   width?: SectionWidth;
   spacing?: SectionSpacing;
+  /**
+   * El aire de ARRIBA cuando no es el de `spacing`. Existe para el organismo que ya
+   * trae su propio aire superior —el que se queda fijo y descuenta la cabecera—: con
+   * los dos sumados, el titular quedaba flotando lejos del bloque de encima.
+   */
+  spacingStart?: SectionSpacing;
+  /**
+   * El aire de ABAJO cuando no es el de `spacing`. Para el organismo cuyo contenido ya
+   * termina en su propio aire, como la corona de tarjetas bajo sus controles.
+   */
+  spacingEnd?: SectionSpacing;
+  /**
+   * El fondo es del tema en los dos casos —blanco en claro, oscuro en oscuro—; lo
+   * que cambia es el grano. Una seccion llena de imagenes lo pide liso: el ruido
+   * sobre el hueco entre fotos se lee como suciedad, no como textura.
+   */
+  surface?: SectionSurface;
   /** Ancla de navegacion. En Payload sale del blockName del bloque. */
   id?: string;
   /**
@@ -61,11 +80,28 @@ const SPACING: Record<SectionSpacing, string> = {
   loose: styles.spacingLoose,
 };
 
+const SPACING_START: Record<SectionSpacing, string> = {
+  none: styles.spacingStartNone,
+  compact: styles.spacingStartCompact,
+  default: styles.spacingStartDefault,
+  loose: styles.spacingStartLoose,
+};
+
+const SPACING_END: Record<SectionSpacing, string> = {
+  none: styles.spacingEndNone,
+  compact: styles.spacingEndCompact,
+  default: styles.spacingEndDefault,
+  loose: styles.spacingEndLoose,
+};
+
 export function Section({
   children,
   theme,
   width = "content",
   spacing = "default",
+  spacingStart,
+  spacingEnd,
+  surface = "grain",
   id,
   labelledBy,
 }: SectionProps) {
@@ -73,7 +109,16 @@ export function Section({
   // la del documento. Resolverla aqui obligaria a conocer el modo, y el modo solo
   // existe en el navegador — Section se quedaria sin poder ser server component
   // por una cuenta que la cascada ya sabe hacer.
-  const className = [styles.root, WIDTH[width], SPACING[spacing]].filter(Boolean).join(" ");
+  const className = [
+    styles.root,
+    WIDTH[width],
+    SPACING[spacing],
+    spacingStart ? SPACING_START[spacingStart] : undefined,
+    spacingEnd ? SPACING_END[spacingEnd] : undefined,
+    surface === "solid" ? styles.surfaceSolid : undefined,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     // Los atributos de tema hacen dos trabajos. Para el CSS son lo que aplica el

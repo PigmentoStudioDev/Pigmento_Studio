@@ -1,6 +1,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/candy';
 @use '../../../styles/roll' as roll;
 @use '../../../styles/type' as brandtype;
 @use '../../../styles/component-tokens' as component;
@@ -70,7 +71,8 @@
   transition:
     scale brand.$duration-half brand.$ease-default,
     background-color brand.$duration-quarter brand.$ease-default,
-    border-color brand.$duration-quarter brand.$ease-default;
+    border-color brand.$duration-quarter brand.$ease-default,
+    filter brand.$duration-quarter brand.$ease-default;
 }
 
 .inner {
@@ -120,8 +122,12 @@
   cursor: not-allowed;
 }
 
+// Apagar el color no basta: el gradiente de la placa es una IMAGEN de fondo, y el
+// `background-color` de deshabilitado va por debajo de ella. Sin el `none`, un boton
+// apagado sigue pintado.
 .root:disabled .bg {
   background-color: component.get('button-disabled');
+  background-image: none;
   border-color: transparent;
 }
 
@@ -129,20 +135,36 @@
   color: theme.$text-on-color-disabled;
 }
 
+// La placa repite el patron del candy en gris: de oscuro a carbon, mismo angulo y
+// misma media. El tono se queda en las tarjetas — un boton de color compite con lo
+// que tiene alrededor, que es lo que tiene que ganar.
 .emphasisPrimary .bg {
-  background-color: component.get('button-primary');
+  @include candy.control;
 }
 
+// Fijo en los dos modos, como la placa que tiene debajo.
 .emphasisPrimary .inner {
-  color: theme.$text-on-color;
+  color: brand.$text-on-control-ink;
 }
 
-.emphasisPrimary:hover:not(:disabled) .bg {
-  background-color: component.get('button-primary-hover');
+// Aclara la placa entera en vez de cambiarle el color. Los tokens
+// button-primary-hover/-active se quedan fuera a proposito: sustituirle el color a un
+// gradiente de tres paradas lo convierte en otro material a medio gesto, cuando lo
+// que tiene que responder es cuanta luz recibe el que ya hay.
+.emphasisPrimary:hover:not(:disabled) .bg,
+.emphasisPrimary:focus-visible .bg {
+  filter: brightness(1.35);
 }
 
 .emphasisPrimary:active:not(:disabled) .bg {
-  background-color: component.get('button-primary-active');
+  filter: brightness(0.8);
+}
+
+// El caracter que entra al rodar llega en el color en el que se queda. El azul de
+// catalogo que usan las otras enfasis, sobre la placa de la familia, se lee como un
+// fallo de pintado y no como un gesto.
+.emphasisPrimary .text {
+  --pg-char-shine: currentcolor;
 }
 
 .emphasisSecondary .bg {
@@ -208,6 +230,14 @@
 }
 
 // Los caracteres no estan aqui: su apagado es global, en _app.scss.
+// El icono no escala con el gesto de la placa: es parte de la etiqueta, no del
+// fondo. Y no se encoge en un contenedor estrecho, donde flex lo aplastaria antes
+// que al texto.
+.icon {
+  display: flex;
+  flex: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .root::after,
   .bg {

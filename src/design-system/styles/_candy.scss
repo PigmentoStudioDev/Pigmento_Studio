@@ -1,0 +1,76 @@
+// El gradiente candy, como superficie.
+//
+// Las familias viven en _brand.scss; aqui vive la FORMA, que es lo que se tiene que
+// repetir identica en cada tarjeta. Un componente que escriba su propio
+// linear-gradient con los tokens acaba con otro angulo u otra parada, y el patron
+// deja de serlo sin que nada falle.
+
+@use 'sass:map';
+@use './brand' as brand;
+
+/// Los tonos de una familia, con el nombre validado.
+///
+/// El @error vive aqui y no en cada mixin porque un nombre mal escrito no rompe
+/// nada: sin fondo, la tarjeta se pinta transparente sobre la seccion y parece una
+/// decision de diseno.
+@function -tones($family) {
+  @if not map.has-key(brand.$candy-families, $family) {
+    @error 'Familia candy desconocida: #{$family}';
+  }
+
+  @return map.get(brand.$candy-families, $family);
+}
+
+/// LA FORMA, y el unico sitio donde se escribe: tres paradas de una misma familia,
+/// el angulo de la casa, la media donde diga la familia.
+///
+/// Publica y con las paradas como parametros porque no solo la usan las tarjetas: la
+/// placa del control repite el patron en gris. Si cada una escribiera su
+/// `linear-gradient`, una acabaria con otro angulo y el patron dejaria de serlo sin
+/// que nada falle.
+@function shape($light, $mid, $mid-stop, $deep) {
+  @return linear-gradient(brand.$candy-angle, $light 0%, $mid $mid-stop, $deep 100%);
+}
+
+@function -base($tones) {
+  @return shape(
+    map.get($tones, light),
+    map.get($tones, mid),
+    map.get($tones, mid-stop),
+    map.get($tones, saturated)
+  );
+}
+
+/// Fondo y texto de UNA familia. Van juntos a proposito: un fondo candy con el texto
+/// del tema en modo oscuro es claro sobre claro.
+///
+/// @param {String} $family — una clave de brand.$candy-families
+@mixin surface($family) {
+  background-image: -base(-tones($family));
+  @include ink($family);
+}
+
+/// La placa del control: el mismo patron en gris, de oscuro a carbon.
+///
+/// Sin tono y sin luces encima: lo que hace el trabajo es la forma. El gradiente
+/// aclara hacia la esquina por donde entraria la luz y se cierra en el carbon de la
+/// casa, que es lo que le da cuerpo a 44px de alto — un negro plano a ese tamano se
+/// lee como un rectangulo, no como algo que se pulsa.
+///
+/// **Va SIN el texto**, al reves que `surface`. En una tarjeta fondo y primer plano
+/// son el mismo nodo; en un control son dos, porque la placa escala al hover y la
+/// etiqueta no. Acoplarlos aqui obligaria a pintar el fondo en el nodo del texto, y
+/// entonces el gesto escalaria tambien la etiqueta y el anillo de foco.
+@mixin control {
+  background-image: shape(
+    brand.$control-ink-light,
+    brand.$control-ink-mid,
+    brand.$control-ink-mid-stop,
+    brand.$control-ink-dark
+  );
+}
+
+/// Solo el primer plano de la familia, para el nodo que lleve el texto.
+@mixin ink($family) {
+  color: map.get(-tones($family), text);
+}

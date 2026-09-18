@@ -53,6 +53,59 @@ $text-on-accent-secondary: colors.$gray-70;
 /// donde un literal de color es la definicion y no una fuga.
 $surface-cover: #f0f0f0;
 
+/// Las familias del gradiente CANDY: el fondo de las tarjetas que se DESTACAN.
+///
+/// Es un patron y no siete colores sueltos, y lo que lo hace patron es la forma:
+/// tres paradas de UNA misma familia —clara, media, saturada— a 150deg, con la
+/// parada media al 52%. Un gradiente entre dos tonos distintos se lee como efecto;
+/// uno que solo gana saturacion hacia la esquina se lee como luz sobre un material.
+///
+/// El texto va en la misma familia, casi negra, y no en el gris del tema: sobre un
+/// fondo de color un gris neutro se ve sucio. Y NO re-tematiza, por lo mismo que las
+/// bandas de ruta: el fondo es fijo, asi que el primer plano tambien.
+///
+/// Orquidea lleva la media al 50% y no es una errata: asi esta en el original, donde
+/// el violeta saturado se comia la mitad baja de la tarjeta con el 52%.
+///
+/// Literales porque este ES el sitio de las primitivas: los valores salen del sistema
+/// de propuestas de Pigmento, no del catalogo de Carbon, y aproximarlos a su gama
+/// cambiaria el patron que se quiere conservar.
+$candy-families: (
+  'periwinkle': (light: #d9c4ff, mid: #a7b6ff, mid-stop: 52%, saturated: #6f8cff, text: #171a52),
+  'orchid': (light: #e7cef5, mid: #c08fee, mid-stop: 50%, saturated: #8a4fe6, text: #260b52),
+  'tangerine': (light: #ffd9b0, mid: #ff9d5c, mid-stop: 52%, saturated: #ff7a33, text: #5a2408),
+  'pink': (light: #ffd2ec, mid: #ff9ecb, mid-stop: 52%, saturated: #ff5fa8, text: #52102f),
+  'lime': (light: #ddf2a8, mid: #b9e85f, mid-stop: 52%, saturated: #93d62f, text: #2c4014),
+  'cyan': (light: #bdeffe, mid: #7fd6f4, mid-stop: 52%, saturated: #33b6ec, text: #0a3a52),
+  'amber': (light: #ffe7b0, mid: #ffbf5c, mid-stop: 52%, saturated: #ff9a33, text: #5a3408),
+);
+
+/// El angulo del gradiente candy. Uno para todas: con dos angulos, dos tarjetas
+/// vecinas parecen iluminadas desde sitios distintos.
+$candy-angle: 150deg;
+
+/// La placa del control primario: el PATRON del candy sin su tono.
+///
+/// Tres paradas de una misma familia a 150deg con la media al 52%, igual que una
+/// tarjeta — pero la familia aqui es el gris. Lo que se conserva del candy es lo que
+/// lo hacia patron: que el gradiente solo gane cuerpo hacia la esquina, sin cruzar a
+/// otro color, para que se lea como luz sobre un material y no como efecto.
+///
+/// Sin tono a proposito. Un control pequeno relleno de color se lee como una
+/// etiqueta; el color en un boton compite con lo que el boton tiene alrededor, que
+/// es justo lo que el boton tiene que ganar. El acento del sitio vive en las
+/// tarjetas, no en el control que las acompana.
+///
+/// Fijo en los dos modos, por lo mismo que el resto: fondo fijo, primer plano fijo.
+$control-ink-light: colors.$gray-80;
+$control-ink-mid: colors.$gray-90;
+$control-ink-dark: colors.$gray-100;
+$control-ink-mid-stop: 52%;
+
+/// El primer plano de esa placa. Lo mide el gate contra las TRES paradas, no solo
+/// contra la mas oscura: el texto cruza el gradiente entero.
+$text-on-control-ink: colors.$white;
+
 /// El escalon DENTRO del panel de portada: lo que lleva el chip. Sale del mismo
 /// cluster que $surface-cover y por el mismo motivo es fijo.
 $surface-cover-raised: colors.$gray-20;
@@ -140,11 +193,25 @@ $grid-tile-gutter: calc(#{$grid-tile-unit} * 2.25);
 /// preloader tiene que tapar a las dos.
 $z-preloader: 200;
 
+/// El velo que cubre la pagina con el menu abierto: un gris medio al 60% y la pagina
+/// difuminada debajo.
+///
+/// Gris y no el `overlay` del tema, y fijo en los dos modos: el del tema es negro al
+/// 50%, y sobre una pagina oscura no separaba nada — el menu y lo de detras quedaban
+/// en el mismo plano. Un gris medio aclara lo oscuro y apaga lo claro, y el
+/// difuminado termina de mandarlo al fondo.
+$surface-header-overlay: color.change(#898989, $alpha: 0.6);
+$header-overlay-blur: 0.625rem;
+
 /// La barra de promos va ENCIMA de la cabecera (100): al esconderse, la pildora sale
 /// por arriba pasando por detras de la barra en vez de montarse sobre ella. El precio
 /// es que el fondo del menu abierto no la tapa, y es aceptable: la barra sigue siendo
 /// un enlace valido con el menu abierto. Debajo del preloader (200).
 $z-topbar: 110;
+
+/// El cursor propio, por encima de todo el chrome: un cursor que pasa por DEBAJO de la
+/// cabecera desaparece justo encima del menu, que es donde mas se usa.
+$z-cursor: 300;
 
 /// Cuanto sube el logo del preloader mientras el panel se retira. Va por detras del
 /// borde, asi que el borde lo alcanza y lo corta.
@@ -270,6 +337,17 @@ $radius-control-square: $radius-05;
 // atarlos por casualidad.
 $chip-block-size: spacing.$spacing-07;
 $radius-chip: math.div($chip-block-size, 2);
+
+// Metrica del disco de arrastre del cursor. Mismo caso que el chip: es una
+// superficie de alto declarado, no un control, asi que el circulo se deriva del lado
+// en vez de pedir la pildora recortada. Y aqui la interpolacion no es teorica — el
+// disco se aprieta al pulsar, y un radio que el navegador recorta saltaria en ese
+// gesto.
+//
+// El lado lo fija el contenido: dos flechas y una etiqueta corta en una linea. Mas
+// pequeno no cabe la etiqueta; mas grande tapa justo lo que se va a arrastrar.
+$cursor-disc-size: 5rem;
+$radius-cursor-disc: math.div($cursor-disc-size, 2);
 
 // Motion.
 //

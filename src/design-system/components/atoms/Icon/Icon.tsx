@@ -24,6 +24,7 @@ export type IconName =
   | "sun"
   | "moon"
   | "arrow"
+  | "arrow-up-right"
   | "chevron"
   | "sound"
   | "mute"
@@ -93,6 +94,20 @@ const ICONS: Record<IconName, IconDefinition> = {
       "m76.5346 31.8467 41.4654 41.5767-41.4654 41.5766h-18.429l33.9984-34.0896h-92.0658671v-14.974h92.0658671l-33.9984-34.0897z",
       "m.00000377 80.7447-.00000377-80.74469922 14.6416-.00000078v80.7447z",
     ],
+  },
+
+  /**
+   * La diagonal de "esto lleva a otro sitio", de Lucide (ISC, trazado copiado como
+   * el resto: una dependencia entera por dos lineas de path no se paga).
+   *
+   * Es la que acompana a una etiqueta dentro de un control, y por eso NO es la
+   * `arrow` del pie: esa trae su propio lienzo de 118 y su barra suelta, pensada
+   * para leerse grande y sola. Esta cae en la reticula de 24 y al mismo grosor que
+   * el resto de los de interfaz, que es lo que la deja emparejar con un texto.
+   */
+  "arrow-up-right": {
+    stroke: true,
+    paths: ["M7 7h10v10", "M7 17 17 7"],
   },
 
   /**

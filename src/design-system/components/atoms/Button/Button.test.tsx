@@ -38,6 +38,28 @@ describe("Button", () => {
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
+  it("sin la prop no hay icono: la flecha promete un destino y no toda accion lo tiene", () => {
+    const { container } = render(<Button>Enviar</Button>);
+
+    expect(container.querySelector("svg")).toBeNull();
+  });
+
+  /**
+   * El icono es decoracion: el nombre del control lo pone su etiqueta. Si el dibujo
+   * entrara al arbol, un enlace con flecha se anunciaria dos veces.
+   */
+  it("con icono sigue habiendo un solo nombre accesible", () => {
+    const { container } = render(
+      <Button href="/trabajo" icon="arrow-up-right">
+        Ver el trabajo
+      </Button>,
+    );
+
+    expect(container.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByRole("link", { name: "Ver el trabajo" })).toBeInTheDocument();
+    expect(declared.has("icon")).toBe(true);
+  });
+
   it("type submit se respeta: un boton de formulario no puede ser button", () => {
     render(<Button type="submit">Enviar</Button>);
 

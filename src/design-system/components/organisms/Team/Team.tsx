@@ -32,19 +32,22 @@ export interface TeamMember {
 
 export interface TeamProps {
   title: string;
+  /** El trozo del titular que se resalta con el scroll. */
+  titleHighlight?: string;
   label: string;
   intro: string;
   members: TeamMember[];
   titleId?: string;
 }
 
-export function Team({ title, label, intro, members, titleId }: TeamProps) {
+export function Team({ title, titleHighlight, label, intro, members, titleId }: TeamProps) {
   const rootRef = useMomentumHover<HTMLDivElement>();
 
   return (
     <div ref={rootRef} className={styles.root}>
       <StripHeader
         title={title}
+        titleHighlight={titleHighlight}
         label={label}
         intro={intro}
         titleId={titleId}
