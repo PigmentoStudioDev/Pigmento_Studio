@@ -29,6 +29,7 @@ const MEMBERS = ["one", "two", "three", "four", "five"] as const;
 export function getTeam(t: Translate): TeamProps {
   return {
     title: t("title"),
+    titleHighlight: t("titleHighlight"),
     label: t("label"),
     intro: t("intro"),
     members: MEMBERS.map((key, index) => ({

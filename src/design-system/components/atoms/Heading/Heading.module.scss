@@ -1,5 +1,6 @@
 @use '../../../styles/carbon-config';
 
+@use '../../../styles/highlight';
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/theme';
 
@@ -48,4 +49,10 @@
 
 .toneSecondary {
   color: theme.$text-secondary;
+}
+
+// El trozo resaltado. Vacio hasta que un ScrollHighlight por encima publique el
+// progreso; sin el, el titular se lee igual y sin resalte.
+.mark {
+  @include highlight.mark;
 }

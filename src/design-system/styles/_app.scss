@@ -32,6 +32,22 @@
   --pg-topbar-offset: 0rem;
 }
 
+// Con el cursor propio a la vista, el del sistema se esconde. Lo marca useCustomCursor
+// en la raiz solo cuando se instala —puntero fino y sin reduced-motion— y lo quita al
+// salir el puntero de la ventana, asi que un tactil o un fallo de carga nunca se
+// quedan sin cursor.
+//
+// Los campos de texto conservan el suyo: la barra de escritura dice donde cae el
+// clic, y eso importa mas que la estetica.
+:root[data-custom-cursor],
+:root[data-custom-cursor] * {
+  cursor: none;
+}
+
+:root[data-custom-cursor] :is(input, textarea, select, [contenteditable]) {
+  cursor: auto;
+}
+
 :root:has([data-topbar]) {
   --pg-topbar-offset: #{brand.$topbar-block-size};
 }

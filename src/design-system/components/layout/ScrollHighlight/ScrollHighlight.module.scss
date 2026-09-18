@@ -1,0 +1,6 @@
+@use '../../../styles/carbon-config';
+
+// Sin caja: el envoltorio solo existe para publicar el progreso que heredan las marcas.
+.root {
+  display: contents;
+}

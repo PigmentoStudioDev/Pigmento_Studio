@@ -60,11 +60,44 @@
       "motion": "motion",
       "close": " nobody skips."
     },
+    "values": {
+      "title": "How we do it",
+      "carousel": "carousel",
+      "previous": "Previous value",
+      "next": "Next value",
+      "picker": "Choose a value",
+      "drag": "Drag",
+      "position": "{current} of {total}",
+      "cards": {
+        "direct": {
+          "title": "You talk to who does the work",
+          "text": "No account managers in between: whoever designs your brand is who answers your emails."
+        },
+        "tested": {
+          "title": "Tested before it launches",
+          "text": "Every decision is validated with the people who will use it, not in a boardroom."
+        },
+        "sameTable": {
+          "title": "Design and code, one team",
+          "text": "What you approve on screen is what goes live, with nothing lost between teams."
+        },
+        "criteria": {
+          "title": "Built to last",
+          "text": "Decisions that keep working once this year's trend has passed."
+        },
+        "measured": {
+          "title": "Results in plain sight",
+          "text": "Speed, conversions and reach measured from day one, with numbers you can check."
+        }
+      }
+    },
     "work": {
       "title": "Featured work",
+      "titleHighlight": "Featured",
       "label": "Cases",
       "intro": "Identities, websites, motion pieces and campaigns. A sample of what leaves the studio when the brief is taken seriously.",
       "cta": "See all work",
+      "cursor": "View case",
       "placeholderClient": "Client",
       "disciplines": {
         "branding": "Branding",
@@ -73,8 +106,34 @@
         "marketing": "Marketing"
       }
     },
+    "services": {
+      "title": "Services",
+      "titleHighlight": "Services",
+      "label": "Offer",
+      "intro": "Four disciplines that work together: hire one or the whole project.",
+      "cta": "See service",
+      "items": {
+        "branding": {
+          "name": "Branding",
+          "scope": "Identity, naming and visual system"
+        },
+        "web": {
+          "name": "Web development",
+          "scope": "Sites, e-commerce and performance"
+        },
+        "motion": {
+          "name": "Motion",
+          "scope": "Brand animation, video and interface"
+        },
+        "marketing": {
+          "name": "Marketing",
+          "scope": "Campaigns, content and paid media"
+        }
+      }
+    },
     "team": {
       "title": "Team",
+      "titleHighlight": "Team",
       "label": "Who does it",
       "intro": "A small studio where the person designing your brand is the one answering your emails. No layers of account management between you and the work.",
       "one": {
@@ -100,6 +159,7 @@
     },
     "faq": {
       "title": "FAQ",
+      "titleHighlight": "FAQ",
       "label": "Frequently asked questions",
       "intro": "Choosing a studio is an expensive decision to undo. Below are the questions people ask us before signing, answered the way we'd answer them on a call.",
       "price": {
@@ -130,6 +190,7 @@
     "cta": {
       "label": "Get in touch",
       "title": "Book a call and let's see where your brand starts.",
+      "titleHighlight": "where your brand starts",
       "cta": "Book a call"
     }
   },

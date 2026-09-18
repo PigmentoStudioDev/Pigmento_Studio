@@ -60,11 +60,44 @@
       "motion": "motion",
       "close": " que nadie se salta."
     },
+    "values": {
+      "title": "Cómo lo hacemos",
+      "carousel": "carrusel",
+      "previous": "Valor anterior",
+      "next": "Valor siguiente",
+      "picker": "Elegir valor",
+      "drag": "Arrastra",
+      "position": "{current} de {total}",
+      "cards": {
+        "direct": {
+          "title": "Hablas con quien lo hace",
+          "text": "Sin ejecutivos de cuenta de por medio: quien diseña tu marca es quien contesta tus correos."
+        },
+        "tested": {
+          "title": "Se prueba antes de lanzarse",
+          "text": "Cada decisión se valida con la gente que la va a usar, no en una sala de juntas."
+        },
+        "sameTable": {
+          "title": "Diseño y código, un solo equipo",
+          "text": "Lo que apruebas en pantalla es lo que se publica, sin nada perdido entre equipos."
+        },
+        "criteria": {
+          "title": "Pensado para durar",
+          "text": "Decisiones que siguen funcionando cuando pase la moda de este año."
+        },
+        "measured": {
+          "title": "Resultados a la vista",
+          "text": "Velocidad, conversiones y alcance medidos desde el primer día, con números que puedes revisar."
+        }
+      }
+    },
     "work": {
       "title": "Trabajo destacado",
+      "titleHighlight": "destacado",
       "label": "Casos",
       "intro": "Identidades, sitios, piezas de motion y campañas. Una muestra de lo que sale del estudio cuando el encargo se toma en serio.",
       "cta": "Ver todo el trabajo",
+      "cursor": "Ver caso",
       "placeholderClient": "Cliente",
       "disciplines": {
         "branding": "Branding",
@@ -73,8 +106,34 @@
         "marketing": "Marketing"
       }
     },
+    "services": {
+      "title": "Servicios",
+      "titleHighlight": "Servicios",
+      "label": "Oferta",
+      "intro": "Cuatro disciplinas que trabajan juntas: puedes contratar una o el proyecto completo.",
+      "cta": "Ver servicio",
+      "items": {
+        "branding": {
+          "name": "Branding",
+          "scope": "Identidad, naming y sistema visual"
+        },
+        "web": {
+          "name": "Desarrollo web",
+          "scope": "Sitios, e-commerce y rendimiento"
+        },
+        "motion": {
+          "name": "Motion",
+          "scope": "Animación de marca, video e interfaz"
+        },
+        "marketing": {
+          "name": "Marketing",
+          "scope": "Campañas, contenido y pauta"
+        }
+      }
+    },
     "team": {
       "title": "Equipo",
+      "titleHighlight": "Equipo",
       "label": "Quién lo hace",
       "intro": "Un estudio pequeño en el que la persona que diseña tu marca es la misma que contesta tus correos. Sin capas de gestión entre tú y quien hace el trabajo.",
       "one": {
@@ -100,6 +159,7 @@
     },
     "faq": {
       "title": "FAQ",
+      "titleHighlight": "FAQ",
       "label": "Preguntas frecuentes",
       "intro": "Elegir estudio es una decisión cara de deshacer. Abajo están las preguntas que nos hacen antes de firmar, contestadas como las contestamos en una llamada.",
       "price": {
@@ -130,6 +190,7 @@
     "cta": {
       "label": "Hablemos",
       "title": "Agendemos una llamada y vemos por dónde empieza tu marca.",
+      "titleHighlight": "por dónde empieza tu marca",
       "cta": "Agendar una llamada"
     }
   },

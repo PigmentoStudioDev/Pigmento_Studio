@@ -2,6 +2,7 @@ import { Button } from "../../atoms/Button/Button";
 import { Heading } from "../../atoms/Heading/Heading";
 import { SectionChip } from "../../atoms/SectionChip/SectionChip";
 import { Subheading } from "../../atoms/Subheading/Subheading";
+import { ScrollHighlight } from "../../layout/ScrollHighlight/ScrollHighlight";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import { HeroBand, type HeroBandItem } from "../../molecules/HeroBand/HeroBand";
 import styles from "./HeroStatement.module.scss";
@@ -16,6 +17,8 @@ import styles from "./HeroStatement.module.scss";
  */
 export interface HeroStatementProps {
   title: string;
+  /** El trozo del titular que se resalta con el scroll. */
+  titleHighlight?: string;
   eyebrow?: string;
   subtitle?: string;
   ctaLabel?: string;
@@ -25,6 +28,7 @@ export interface HeroStatementProps {
 
 export function HeroStatement({
   title,
+  titleHighlight,
   eyebrow,
   subtitle,
   ctaLabel,
@@ -41,11 +45,13 @@ export function HeroStatement({
         ) : null}
 
         <div className={styles.title}>
-          <ScrollReveal by="lines">
-            <Heading level={1} size="heading">
-              {title}
-            </Heading>
-          </ScrollReveal>
+          <ScrollHighlight>
+            <ScrollReveal by="lines">
+              <Heading level={1} size="heading" highlight={titleHighlight}>
+                {title}
+              </Heading>
+            </ScrollReveal>
+          </ScrollHighlight>
         </div>
 
         {subtitle ? (
@@ -59,7 +65,7 @@ export function HeroStatement({
         {ctaLabel && ctaHref ? (
           <div className={styles.cta}>
             <ScrollReveal by="block">
-              <Button href={ctaHref} size="lg">
+              <Button href={ctaHref} size="lg" icon="arrow-up-right">
                 {ctaLabel}
               </Button>
             </ScrollReveal>

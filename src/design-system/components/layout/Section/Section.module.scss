@@ -78,3 +78,43 @@
 .spacingLoose {
   padding-block: spacing.$spacing-11;
 }
+
+// Despues de los de arriba a proposito: misma especificidad, y el orden es lo que
+// hace que el aire propio de un lado gane al del eje comun.
+.spacingStartNone {
+  padding-block-start: 0;
+}
+
+.spacingStartCompact {
+  padding-block-start: spacing.$spacing-07;
+}
+
+.spacingStartDefault {
+  padding-block-start: spacing.$spacing-09;
+}
+
+.spacingStartLoose {
+  padding-block-start: spacing.$spacing-11;
+}
+
+.spacingEndNone {
+  padding-block-end: 0;
+}
+
+.spacingEndCompact {
+  padding-block-end: spacing.$spacing-07;
+}
+
+.spacingEndDefault {
+  padding-block-end: spacing.$spacing-09;
+}
+
+.spacingEndLoose {
+  padding-block-end: spacing.$spacing-11;
+}
+
+// El color del tema se queda; solo se quita la capa de ruido. Detras de .root por
+// lo mismo: gana por orden, sin subir especificidad.
+.surfaceSolid {
+  background-image: none;
+}

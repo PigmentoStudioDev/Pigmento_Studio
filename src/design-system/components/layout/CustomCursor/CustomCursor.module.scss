@@ -1,0 +1,177 @@
+@use 'sass:map';
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// La flecha mide lo mismo que en el portfolio: 24px contra el cuerpo base.
+$arrow-size: 1.5rem;
+
+/// Cuanto se corre la flecha para que la PUNTA, y no la esquina de su caja, caiga en
+/// el punto del puntero. Es el ajuste del portfolio, en rem.
+$arrow-offset-x: -0.25rem;
+$arrow-offset-y: -0.125rem;
+
+/// Cuanto se aprieta con el boton abajo. Poco a proposito: es la confirmacion del
+/// gesto, no un gesto propio.
+$drag-press: 0.92;
+
+/// El chevron de la pastilla: el verde de la familia candy lima, la marca en vez del
+/// verde suelto de la referencia.
+$chevron-color: map.get(map.get(brand.$candy-families, 'lime'), saturated);
+
+// Fija y sin caja propia: las capas se posicionan contra la ventana. Lleva la zona de
+// tema que pone el hook, asi que los tokens de abajo cambian con lo que hay debajo.
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: brand.$z-cursor;
+  pointer-events: none;
+  // Sin fondo propio: la zona de Carbon solo tiene que redeclarar los tokens.
+  background: none;
+}
+
+// Nada se ve hasta que el hook marca el documento. Sin JS, en tactil o con
+// reduced-motion la marca no llega nunca y queda el cursor del sistema.
+.pointer,
+.follower {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  opacity: 0;
+}
+
+:root[data-custom-cursor] .pointer {
+  opacity: 1;
+}
+
+:root[data-custom-cursor] .follower {
+  opacity: 1;
+}
+
+.arrow {
+  display: block;
+  inline-size: $arrow-size;
+  block-size: $arrow-size;
+  translate: $arrow-offset-x $arrow-offset-y;
+}
+
+// Relleno del texto y borde del fondo: sobre cualquier superficie la flecha tiene un
+// canto que la separa. En zona oscura los dos se invierten solos.
+.arrowShape {
+  fill: theme.$text-primary;
+  stroke: theme.$background;
+  stroke-width: 1.5;
+}
+
+// El relleno de la capa es lo que decide cuando la pastilla ya no cabe: el hook mide
+// su borde derecho contra la ventana.
+.follower {
+  padding-block-start: spacing.$spacing-05;
+  padding-inline: spacing.$spacing-03 spacing.$spacing-05;
+}
+
+// Centrado en el puntero, al reves que la pastilla: el disco ES el cursor mientras se
+// arrastra, asi que su sitio es el punto y no al lado.
+.drag {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  display: flex;
+  gap: spacing.$spacing-02;
+  align-items: center;
+  justify-content: center;
+  inline-size: brand.$cursor-disc-size;
+  block-size: brand.$cursor-disc-size;
+  border-radius: brand.$radius-cursor-disc;
+  background-color: theme.$background-inverse;
+  color: theme.$text-inverse;
+  opacity: 0;
+  translate: -50% -50%;
+  scale: 0.8;
+  transition:
+    scale brand.$duration-half brand.$ease-default,
+    opacity brand.$duration-quarter brand.$ease-default;
+}
+
+.root[data-cursor-variant='drag'] .drag {
+  opacity: 1;
+  scale: 1;
+}
+
+// Con el boton abajo el disco se aprieta: la misma confirmacion que da un boton.
+:root[data-cursor-pressed] .root[data-cursor-variant='drag'] .drag {
+  scale: $drag-press;
+}
+
+// La flecha se retira cuando el disco esta: dos cursores a la vez en el mismo punto
+// se leen como un fallo de pintado.
+.root[data-cursor-variant='drag'] .pointer {
+  opacity: 0;
+}
+
+// Una apunta a cada lado: es la misma forma girada, como en la pastilla.
+.dragArrow {
+  inline-size: 0.3125rem;
+  flex: none;
+}
+
+.dragArrow:first-child {
+  rotate: 180deg;
+}
+
+.dragText {
+  @include brandtype.style('label');
+
+  white-space: nowrap;
+}
+
+.scramble {
+  position: relative;
+  display: flex;
+  gap: spacing.$spacing-03;
+  align-items: center;
+  justify-content: center;
+  block-size: 2em;
+  padding-inline: spacing.$spacing-04;
+  border-radius: brand.$radius-03;
+  background-color: theme.$background-inverse;
+  color: theme.$text-inverse;
+  opacity: 0;
+  transform: translateX(0%) scale(1) rotate(0.001deg);
+  transition:
+    transform brand.$duration-half brand.$ease-default,
+    opacity brand.$duration-quarter brand.$ease-default brand.$duration-quarter;
+}
+
+.root[data-cursor-variant='scramble'] .follower[data-cursor-state='active'] .scramble,
+.root[data-cursor-variant='scramble'] .follower[data-cursor-state='active-edge'] .scramble {
+  opacity: 1;
+  transition:
+    transform brand.$duration-half brand.$ease-default,
+    opacity brand.$duration-quarter brand.$ease-default;
+}
+
+.follower[data-cursor-state='active-edge'] .scramble {
+  transform: translateX(-100%) scale(1) rotate(0.001deg);
+}
+
+.scrambleText {
+  @include brandtype.style('label');
+
+  white-space: nowrap;
+}
+
+.chevron {
+  inline-size: 0.375em;
+  color: $chevron-color;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scramble,
+  .drag {
+    transition: none;
+  }
+}

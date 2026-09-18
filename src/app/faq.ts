@@ -17,6 +17,7 @@ const ITEMS = ["price", "time", "remote", "ownership", "scope", "start"] as cons
 export function getFaq(t: Translate): FaqProps {
   return {
     title: t("title"),
+    titleHighlight: t("titleHighlight"),
     label: t("label"),
     intro: t("intro"),
     items: ITEMS.map((key) => ({

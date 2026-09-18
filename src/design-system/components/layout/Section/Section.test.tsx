@@ -17,7 +17,7 @@ import { render, screen } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { compile, type Options } from "sass";
 import { describe, expect, it } from "vitest";
-import { Section, type SectionSpacing, type SectionTheme, type SectionWidth } from "./Section";
+import { Section, type SectionSpacing, type SectionSurface, type SectionTheme, type SectionWidth } from "./Section";
 
 const WIDTHS: SectionWidth[] = ["content", "wide", "full", "strip"];
 const SPACINGS: SectionSpacing[] = ["none", "compact", "default", "loose"];
@@ -144,6 +144,22 @@ describe("Section", () => {
     expect(
       [...own, ...(inner?.classList ?? [])].filter((cls) => !declared.has(cls)),
     ).toEqual([]);
+  });
+
+  /**
+   * Los dos ejes opcionales suman UNA clase cada uno solo cuando se piden, y la hoja
+   * la declara. Sin pedirlos no aparecen: el caso de arriba ya cuenta tres clases.
+   */
+  it.each([
+    ...SPACINGS.map((spacingStart) => ({ label: `spacingStart=${spacingStart}`, props: { spacingStart } })),
+    ...SPACINGS.map((spacingEnd) => ({ label: `spacingEnd=${spacingEnd}`, props: { spacingEnd } })),
+    ...(["solid"] as SectionSurface[]).map((surface) => ({ label: `surface=${surface}`, props: { surface } })),
+  ])("$label anade una clase que existe en Section.module.scss", ({ props }) => {
+    const { container } = render(<Section {...props}>x</Section>);
+    const own = [...sectionOf(container).classList];
+
+    expect(own).toHaveLength(4);
+    expect(own.filter((cls) => !declared.has(cls))).toEqual([]);
   });
 
   it.each([

@@ -5,17 +5,17 @@ import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
 
 /**
- * El subrayado que se rellena conforme la frase cruza la pantalla.
+ * El resaltado que se rellena conforme el texto cruza la pantalla.
  *
- * Portado del de Portfolio2026 con los mismos tres cambios de casa que el odometro:
- * props en vez de barrer el documento buscando `[data-scroll-highlight]`, gsap por
- * su unica puerta, y el estado de reposo en la HOJA y no en JS.
+ * Portado del de Portfolio2026 con los cambios de casa: props en vez de barrer el
+ * documento, gsap por su unica puerta, y el reposo en la HOJA y no en JS.
  *
- * Ese tercero es el que mas cambia. Alli el relleno arranca poniendo
- * `backgroundSize: 0%` desde JS, asi que entre el primer pintado y la llegada de
- * gsap la marca se ve YA rellena y luego se vacia de golpe. Aqui el 0% lo pone el
- * CSS, gsap solo lo lleva al 100%, y con `prefers-reduced-motion` una @media lo deja
- * relleno sin que nada tenga que preguntar por la preferencia.
+ * **No anima las marcas: anima un numero.** Publica el progreso en
+ * `--pg-highlight-progress` sobre la raiz, y cada <mark> lo lee de su antepasado. Es
+ * lo que le permite convivir con el reveal por lineas: SplitText corta una marca que
+ * cruza dos lineas en dos copias, y vuelve a cortar al cambiar el ancho. Una marca
+ * apuntada al montar dejaria de estar en el DOM; un numero heredado les llega a las
+ * copias que haya en cada momento.
  *
  * `scrub` y no una duracion: el relleno ES la barra de scroll, y por eso no lleva
  * curva propia — la pone quien desplaza.
@@ -23,33 +23,40 @@ import { loadMotion, type MatchMedia } from "./gsap";
 export interface ScrollHighlightOptions {
   scrollStart?: string;
   scrollEnd?: string;
-  /** Retardo entre marcas cuando hay varias, en segundos de la linea de tiempo. */
-  stagger?: number;
 }
 
 const DEFAULTS = {
   scrollStart: "top 85%",
   scrollEnd: "bottom 20%",
-  stagger: 0.12,
   scrub: 0.35,
 } as const;
 
-/** Lo que el hook rellena. El marcado lo pone el componente. */
-export const HIGHLIGHT_ATTR = "data-highlight";
+export const HIGHLIGHT_PROGRESS_PROPERTY = "--pg-highlight-progress";
+
+/**
+ * Lo primero con caja, bajando por el primer hijo. Un envoltorio con `display:
+ * contents` no tiene caja y ScrollTrigger lo mediria en cero —el relleno saldria
+ * completo desde el principio—, y aqui van dos seguidos: este y el del reveal. El
+ * numero se sigue poniendo en la raiz, que es de quien lo heredan las marcas.
+ */
+function boxedElement(root: Element): Element | null {
+  let element: Element | null = root;
+  while (element && element.getClientRects().length === 0) element = element.firstElementChild;
+  return element;
+}
 
 export function useScrollHighlight<T extends HTMLElement>({
   scrollStart = DEFAULTS.scrollStart,
   scrollEnd = DEFAULTS.scrollEnd,
-  stagger = DEFAULTS.stagger,
 }: ScrollHighlightOptions = {}) {
   const ref = useRef<T>(null);
 
   useEffect(() => {
     const root = ref.current;
-    if (!root) return;
+    if (!root || !root.querySelector("mark")) return;
 
-    const marcas = root.querySelectorAll<HTMLElement>(`[${HIGHLIGHT_ATTR}]`);
-    if (!marcas.length) return;
+    const trigger = boxedElement(root);
+    if (!trigger) return;
 
     let mm: MatchMedia | undefined;
     let cancelled = false;
@@ -61,25 +68,19 @@ export function useScrollHighlight<T extends HTMLElement>({
 
       mm.add({ ...MOTION_BREAKPOINTS, isReduced: REDUCED_MOTION }, (context) => {
         // Con la preferencia puesta no se toca nada: la hoja ya deja la marca
-        // rellena en su @media, asi que el texto se lee subrayado y quieto.
+        // rellena en su @media.
         if (context.conditions?.isReduced) return;
 
-        const tl = gsap.timeline({
-          scrollTrigger: { trigger: root, start: scrollStart, end: scrollEnd, scrub: DEFAULTS.scrub },
-        });
-
-        marcas.forEach((marca, i) => {
-          tl.to(
-            marca,
-            {
-              backgroundSize: "100% 100%",
-              // conformance-exempt: motion-literal — con scrub la curva la pone la barra de scroll; 'none' es la AUSENCIA de curva, no una segunda conviviendo con la de marca.
-              ease: "none",
-              duration: 1,
-            },
-            i * stagger,
-          );
-        });
+        gsap.fromTo(
+          root,
+          { [HIGHLIGHT_PROGRESS_PROPERTY]: 0 },
+          {
+            [HIGHLIGHT_PROGRESS_PROPERTY]: 1,
+            // conformance-exempt: motion-literal — con scrub la curva la pone la barra de scroll; 'none' es la AUSENCIA de curva, no una segunda conviviendo con la de marca.
+            ease: "none",
+            scrollTrigger: { trigger, start: scrollStart, end: scrollEnd, scrub: DEFAULTS.scrub },
+          },
+        );
       });
     });
 
@@ -87,7 +88,7 @@ export function useScrollHighlight<T extends HTMLElement>({
       cancelled = true;
       mm?.revert();
     };
-  }, [scrollStart, scrollEnd, stagger]);
+  }, [scrollStart, scrollEnd]);
 
   return ref;
 }

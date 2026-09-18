@@ -1,0 +1,29 @@
+// El resaltado que se rellena con el scroll, como estilo de la marca.
+//
+// Vive aqui porque lo pintan dos piezas —el titular y la frase en trozos— y el
+// relleno tiene que ser identico en las dos. Lo que no vive aqui es CUANTO va
+// rellenado: eso lo publica useScrollHighlight en --pg-highlight-progress, sobre un
+// antepasado que no se parte.
+
+@use '@carbon/react/scss/theme';
+
+/// Va en el <mark>. El relleno sale de un NUMERO heredado y no de un estilo puesto en
+/// la marca: el partido por lineas del reveal corta la marca en una copia por linea, y
+/// un estilo escrito en la original no llegaria a las copias. Una custom property del
+/// antepasado les llega a todas.
+@mixin mark {
+  background-image: linear-gradient(theme.$highlight, theme.$highlight);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: calc(var(--pg-highlight-progress, 0) * 100%) 100%;
+  // <mark> trae fondo y color propios del navegador: el fondo lo pone el gradiente y
+  // el color tiene que seguir al tema.
+  background-color: transparent;
+  color: inherit;
+
+  // Quien pide menos movimiento lee el resalte ya puesto. En la hoja y no desde JS:
+  // es cierto antes de que gsap llegue, y sigue siendolo si no llega nunca.
+  @media (prefers-reduced-motion: reduce) {
+    background-size: 100% 100%;
+  }
+}

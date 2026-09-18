@@ -51,7 +51,8 @@ $hidden-scale: 0.95;
 .backdrop {
   position: fixed;
   inset: 0;
-  background-color: theme.$overlay;
+  background-color: brand.$surface-header-overlay;
+  backdrop-filter: blur(brand.$header-overlay-blur);
   opacity: 0;
   // visibility, y no solo opacity: un fondo transparente pero visible seguiria
   // comiendose los clics de toda la pagina con el panel cerrado.

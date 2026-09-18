@@ -99,3 +99,22 @@ export function loadObserver(): Promise<ObserverPlugin> {
 
   return observer;
 }
+
+/**
+ * Aparte por lo mismo que la inercia: solo lo usa el cursor con texto, y no tiene por
+ * que descargarlo quien navega con el dedo.
+ */
+let scrambleText: Promise<void> | null = null;
+
+export function loadScrambleText(): Promise<void> {
+  scrambleText ??= (async () => {
+    const [{ gsap }, { ScrambleTextPlugin }] = await Promise.all([
+      import("gsap"),
+      import("gsap/ScrambleTextPlugin"),
+    ]);
+
+    gsap.registerPlugin(ScrambleTextPlugin);
+  })();
+
+  return scrambleText;
+}
