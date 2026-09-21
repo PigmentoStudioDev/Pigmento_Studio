@@ -16,6 +16,8 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
   arquitectura: aqui el CMS es local al proceso y hay una sola persona. La key se crea en
   el panel y corre como su dueño con `overrideAccess: false`; `users` no se expone. Tres
   gates nuevos, verificados en rojo. Programa en `specs/mcp/`.
+- **El MCP desde Claude web.** Un conector de claude.ai no manda headers, asi que la key
+  puede ir en la URL (`?key=`) por `overrideAuth` del plugin. Key aparte solo para el chat.
 - **Next 16.3.5.** La revision de seguridad del MCP saco a la luz GHSA-2xp9-vwfh-vxw4
   (RCE por AVIF en la optimizacion de imagen, Next < 16.3.3): la tool de subida era una
   entrada al host que `next/image` autoriza. Parche, y AVIF y SVG fuera de la lista de
