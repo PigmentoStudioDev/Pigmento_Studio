@@ -7,6 +7,11 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
 
 ### Added
 
+- **Pagina publica de legales** en `/[locale]/legales/[slug]`, con el indice pegajoso al lado
+  derivado del cuerpo (plantilla Relume Content 28) y los enlaces del pie consultados al CMS.
+  Se prerenderiza solo lo publicado y `dynamicParams = false`, asi que una direccion inventada
+  es un 404 estatico que no toca la base de datos — y un legal nuevo necesita un despliegue.
+  Lo unico que cruza al navegador es el indice, para decir por donde va la lectura.
 - **Coleccion `legal`**: aviso de privacidad, terminos y cookies. El cuerpo es una LISTA de
   secciones y no un bloque de texto, porque la pagina lleva un indice al lado y ese indice
   se deriva del cuerpo — cada seccion trae encabezado, nivel y un ancla que acuña el
