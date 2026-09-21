@@ -1,0 +1,99 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand';
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// Las cuatro pilas del documento solo se diferencian en el hueco, asi que la
+// declaracion comun va una vez: agrupar aqui es CSS que no se descarga cuatro
+// veces, y este gate mide justo eso.
+.root,
+.head,
+.body,
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.root {
+  gap: spacing.$spacing-09;
+}
+
+.head {
+  gap: spacing.$spacing-05;
+  max-inline-size: 60ch;
+}
+
+// Lo mismo con la prosa: cuatro bloques de texto con el mismo reposo.
+.effective,
+.intro,
+.paragraph,
+.list {
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.effective {
+  @include brandtype.style('label');
+}
+
+.intro {
+  @include brandtype.style('lead');
+}
+
+.paragraph {
+  @include brandtype.style('body');
+}
+
+/**
+ * Dos columnas desde 'lg': el cuerpo y el indice. Por debajo es una sola y el
+ * indice queda arriba, que es el orden del marcado — no hace falta reordenar.
+ */
+.columns {
+  display: grid;
+  gap: spacing.$spacing-07;
+
+  @include breakpoint.breakpoint('lg') {
+    grid-template-columns: minmax(0, 1fr) brand.$track-aside;
+    gap: spacing.$spacing-09;
+
+    // El indice va DESPUES visualmente y ANTES en el marcado. Es la unica
+    // reordenacion, y solo en la anchura donde las dos columnas existen.
+    .aside {
+      order: 2;
+      position: sticky;
+      // Que no se pegue al borde de arriba al fijarse.
+      inset-block-start: spacing.$spacing-07;
+      align-self: start;
+    }
+
+    .body {
+      order: 1;
+    }
+  }
+}
+
+.body {
+  gap: spacing.$spacing-08;
+  // La medida de lectura. Un legal a todo lo ancho no lo lee nadie.
+  max-inline-size: 70ch;
+}
+
+.section {
+  gap: spacing.$spacing-04;
+
+  /**
+   * El ancla es el destino de un enlace del indice, y el indice esta pegajoso.
+   * Sin este margen el encabezado al que se salta queda pegado al techo de la
+   * ventana.
+   */
+  scroll-margin-block-start: spacing.$spacing-07;
+}
+
+.list {
+  @include brandtype.style('body');
+
+  padding-inline-start: spacing.$spacing-05;
+}
