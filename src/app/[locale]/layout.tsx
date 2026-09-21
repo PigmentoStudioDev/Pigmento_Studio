@@ -14,6 +14,7 @@ import { pageStatusScript } from "@/design-system/motion/pageReady";
 import { themeModeScript } from "@/design-system/theme/mode";
 import { routing } from "@/i18n/routing";
 import { getFooter } from "../footer";
+import { getLegalLinks } from "@/cms/legal";
 import { getFeaturedPieces } from "@/cms/projects";
 import { getNavigation } from "../navigation";
 import { getTopBar } from "../topbar";
@@ -113,6 +114,9 @@ export default async function RootLayout({
   // NavBanner ya lo aguanta: no hay fallback a los PNG de public/, porque un
   // fallback silencioso convierte "el CMS no responde" en "el sitio se ve bien".
   const pieces = await getFeaturedPieces(locale);
+  // Los legales del pie salen del CMS, como el escaparate del menu. Coleccion
+  // vacia, fila sin enlaces legales: no hay forma de enlazar a un 404.
+  const legals = await getLegalLinks(locale);
   const tFooter = await getTranslations("footer");
   const tTopBar = await getTranslations("topbar");
 
@@ -181,7 +185,7 @@ export default async function RootLayout({
               contentinfo — la regla de HTML es que solo lo es cuando no esta
               anidado — y ademas el pie no es un bloque que el CMS vaya a colocar
               entre otros, asi que no tiene ritmo vertical que heredar. */}
-          <SiteFooter {...getFooter(tFooter)} />
+          <SiteFooter {...getFooter(tFooter, legals)} />
         </NextIntlClientProvider>
       </body>
     </html>

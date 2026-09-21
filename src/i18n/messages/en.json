@@ -164,5 +164,9 @@
   "topbar": {
     "promo": "Brand design and growth from Mexico City",
     "agency": "Let's talk about your next project"
+  },
+  "legal": {
+    "effectiveSince": "In effect since {date}",
+    "tocLabel": "Document contents"
   }
 }
