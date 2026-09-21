@@ -181,6 +181,30 @@ describe('anchorSections', () => {
   });
 
   /**
+   * Dos filas guardadas con la MISMA ancla ya estaban rotas: el segundo enlace del
+   * indice llevaba al primero. Recuperarlas tal cual perpetuaba la duplicidad, asi
+   * que se desempatan igual que las acuñadas. Pasa con datos anteriores a este
+   * hook o con una peticion que repite un id.
+   */
+  it('desempata dos anclas guardadas iguales', () => {
+    const out = anchorSections<AnchorableLegal>(
+      {
+        sections: [
+          { id: 'fila-1', heading: 'Vigencia' },
+          { id: 'fila-2', heading: 'Vigencia' },
+        ],
+      },
+      {
+        sections: [
+          { id: 'fila-1', heading: 'Vigencia', anchor: 'vigencia' },
+          { id: 'fila-2', heading: 'Vigencia', anchor: 'vigencia' },
+        ],
+      },
+    );
+    expect(out.sections?.map((x) => x.anchor)).toEqual(['vigencia', 'vigencia-2']);
+  });
+
+  /**
    * Dos encabezados iguales darian dos anclas iguales, y entonces el segundo
    * enlace del indice lleva al primero. Se desempata con un sufijo.
    */
