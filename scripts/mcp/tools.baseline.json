@@ -1,0 +1,291 @@
+{
+  "tools": [
+    {
+      "name": "createMedia",
+      "required": [
+        "alt"
+      ],
+      "props": [
+        "alt",
+        "depth",
+        "draft",
+        "fallbackLocale",
+        "filename",
+        "filesize",
+        "focalX",
+        "focalY",
+        "height",
+        "locale",
+        "mimeType",
+        "prefix",
+        "select",
+        "thumbnailURL",
+        "url",
+        "width"
+      ]
+    },
+    {
+      "name": "createProjects",
+      "required": [
+        "cover",
+        "slug",
+        "title"
+      ],
+      "props": [
+        "_status",
+        "client",
+        "cover",
+        "depth",
+        "discipline",
+        "draft",
+        "fallbackLocale",
+        "featured",
+        "gallery",
+        "locale",
+        "order",
+        "select",
+        "slug",
+        "summary",
+        "title",
+        "year"
+      ]
+    },
+    {
+      "name": "createProposals",
+      "required": [
+        "client",
+        "currency",
+        "status"
+      ],
+      "props": [
+        "accessToken",
+        "addOns",
+        "addOnsIntro",
+        "addOnsTitle",
+        "baseTitle",
+        "client",
+        "closing",
+        "contactEmail",
+        "context",
+        "coverImage",
+        "criteria",
+        "currency",
+        "deliverables",
+        "depth",
+        "draft",
+        "fallbackLocale",
+        "figures",
+        "findings",
+        "headline",
+        "includedInAll",
+        "locale",
+        "notes",
+        "packages",
+        "recBody",
+        "recHeadline",
+        "recommendedPackage",
+        "routesEyebrow",
+        "scopeItems",
+        "select",
+        "serviceTitle",
+        "status",
+        "tagline",
+        "technicalNote",
+        "terms",
+        "termsTitle",
+        "validUntil"
+      ]
+    },
+    {
+      "name": "deleteMedia",
+      "required": [],
+      "props": [
+        "depth",
+        "fallbackLocale",
+        "id",
+        "locale",
+        "where"
+      ]
+    },
+    {
+      "name": "deleteProjects",
+      "required": [],
+      "props": [
+        "depth",
+        "fallbackLocale",
+        "id",
+        "locale",
+        "where"
+      ]
+    },
+    {
+      "name": "deleteProposals",
+      "required": [],
+      "props": [
+        "depth",
+        "fallbackLocale",
+        "id",
+        "locale",
+        "where"
+      ]
+    },
+    {
+      "name": "findMedia",
+      "required": [],
+      "props": [
+        "depth",
+        "draft",
+        "fallbackLocale",
+        "id",
+        "limit",
+        "locale",
+        "page",
+        "select",
+        "sort",
+        "where"
+      ]
+    },
+    {
+      "name": "findProjects",
+      "required": [],
+      "props": [
+        "depth",
+        "draft",
+        "fallbackLocale",
+        "id",
+        "limit",
+        "locale",
+        "page",
+        "select",
+        "sort",
+        "where"
+      ]
+    },
+    {
+      "name": "findProposals",
+      "required": [],
+      "props": [
+        "depth",
+        "draft",
+        "fallbackLocale",
+        "id",
+        "limit",
+        "locale",
+        "page",
+        "select",
+        "sort",
+        "where"
+      ]
+    },
+    {
+      "name": "pigmento_upload_media",
+      "required": [
+        "alt",
+        "source"
+      ],
+      "props": [
+        "alt",
+        "source"
+      ]
+    },
+    {
+      "name": "updateMedia",
+      "required": [],
+      "props": [
+        "alt",
+        "depth",
+        "draft",
+        "fallbackLocale",
+        "filename",
+        "filesize",
+        "focalX",
+        "focalY",
+        "height",
+        "id",
+        "locale",
+        "mimeType",
+        "overrideLock",
+        "prefix",
+        "select",
+        "thumbnailURL",
+        "url",
+        "where",
+        "width"
+      ]
+    },
+    {
+      "name": "updateProjects",
+      "required": [],
+      "props": [
+        "_status",
+        "client",
+        "cover",
+        "depth",
+        "discipline",
+        "draft",
+        "fallbackLocale",
+        "featured",
+        "gallery",
+        "id",
+        "locale",
+        "order",
+        "overrideLock",
+        "select",
+        "slug",
+        "summary",
+        "title",
+        "where",
+        "year"
+      ]
+    },
+    {
+      "name": "updateProposals",
+      "required": [],
+      "props": [
+        "accessToken",
+        "addOns",
+        "addOnsIntro",
+        "addOnsTitle",
+        "baseTitle",
+        "client",
+        "closing",
+        "contactEmail",
+        "context",
+        "coverImage",
+        "criteria",
+        "currency",
+        "deliverables",
+        "depth",
+        "draft",
+        "fallbackLocale",
+        "figures",
+        "findings",
+        "headline",
+        "id",
+        "includedInAll",
+        "locale",
+        "notes",
+        "overrideLock",
+        "packages",
+        "recBody",
+        "recHeadline",
+        "recommendedPackage",
+        "routesEyebrow",
+        "scopeItems",
+        "select",
+        "serviceTitle",
+        "status",
+        "tagline",
+        "technicalNote",
+        "terms",
+        "termsTitle",
+        "validUntil",
+        "where"
+      ]
+    }
+  ],
+  "resources": [
+    "pigmento://cms/guia",
+    "pigmento://cms/media"
+  ]
+}
