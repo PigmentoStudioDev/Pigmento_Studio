@@ -59,6 +59,10 @@ export interface AnchorableLegal {
  * sola, una fila nueva colocada antes en el orden se lleva el nombre limpio y
  * empuja a la guardada a `-2`, que es justo el enlace que no puede moverse.
  *
+ * "No se recalcula" no es "se copia sin mirar": lo guardado tambien se sanea y
+ * tambien se desempata. Un ancla duplicada o con basura ya estaba rota, y
+ * devolverla intacta solo mantiene rota la pagina.
+ *
  * Funcion pura y exportada por su test, como `criterionKey` y `alignProposal`.
  */
 export function anchorSections<T extends AnchorableLegal>(
@@ -79,8 +83,16 @@ export function anchorSections<T extends AnchorableLegal>(
   // Pasada 1: resolver lo guardado y reservar su nombre.
   const recuperadas = data.sections.map((section) => {
     const guardada = section.id ? guardadas.get(String(section.id)) : undefined;
-    if (guardada) usadas.add(guardada);
-    return guardada;
+    if (!guardada) return undefined;
+
+    // Tambien lo recuperado se desempata. Dos filas guardadas con la misma ancla
+    // ya estaban rotas —el segundo enlace del indice llevaba al primero—, y
+    // devolverlas tal cual perpetuaba la duplicidad. Pasa con datos anteriores a
+    // este hook o con una peticion que repite un id.
+    let anchor = guardada;
+    for (let n = 2; usadas.has(anchor); n += 1) anchor = `${guardada}-${n}`;
+    usadas.add(anchor);
+    return anchor;
   });
 
   // Pasada 2: acunar solo lo que no tenia ancla guardada.
