@@ -7,6 +7,12 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
 
 ### Added
 
+- **Coleccion `legal`**: aviso de privacidad, terminos y cookies. El cuerpo es una LISTA de
+  secciones y no un bloque de texto, porque la pagina lleva un indice al lado y ese indice
+  se deriva del cuerpo — cada seccion trae encabezado, nivel y un ancla que acuña el
+  servidor y que no cambia aunque se corrija el titulo. Sin rich text, como el resto del
+  repo. Publica solo lo publicado, con borradores; por MCP se crea y se edita, pero no se
+  borra: un legal borrado es un 404 en una URL indexada.
 - **El CMS por MCP.** `POST /api/mcp` sobre el plugin oficial de Payload, misma version
   pinneada: CRUD de `media`, `projects` y `proposals`, la tool `pigmento_upload_media`
   (URL https o base64 → R2, alt en dos idiomas, tope 15 MB, solo hosts con nombre) y
