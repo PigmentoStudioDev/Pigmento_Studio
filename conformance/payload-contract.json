@@ -108,5 +108,34 @@
       "total",
       "subtotal"
     ]
+  },
+  "mcp": {
+    "why": "el MCP es la unica puerta del CMS que abre un modelo por encargo. Lo que aqui se relaja no lo ve nadie en el panel: se ve en R2, en la base o en el repo",
+    "dir": "mcp/",
+    "acceso": {
+      "metodos": [
+        "find",
+        "findByID",
+        "create",
+        "update",
+        "delete"
+      ],
+      "exige": [
+        "overrideAccess: false"
+      ],
+      "why": "cada llamada corre como el usuario dueño de la API key. La Local API se salta el control de acceso POR DEFECTO, asi que sin esta linea una tool custom escribe lo que la coleccion prohibe, sin error y sin que ningun tipo se queje"
+    },
+    "sinExperimental": {
+      "archivos": [
+        "payload.config.ts"
+      ],
+      "pattern": "\\bexperimental\\s*:",
+      "why": "las tools experimentales del plugin escriben archivos de coleccion y editan payload.config.ts en disco. En Vercel no tienen sentido y en local son un agente reescribiendo el repo por un canal sin diff"
+    },
+    "noExponeUsers": {
+      "file": "mcp/plugin.ts",
+      "pattern": "^\\s*(users|'users'|\"users\"|payload-mcp-api-keys|'payload-mcp-api-keys')\\s*:",
+      "why": "dar de alta gente es del panel: un MCP con createUsers es una puerta que nadie pidio. Y una key que crea keys es escalada sin diff. El test de Vitest lo afirma sobre el objeto; este gate es la segunda red, para que no dependa de que alguien corra los tests"
+    }
   }
 }

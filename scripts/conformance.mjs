@@ -440,6 +440,40 @@ function sectionBudgets() {
   }
 }
 
+/**
+ * Cada llamada `payload.<metodo>(` de un archivo, con sus argumentos ya sin
+ * comentarios y la linea donde empieza. La comparten las lecturas de cms/ y las
+ * tools de mcp/: la forma de encontrar una llamada es la misma, lo que cambia es
+ * lo que cada directorio exige de ella.
+ *
+ * Se equilibran llaves desde la llamada hasta cerrar su argumento. Un regex de
+ * una linea no sirve: las opciones ocupan varias, y un gate que solo mira la
+ * primera pasa verde sobre la consulta que importa.
+ *
+ * Sin comentarios: si no, `/* accessToken *\/` pegado a la llamada compra el
+ * gate entero. La comprobacion tiene que mirar codigo, no prosa.
+ */
+function* llamadasLocalApi(src, metodos) {
+  const LLAMADA = new RegExp(`payload\\.(${metodos.join('|')})\\(`, 'g');
+
+  for (const hit of src.matchAll(LLAMADA)) {
+    const desde = hit.index + hit[0].length;
+    let nivel = 0;
+    let fin = desde;
+    for (; fin < src.length; fin += 1) {
+      if (src[fin] === '(' || src[fin] === '{') nivel += 1;
+      else if (src[fin] === ')' || src[fin] === '}') {
+        nivel -= 1;
+        if (nivel < 0) break;
+      }
+    }
+    const crudo = src.slice(desde, fin);
+    if (/conformance-exempt/.test(crudo)) continue;
+
+    yield { args: stripComments(crudo), nLinea: src.slice(0, hit.index).split('\n').length };
+  }
+}
+
 /** payload — la frontera entre el CMS y el sitio. */
 function sectionPayload() {
   const contract = readJson('payload-contract.json');
@@ -507,36 +541,13 @@ function sectionPayload() {
 
   // 2c. Las lecturas de la Local API, coleccion por coleccion.
   const lec = contract.lecturas;
-  const LLAMADA = new RegExp(`payload\\.(${lec.metodos.join('|')})\\(`, 'g');
 
   for (const file of walk(join(base, lec.dir), ['.ts', '.tsx'])) {
     if (file.endsWith('.test.ts')) continue;
     const rel = relative(base, file);
     const src = readFileSync(file, 'utf8');
 
-    for (const hit of src.matchAll(LLAMADA)) {
-      /**
-       * Se equilibran llaves desde la llamada hasta cerrar su argumento. Un regex
-       * de una linea no sirve: las opciones ocupan varias, y un gate que solo mira
-       * la primera pasa verde sobre la consulta que importa.
-       */
-      const desde = hit.index + hit[0].length;
-      let nivel = 0;
-      let fin = desde;
-      for (; fin < src.length; fin += 1) {
-        if (src[fin] === '(' || src[fin] === '{') nivel += 1;
-        else if (src[fin] === ')' || src[fin] === '}') {
-          nivel -= 1;
-          if (nivel < 0) break;
-        }
-      }
-      const crudo = src.slice(desde, fin);
-      if (/conformance-exempt/.test(crudo)) continue;
-
-      // Sin comentarios: si no, `/* accessToken */` pegado a la llamada compra el
-      // gate entero. La comprobacion tiene que mirar codigo, no prosa.
-      const args = stripComments(crudo);
-      const nLinea = src.slice(0, hit.index).split('\n').length;
+    for (const { args, nLinea } of llamadasLocalApi(src, lec.metodos)) {
 
       const coleccion = args.match(/collection:\s*['"`]([^'"`]+)/)?.[1];
       const regla = (coleccion && lec.porColeccion[coleccion]) || lec.porDefecto;
@@ -577,6 +588,48 @@ function sectionPayload() {
             quejarse(`sin \`${campo}\` COMO CAMPO DEL where`);
           }
         }
+      }
+    }
+  }
+
+  // 2e. El MCP: cada llamada a la Local API respeta el acceso, sin tools
+  // experimentales y sin exponer users. Es la unica puerta del CMS que abre un
+  // modelo por encargo, y lo que aqui se relaja no lo ve nadie en el panel.
+  const mcp = contract.mcp;
+  const mcpFiles = [...walk(join(base, mcp.dir), ['.ts'])].filter((f) => !f.endsWith('.test.ts'));
+
+  for (const file of mcpFiles) {
+    const rel = relative(base, file);
+    const src = readFileSync(file, 'utf8');
+    for (const { args, nLinea } of llamadasLocalApi(src, mcp.acceso.metodos)) {
+      for (const exigido of mcp.acceso.exige) {
+        if (!args.includes(exigido)) {
+          fail('payload', `${rel}:${nLinea}: llamada a la Local API sin \`${exigido}\` — ${mcp.acceso.why}`);
+        }
+      }
+    }
+  }
+
+  const exp = mcp.sinExperimental;
+  const EXPERIMENTAL = new RegExp(exp.pattern);
+  for (const file of [...mcpFiles, ...exp.archivos.map((f) => join(base, f))]) {
+    const rel = relative(base, file);
+    for (const line of codeLines(readFileSync(file, 'utf8'))) {
+      if (EXPERIMENTAL.test(line.text)) {
+        fail('payload', `${rel}:${line.n}: mcp-sin-experimental — ${exp.why}`);
+      }
+    }
+  }
+
+  const usr = mcp.noExponeUsers;
+  const USERS = new RegExp(usr.pattern);
+  const pluginFile = join(base, usr.file);
+  if (!existsSync(pluginFile)) {
+    fail('payload', `${usr.file}: no existe — ${usr.why}`);
+  } else {
+    for (const line of codeLines(readFileSync(pluginFile, 'utf8'))) {
+      if (USERS.test(line.text)) {
+        fail('payload', `${usr.file}:${line.n}: mcp-no-expone-users — ${usr.why}`);
       }
     }
   }
