@@ -2,6 +2,7 @@ import config from '@payload-config';
 import { getPayload } from 'payload';
 import type { Media, Proposal } from '@/payload-types';
 import type { Locale } from '@/i18n/routing';
+import { lines, paragraphs } from './text';
 
 /**
  * El adaptador de las propuestas. Es la frontera entre una coleccion PRIVADA y
@@ -121,22 +122,6 @@ export interface ProposalView {
   termsTitle: string | null;
   terms: ProposalTerm[];
   closing: string | null;
-}
-
-/** Una linea por renglon, sin las vacias. Es como se captura una lista en una textarea. */
-function lines(value?: string | null): string[] {
-  return (value ?? '')
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean);
-}
-
-/** Los parrafos van separados por linea en blanco, que es como se escribe prosa. */
-function paragraphs(value?: string | null): string[] {
-  return (value ?? '')
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean);
 }
 
 function toPrice(row: {
