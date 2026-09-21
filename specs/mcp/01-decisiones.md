@@ -96,6 +96,14 @@ el `inputSchema` de `create<Slug>` / `update<Slug>` y es lo que un cliente lee p
 - **Cliente:** `claude mcp add --transport http pigmento-cms <url> --header "Authorization: Bearer <key>"`,
   y `.mcp.json` en el repo con `${PIGMENTO_MCP_KEY}` para que el proyecto lo traiga
   solo (M3). Cualquier otro cliente MCP con HTTP + header sirve igual.
+- **Claude web, la key en la query.** Un conector personalizado de claude.ai solo acepta
+  una URL (y OAuth opcional): ni headers ni bearer. El plugin autentica por header, pero
+  `overrideAuth` deja pasarle una key alternativa a su helper por defecto, así que
+  `?key=<key>` en la URL entra por ahí y, sin `key`, todo sigue como antes. Verificado en
+  vivo: sin nada 401, `?key=` correcta 200, `?key=` falsa 401, header solo 200. Si vienen
+  las dos, manda la query. El precio es un secreto en la URL (logs, historial), y se paga
+  con una key aparte solo para el chat, revocable sin tocar la otra. OAuth de verdad —el
+  camino de Atom— queda para cuando el MCP deje de ser de una persona.
 - `maxDuration`: 60 s (default del plugin); la subida de un asset de 15 MB desde una
   URL cabe. Se deja explícito en `handlerOptions` para que sea un diff cambiarlo.
 

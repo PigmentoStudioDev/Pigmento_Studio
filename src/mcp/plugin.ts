@@ -95,8 +95,29 @@ export const MCP_RESOURCES = [
 
 export const MCP_TOOLS = [uploadMediaTool];
 
+/**
+ * La key, si viene en la URL como `?key=`. Claude web solo acepta una URL para
+ * un conector personalizado — ni headers ni bearer — y el plugin autentica por
+ * el header. Sin `key` en la query se devuelve undefined y el plugin sigue
+ * leyendo `Authorization` como siempre; la key de la query no sustituye a la
+ * del header, la complementa.
+ *
+ * Un secreto en la URL puede quedar en logs y en el historial del navegador:
+ * es una key APARTE, solo para el chat, que se revoca desde el panel sin tocar
+ * la de Claude Code.
+ */
+export function apiKeyFromUrl(url: string): string | undefined {
+  try {
+    return new URL(url).searchParams.get('key') || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export const pigmentoMcp = mcpPlugin({
   collections: MCP_COLLECTIONS,
+  overrideAuth: (req, getDefaultMcpAccessSettings) =>
+    getDefaultMcpAccessSettings(apiKeyFromUrl(req.url ?? '')),
   mcp: {
     tools: MCP_TOOLS,
     resources: MCP_RESOURCES,

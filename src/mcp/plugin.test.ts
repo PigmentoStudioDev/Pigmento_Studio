@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { instructions } from './instructions';
-import { MCP_COLLECTIONS } from './plugin';
+import { MCP_COLLECTIONS, apiKeyFromUrl } from './plugin';
 
 /**
  * Contrato de la superficie del MCP, no del plugin. Se afirma sobre el objeto
@@ -50,5 +50,25 @@ describe('instructions', () => {
     expect(instructions).toContain('pigmento://cms/guia');
     expect(instructions).toContain('pigmento://cms/media');
     expect(instructions).toMatch(/borrador/);
+  });
+});
+
+describe('apiKeyFromUrl', () => {
+  /**
+   * Claude web solo acepta una URL para un conector: ni headers ni bearer. La
+   * key viaja en la query, y solo se usa si viene; sin ella, el plugin sigue
+   * leyendo el header Authorization como siempre.
+   */
+  it('saca la key de ?key=', () => {
+    expect(apiKeyFromUrl('https://x.test/api/mcp?key=abc-123')).toBe('abc-123');
+  });
+
+  it.each([
+    ['https://x.test/api/mcp', 'sin query'],
+    ['https://x.test/api/mcp?key=', 'vacia'],
+    ['https://x.test/api/mcp?otra=1', 'otro parametro'],
+    ['no-es-url', 'no es URL'],
+  ])('devuelve undefined con %s (%s)', (url) => {
+    expect(apiKeyFromUrl(url)).toBeUndefined();
   });
 });

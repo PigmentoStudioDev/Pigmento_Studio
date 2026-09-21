@@ -306,6 +306,11 @@ expone y con que reglas vive en `src/mcp/`; el programa entero en `specs/mcp/`.
 - **Conectar**: `.mcp.json` ya declara el servidor; solo hace falta
   `export PIGMENTO_MCP_KEY=<la key>` antes de abrir Claude Code en este repo. A mano:
   `claude mcp add --transport http pigmento-cms http://localhost:3000/api/mcp --header "Authorization: Bearer <key>"`.
+- **Claude web** (claude.ai → Conectores → personalizado) solo acepta una URL, sin headers:
+  la key va en la query, `https://<host>/api/mcp?key=<key>`. Es una key APARTE, solo para
+  el chat, con los toggles que el chat necesite: un secreto en la URL puede quedar en logs
+  y en el historial, y asi se revoca desde el panel sin tocar la de Claude Code. Sin `key`
+  en la query el plugin lee `Authorization` como siempre.
 - **Verificar**: `MCP_API_KEY=<key> node scripts/mcp-oraculo.mjs` contra `pnpm dev`
   (o `MCP_URL=...` contra otro). Compara la superficie con `scripts/mcp/tools.baseline.json`
   y hace el round-trip de un PNG: subida a R2, alt en ingles, borrado. Sale con 2 sin
