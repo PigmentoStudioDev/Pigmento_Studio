@@ -43,6 +43,23 @@ metadatos. Reglas de los assets: \`pigmento://cms/media\`.
   y acuña las claves de \`findings\`: no las escribas.
 - \`notes\` es interno y nunca llega a la pagina.
 
+### legal — los textos legales
+- Una entrada por documento: aviso de privacidad, terminos, cookies. \`slug\` unico y NO
+  localizado; \`title\`, \`intro\` y \`tocTitle\` si se localizan.
+- \`effectiveDate\` es desde cuando rige esta version, y va arriba del documento.
+- El cuerpo es \`sections\`, una LISTA, no un bloque de texto: la pagina lleva un indice al
+  lado y ese indice sale de aqui. Cada seccion tiene \`heading\`, \`level\` (2 seccion, 3
+  subseccion), \`body\` con un parrafo por bloque separados por linea en blanco, y \`items\`
+  para una lista opcional.
+- \`anchor\` lo acuña el SERVIDOR desde el encabezado al CREAR: no lo escribas, y lo que
+  mandes ahi se sanea igual, asi que no sirve para meter nada.
+- Al ACTUALIZAR, devuelve en cada seccion el \`anchor\` tal cual lo leiste. Una fila que
+  llega sin el se trata como nueva y su ancla se recalcula desde el encabezado nuevo, lo
+  que rompe un enlace que puede estar pegado en un correo. No es un capricho: estas tools
+  no admiten el \`id\` de una fila, asi que el ancla es lo unico que la identifica.
+- Tiene borradores y no se puede borrar por aqui. Publicar un legal es decision de la
+  persona.
+
 ## Lo que no existe
 - Usuarios: se dan de alta en el panel, no por aqui.
 - Globals de navegacion y pie: todavia no estan en el CMS.
