@@ -94,6 +94,23 @@
           "cms/"
         ],
         "why": "cms/ es el adaptador entre Payload y el sitio: lo consume una RUTA. Si lo importa un organismo, el design system pasa a depender del CMS por la puerta de atras y la frontera deja de existir aunque el archivo siga ahi"
+      },
+      {
+        "to": "mcp/",
+        "importableFrom": [
+          "mcp/",
+          "payload.config.ts"
+        ],
+        "why": "mcp/ es el conector entre el CMS y los clientes MCP: lo monta payload.config.ts como plugin y nadie mas. Si lo importa una ruta o un organismo, el sitio pasa a depender de un canal que existe para agentes, y la frontera deja de existir aunque el directorio siga ahi"
+      },
+      {
+        "from": "mcp/",
+        "mayNotImport": [
+          "app/",
+          "cms/",
+          "design-system/"
+        ],
+        "why": "el conector habla con Payload por slugs y por req.payload, que es lo que el plugin entrega. Si conoce al adaptador cms/ o a un organismo, un cambio del sitio rompe una tool sin que ningun test del sitio lo note; y si conoce app/, se lleva rutas de Next a una funcion que solo sirve JSON-RPC"
       }
     ]
   }
