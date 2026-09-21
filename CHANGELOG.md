@@ -7,6 +7,19 @@ El proyecto todavia no versiona: hasta el primer release todo entra en `Unreleas
 
 ### Added
 
+- **El CMS por MCP.** `POST /api/mcp` sobre el plugin oficial de Payload, misma version
+  pinneada: CRUD de `media`, `projects` y `proposals`, la tool `pigmento_upload_media`
+  (URL https o base64 → R2, alt en dos idiomas, tope 15 MB, solo hosts con nombre) y
+  los resources `pigmento://cms/guia` y `pigmento://cms/media`. Se replica del conector
+  Knowledge de Atom lo que hace usable un MCP para poblar contenido —descripciones que
+  enseñan a escribir, instrucciones de servidor, oraculo por el cable— y no su
+  arquitectura: aqui el CMS es local al proceso y hay una sola persona. La key se crea en
+  el panel y corre como su dueño con `overrideAccess: false`; `users` no se expone. Tres
+  gates nuevos, verificados en rojo. Programa en `specs/mcp/`.
+- **Next 16.3.5.** La revision de seguridad del MCP saco a la luz GHSA-2xp9-vwfh-vxw4
+  (RCE por AVIF en la optimizacion de imagen, Next < 16.3.3): la tool de subida era una
+  entrada al host que `next/image` autoriza. Parche, y AVIF y SVG fuera de la lista de
+  subida.
 - **Modo claro y oscuro, por zonas.** El modo NO es un vocabulario nuevo: es cual de
   las cuatro zonas de Carbon lleva `<html>`. Una seccion declara un ROL (`base` |
   `alt`) y el par de zonas de su modo lo resuelve por descendencia — la misma seccion

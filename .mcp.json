@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "pigmento-cms": {
+      "type": "http",
+      "url": "http://localhost:3000/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${PIGMENTO_MCP_KEY}"
+      }
+    }
+  }
+}
