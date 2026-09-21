@@ -129,6 +129,11 @@ $container-full: 120rem;
 /// una medida de la reticula, y la reticula es del sistema.
 $track-card: 22rem;
 
+/// Ancho del carril lateral: el indice de un documento largo. Mas estrecho que una
+/// tarjeta porque no lleva contenido, lleva destinos — y un indice tan ancho como el
+/// texto deja de leerse como el margen del documento.
+$track-aside: 16rem;
+
 /// Unidad de la reticula del hero. Lado y aire salen de ella, como en la referencia,
 /// para que la proporcion pieza/hueco sea la misma en cualquier pantalla.
 $grid-tile-unit: clamp(1.5rem, 2vw, 3rem);

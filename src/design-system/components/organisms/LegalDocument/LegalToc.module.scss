@@ -1,0 +1,62 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.toc {
+  @include breakpoint.breakpoint('lg') {
+    // Un indice mas alto que la ventana tiene que rodar por su cuenta, o sus
+    // ultimas entradas quedan fuera de alcance mientras esta fijado.
+    max-block-size: calc(100svh - #{spacing.$spacing-09});
+    overflow-y: auto;
+  }
+}
+
+.tocTitle {
+  @include brandtype.style('label');
+
+  cursor: pointer;
+  padding-block: spacing.$spacing-04;
+
+  @include breakpoint.breakpoint('lg') {
+    // En dos columnas el indice esta siempre abierto: el rotulo deja de ser un
+    // mando y vuelve a ser un rotulo.
+    cursor: default;
+    pointer-events: none;
+    list-style: none;
+  }
+}
+
+.tocList {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 spacing.$spacing-05;
+  padding: 0;
+  list-style: none;
+}
+
+.tocLink {
+  @include brandtype.style('control-s');
+
+  display: block;
+  padding-block: spacing.$spacing-02;
+  color: theme.$text-secondary;
+  text-decoration: none;
+
+  // La subseccion se sangra: es lo que la distingue de un renglon mas de la lista.
+  &[data-level='3'] {
+    padding-inline-start: spacing.$spacing-05;
+  }
+
+  /**
+   * Donde va la lectura. `aria-current` es el dato y el selector a la vez: no hay
+   * una clase paralela que pueda quedar desincronizada del atributo que anuncia
+   * el lector de pantalla.
+   */
+  &:hover,
+  &[aria-current='true'] {
+    color: theme.$text-primary;
+  }
+}
