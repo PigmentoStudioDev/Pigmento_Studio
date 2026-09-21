@@ -288,6 +288,35 @@ nunca un directorio en bloque: cada componente que se muda al navegador tiene qu
 una linea visible en el diff. Ayuda que `@carbon/react` ya trae `"use client"` en su
 propio barrel — una molecula que solo compone Carbon se queda server component.
 
+## El MCP del CMS
+
+El CMS se puede poblar desde Claude Code o cualquier cliente MCP: `POST /api/mcp`, sobre
+el plugin oficial `@payloadcms/plugin-mcp` (misma version pinneada que Payload). Que
+expone y con que reglas vive en `src/mcp/`; el programa entero en `specs/mcp/`.
+
+- **Superficie**: `find/create/update/delete` de `media`, `projects` y `proposals` (los
+  nombres los pone el plugin: `findProjects`, `createMedia`...), la tool propia
+  `pigmento_upload_media` (URL https o base64 → R2, con alt en `es` y `en`) y dos
+  resources: `pigmento://cms/guia` (como esta modelado el CMS) y `pigmento://cms/media`
+  (reglas de los assets). `users` y la coleccion de keys quedan fuera a proposito.
+- **Auth**: una API key creada en `/admin`, grupo **MCP → API Keys**, ligada a tu propio
+  usuario. Cada llamada corre como ese usuario con `overrideAccess: false`: lo que el
+  panel no deja hacer, el MCP tampoco. Cada key lleva toggles por operacion, tool y
+  resource, asi que `delete` se apaga desde el panel sin deploy.
+- **Conectar**: `.mcp.json` ya declara el servidor; solo hace falta
+  `export PIGMENTO_MCP_KEY=<la key>` antes de abrir Claude Code en este repo. A mano:
+  `claude mcp add --transport http pigmento-cms http://localhost:3000/api/mcp --header "Authorization: Bearer <key>"`.
+- **Verificar**: `MCP_API_KEY=<key> node scripts/mcp-oraculo.mjs` contra `pnpm dev`
+  (o `MCP_URL=...` contra otro). Compara la superficie con `scripts/mcp/tools.baseline.json`
+  y hace el round-trip de un PNG: subida a R2, alt en ingles, borrado. Sale con 2 sin
+  key. Si la superficie cambia a proposito: `--capturar` y subir `SERVER_INFO.version`.
+- **Dos reglas duras**, con gate cada una en `payload-contract.json › mcp`: toda
+  llamada a la Local API en `mcp/` lleva `overrideAccess: false`; y las tools
+  `experimental` del plugin no se encienden — escriben archivos de coleccion y editan
+  `payload.config.ts` en disco, un agente reescribiendo el repo por un canal sin diff.
+- Una colección o global nuevo se añade a `MCP_COLLECTIONS` en su propio diff. Cada
+  tool o resource propio añade un checkbox a la coleccion de keys: `migrate:create`.
+
 ## `/ds` es herramienta de desarrollo
 
 La pagina de preview no es una pagina del sitio. Queda **exenta de i18n** (decision de
