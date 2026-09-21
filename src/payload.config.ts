@@ -8,6 +8,7 @@ import { Media } from './collections/Media';
 import { Projects } from './collections/Projects';
 import { Proposals } from './collections/Proposals';
 import { Users } from './collections/Users';
+import { pigmentoMcp } from './mcp/plugin';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -147,5 +148,13 @@ export default buildConfig({
         forcePathStyle: true,
       },
     }),
+
+    /**
+     * El CMS por MCP: CRUD de las colecciones de contenido y subida de assets
+     * desde Claude Code o cualquier otro cliente. Que expone y con que reglas
+     * vive en src/mcp/plugin.ts; el bearer es una API key creada en el panel
+     * (grupo MCP) y cada llamada corre como su dueño, con overrideAccess: false.
+     */
+    pigmentoMcp,
   ],
 });

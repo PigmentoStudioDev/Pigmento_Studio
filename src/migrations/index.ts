@@ -5,6 +5,8 @@ import * as migration_20260910_221046_proposals from './20260910_221046_proposal
 import * as migration_20260911_151335_propuesta_comparativa from './20260911_151335_propuesta_comparativa';
 import * as migration_20260911_162011_auditoria_y_cifras from './20260911_162011_auditoria_y_cifras';
 import * as migration_20260911_183048_propuesta_bilingue from './20260911_183048_propuesta_bilingue';
+import * as migration_20260921_025843_mcp_api_keys from './20260921_025843_mcp_api_keys';
+import * as migration_20260921_030438_mcp_tool_toggles from './20260921_030438_mcp_tool_toggles';
 
 export const migrations = [
   {
@@ -40,6 +42,16 @@ export const migrations = [
   {
     up: migration_20260911_183048_propuesta_bilingue.up,
     down: migration_20260911_183048_propuesta_bilingue.down,
-    name: '20260911_183048_propuesta_bilingue'
+    name: '20260911_183048_propuesta_bilingue',
+  },
+  {
+    up: migration_20260921_025843_mcp_api_keys.up,
+    down: migration_20260921_025843_mcp_api_keys.down,
+    name: '20260921_025843_mcp_api_keys',
+  },
+  {
+    up: migration_20260921_030438_mcp_tool_toggles.up,
+    down: migration_20260921_030438_mcp_tool_toggles.down,
+    name: '20260921_030438_mcp_tool_toggles'
   },
 ];

@@ -64,6 +64,7 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
+    'payload-mcp-api-keys': PayloadMcpApiKeyAuthOperations;
   };
   blocks: {};
   collections: {
@@ -71,6 +72,7 @@ export interface Config {
     media: Media;
     projects: Project;
     proposals: Proposal;
+    'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +84,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     proposals: ProposalsSelect<false> | ProposalsSelect<true>;
+    'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -97,13 +100,31 @@ export interface Config {
   widgets: {
     collections: CollectionsWidget;
   };
-  user: User;
+  user: User | PayloadMcpApiKey;
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
 export interface UserAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
+export interface PayloadMcpApiKeyAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -402,6 +423,103 @@ export interface Proposal {
   createdAt: string;
 }
 /**
+ * API keys control which collections, resources, tools, and prompts MCP clients can access
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-mcp-api-keys".
+ */
+export interface PayloadMcpApiKey {
+  id: number;
+  /**
+   * The user that the API key is associated with.
+   */
+  user: number | User;
+  /**
+   * A useful label for the API key.
+   */
+  label?: string | null;
+  /**
+   * The purpose of the API key.
+   */
+  description?: string | null;
+  media?: {
+    /**
+     * Allow clients to find media.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create media.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update media.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete media.
+     */
+    delete?: boolean | null;
+  };
+  projects?: {
+    /**
+     * Allow clients to find projects.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create projects.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update projects.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete projects.
+     */
+    delete?: boolean | null;
+  };
+  proposals?: {
+    /**
+     * Allow clients to find proposals.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create proposals.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update proposals.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete proposals.
+     */
+    delete?: boolean | null;
+  };
+  'payload-mcp-tool'?: {
+    /**
+     * Sube un archivo a la coleccion media (R2) desde una URL https o en base64, con su alt en es y opcionalmente en. Devuelve el id, la url y las medidas: usa el id en cover o gallery de un proyecto. Antes de subir, busca en media si el archivo ya existe. Formatos: image/png, image/jpeg, image/webp, image/gif, video/mp4. Tope 15 MB.
+     */
+    pigmentoUploadMedia?: boolean | null;
+  };
+  'payload-mcp-resource'?: {
+    /**
+     * Idiomas, slugs, borradores, cotizaciones privadas y lo que cada campo significa. Leer antes de crear nada.
+     */
+    cmsGuia?: boolean | null;
+    /**
+     * alt obligatorio y localizado, formatos, tope, R2 y que no subir. Leer antes de subir un archivo.
+     */
+    cmsMedia?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
+  collection: 'payload-mcp-api-keys';
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -440,12 +558,21 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'proposals';
         value: number | Proposal;
+      } | null)
+    | ({
+        relationTo: 'payload-mcp-api-keys';
+        value: number | PayloadMcpApiKey;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'payload-mcp-api-keys';
+        value: number | PayloadMcpApiKey;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -455,10 +582,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'payload-mcp-api-keys';
+        value: number | PayloadMcpApiKey;
+      };
   key?: string | null;
   value?:
     | {
@@ -657,6 +789,55 @@ export interface ProposalsSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-mcp-api-keys_select".
+ */
+export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
+  user?: T;
+  label?: T;
+  description?: T;
+  media?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  projects?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  proposals?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  'payload-mcp-tool'?:
+    | T
+    | {
+        pigmentoUploadMedia?: T;
+      };
+  'payload-mcp-resource'?:
+    | T
+    | {
+        cmsGuia?: T;
+        cmsMedia?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
