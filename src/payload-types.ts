@@ -72,6 +72,7 @@ export interface Config {
     media: Media;
     projects: Project;
     proposals: Proposal;
+    legal: Legal;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -84,6 +85,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     proposals: ProposalsSelect<false> | ProposalsSelect<true>;
+    legal: LegalSelect<false> | LegalSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -423,6 +425,63 @@ export interface Proposal {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legal".
+ */
+export interface Legal {
+  id: number;
+  title: string;
+  /**
+   * La direccion del documento: aviso-de-privacidad. No se traduce.
+   */
+  slug: string;
+  /**
+   * Desde cuando rige esta version. Va arriba del documento, antes del indice.
+   */
+  effectiveDate?: string | null;
+  /**
+   * Opcional. El parrafo de entrada, antes del indice.
+   */
+  intro?: string | null;
+  /**
+   * El rotulo del indice lateral.
+   */
+  tocTitle?: string | null;
+  /**
+   * El cuerpo. El indice de la pagina sale de aqui, en este orden.
+   */
+  sections?:
+    | {
+        heading: string;
+        /**
+         * El ancla del indice. La acuna el servidor desde el encabezado.
+         */
+        anchor?: string | null;
+        /**
+         * 2 es una seccion; 3 una subseccion, que el indice sangra. No hay mas.
+         */
+        level: '2' | '3';
+        /**
+         * Un parrafo por bloque, separados por linea en blanco.
+         */
+        body?: string | null;
+        /**
+         * Opcional: la lista que sigue al cuerpo. Un punto por renglon.
+         */
+        items?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * API keys control which collections, resources, tools, and prompts MCP clients can access
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -477,6 +536,20 @@ export interface PayloadMcpApiKey {
      * Allow clients to delete projects.
      */
     delete?: boolean | null;
+  };
+  legal?: {
+    /**
+     * Allow clients to find legal.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create legal.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update legal.
+     */
+    update?: boolean | null;
   };
   proposals?: {
     /**
@@ -558,6 +631,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'proposals';
         value: number | Proposal;
+      } | null)
+    | ({
+        relationTo: 'legal';
+        value: number | Legal;
       } | null)
     | ({
         relationTo: 'payload-mcp-api-keys';
@@ -792,6 +869,35 @@ export interface ProposalsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legal_select".
+ */
+export interface LegalSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  effectiveDate?: T;
+  intro?: T;
+  tocTitle?: T;
+  sections?:
+    | T
+    | {
+        heading?: T;
+        anchor?: T;
+        level?: T;
+        body?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-mcp-api-keys_select".
  */
 export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
@@ -813,6 +919,13 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         create?: T;
         update?: T;
         delete?: T;
+      };
+  legal?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
       };
   proposals?:
     | T

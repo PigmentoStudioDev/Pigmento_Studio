@@ -4,6 +4,7 @@ import { sqliteAdapter } from '@payloadcms/db-sqlite';
 import { s3Storage } from '@payloadcms/storage-s3';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
+import { Legal } from './collections/Legal';
 import { Media } from './collections/Media';
 import { Projects } from './collections/Projects';
 import { Proposals } from './collections/Proposals';
@@ -45,7 +46,7 @@ export default buildConfig({
     importMap: { baseDir: path.resolve(dirname) },
   },
 
-  collections: [Users, Media, Projects, Proposals],
+  collections: [Users, Media, Projects, Proposals, Legal],
 
   secret: process.env.PAYLOAD_SECRET || '',
 
