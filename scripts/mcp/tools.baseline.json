@@ -1,6 +1,27 @@
 {
   "tools": [
     {
+      "name": "createLegal",
+      "required": [
+        "slug",
+        "title"
+      ],
+      "props": [
+        "_status",
+        "depth",
+        "draft",
+        "effectiveDate",
+        "fallbackLocale",
+        "intro",
+        "locale",
+        "sections",
+        "select",
+        "slug",
+        "title",
+        "tocTitle"
+      ]
+    },
+    {
       "name": "createMedia",
       "required": [
         "alt"
@@ -130,6 +151,22 @@
       ]
     },
     {
+      "name": "findLegal",
+      "required": [],
+      "props": [
+        "depth",
+        "draft",
+        "fallbackLocale",
+        "id",
+        "limit",
+        "locale",
+        "page",
+        "select",
+        "sort",
+        "where"
+      ]
+    },
+    {
       "name": "findMedia",
       "required": [],
       "props": [
@@ -186,6 +223,27 @@
       "props": [
         "alt",
         "source"
+      ]
+    },
+    {
+      "name": "updateLegal",
+      "required": [],
+      "props": [
+        "_status",
+        "depth",
+        "draft",
+        "effectiveDate",
+        "fallbackLocale",
+        "id",
+        "intro",
+        "locale",
+        "overrideLock",
+        "sections",
+        "select",
+        "slug",
+        "title",
+        "tocTitle",
+        "where"
       ]
     },
     {

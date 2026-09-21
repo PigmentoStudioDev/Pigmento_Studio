@@ -30,6 +30,23 @@ export const MCP_COLLECTIONS = {
       'Tiene borradores: crea con draft=true y deja que la persona publique. order menor ' +
       'primero; featured lo mete en el escaparate del menu y en el manifiesto.',
   },
+  legal: {
+    /**
+     * Sin `delete`: borrar un documento legal es un 404 en una URL indexada, y
+     * puede ser el texto que un cliente acepto. Esa decision no la toma un
+     * modelo — se hace en el panel, a mano y a sabiendas.
+     */
+    enabled: { find: true, create: true, update: true, delete: false },
+    description:
+      'Los textos legales del sitio: aviso de privacidad, terminos, cookies. El cuerpo es una ' +
+      'lista de secciones, no un bloque de texto: el indice de la pagina se deriva de ellas. ' +
+      'Cada seccion lleva encabezado, nivel (2 seccion, 3 subseccion), parrafos separados por ' +
+      'linea en blanco y una lista opcional. Al CREAR, el ancla la acuña el servidor desde el ' +
+      'encabezado: no la escribas. Al ACTUALIZAR un documento que ya existe, devuelve en cada ' +
+      'seccion el `anchor` tal cual lo leiste: una fila que llega sin el se trata como nueva y ' +
+      'su ancla se recalcula, lo que rompe el enlace del indice que alguien pudo guardar. ' +
+      'Nace en borrador; publicar un legal es decision de la persona.',
+  },
   proposals: {
     enabled: { find: true, create: true, update: true, delete: true },
     description:
@@ -46,7 +63,7 @@ export const MCP_COLLECTIONS = {
  * de scripts/mcp/tools.baseline.json — no la del sitio, que no le dice nada a
  * quien se conecta.
  */
-export const SERVER_INFO = { name: 'pigmento-cms', version: '1' };
+export const SERVER_INFO = { name: 'pigmento-cms', version: '2' };
 
 /**
  * 60 s es el default del plugin; se escribe para que cambiarlo sea un diff. Una

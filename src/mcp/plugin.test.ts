@@ -12,11 +12,29 @@ describe('MCP_COLLECTIONS', () => {
    * una a una: `enabled: true` a secas abriria lo que el plugin decida en la
    * siguiente version.
    */
-  it('expone media, projects y proposals con CRUD completo', () => {
-    expect(Object.keys(MCP_COLLECTIONS).sort()).toEqual(['media', 'projects', 'proposals']);
-    for (const cfg of Object.values(MCP_COLLECTIONS)) {
-      expect(cfg.enabled).toEqual({ find: true, create: true, update: true, delete: true });
+  it('expone media, projects, proposals y legal', () => {
+    expect(Object.keys(MCP_COLLECTIONS).sort()).toEqual(['legal', 'media', 'projects', 'proposals']);
+    for (const slug of ['media', 'projects', 'proposals'] as const) {
+      expect(MCP_COLLECTIONS[slug].enabled).toEqual({
+        find: true,
+        create: true,
+        update: true,
+        delete: true,
+      });
     }
+  });
+
+  /**
+   * Borrar un legal es un 404 en una URL indexada, y puede ser el texto que un
+   * cliente acepto. Se escribe y se edita por MCP; se borra en el panel.
+   */
+  it('legal no se puede borrar por MCP', () => {
+    expect(MCP_COLLECTIONS.legal.enabled).toEqual({
+      find: true,
+      create: true,
+      update: true,
+      delete: false,
+    });
   });
 
   /**
