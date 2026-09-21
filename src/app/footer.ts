@@ -1,4 +1,5 @@
 import type { SiteFooterProps } from "@/design-system/components/organisms/SiteFooter/SiteFooter";
+import type { LegalLink } from "@/cms/legal";
 
 /**
  * El contenido del pie. Vive en app/ y no en el design system por lo mismo que la
@@ -18,7 +19,12 @@ const INSTAGRAM = "https://www.instagram.com/pigmento__studio";
 const BEHANCE = "https://www.behance.net/pigmentostudio1";
 const FACEBOOK = "https://www.facebook.com/pigmentostudiomx/";
 
-export function getFooter(t: Translate): SiteFooterProps {
+/**
+ * Los legales entran como DATO y no como constante, igual que el escaparate entra
+ * en la navegacion: sus direcciones viven en el CMS y sus nombres se traducen ahi.
+ * Lista vacia, fila sin enlaces legales — nunca un enlace a un 404.
+ */
+export function getFooter(t: Translate, legals: LegalLink[] = []): SiteFooterProps {
   return {
     metaLabel: t("metaLabel"),
     meta: [
@@ -41,6 +47,7 @@ export function getFooter(t: Translate): SiteFooterProps {
       { label: t("behance"), href: BEHANCE, name: t("behanceName"), external: true },
       { label: t("facebook"), href: FACEBOOK, name: t("facebookName"), external: true },
       { label: t("city"), plain: true },
+      ...legals.map((legal) => ({ label: legal.title, href: `/legales/${legal.slug}` })),
     ],
   };
 }

@@ -164,5 +164,9 @@
   "topbar": {
     "promo": "Diseño de marca y crecimiento desde Ciudad de México",
     "agency": "Hablemos de tu próximo proyecto"
+  },
+  "legal": {
+    "effectiveSince": "Vigente desde el {date}",
+    "tocLabel": "Contenido del documento"
   }
 }
