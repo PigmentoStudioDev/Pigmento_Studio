@@ -43,7 +43,7 @@
   block-size: brand.$band-card-block-size;
   aspect-ratio: 3 / 4;
   overflow: clip;
-  border-radius: brand.$radius-01;
+  border-radius: brand.$radius-piece;
 
   @include breakpoint.breakpoint-down('md') {
     block-size: brand.$band-card-block-size-compact;

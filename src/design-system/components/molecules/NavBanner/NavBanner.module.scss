@@ -14,8 +14,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  // Superficie grande: el mismo escalon que el banner de la referencia.
-  border-radius: brand.$radius-07;
+  border-radius: brand.$radius-card;
   // Proporcion, no alto fijo. La referencia lo resuelve con un padding-top del
   // 110% sobre un div vacio; aspect-ratio hace lo mismo sin el div y ademas se
   // adapta cuando la columna cambia de ancho.

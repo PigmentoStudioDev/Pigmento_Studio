@@ -34,13 +34,12 @@
   @include brandtype.style('body');
 
   margin: 0;
-  font-weight: 600;
+  font-weight: brandtype.$weight-semibold;
 }
 
 .termLabel {
   @include brandtype.style('label');
 
-  text-transform: uppercase;
 }
 
 .description {

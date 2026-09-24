@@ -39,7 +39,6 @@
   @include brandtype.style('label');
 
   text-align: start;
-  text-transform: uppercase;
   color: theme.$text-secondary;
   padding-block-end: spacing.$spacing-05;
 }
@@ -66,7 +65,6 @@
 .corner {
   @include brandtype.style('label');
 
-  text-transform: uppercase;
   color: theme.$text-secondary;
   padding: spacing.$spacing-05;
   border-block-end: 1px solid theme.$border-strong;
@@ -75,8 +73,7 @@
 .criterion {
   @include brandtype.style('label');
 
-  text-transform: uppercase;
-  font-weight: 600;
+  font-weight: brandtype.$weight-semibold;
   padding: spacing.$spacing-05;
   border-block-end: 1px solid theme.$border-subtle;
 }
@@ -93,7 +90,7 @@
   @include brandtype.style('body');
 
   display: block;
-  font-weight: 600;
+  font-weight: brandtype.$weight-semibold;
 }
 
 .columnMeta {

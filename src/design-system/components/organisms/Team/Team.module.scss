@@ -54,7 +54,7 @@ $portrait-ratio: '3 / 4';
 // repinta la foto entera en cada fotograma en vez de recomponerla.
 .card {
   overflow: hidden;
-  border-radius: brand.$radius-05;
+  border-radius: brand.$radius-piece;
   will-change: transform;
 }
 

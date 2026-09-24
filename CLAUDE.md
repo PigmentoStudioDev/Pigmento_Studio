@@ -215,10 +215,19 @@ parecen, y eso es exactamente lo que se lee como incoherente.
 - `$radius-header` — pildora EXACTA de la barra, derivada de su alto. Un radio
   recortado no interpola: la transicion no se ve hasta que el valor declarado baja
   del recorte, y entonces salta.
+**Mismo rol, mismo radio.** Que cada radio sea un escalon no basta: las fotos del
+hero iban a 2px, las del equipo a 8 y las del trabajo a 12. Los roles viven en
+`_brand.scss` y suben con el tamano de la superficie:
+
+- `$radius-piece` (12) — toda pieza de imagen: tira, reticula, rueda, vista previa.
+- `$radius-card` (16) — tarjeta de contenido o columna destacada.
+- `$radius-plate` (24) — placa de seccion: la llamada final, el panel abierto.
+- `$radius-mark` (12) — el resaltado de los titulares, por trozo de linea.
+
 La **concentricidad** — una caja dentro de otra lleva radio exterior menos la
-separacion, como el `calc(0.125em - 2px)` del original — es la regla, pero todavia no
-hay ninguna superficie anidada que la necesite. Cuando la haya es una linea; un helper
-esperando por si acaso no.
+separacion, como el `calc(0.125em - 2px)` del original — es la regla. La primera
+superficie anidada es la etiqueta sobre las piezas de trabajo: pieza 12 menos 8 de
+hueco, 4 (`$radius-03`).
 
 Lo vigila `__tests__/radius-contract.test.ts`, sobre el CSS compilado y con los dos
 gates verificados en rojo: **todo radio de un componente es un escalon de la escala**,
@@ -432,6 +441,29 @@ expone y con que reglas vive en `src/mcp/`; el programa entero en `specs/mcp/`.
   tool o resource propio añade un checkbox a la coleccion de keys: `migrate:create`.
 
 ## `/ds` es herramienta de desarrollo
+
+### Lenguaje visual
+
+Las reglas que no son de un componente sino de todos. Cada una tiene su gate.
+
+- **Lineas** (`line-contract.test.ts`): `$border-subtle` separa, `$border-strong`
+  senala (cabecera de tabla, indicador apagado). Nunca los numerados (`-01`): escritos
+  a mano salen con el respaldo literal del tema blanco y no re-tematizan.
+- **Pesos** (`type-contract.test.ts`): de `$weight-*`, nunca un numero. Se lee el
+  fuente, porque `600` y `$weight-semibold` compilan igual.
+- **Foco** (`focus-contract.test.ts`): 2px en `$focus` (o `$focus-inverse` sobre
+  superficie invertida), por dentro (-2px) en filas y superficies a sangre, por fuera
+  (2px) en controles con borde propio, o con `box-shadow` en Button e IconButton.
+- **Conmutadores** (`toggle-contract.test.ts`): tema, sonido e idioma son hermanos —
+  mismo cuerpo, mismo hover que invierte placa E icono. El icono de un control mide
+  `$control-icon-size`, uno solo.
+- **Hover de una superficie**: el `layer-hover` de SU capa (`-01` sobre `$layer-01`,
+  `-02` sobre `$layer-02`). El contextual `$layer-hover` no sirve aqui: sin las clases
+  de capa de Carbon vale siempre `-01`, y sobre una superficie `-02` oscurece en vez
+  de aclarar en modo oscuro. Los controles llevan el hover de su atomo; los gestos de
+  fila (rodado, etiqueta, pista) son de cada organismo, como su motion.
+- **Sin caja alta** (`type-contract.test.ts`): ninguna hoja pone mayusculas.
+- **Radios por rol**: ver Radios.
 
 La pagina de preview no es una pagina del sitio. Queda **exenta de i18n** (decision de
 Karen) y no se amplia con previews de cada componente. Del gate de tokens no se exenta.

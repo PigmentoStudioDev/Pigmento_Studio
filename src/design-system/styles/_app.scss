@@ -64,6 +64,14 @@ body {
   margin: 0;
 }
 
+// Los controles de formulario no heredan la familia: el navegador les pone la suya
+// del sistema. Tambien lo hacia el reset de Carbon, y sin el cada <button> cuyo
+// estilo de tipo es la sans —que el mixin no repite porque la pone el body— salia
+// en Arial. Los que piden la mono la siguen declarando y ganan por clase.
+:where(button, input, select, textarea) {
+  font-family: inherit;
+}
+
 // Reposo del caracter que rueda (el gesto, en _roll.scss). Global porque pg-char la
 // crea el hook en runtime: en un modulo, el componente que olvide el mixin se queda
 // con caracteres marcados y sin estilo.

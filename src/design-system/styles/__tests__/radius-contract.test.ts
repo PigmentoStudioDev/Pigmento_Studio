@@ -130,3 +130,42 @@ describe('contrato de radios', () => {
     expect(misuse.map((r) => `${r.rel} · ${r.selector}`)).toEqual([]);
   });
 });
+
+/**
+ * Los roles, y no solo la escala. Que cada radio sea un escalon no basta: las fotos
+ * del hero iban a 2px, las del equipo a 8 y las del trabajo a 12 — tres escalones
+ * validos para UN mismo rol, y junto a botones en pildora se leian como cajas
+ * cuadradas. Mismo rol, mismo radio: por eso los roles viven en _brand.scss.
+ */
+describe('radios por rol', () => {
+  const radiusOf = (rel: string, selector: string): string | undefined =>
+    RADII.find((r) => r.rel === rel && r.selector === selector)?.value;
+
+  const PIECES: ReadonlyArray<readonly [string, string]> = [
+    ['components/molecules/HeroBand/HeroBand.module.scss', '.card'],
+    ['components/organisms/WorkRows/WorkRows.module.scss', '.card'],
+    ['components/organisms/Team/Team.module.scss', '.card'],
+    ['components/organisms/Services/Services.module.scss', '.container'],
+    ['components/molecules/RadialGallery/RadialGallery.module.scss', '.thumb'],
+    ['components/molecules/InfiniteGrid/InfiniteGrid.module.scss', '.card'],
+  ];
+
+  it('toda pieza de imagen lleva el mismo radio', () => {
+    const values = PIECES.map(([rel, selector]) => `${rel.split('/').at(-1)} ${selector} · ${radiusOf(rel, selector)}`);
+    const unique = new Set(PIECES.map(([rel, selector]) => radiusOf(rel, selector)));
+
+    expect(unique.size, values.join('\n')).toBe(1);
+    expect([...unique][0]).not.toBe('0');
+  });
+
+  it('la placa de la llamada final no es una caja cuadrada', () => {
+    const value = radiusOf('components/organisms/FinalCta/FinalCta.module.scss', '.panel');
+
+    expect(value).toBeDefined();
+    expect(value).not.toBe('0');
+  });
+
+  it('el resaltado de los titulares redondea cada trozo de linea', () => {
+    expect(radiusOf('components/atoms/Heading/Heading.module.scss', '.mark')).toBeDefined();
+  });
+});

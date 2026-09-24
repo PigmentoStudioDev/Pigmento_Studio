@@ -39,8 +39,8 @@
 .track {
   position: relative;
   display: block;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
+  inline-size: brand.$control-icon-size;
+  block-size: brand.$control-icon-size;
   overflow: clip;
 }
 

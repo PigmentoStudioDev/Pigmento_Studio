@@ -63,15 +63,15 @@ $-styles: (
   // llegue de un borde al otro.
   //
   // Ahi el clamp deja de proteger y pasa a estorbar en los dos extremos. Con el
-  // suelo de 3.5rem, tres palabras en caja alta desbordan un movil de 375px y sacan
+  // suelo de 3.5rem, tres palabras desbordan un movil de 375px y sacan
   // barra horizontal al SITIO ENTERO; con el techo de 9.375rem, la linea deja de
   // llegar al borde a partir de 1500px y la composicion se descuadra sola. En vw
   // puro la proporcion contra la ventana es la misma en las dos, que es la unica
   // forma de que una linea a sangre siga siendo a sangre.
   //
-  // Peso 500 y caja alta van EN el estilo y no en quien lo usa: es un titular de
-  // cartel, y esas dos cosas son lo que lo distinguen del display de contenedor.
-  'display-bleed': (size: 10.5vw, height: 0.9, tracking: -0.05em, weight: 500, upper: true),
+  // El peso 500 va EN el estilo y no en quien lo usa: es un titular de cartel, y es
+  // lo que lo distingue del display de contenedor. Sin caja alta desde 2026-09-24.
+  'display-bleed': (size: 10.5vw, height: 0.9, tracking: -0.05em, weight: 500),
 
   // La segunda cima, y fluida por el MISMO motivo que la primera: un titular fijo
   // solo esta calibrado para un ancho. 48px eran grandes en un movil y pequenos en
@@ -126,22 +126,21 @@ $-styles: (
   //
   // Lo que se estrecha con esto es el hueco hasta la entradilla, que pasa de x1.88 a
   // x1.50. Sigue siendo un escalon que se ve, y el de abajo tambien: contra el
-  // metadato la diferencia de tamano nunca fue el argumento — es la familia mono y
-  // la caja alta las que dicen que eso es metadato antes de leerlo.
+  // metadato la diferencia de tamano nunca fue el argumento — es la familia mono la
+  // que dice que eso es metadato antes de leerlo.
   'body': (size: 1.25rem, height: 1.5, tracking: -0.01em, weight: 400),
 
   // El metadato: chip de seccion, distintivo, contador.
   //
   // La familia es lo que hace el trabajo, no el tamano. Contra un cuerpo de 16 la
   // diferencia de tamano es de solo x1.23 — indistinguible por si sola — pero en
-  // mono y en caja alta se sabe que es metadato ANTES de leerlo. Es la separacion
-  // mas barata que existe y la unica que funciona a cualquier tamano.
+  // mono se sabe que es metadato ANTES de leerlo. Es la separacion mas barata que
+  // existe y la unica que funciona a cualquier tamano.
   //
-  // El tracking va en POSITIVO, al reves que el resto de la escala. La caja alta no
-  // trae ascendentes ni descendentes que separen las letras, asi que apretarla la
-  // convierte en una mancha; la curva que aprieta segun crece el cuerpo es para caja
-  // baja.
-  'label': (size: 0.8125rem, height: 1, tracking: 0.02em, weight: 500, family: 'mono', upper: true),
+  // En caja baja desde 2026-09-24, decision de Karen: ninguna caja alta en el sitio,
+  // y el gate de type-contract lo vigila. El tracking positivo existia para separar
+  // mayusculas, asi que vuelve a cero, como en los controles.
+  'label': (size: 0.8125rem, height: 1, tracking: 0, weight: 500, family: 'mono'),
 
   // Etiquetas de control — boton, conmutador de menu. Comparten FAMILIA con el
   // metadato: en la pagina solo hay DOS familias y cada una dice una cosa, mono
@@ -183,10 +182,6 @@ $-styles: (
   // body, asi que repetirla en cada estilo seria una declaracion muerta por regla.
   @if map.get($s, family) {
     font-family: type.font-family(map.get($s, family));
-  }
-
-  @if map.get($s, upper) {
-    text-transform: uppercase;
   }
 }
 
