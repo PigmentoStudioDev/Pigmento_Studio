@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
+import { EASE_LINEAR } from "./tokens";
 
 /**
  * Parallax por scroll: el objetivo se desplaza dentro de su disparador mientras
@@ -116,8 +117,8 @@ export function useParallax<T extends HTMLElement, U extends HTMLElement>({
             { [prop]: start },
             {
               [prop]: end,
-              // conformance-exempt: motion-literal — en un tween con scrub la curva la pone la barra de scroll; 'none' es la AUSENCIA de curva, no una segunda conviviendo con la de marca.
-              ease: "none",
+              // en un tween con scrub la curva la pone la barra de scroll: sin curva propia, no una segunda conviviendo con la de marca.
+              ease: EASE_LINEAR,
               scrollTrigger: {
                 trigger,
                 // clamp() impide que el objetivo arranque ya desplazado cuando el

@@ -362,9 +362,22 @@ gestos y que suenen juntos. Un desfase se escribe como MULTIPLOS de un paso
 (`calc($duration-quarter * 3)`), no como sumas: sumando, el tercero deja de leerse como
 el tercero y reafinar el ritmo obliga a recalcular cada suma a mano.
 
-**Una sola curva en todo el sitio.** Tambien en los micro-gestos: un hover usa el
-cuarto de la escala, no el registro productivo de Carbon. Dos curvas conviviendo son
-dos sensaciones distintas, y eso se nota aunque no se sepa nombrar.
+**Una curva por ROL, y todas de la marca.** `$ease-default` para los gestos que se
+miran, `$ease-natural` para lo que acompana (el cierre de un panel, el brillo del
+rodado), `$ease-click` y `$ease-focus` para la pulsacion y el anillo de los atomos, y
+`$ease-follow` para lo que persigue al puntero (cursor, vista previa): se reapunta en
+cada movimiento, y una curva que arranca lenta, reapuntada a cada frame, no llega
+nunca — el cursor se rompio asi. Nada fuera de esas cinco: tambien los micro-gestos, donde un hover usa el cuarto de
+la escala y no el registro productivo de Carbon. Dos curvas para el mismo rol son dos
+sensaciones distintas, y eso se nota aunque no se sepa nombrar.
+
+**GSAP usa los mismos tokens, leidos y no copiados.** `_app.scss` publica la escala,
+los desfases y la curva de marca como `--pg-duration-*`, `--pg-stagger-*` y
+`--pg-ease-default`; `motion/tokens.ts` los lee (`duration("half")`,
+`duration("quarter", 3)`, `stagger("slice")`) y `loadMotion()` registra las curvas
+como `BRAND_EASE` y `FOLLOW_EASE` con CustomEase. Lo que va atado al scroll o a una velocidad constante usa
+`EASE_LINEAR`. Antes cada hook escribia lo suyo: cinco duraciones fuera de la escala
+y siete curvas de gsap, incluidos rebotes, junto a una sola de marca.
 
 Lo vigilan tres gates, cada uno verificado en rojo:
 
@@ -377,12 +390,45 @@ Lo vigilan tres gates, cada uno verificado en rojo:
   tokens del propio Sass para que la lista no se desincronice cuando la marca sustituya
   los placeholders.
 - `tsx-contract.json` → `motion-literal` y `gsap-import` — el mismo gate que en Sass,
-  por la otra puerta. Sin ellos, un `gsap.to(el, { duration: 0.6, ease: 'power2.out' })`
-  pasaba los cuatro gates sin despeinarse.
+  por la otra puerta, sobre `.tsx` **y `.ts`**. Solo miraba `.tsx`, y los hooks son
+  `.ts`: los comentarios `conformance-exempt` de la linea de arriba no eximian nada
+  porque nada los estaba leyendo. La valvula cuenta solo en la MISMA linea.
+- `motion/gsap.test.ts` — la curva de marca queda registrada. Si el registro falla,
+  gsap no avisa: cae a su curva por defecto y el sitio se mueve distinto sin un error.
+
+**Toda seccion entra con el scroll, cabecera y contenido.** `ScrollReveal` es el
+estandar: `lines`/`words` para texto, `block` para cajas, `inner` para listas (el
+envoltorio no puede ir dentro de un `<ul>`). Una cabecera que entra sobre una lista
+que aparece de golpe se lee como un bloque a medio cargar. Los heros de primera
+pantalla usan `Reveal` por pasos, y el chrome (barra, cabecera, preloader) su
+keyframe con `$duration-base` + `$ease-default`.
 
 Unica exencion de reduced-motion, con el motivo escrito en el propio test:
 `preview/preview.scss`, que ES la demo de los tokens de motion — apagarla dejaria un
 cuadro quieto que no explica nada.
+
+### Lenguaje visual
+
+Las reglas que no son de un componente sino de todos. Cada una tiene su gate.
+
+- **Lineas** (`line-contract.test.ts`): `$border-subtle` separa, `$border-strong`
+  senala (cabecera de tabla, indicador apagado). Nunca los numerados (`-01`): escritos
+  a mano salen con el respaldo literal del tema blanco y no re-tematizan.
+- **Pesos** (`type-contract.test.ts`): de `$weight-*`, nunca un numero. Se lee el
+  fuente, porque `600` y `$weight-semibold` compilan igual.
+- **Foco** (`focus-contract.test.ts`): 2px en `$focus` (o `$focus-inverse` sobre
+  superficie invertida), por dentro (-2px) en filas y superficies a sangre, por fuera
+  (2px) en controles con borde propio, o con `box-shadow` en Button e IconButton.
+- **Conmutadores** (`toggle-contract.test.ts`): tema, sonido e idioma son hermanos —
+  mismo cuerpo, mismo hover que invierte placa E icono. El icono de un control mide
+  `$control-icon-size`, uno solo.
+- **Hover de una superficie**: el `layer-hover` de SU capa (`-01` sobre `$layer-01`,
+  `-02` sobre `$layer-02`). El contextual `$layer-hover` no sirve aqui: sin las clases
+  de capa de Carbon vale siempre `-01`, y sobre una superficie `-02` oscurece en vez
+  de aclarar en modo oscuro. Los controles llevan el hover de su atomo; los gestos de
+  fila (rodado, etiqueta, pista) son de cada organismo, como su motion.
+- **Sin caja alta** (`type-contract.test.ts`): ninguna hoja pone mayusculas.
+- **Radios por rol**: ver Radios.
 
 ### Los deltas que traeran Payload y Resend
 
@@ -441,29 +487,6 @@ expone y con que reglas vive en `src/mcp/`; el programa entero en `specs/mcp/`.
   tool o resource propio añade un checkbox a la coleccion de keys: `migrate:create`.
 
 ## `/ds` es herramienta de desarrollo
-
-### Lenguaje visual
-
-Las reglas que no son de un componente sino de todos. Cada una tiene su gate.
-
-- **Lineas** (`line-contract.test.ts`): `$border-subtle` separa, `$border-strong`
-  senala (cabecera de tabla, indicador apagado). Nunca los numerados (`-01`): escritos
-  a mano salen con el respaldo literal del tema blanco y no re-tematizan.
-- **Pesos** (`type-contract.test.ts`): de `$weight-*`, nunca un numero. Se lee el
-  fuente, porque `600` y `$weight-semibold` compilan igual.
-- **Foco** (`focus-contract.test.ts`): 2px en `$focus` (o `$focus-inverse` sobre
-  superficie invertida), por dentro (-2px) en filas y superficies a sangre, por fuera
-  (2px) en controles con borde propio, o con `box-shadow` en Button e IconButton.
-- **Conmutadores** (`toggle-contract.test.ts`): tema, sonido e idioma son hermanos —
-  mismo cuerpo, mismo hover que invierte placa E icono. El icono de un control mide
-  `$control-icon-size`, uno solo.
-- **Hover de una superficie**: el `layer-hover` de SU capa (`-01` sobre `$layer-01`,
-  `-02` sobre `$layer-02`). El contextual `$layer-hover` no sirve aqui: sin las clases
-  de capa de Carbon vale siempre `-01`, y sobre una superficie `-02` oscurece en vez
-  de aclarar en modo oscuro. Los controles llevan el hover de su atomo; los gestos de
-  fila (rodado, etiqueta, pista) son de cada organismo, como su motion.
-- **Sin caja alta** (`type-contract.test.ts`): ninguna hoja pone mayusculas.
-- **Radios por rol**: ver Radios.
 
 La pagina de preview no es una pagina del sitio. Queda **exenta de i18n** (decision de
 Karen) y no se amplia con previews de cada componente. Del gate de tokens no se exenta.

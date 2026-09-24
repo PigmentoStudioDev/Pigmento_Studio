@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
+import { EASE_LINEAR } from "./tokens";
 
 /**
  * La barra de promos: cada fila en bucle horizontal, en sentidos opuestos, y al bajar
@@ -91,8 +92,8 @@ export function useTopBar<T extends HTMLElement>() {
               xPercent: toLeft ? -100 : 0,
               repeat: -1,
               duration,
-              // conformance-exempt: motion-literal — un bucle a velocidad constante no lleva curva; 'none' es la AUSENCIA de ease.
-              ease: "none",
+              // un bucle a velocidad constante: el ritmo lo marca la duracion, no una curva.
+              ease: EASE_LINEAR,
             },
           );
         });
@@ -100,8 +101,8 @@ export function useTopBar<T extends HTMLElement>() {
         if (rows.length > 1) {
           gsap.to(rows, {
             yPercent: -100,
-            // conformance-exempt: motion-literal — atado al scrub, la curva la pone la barra de scroll.
-            ease: "none",
+            // atado al scrub, la curva la pone la barra de scroll.
+            ease: EASE_LINEAR,
             scrollTrigger: {
               trigger: document.documentElement,
               start: "top top",

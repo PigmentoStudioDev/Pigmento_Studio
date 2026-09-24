@@ -12,6 +12,7 @@ import {
   rotationFromDelta,
 } from "./cursor";
 import { loadMotion, loadScrambleText } from "./gsap";
+import { BRAND_EASE, duration, FOLLOW_EASE } from "./tokens";
 import { whenPageReady } from "./pageReady";
 
 /**
@@ -95,26 +96,18 @@ export function useCustomCursor<T extends HTMLElement>() {
 
         const html = document.documentElement;
 
-        const pointerX = gsap.quickTo(pointer, "x", {
-          duration: 0.35,
-          // conformance-exempt: motion-literal — la del portfolio. La flecha llega un pelo tarde y frena, que es lo que la hace sentirse objeto y no puntero.
-          ease: "power3",
-        });
-        const pointerY = gsap.quickTo(pointer, "y", {
-          duration: 0.35,
-          // conformance-exempt: motion-literal — la misma que el eje X.
-          ease: "power3",
-        });
-        const followerX = gsap.quickTo(follower, "x", {
-          duration: 0.4,
-          // conformance-exempt: motion-literal — la de la referencia del cursor con texto: la pastilla va un paso por detras de la flecha.
-          ease: "power3.out",
-        });
-        const followerY = gsap.quickTo(follower, "y", {
-          duration: 0.4,
-          // conformance-exempt: motion-literal — la misma que el eje X.
-          ease: "power3.out",
-        });
+        // La flecha llega un pelo tarde y frena, que es lo que la hace sentirse objeto
+        // y no puntero: media. La pastilla va un paso por detras: tres cuartos. Un
+        // desfase escrito como multiplo del paso, para que los dos sigan sonando juntos.
+        // Con la curva de SEGUIR: se reapuntan en cada movimiento, y con la de marca
+        // cada reapunte arrancaba lento y el cursor no llegaba nunca.
+        const pointerTo = { duration: duration("half"), ease: FOLLOW_EASE };
+        const followerTo = { duration: duration("quarter", 3), ease: FOLLOW_EASE };
+
+        const pointerX = gsap.quickTo(pointer, "x", pointerTo);
+        const pointerY = gsap.quickTo(pointer, "y", pointerTo);
+        const followerX = gsap.quickTo(follower, "x", followerTo);
+        const followerY = gsap.quickTo(follower, "y", followerTo);
 
         // La libreta temprana ya no hace falta: los manejadores de abajo apuntan la
         // posicion ellos mismos y ademas mueven las capas.
@@ -150,9 +143,8 @@ export function useCustomCursor<T extends HTMLElement>() {
             interactive = nextInteractive;
             gsap.to(pointer, {
               scale: interactive ? 1.4 : 1,
-              duration: 0.25,
-              // conformance-exempt: motion-literal — la del portfolio para el crecimiento sobre algo pulsable.
-              ease: "power2.out",
+              duration: duration("half"),
+              ease: BRAND_EASE,
             });
           }
 
@@ -164,7 +156,7 @@ export function useCustomCursor<T extends HTMLElement>() {
           if (target.element !== activeElement) {
             activeElement = target.element;
             gsap.to(texts, {
-              duration: 0.6,
+              duration: duration("base"),
               overwrite: "auto",
               scrambleText: { text: target.text, chars: SCRAMBLE_CHARS, speed: 1.2 },
             });

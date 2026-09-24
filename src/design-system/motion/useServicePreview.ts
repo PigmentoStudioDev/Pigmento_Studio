@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { REDUCED_MOTION } from "./breakpoints";
 import { loadMotion } from "./gsap";
+import { BRAND_EASE, duration, FOLLOW_EASE } from "./tokens";
 
 /**
  * La vista previa que acompana al puntero por una lista de servicios.
@@ -54,10 +55,11 @@ export function useServicePreview<T extends HTMLElement>() {
 
       gsap.set(container, { yPercent: -50 });
 
+      // El seguimiento llega tarde y frena largo: el paso entero de la escala, con la
+      // curva de seguir, porque se reapunta en cada movimiento del puntero.
       const yTo = gsap.quickTo(container, "y", {
-        duration: 0.5,
-        // conformance-exempt: motion-literal — la de la referencia. El seguimiento llega tarde y frena largo; con la curva de marca la caja se pegaba al puntero.
-        ease: "power4",
+        duration: duration("base"),
+        ease: FOLLOW_EASE,
       });
 
       const clear = () => {
@@ -88,11 +90,12 @@ export function useServicePreview<T extends HTMLElement>() {
         layer.appendChild(image);
         container.appendChild(layer);
 
+        // La cortina arranca y aterriza lenta y cruza rapida por el medio: es la
+        // forma de la curva de marca, asi que no pide una propia.
         gsap.to([layer, image], {
           y: 0,
-          duration: 0.6,
-          // conformance-exempt: motion-literal — la de la referencia. La cortina arranca y aterriza lenta y cruza rapida por el medio, que es lo que hace que el barrido se lea.
-          ease: "expo.inOut",
+          duration: duration("base"),
+          ease: BRAND_EASE,
         });
 
         if (container.children.length > MAX_LAYERS) container.children[0]?.remove();

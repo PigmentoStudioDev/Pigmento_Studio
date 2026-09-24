@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
+import { EASE_LINEAR } from "./tokens";
 
 /**
  * El resaltado que se rellena conforme el texto cruza la pantalla.
@@ -76,8 +77,8 @@ export function useScrollHighlight<T extends HTMLElement>({
           { [HIGHLIGHT_PROGRESS_PROPERTY]: 0 },
           {
             [HIGHLIGHT_PROGRESS_PROPERTY]: 1,
-            // conformance-exempt: motion-literal — con scrub la curva la pone la barra de scroll; 'none' es la AUSENCIA de curva, no una segunda conviviendo con la de marca.
-            ease: "none",
+            // con scrub la curva la pone la barra de scroll: sin curva propia, no una segunda conviviendo con la de marca.
+            ease: EASE_LINEAR,
             scrollTrigger: { trigger, start: scrollStart, end: scrollEnd, scrub: DEFAULTS.scrub },
           },
         );

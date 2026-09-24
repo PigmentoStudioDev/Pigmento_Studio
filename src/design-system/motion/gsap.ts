@@ -25,6 +25,8 @@ export interface Motion {
 /** El contexto de consultas de medios de gsap, para tipar la limpieza. */
 export type MatchMedia = ReturnType<Motion["gsap"]["matchMedia"]>;
 
+import { BRAND_EASE, brandEasePoints, FOLLOW_EASE, followEasePoints } from "./tokens";
+
 /**
  * Una sola carga para toda la vida de la pagina, y una sola promesa mientras esta
  * en vuelo: dos componentes que monten a la vez piden lo mismo y el segundo espera
@@ -37,13 +39,23 @@ export function loadMotion(): Promise<Motion> {
   if (loaded) return Promise.resolve(loaded);
 
   pending ??= (async () => {
-    const [core, scrollTrigger, splitText] = await Promise.all([
+    const [core, scrollTrigger, splitText, customEase] = await Promise.all([
       import("gsap"),
       import("gsap/ScrollTrigger"),
       import("gsap/SplitText"),
+      import("gsap/CustomEase"),
     ]);
 
-    core.gsap.registerPlugin(scrollTrigger.ScrollTrigger, splitText.SplitText);
+    core.gsap.registerPlugin(scrollTrigger.ScrollTrigger, splitText.SplitText, customEase.CustomEase);
+
+    // La curva de marca, con nombre, para que ningun hook escriba la suya: se lee de
+    // la hoja (motion/tokens.ts), no se copia. Sin hoja —un test— queda sin registrar
+    // y gsap cae a su curva por defecto, que es un gesto peor y no un error.
+    const points = brandEasePoints();
+    if (points) customEase.CustomEase.create(BRAND_EASE, points);
+
+    const follow = followEasePoints();
+    if (follow) customEase.CustomEase.create(FOLLOW_EASE, follow);
 
     loaded = {
       gsap: core.gsap,

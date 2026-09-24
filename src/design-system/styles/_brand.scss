@@ -420,6 +420,12 @@ $stagger-char: 0.024s;
 /// El paso del desfase por LONJA, en la cortina que sube detras de un icono. Es el
 /// doble del de caracter y no un numero nuevo: cinco lonjas con el paso de letra se
 /// leerian como una sola, y con un paso suelto habria dos ritmos de desfase en el
+/// Lo que PERSIGUE al puntero: el cursor, la vista previa que lo acompana. Se reapunta
+/// en cada movimiento, y cada reapunte arranca un tramo nuevo desde donde va; con una
+/// curva que arranca lenta, como la de arriba, cada tramo vuelve a arrancar lento y la
+/// pieza no llega mientras el raton se mueve. Esta sale a toda velocidad y frena.
+$ease-follow: cubic-bezier(0.215, 0.61, 0.355, 1);
+
 /// sitio sin nada que los relacione.
 $stagger-slice: $stagger-char * 2;
 

@@ -30,6 +30,19 @@
 // hueco reservado para nada.
 :root {
   --pg-topbar-offset: 0rem;
+
+  // El motion de marca para JavaScript: motion/tokens.ts lo lee de aqui. Publicado y
+  // no copiado, para que un gesto de gsap y una transicion de CSS salgan de la misma
+  // escala y de la misma curva.
+  --pg-duration-quarter: #{brand.$duration-quarter};
+  --pg-duration-half: #{brand.$duration-half};
+  --pg-duration-base: #{brand.$duration-base};
+  --pg-duration-onehalf: #{brand.$duration-onehalf};
+  --pg-duration-double: #{brand.$duration-double};
+  --pg-stagger-char: #{brand.$stagger-char};
+  --pg-stagger-slice: #{brand.$stagger-slice};
+  --pg-ease-default: #{brand.$ease-default};
+  --pg-ease-follow: #{brand.$ease-follow};
 }
 
 // Con el cursor propio a la vista, el del sistema se esconde. Lo marca useCustomCursor

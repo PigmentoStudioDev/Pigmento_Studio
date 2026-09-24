@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
+import { BRAND_EASE, duration as scaleDuration, stagger } from "./tokens";
 
 /**
  * Odometro: los digitos de una cifra ruedan hasta su valor al entrar en pantalla.
@@ -32,10 +33,6 @@ import { loadMotion, type MatchMedia } from "./gsap";
 /** Cuantas vueltas completas da un digito antes de aterrizar. */
 const CICLOS = 2;
 
-/** Retardo entre digitos, en segundos. Corren de derecha a izquierda. */
-const RETARDO_DIGITO = 0.04;
-
-const DURACION = 1;
 
 /**
  * El atributo que separa lo que es de React de lo que es del hook.
@@ -53,6 +50,7 @@ export interface NumberRollOptions {
   value: string;
   /** Posicion de scroll donde arranca, en sintaxis de ScrollTrigger. */
   scrollStart?: string;
+  /** En segundos. Sin valor, el paso de una y media de la escala: lo que tarda una entrada. */
   duration?: number;
 }
 
@@ -77,7 +75,7 @@ export function pasoDe(el: HTMLElement): number {
 export function useNumberRoll<T extends HTMLElement>({
   value,
   scrollStart = "top 85%",
-  duration = DURACION,
+  duration,
 }: NumberRollOptions) {
   const ref = useRef<T>(null);
 
@@ -153,6 +151,11 @@ export function useNumberRoll<T extends HTMLElement>({
           onComplete: soltar,
         });
 
+        // La rueda frena con la curva de marca, que ya pasa casi todo el recorrido
+        // frenando; y los digitos se desfasan con el paso de la escala, no con uno propio.
+        const segundos = duration ?? scaleDuration("onehalf");
+        const desfase = stagger("slice");
+
         rodillos.forEach(({ rodillo, destino }, i) => {
           // De derecha a izquierda: las unidades aterrizan primero, como un contador
           // mecanico. Al reves se lee como si el numero se escribiera solo.
@@ -162,12 +165,11 @@ export function useNumberRoll<T extends HTMLElement>({
             rodillo,
             {
               y: `${-destino * paso}em`,
-              duration,
-              // conformance-exempt: motion-literal — la curva de un odometro es la de una rueda que frena, no una de las de marca; 'power3.out' es esa fisica y no una segunda curva conviviendo con la del sistema.
-              ease: "power3.out",
+              duration: segundos,
+              ease: BRAND_EASE,
               force3D: true,
             },
-            desdeLaDerecha * RETARDO_DIGITO,
+            desdeLaDerecha * desfase,
           );
         });
       });

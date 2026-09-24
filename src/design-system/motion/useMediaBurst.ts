@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
+import { REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type Motion } from "./gsap";
+import { BRAND_EASE, duration } from "./tokens";
 
 /**
  * Un chorro de piezas que brota de una palabra mientras el puntero la senala.
@@ -18,9 +20,10 @@ import { loadMotion, type Motion } from "./gsap";
  * sobre lo duplicado y ninguna limpieza lo alcanza. Ademas insertar en el DOM en cada
  * rafaga fuerza un reflujo por pieza.
  *
- * Con reservarlas basta y sobra: una pieza vive 0.7s y la rafaga tarda todo el ciclo
- * en volver a ella, asi que ninguna se pide dos veces a la vez mientras haya mas
- * piezas que las que caben en ese tiempo.
+ * Con reservarlas basta y sobra: una pieza vive la espera mas la salida (un paso y un
+ * cuarto de la escala) y la rafaga tarda todo el ciclo en volver a ella, asi que
+ * ninguna se pide dos veces a la vez mientras haya mas piezas que las que caben en
+ * ese tiempo.
  *
  * Las toma por ESTRUCTURA — los nodos marcados dentro de la raiz— y no por clase, que
  * es como useMarquee lee sus copias: el componente decide cuantas pinta y como se
@@ -97,7 +100,7 @@ export function useMediaBurst<T extends HTMLElement>({
        * caso de manual de reduced-motion, y quien la cambia a mitad de sesion espera
        * que le haga caso sin recargar.
        */
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (window.matchMedia(REDUCED_MOTION).matches) return;
 
       const pieces = [...root.querySelectorAll<HTMLElement>(`[${MEDIA_BURST_PIECE}]`)];
       if (pieces.length === 0) return;
@@ -115,6 +118,13 @@ export function useMediaBurst<T extends HTMLElement>({
       const y = box.top - rootBox.top + box.height / 2;
 
       stop();
+
+      // Los tiempos se leen una vez por rafaga y no por pieza: son de la escala, y
+      // una rafaga entera suena al mismo paso. Entra en tres cuartos, se queda y
+      // sale en un cuarto.
+      const rise = duration("quarter", 3);
+      const hold = duration("base");
+      const leave = duration("quarter");
 
       const emit = () => {
         const piece = pieces[cursorRef.current % pieces.length];
@@ -138,19 +148,17 @@ export function useMediaBurst<T extends HTMLElement>({
           {
             y,
             rotation: random(TILT_DEG),
-            duration: 0.4,
-            // conformance-exempt: motion-literal — la curva de la referencia. El rebote es el gesto: la pieza se pasa de largo y vuelve, que es lo que la hace aterrizar en vez de deslizarse.
-            ease: "back.out(3)",
+            duration: rise,
+            ease: BRAND_EASE,
           },
         );
 
         gsap.to(piece, {
           scale: 0.9,
           autoAlpha: 0,
-          delay: 0.5,
-          duration: 0.2,
-          // conformance-exempt: motion-literal — la de salida, del mismo par que la anterior: encoge tomando impulso al reves.
-          ease: "back.in(2)",
+          delay: hold,
+          duration: leave,
+          ease: BRAND_EASE,
         });
       };
 
