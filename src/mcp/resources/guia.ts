@@ -26,6 +26,11 @@ metadatos. Reglas de los assets: \`pigmento://cms/media\`.
 - \`title\` (localizado, obligatorio), \`slug\` (unico), \`client\`, \`year\`,
   \`discipline\` (branding | web | motion | marketing), \`summary\` (localizado, texto plano:
   los organismos reciben cadenas, no rich text).
+- \`discipline\` es UNA, la principal: la etiqueta que pinta cada fila del sitio.
+  \`categories\` son TODAS las que se trabajaron, de una lista cerrada: branding |
+  packaging | motion | web | ecommerce | producto (UX/UI) | marketing | redes. Motion
+  cubre motion branding y motion graphics; ecommerce, diseno y desarrollo de tienda.
+  No se localizan: se guarda la clave y el sitio traduce la etiqueta.
 - \`cover\` (obligatorio) y \`gallery[].image\` son ids de \`media\`.
 - \`featured\`: aparece en el escaparate del menu y en el manifiesto.
 - \`order\`: menor primero; empata por fecha de creacion.

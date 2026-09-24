@@ -207,6 +207,11 @@ export interface Project {
   client?: string | null;
   year?: number | null;
   discipline?: ('branding' | 'web' | 'motion' | 'marketing') | null;
+  /**
+   * Todo lo que se hizo en la pieza. La disciplina es la principal.
+   */
+  categories?:
+    ('branding' | 'packaging' | 'motion' | 'web' | 'ecommerce' | 'producto' | 'marketing' | 'redes')[] | null;
   summary?: string | null;
   cover: number | Media;
   gallery?:
@@ -744,6 +749,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   client?: T;
   year?: T;
   discipline?: T;
+  categories?: T;
   summary?: T;
   cover?: T;
   gallery?:

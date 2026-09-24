@@ -8,6 +8,7 @@ import * as migration_20260911_183048_propuesta_bilingue from './20260911_183048
 import * as migration_20260921_025843_mcp_api_keys from './20260921_025843_mcp_api_keys';
 import * as migration_20260921_030438_mcp_tool_toggles from './20260921_030438_mcp_tool_toggles';
 import * as migration_20260921_155324_legal from './20260921_155324_legal';
+import * as migration_20260924_225529_project_categories from './20260924_225529_project_categories';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20260921_155324_legal.up,
     down: migration_20260921_155324_legal.down,
-    name: '20260921_155324_legal'
+    name: '20260921_155324_legal',
+  },
+  {
+    up: migration_20260924_225529_project_categories.up,
+    down: migration_20260924_225529_project_categories.down,
+    name: '20260924_225529_project_categories'
   },
 ];

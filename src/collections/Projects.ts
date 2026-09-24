@@ -10,7 +10,7 @@ export const Projects: CollectionConfig = {
 
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'client', 'year', 'discipline', '_status'],
+    defaultColumns: ['title', 'client', 'discipline', 'categories', '_status'],
   },
 
   /**
@@ -48,6 +48,29 @@ export const Projects: CollectionConfig = {
       name: 'discipline',
       type: 'select',
       options: ['branding', 'web', 'motion', 'marketing'],
+    },
+
+    /**
+     * Todo lo que se hizo en la pieza; la disciplina es solo la etiqueta principal.
+     * Salen de los tags del sitio anterior con dos fusiones: Motion Branding y
+     * Motion Graphics eran un mismo servicio con dos nombres, igual que el diseno y
+     * el desarrollo de e-commerce. Lista cerrada para que no vuelvan a separarse.
+     */
+    {
+      name: 'categories',
+      type: 'select',
+      hasMany: true,
+      options: [
+        { value: 'branding', label: { es: 'Branding', en: 'Branding' } },
+        { value: 'packaging', label: { es: 'Packaging', en: 'Packaging' } },
+        { value: 'motion', label: { es: 'Motion', en: 'Motion' } },
+        { value: 'web', label: { es: 'Diseño web', en: 'Web design' } },
+        { value: 'ecommerce', label: { es: 'E-commerce', en: 'E-commerce' } },
+        { value: 'producto', label: { es: 'Producto digital (UX/UI)', en: 'Digital product (UX/UI)' } },
+        { value: 'marketing', label: { es: 'Marketing digital', en: 'Digital marketing' } },
+        { value: 'redes', label: { es: 'Redes sociales', en: 'Social media' } },
+      ],
+      admin: { description: 'Todo lo que se hizo en la pieza. La disciplina es la principal.' },
     },
 
     // Sin rich text: los organismos reciben cadenas planas y ese contrato es lo
