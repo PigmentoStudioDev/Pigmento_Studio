@@ -1,12 +1,16 @@
+import type { WorkProject } from "@/cms/projects";
 import type { WorkPiece, WorkRowsProps } from "@/design-system/components/organisms/WorkRows/WorkRows";
 
 /**
  * El strip de trabajo destacado. Vive en app/ por lo mismo que el resto del contenido.
  *
- * TODO(cms): piezas fijas porque el CMS tiene hoy un solo proyecto y las filas
- * necesitan unas veinticinco. Con 14 imagenes se repiten; cuando haya portafolio real se
- * mapea desde cms/projects.ts. Los CLIENTES son marcadores, igual que los nombres del
- * equipo: un cliente inventado en la pagina de un estudio no se puede arreglar despues.
+ * Las piezas salen del portfolio publicado en el CMS. Las filas necesitan mas piezas
+ * que proyectos hay, asi que se repiten en su orden.
+ *
+ * Los marcadores se quedan como respaldo para una base vacia —la de desarrollo—, no
+ * para rellenar: con un solo proyecto publicado se repite ese, no se inventa otro. Sus
+ * CLIENTES son marcadores a proposito, igual que los nombres del equipo: un cliente
+ * inventado en la pagina de un estudio no se puede arreglar despues.
  */
 type Translate = (key: string) => string;
 
@@ -35,7 +39,7 @@ const IMAGES = [
  */
 const ROW_LENGTHS = [14, 10];
 
-function piece(t: Translate, imageIndex: number): WorkPiece {
+function placeholder(t: Translate, imageIndex: number): WorkPiece {
   const index = imageIndex % IMAGES.length;
 
   return {
@@ -46,10 +50,24 @@ function piece(t: Translate, imageIndex: number): WorkPiece {
   };
 }
 
-export function getWork(t: Translate): WorkRowsProps {
+function fromProject(t: Translate, project: WorkProject): WorkPiece {
+  return {
+    client: project.client,
+    ...(project.discipline ? { discipline: t(`disciplines.${project.discipline}`) } : {}),
+    // TODO(rutas): la pagina de cada caso todavia no existe.
+    href: "/trabajo",
+    image: project.image,
+  };
+}
+
+export function getWork(t: Translate, projects: WorkProject[]): WorkRowsProps {
+  const count = projects.length || IMAGES.length;
+  const piece = (index: number): WorkPiece =>
+    projects.length ? fromProject(t, projects[index % count]) : placeholder(t, index);
+
   // Cada fila empieza a media coleccion de la anterior. Seguidas, la segunda volvia a
-  // la imagen 01 y las dos filas arrancaban con las mismas piezas una encima de otra.
-  const starts = ROW_LENGTHS.map((_, row) => row * Math.floor(IMAGES.length / 2));
+  // la primera pieza y las dos filas arrancaban con las mismas una encima de otra.
+  const starts = ROW_LENGTHS.map((_, row) => row * Math.floor(count / 2));
 
   return {
     title: t("title"),
@@ -60,6 +78,6 @@ export function getWork(t: Translate): WorkRowsProps {
     cursorLabel: t("cursor"),
     // TODO(rutas): /trabajo todavia no existe.
     ctaHref: "/trabajo",
-    rows: ROW_LENGTHS.map((length, row) => Array.from({ length }, (_, i) => piece(t, starts[row] + i))),
+    rows: ROW_LENGTHS.map((length, row) => Array.from({ length }, (_, i) => piece(starts[row] + i))),
   };
 }

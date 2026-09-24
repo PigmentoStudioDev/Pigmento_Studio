@@ -58,3 +58,38 @@ export async function getFeaturedPieces(locale: Locale): Promise<ProjectPiece[]>
 
   return docs.map((doc: Project) => toPiece(doc.cover)).filter((p): p is ProjectPiece => p !== null);
 }
+
+/** Una fila del strip de trabajo: la disciplina viaja como clave, la traduce la pagina. */
+export interface WorkProject {
+  client: string;
+  discipline?: NonNullable<Project['discipline']>;
+  image: ProjectPiece;
+}
+
+/** Exportada por su test. Sin portada poblada no hay pieza que pintar. */
+export function toWorkProject(doc: Project): WorkProject | null {
+  const image = toPiece(doc.cover);
+  if (!image) return null;
+
+  return {
+    client: doc.client || doc.title,
+    ...(doc.discipline ? { discipline: doc.discipline } : {}),
+    image,
+  };
+}
+
+/** Todo el portfolio publicado, en el orden que marca el CMS. */
+export async function getWorkProjects(locale: Locale): Promise<WorkProject[]> {
+  const payload = await getPayload({ config });
+
+  const { docs } = await payload.find({
+    collection: 'projects',
+    locale,
+    overrideAccess: false,
+    sort: 'order',
+    depth: 2,
+    limit: 100,
+  });
+
+  return docs.map(toWorkProject).filter((p): p is WorkProject => p !== null);
+}
