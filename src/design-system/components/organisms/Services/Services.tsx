@@ -2,6 +2,8 @@
 
 import { getImageProps } from "next/image";
 import { cursorAttributes } from "../../../motion/cursor";
+import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
+import { Heading } from "../../atoms/Heading/Heading";
 import { useServicePreview } from "../../../motion/useServicePreview";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
 import styles from "./Services.module.scss";
@@ -51,20 +53,31 @@ export function Services({ title, titleHighlight, label, intro, cta, services, t
         <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
       </div>
 
-      <ul className={styles.list} data-preview-list="">
-        {services.map((service) => (
-          <li key={service.href + service.name} className={styles.row} data-preview-row="">
-            <a className={styles.link} href={service.href} {...cursorAttributes("scramble", cta)}>
-              <h3 className={styles.name}>{service.name}</h3>
-              {/* Sin el espacio, el nombre del enlace sale "BrandingIdentidad". */}{" "}
-              <span className={styles.scope}>{service.scope}</span>
-              <span className={styles.cta} aria-hidden="true">
-                {cta}
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
+      {/* Las filas entran como el resto de la pagina, una detras de otra: con solo la
+          cabecera animada, la lista aparecia de golpe debajo de ella. `inner` porque
+          el envoltorio no puede meterse dentro del <ul>. */}
+      <ScrollReveal by="block" inner>
+        <ul className={styles.list} data-preview-list="">
+          {services.map((service) => (
+            <li key={service.href + service.name} className={styles.row} data-preview-row="">
+              <a className={styles.link} href={service.href} {...cursorAttributes("scramble", cta)}>
+                {/* El titular es el atomo, como en el resto del sistema; la caja solo
+                    reparte el ancho de la fila. */}
+                <div className={styles.name}>
+                  <Heading level={3} size="title">
+                    {service.name}
+                  </Heading>
+                </div>
+                {/* Sin el espacio, el nombre del enlace sale "BrandingIdentidad". */}{" "}
+                <span className={styles.scope}>{service.scope}</span>
+                <span className={styles.cta} aria-hidden="true">
+                  {cta}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </ScrollReveal>
 
       {/* Precargadas como en la referencia: la capa usa la que el navegador ya bajo. */}
       <div className={styles.medias} aria-hidden="true" data-preview-media="">

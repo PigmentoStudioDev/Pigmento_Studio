@@ -103,65 +103,68 @@ export function Faq({
       <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
 
       {/* Las filas cuelgan de la raiz sin envoltorio: cada una trae su filete, asi
-          que un contenedor intermedio no tendria nada que declarar. */}
-      {items.map((item, index) => {
-        const isOpen = open.includes(index);
-        const panelId = `faq-panel-${index}`;
-        const triggerId = `faq-trigger-${index}`;
+          que un contenedor intermedio no tendria nada que declarar. ScrollReveal no
+          crea caja, y cada fila entra como una pieza, una detras de otra. */}
+      <ScrollReveal by="block">
+        {items.map((item, index) => {
+          const isOpen = open.includes(index);
+          const panelId = `faq-panel-${index}`;
+          const triggerId = `faq-trigger-${index}`;
 
-        return (
-          <div
-            key={item.question}
-            className={styles.row}
-            data-faq-open={isOpen ? "true" : undefined}
-          >
-            {/* El titular es del DOCUMENTO y el boton es el control: envolver uno en
-                  otro es lo que deja la FAQ navegable por encabezados sin renunciar a
-                  que la fila entera se pulse. */}
-            <h3 className={styles.questionHeading}>
-              <button
-                ref={(el) => {
-                  triggersRef.current[index] = el;
-                }}
-                type="button"
-                id={triggerId}
-                className={styles.trigger}
-                aria-expanded={isOpen}
-                aria-controls={panelId}
-                // El atributo se lee en el momento del evento, con el estado de ANTES
-                // del clic: cerrada suena a desplegar. Un solo control dice dos senales
-                // distintas sin una linea de JS.
-                data-uisfx={isOpen ? "collapse" : "expand"}
-                onClick={() => toggle(index)}
-                onKeyDown={(event) => handleKeyDown(event, index)}
-              >
-                <span className={styles.question}>{item.question}</span>
-                <span className={styles.icon}>
-                  <Icon name="chevron" />
-                </span>
-              </button>
-            </h3>
-
-            {/*
-                `inert` mientras esta cerrado, no `hidden`: el panel tiene que seguir
-                midiendo para poder animarse, y un contenido que mide pero no se ve
-                sigue recibiendo el tabulador y se sigue leyendo en voz alta. Inert lo
-                saca de los dos sitios sin sacarlo del flujo.
-              */}
+          return (
             <div
-              id={panelId}
-              role="region"
-              aria-labelledby={triggerId}
-              className={styles.panel}
-              inert={!isOpen}
+              key={item.question}
+              className={styles.row}
+              data-faq-open={isOpen ? "true" : undefined}
             >
-              <div className={styles.panelInner}>
-                <p className={styles.answer}>{item.answer}</p>
+              {/* El titular es del DOCUMENTO y el boton es el control: envolver uno en
+                    otro es lo que deja la FAQ navegable por encabezados sin renunciar a
+                    que la fila entera se pulse. */}
+              <h3 className={styles.questionHeading}>
+                <button
+                  ref={(el) => {
+                    triggersRef.current[index] = el;
+                  }}
+                  type="button"
+                  id={triggerId}
+                  className={styles.trigger}
+                  aria-expanded={isOpen}
+                  aria-controls={panelId}
+                  // El atributo se lee en el momento del evento, con el estado de ANTES
+                  // del clic: cerrada suena a desplegar. Un solo control dice dos senales
+                  // distintas sin una linea de JS.
+                  data-uisfx={isOpen ? "collapse" : "expand"}
+                  onClick={() => toggle(index)}
+                  onKeyDown={(event) => handleKeyDown(event, index)}
+                >
+                  <span>{item.question}</span>
+                  <span className={styles.icon}>
+                    <Icon name="chevron" />
+                  </span>
+                </button>
+              </h3>
+
+              {/*
+                  `inert` mientras esta cerrado, no `hidden`: el panel tiene que seguir
+                  midiendo para poder animarse, y un contenido que mide pero no se ve
+                  sigue recibiendo el tabulador y se sigue leyendo en voz alta. Inert lo
+                  saca de los dos sitios sin sacarlo del flujo.
+                */}
+              <div
+                id={panelId}
+                role="region"
+                aria-labelledby={triggerId}
+                className={styles.panel}
+                inert={!isOpen}
+              >
+                <div className={styles.panelInner}>
+                  <p className={styles.answer}>{item.answer}</p>
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </ScrollReveal>
     </div>
   );
 }

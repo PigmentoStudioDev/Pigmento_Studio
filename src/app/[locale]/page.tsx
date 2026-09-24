@@ -125,8 +125,15 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       </Section>
 
       {/* Lo que se puede contratar, justo despues de ver como se ve: quien acaba de
-          mirar las piezas se pregunta que les puede pedir. */}
-      <Section width="strip" spacing="loose" labelledBy={SERVICES_TITLE_ID}>
+          mirar las piezas se pregunta que les puede pedir. Oscura en los dos modos:
+          despues de la reticula, cuatro cabeceras iguales seguidas se leian como un
+          documento, y el cambio de tono es lo que parte esa serie. */}
+      <Section
+        width="strip"
+        spacing="loose"
+        theme={{ light: "dark", dark: "dark" }}
+        labelledBy={SERVICES_TITLE_ID}
+      >
         <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} />
       </Section>
 
