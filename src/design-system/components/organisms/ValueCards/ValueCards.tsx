@@ -2,9 +2,12 @@
 
 import type { CSSProperties } from "react";
 import { cursorAttributes } from "../../../motion/cursor";
+import { useAutoRotate } from "../../../motion/useAutoRotate";
 import { RADIAL_COPIES, useRadialSlider } from "../../../motion/useRadialSlider";
 import type { CandyFamily } from "../../../theme/candy";
+import { GlassSurface } from "../../atoms/GlassSurface/GlassSurface";
 import { IconButton } from "../../atoms/IconButton/IconButton";
+import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import styles from "./ValueCards.module.scss";
 
 /**
@@ -28,6 +31,13 @@ import styles from "./ValueCards.module.scss";
  * El giro no esta aqui: el hook lleva el paso y el desvio del dedo, y la hoja los
  * convierte en rotacion con la curva de la marca. Con reduced-motion la hoja pinta
  * una fila con scroll nativo y esconde los controles, que ya no tendrian que girar.
+ *
+ * Gira sola hasta que la persona la toca. Mientras gira sola la region viva calla:
+ * anunciar cada vuelta interrumpiria al lector de pantalla cada pocos segundos.
+ *
+ * Los controles flotan en una pastilla sobre el borde de abajo, para que la corona
+ * llegue a los limites de la franja. Con el cristal de la cabecera, que es la otra
+ * pildora flotante del sitio.
  *
  * Props serializables: cada tarjeta trae su familia de color como NOMBRE, que es lo
  * que guardaria un campo `select` de Payload.
@@ -68,10 +78,22 @@ export function ValueCards({ title, cards, labels, titleId }: ValueCardsProps) {
   const count = cards.length;
   const { trackRef, step, active, dragDegrees, dragging, go, goTo, handlers, onTransitionEnd } =
     useRadialSlider<HTMLDivElement>(count);
+  const {
+    ref: rotateRef,
+    rotating,
+    stop: stopRotating,
+    handlers: rotateHandlers,
+  } = useAutoRotate<HTMLDivElement>(() => go(1), count > 1);
 
   if (count === 0) return null;
 
   const current = cards[active];
+
+  // Mover la corona a mano le quita el ritmo a la rotacion automatica.
+  const byHand = (move: () => void) => () => {
+    stopRotating();
+    move();
+  };
 
   // Fuera del JSX: el gate de literales en estilo inline no distingue un valor
   // calculado de uno escrito a mano. Numeros puros; la unidad la pone la hoja.
@@ -86,74 +108,88 @@ export function ValueCards({ title, cards, labels, titleId }: ValueCardsProps) {
         {title}
       </h2>
 
-      <div role="group" aria-roledescription={labels.carousel} aria-labelledby={titleId}>
-        <div
-          className={styles.stage}
-          data-dragging={dragging ? "true" : undefined}
-          {...cursorAttributes("drag", labels.drag)}
-          {...handlers}
-        >
-          <div ref={trackRef} className={styles.track} style={trackStyle} onTransitionEnd={onTransitionEnd}>
-            {COPIES.map((copy) =>
-              cards.map((card, index) => {
-                const announced = copy === ANNOUNCED_COPY;
-                const slideStyle = { "--pg-radial-position": (copy - ANNOUNCED_COPY) * count + index } as CSSProperties;
+      {/* La corona entra como el resto de la pagina. Entera y no tarjeta a tarjeta:
+          las tarjetas ya las mueve el giro, y dos gestos sobre la misma pieza se
+          pisarian. */}
+      <ScrollReveal by="block">
+        <div role="group" aria-roledescription={labels.carousel} aria-labelledby={titleId}>
+          <div ref={rotateRef} className={styles.carousel} {...rotateHandlers}>
+            <div
+              className={styles.stage}
+              data-dragging={dragging ? "true" : undefined}
+              {...cursorAttributes("drag", labels.drag)}
+              {...handlers}
+              onPointerDown={(event) => {
+                stopRotating();
+                handlers.onPointerDown(event);
+              }}
+            >
+              <div ref={trackRef} className={styles.track} style={trackStyle} onTransitionEnd={onTransitionEnd}>
+                {COPIES.map((copy) =>
+                  cards.map((card, index) => {
+                    const announced = copy === ANNOUNCED_COPY;
+                    const slideStyle = { "--pg-radial-position": (copy - ANNOUNCED_COPY) * count + index } as CSSProperties;
 
-                return (
-                  <div
-                    key={`${copy}-${index}`}
-                    className={styles.slide}
-                    style={slideStyle}
-                    data-clone={announced ? undefined : "true"}
-                    {...(announced
-                      ? { role: "group", "aria-label": card.position }
-                      : { "aria-hidden": true, inert: true })}
-                  >
-                    <article className={styles.card} data-family={card.family}>
-                      <span className={styles.index} aria-hidden="true">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <div className={styles.body}>
-                        <h3 className={styles.cardTitle}>{card.title}</h3>
-                        <p className={styles.text}>{card.text}</p>
+                    return (
+                      <div
+                        key={`${copy}-${index}`}
+                        className={styles.slide}
+                        style={slideStyle}
+                        data-clone={announced ? undefined : "true"}
+                        {...(announced
+                          ? { role: "group", "aria-label": card.position }
+                          : { "aria-hidden": true, inert: true })}
+                      >
+                        <article className={styles.card} data-family={card.family}>
+                          <span className={styles.index} aria-hidden="true">
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                          <div className={styles.body}>
+                            <h3 className={styles.cardTitle}>{card.title}</h3>
+                            <p className={styles.text}>{card.text}</p>
+                          </div>
+                        </article>
                       </div>
-                    </article>
-                  </div>
-                );
-              }),
-            )}
-          </div>
-        </div>
-
-        <p className={styles.status} aria-live="polite">
-          {current.position}: {current.title}
-        </p>
-
-        {count > 1 ? (
-          <div className={styles.controls}>
-            {/* La flecha es una sola y apunta a la derecha: la de atras es la misma
-                reflejada, en un envoltorio para no pisar la escala del gesto de pulsar. */}
-            <span className={styles.previous}>
-              <IconButton icon="arrow" label={labels.previous} onClick={() => go(-1)} />
-            </span>
-
-            <div role="group" aria-label={labels.picker} className={styles.dots}>
-              {cards.map((card, index) => (
-                <button
-                  key={card.title}
-                  type="button"
-                  className={styles.dot}
-                  aria-label={card.title}
-                  aria-current={index === active ? "true" : undefined}
-                  onClick={() => goTo(index)}
-                />
-              ))}
+                    );
+                  }),
+                )}
+              </div>
             </div>
 
-            <IconButton icon="arrow" label={labels.next} emphasis="primary" onClick={() => go(1)} />
+            {count > 1 ? (
+              <div className={styles.controls}>
+                <GlassSurface />
+                <div className={styles.controlsRow}>
+                  {/* La flecha es una sola y apunta a la derecha: la de atras es la misma
+                      reflejada, en un envoltorio para no pisar la escala del gesto de pulsar. */}
+                  <span className={styles.previous}>
+                    <IconButton icon="arrow" label={labels.previous} onClick={byHand(() => go(-1))} />
+                  </span>
+
+                  <div role="group" aria-label={labels.picker} className={styles.dots}>
+                    {cards.map((card, index) => (
+                      <button
+                        key={card.title}
+                        type="button"
+                        className={styles.dot}
+                        aria-label={card.title}
+                        aria-current={index === active ? "true" : undefined}
+                        onClick={byHand(() => goTo(index))}
+                      />
+                    ))}
+                  </div>
+
+                  <IconButton icon="arrow" label={labels.next} emphasis="primary" onClick={byHand(() => go(1))} />
+                </div>
+              </div>
+            ) : null}
           </div>
-        ) : null}
-      </div>
+
+          <p className={styles.status} aria-live={rotating ? "off" : "polite"}>
+            {current.position}: {current.title}
+          </p>
+        </div>
+      </ScrollReveal>
     </div>
   );
 }

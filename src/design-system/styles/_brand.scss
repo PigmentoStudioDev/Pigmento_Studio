@@ -348,6 +348,14 @@ $control-inline-l: 1.25rem;
 /// distinto por tamano.
 $radius-control-m: math.div($control-block-m, 2);
 
+/// La barra flotante que agrupa controles de tamano 'm' (la del carrusel de valores),
+/// con el material de la cabecera: cristal y un filo. Su alto lo conoce el CSS —el
+/// control, su aire y el filo—, asi que su pildora se deriva y no se recorta: radio
+/// del control mas lo que lo separa del borde, concentrico con lo de dentro.
+$control-bar-padding: spacing.$spacing-02;
+$control-bar-border: 1px;
+$radius-control-bar: calc(#{$radius-control-m + $control-bar-padding} + #{$control-bar-border});
+
 /// Radio de un control CUADRADO — el boton de icono.
 ///
 /// Es un escalon de la escala y no una pildora ni un 50%: la forma de referencia es
@@ -412,6 +420,12 @@ $ease-natural: cubic-bezier(0.32, 0.12, 0.2, 1);
 /// El anillo de foco. Rapidisima: un foco que tarda es un foco que ya no se sigue.
 $ease-focus: cubic-bezier(0.32, 0.72, 0, 1);
 
+/// Lo que PERSIGUE al puntero: el cursor, la vista previa que lo acompana. Se reapunta
+/// en cada movimiento, y cada reapunte arranca un tramo nuevo desde donde va; con una
+/// curva que arranca lenta, como la de arriba, cada tramo vuelve a arrancar lento y la
+/// pieza no llega mientras el raton se mueve. Esta sale a toda velocidad y frena.
+$ease-follow: cubic-bezier(0.215, 0.61, 0.355, 1);
+
 /// El paso del desfase por CARACTER. No cabe en la escala de duracion: el escalon
 /// mas corto son 0.15s, que en una palabra de seis letras es casi un segundo solo
 /// de retardo.
@@ -420,12 +434,6 @@ $stagger-char: 0.024s;
 /// El paso del desfase por LONJA, en la cortina que sube detras de un icono. Es el
 /// doble del de caracter y no un numero nuevo: cinco lonjas con el paso de letra se
 /// leerian como una sola, y con un paso suelto habria dos ritmos de desfase en el
-/// Lo que PERSIGUE al puntero: el cursor, la vista previa que lo acompana. Se reapunta
-/// en cada movimiento, y cada reapunte arranca un tramo nuevo desde donde va; con una
-/// curva que arranca lenta, como la de arriba, cada tramo vuelve a arrancar lento y la
-/// pieza no llega mientras el raton se mueve. Esta sale a toda velocidad y frena.
-$ease-follow: cubic-bezier(0.215, 0.61, 0.355, 1);
-
 /// sitio sin nada que los relacione.
 $stagger-slice: $stagger-char * 2;
 
