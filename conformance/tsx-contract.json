@@ -3,7 +3,10 @@
   "scanDirs": [
     "src"
   ],
-  "ext": ".tsx",
+  "ext": [
+    ".tsx",
+    ".ts"
+  ],
   "rules": {
     "inline-style-literal": {
       "why": "un style={{ color: '#fff' }} no re-tematiza y es invisible para el gate del Sass. Los valores dinamicos (style={{ background: token.value }}) SI pasan: no son literales",
@@ -23,12 +26,31 @@
     }
   },
   "exemptFiles": {
+    "design-system/motion/gsap.test.ts": {
+      "why": "Es el test del registro de la curva de marca: le da la curva cubica tal como la sirve el navegador y compara contra una de gsap. Los literales son el dato de entrada y el termino de comparacion, no motion que viaje al navegador",
+      "rules": [
+        "motion-literal"
+      ]
+    },
+    "design-system/motion/tokens.test.ts": {
+      "why": "Es el test del puente de motion: le da a leer una curva cubica para comprobar que la parsea. El literal es el dato de entrada del test, no motion que viaje al navegador",
+      "rules": [
+        "motion-literal"
+      ]
+    },
+    "design-system/styles/__tests__/theme-contract.test.ts": {
+      "why": "Es el test que vigila las zonas de tema de Carbon: nombra las clases cds-- para comprobar que index.scss las emite. No acopla nada al markup, es la afirmacion misma",
+      "rules": [
+        "handwritten-cds-class"
+      ]
+    },
     "app/global-error.tsx": "Se dispara cuando falla el propio root layout, asi que no puede depender de la hoja de estilos — que podria ser justo lo que fallo. Sus literales son el fallback de ultimo recurso, deliberado",
     "design-system/theme/zone.ts": "ES la frontera con la convencion de clases de tema de Carbon: alguien tiene que escribir 'cds--' una vez para que nadie mas tenga que hacerlo. Fuera de aqui la regla sigue entera",
     "design-system/motion/gsap.ts": {
-      "why": "ES la puerta. El unico archivo que puede importar gsap, que es justo lo que la regla protege: sin una excepcion declarada, la regla se cumpliria no usando gsap en ningun sitio",
+      "why": "ES la puerta. El unico archivo que puede importar gsap, que es justo lo que la regla protege: sin una excepcion declarada, la regla se cumpliria no usando gsap en ningun sitio. Y es donde se registra la curva de marca con CustomEase, leida de la hoja y no escrita: el unico CustomEase. del proyecto, y por eso motion-literal tampoco aplica aqui",
       "rules": [
-        "gsap-import"
+        "gsap-import",
+        "motion-literal"
       ]
     }
   },

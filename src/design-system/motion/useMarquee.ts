@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
+import { EASE_LINEAR } from "./tokens";
 
 /**
  * Tira infinita que invierte su sentido segun hacia donde se desplace la pagina.
@@ -147,8 +148,8 @@ export function useMarquee<T extends HTMLElement, U extends HTMLElement>({
               xPercent: -100,
               repeat: -1,
               duration,
-              // conformance-exempt: motion-literal — un bucle a velocidad constante no lleva curva; 'linear' es la AUSENCIA de ease, no una segunda conviviendo con la de marca.
-              ease: "linear",
+              // un bucle a velocidad constante: el ritmo lo marca la duracion, no una segunda curva conviviendo con la de marca.
+              ease: EASE_LINEAR,
             })
             // A mitad del recorrido: asi la tira arranca ya poblada por los dos
             // lados en vez de entrar en cuadro desde un borde vacio.
@@ -186,8 +187,8 @@ export function useMarquee<T extends HTMLElement, U extends HTMLElement>({
             { x: `${from}vw` },
             {
               x: `${-from}vw`,
-              // conformance-exempt: motion-literal — atado al scrub, la curva la pone la barra de scroll.
-              ease: "none",
+              // atado al scrub, la curva la pone la barra de scroll.
+              ease: EASE_LINEAR,
             },
           );
 
