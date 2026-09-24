@@ -139,25 +139,13 @@ $card-block-size-compact: 26rem;
 
 // Flota sobre el borde de abajo, en el hueco que deja la corona bajo la tarjeta del
 // centro: asi la corona llega a los limites de la franja y los controles no le roban
-// alto. Mismo material que la cabecera, que tambien es una pildora flotante: cristal
-// y un filo, y el tema de la zona en la que cae.
+// alto. La pastilla la pone ControlBar; aqui solo se decide donde cae.
 .controls {
   position: absolute;
   inset-block-end: spacing.$spacing-05;
   inset-inline-start: 50%;
   z-index: 1;
-  padding: brand.$control-bar-padding;
-  border: brand.$control-bar-border solid theme.$border-subtle;
-  border-radius: brand.$radius-control-bar;
   translate: -50% 0;
-}
-
-// Por encima del cristal: la lamina va en absoluto y taparia una fila sin posicion.
-.controlsRow {
-  position: relative;
-  display: flex;
-  gap: spacing.$spacing-03;
-  align-items: center;
 }
 
 .previous {

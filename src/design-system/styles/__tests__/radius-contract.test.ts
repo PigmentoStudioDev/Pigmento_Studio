@@ -122,8 +122,10 @@ describe('contrato de radios', () => {
 
   // Whitelist POR NOMBRE, no un patron abierto: cada control que puede llevar
   // pildora se anade a mano y se ve en el diff. NavToggle es un <button> con su
-  // aria-expanded — un control, aunque no sea el atomo Button.
-  const CONTROLS = /(Button|Tag|NavToggle)\//;
+  // aria-expanded — un control, aunque no sea el atomo Button. Team entra por sus
+  // pastillas de area, que son conmutadores (aria-pressed); el resto de sus radios
+  // son roles de la escala y el contrato de arriba los sigue vigilando.
+  const CONTROLS = /(Button|Tag|NavToggle|Team)\//;
 
   it('la pildora solo la usan los controles', () => {
     const misuse = RADII.filter((r) => r.value === pill && !CONTROLS.test(r.rel));
@@ -145,7 +147,7 @@ describe('radios por rol', () => {
   const PIECES: ReadonlyArray<readonly [string, string]> = [
     ['components/molecules/HeroBand/HeroBand.module.scss', '.card'],
     ['components/organisms/WorkRows/WorkRows.module.scss', '.card'],
-    ['components/organisms/Team/Team.module.scss', '.card'],
+    ['components/organisms/Team/Team.module.scss', '.shot'],
     ['components/organisms/Services/Services.module.scss', '.container'],
     ['components/molecules/RadialGallery/RadialGallery.module.scss', '.thumb'],
     ['components/molecules/InfiniteGrid/InfiniteGrid.module.scss', '.card'],

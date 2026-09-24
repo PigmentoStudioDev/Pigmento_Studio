@@ -1,0 +1,23 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// El cristal va en absoluto y cubre la pastilla, asi que la caja tiene que ser su
+// referencia; y ocupa lo que mide su contenido, no la fila de quien la contiene.
+.root {
+  position: relative;
+  display: inline-flex;
+  padding: brand.$control-bar-padding;
+  border: brand.$control-bar-border solid theme.$border-subtle;
+  border-radius: brand.$radius-control-bar;
+}
+
+// Por encima del cristal: la lamina va en absoluto y taparia una fila sin posicion.
+.row {
+  position: relative;
+  display: flex;
+  gap: spacing.$spacing-03;
+  align-items: center;
+}

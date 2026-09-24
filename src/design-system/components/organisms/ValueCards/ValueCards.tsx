@@ -5,8 +5,8 @@ import { cursorAttributes } from "../../../motion/cursor";
 import { useAutoRotate } from "../../../motion/useAutoRotate";
 import { RADIAL_COPIES, useRadialSlider } from "../../../motion/useRadialSlider";
 import type { CandyFamily } from "../../../theme/candy";
-import { GlassSurface } from "../../atoms/GlassSurface/GlassSurface";
 import { IconButton } from "../../atoms/IconButton/IconButton";
+import { ControlBar } from "../../molecules/ControlBar/ControlBar";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import styles from "./ValueCards.module.scss";
 
@@ -158,8 +158,7 @@ export function ValueCards({ title, cards, labels, titleId }: ValueCardsProps) {
 
             {count > 1 ? (
               <div className={styles.controls}>
-                <GlassSurface />
-                <div className={styles.controlsRow}>
+                <ControlBar>
                   {/* La flecha es una sola y apunta a la derecha: la de atras es la misma
                       reflejada, en un envoltorio para no pisar la escala del gesto de pulsar. */}
                   <span className={styles.previous}>
@@ -180,7 +179,7 @@ export function ValueCards({ title, cards, labels, titleId }: ValueCardsProps) {
                   </div>
 
                   <IconButton icon="arrow" label={labels.next} emphasis="primary" onClick={byHand(() => go(1))} />
-                </div>
+                </ControlBar>
               </div>
             ) : null}
           </div>

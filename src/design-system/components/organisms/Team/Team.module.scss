@@ -5,65 +5,294 @@
 
 @use '../../../styles/brand' as brand;
 @use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
-/// Ancho minimo de un retrato antes de que la rejilla parta a menos columnas. Con
-/// menos, una cara deja de reconocerse y la fila se lee como una tira de sellos.
-$member-min-inline-size: 14rem;
+/// Ancho de la columna de areas. Lo que ocupa la etiqueta mas larga en su pastilla,
+/// no una fraccion de la reticula: con una fraccion, en pantalla ancha la columna
+/// se come media tarjeta sin tener nada que poner.
+$rail-inline-size: 12rem;
 
-/// Proporcion del retrato. Vertical, que es como se encuadra a una persona.
-///
-/// Como CADENA y no como fraccion: en Sass la barra sigue siendo division, asi que
-/// `3 / 4` llegaria al CSS como `0.75`. Es el mismo numero y se pierde la lectura —
-/// una proporcion se entiende de un vistazo y un decimal no.
-$portrait-ratio: '3 / 4';
+/// Cuantas tarjetas caben a la vista. Con un numero entero la fila parece una rejilla
+/// que se acaba en el borde; la fraccion deja asomar la siguiente y dice que hay mas.
+$cards-per-view: 2.4;
+$cards-per-view-compact: 1.15;
+
+/// Proporcion del retrato. Como CADENA: en Sass la barra divide, y `4 / 5` llegaria al
+/// CSS como `0.8`, que es el mismo numero sin la lectura de una proporcion.
+$portrait-ratio: '4 / 5';
+
+/// El color de quien no esta activo. Apagado, no gris: sin color del todo la fila se
+/// leeria como fotos de archivo, y la activa dejaria de destacar por contraste.
+$rest-saturation: 0.6;
 
 .root {
   padding-inline: spacing.$spacing-06;
 }
 
-// `auto-fit` y no un numero de columnas: cuantas caben lo decide el ancho, y cuantos
-// hay lo decide el contenido. Con un `repeat(5, 1fr)` escrito a mano, el dia que
-// entre o salga alguien del equipo hay que venir a esta hoja a cambiarlo.
-.grid {
+.body {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax($member-min-inline-size, 1fr));
-  gap: spacing.$spacing-06;
-  // list-style quita el marcador pero no el padding de 40px que el navegador le pone
-  // a todo <ul>. Son dos reglas distintas.
-  padding-inline-start: 0;
-  margin-block: 0;
-  list-style: none;
+  grid-template-columns: $rail-inline-size minmax(0, 1fr);
+  gap: spacing.$spacing-07;
+  margin-block-start: spacing.$spacing-09;
+
+  @include breakpoint.breakpoint-down('md') {
+    grid-template-columns: minmax(0, 1fr);
+    gap: spacing.$spacing-06;
+  }
 }
 
-.member {
+// Las areas arriba y la pastilla abajo, a los extremos de la columna: son dos maneras
+// distintas de moverse por la fila y juntas se leerian como un solo control.
+.rail {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: spacing.$spacing-07;
+
+  @include breakpoint.breakpoint-down('md') {
+    flex-flow: row wrap;
+    align-items: center;
+  }
+}
+
+.filters {
   display: flex;
   flex-direction: column;
   gap: spacing.$spacing-03;
+  align-items: flex-start;
+
+  @include breakpoint.breakpoint-down('md') {
+    flex-flow: row wrap;
+  }
 }
 
-// El marco se queda quieto y es quien escucha. No lleva recorte: la tarjeta que vuela
-// tiene que poder salirse de el.
-.frame {
-  position: relative;
-  margin-block-end: spacing.$spacing-03;
+// Una pastilla por area. Es un conmutador (aria-pressed), asi que su estado va en el
+// fondo y no solo en el color del texto: el color solo no llega a quien no lo distingue.
+.chip {
+  @include brandtype.style('label');
+
+  padding-block: spacing.$spacing-03;
+  padding-inline: spacing.$spacing-04;
+  border: 1px solid theme.$border-subtle;
+  border-radius: brand.$radius-full;
+  background: none;
+  color: theme.$text-secondary;
+  cursor: pointer;
+  transition:
+    color brand.$duration-quarter brand.$ease-default,
+    background-color brand.$duration-quarter brand.$ease-default,
+    border-color brand.$duration-quarter brand.$ease-default;
 }
 
-// Lo que vuela. `will-change` lo promociona a capa propia: sin eso, cada golpe
-// repinta la foto entera en cada fotograma en vez de recomponerla.
+.chip:hover {
+  border-color: theme.$border-strong;
+  color: theme.$text-primary;
+}
+
+.chip[aria-pressed='true'] {
+  border-color: theme.$background-inverse;
+  background-color: theme.$background-inverse;
+  color: theme.$text-inverse;
+}
+
+.chip:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+}
+
+.previous {
+  display: inline-flex;
+  scale: -1 1;
+}
+
+// La ventana de la fila. Es contenedor de si misma: el ancho de cada tarjeta y el tope
+// del final se calculan contra ella (cqi), no contra la pagina.
+.viewport {
+  container-type: inline-size;
+  overflow: clip;
+  // Llega al borde de la pagina: la fila sigue mas alla del marco en vez de acabarse
+  // en el margen como una rejilla.
+  margin-inline-end: calc(#{spacing.$spacing-06} * -1);
+  // El gesto es horizontal: el vertical sigue siendo el scroll de la pagina.
+  touch-action: pan-y;
+  user-select: none;
+
+  --pg-roster-per-view: #{$cards-per-view};
+
+  @include breakpoint.breakpoint-down('md') {
+    --pg-roster-per-view: #{$cards-per-view-compact};
+  }
+}
+
+.viewport:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+:root:not([data-custom-cursor]) .viewport {
+  cursor: grab;
+}
+
+:root:not([data-custom-cursor]) .viewport[data-dragging='true'] {
+  cursor: grabbing;
+}
+
+// Un paso es una tarjeta mas su hueco. La fila se desplaza ese paso por indice, mas lo
+// que desvie el dedo, y no pasa de su final: el tope es la diferencia entre lo que mide
+// la fila (100%) y lo que mide la ventana (100cqi), y la hoja lo sabe sin que el JS mida.
+// HACK: sin respaldo para navegadores sin unidades de contenedor: ahi la declaracion se
+// invalida y la fila no se desplaza. Anadir un @supports si analitica muestra trafico real de ellos.
+.track {
+  --pg-roster-gap: #{spacing.$spacing-04};
+  --pg-roster-card: calc((100cqi - var(--pg-roster-gap) * 2) / var(--pg-roster-per-view));
+  --pg-roster-offset: calc(
+    var(--pg-roster-index, 0) * (var(--pg-roster-card) + var(--pg-roster-gap)) * -1 +
+      var(--pg-roster-drag, 0) * 1px
+  );
+
+  display: flex;
+  gap: var(--pg-roster-gap);
+  inline-size: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  translate: max(min(var(--pg-roster-offset), 0px), min(calc(100cqi - 100%), 0px)) 0;
+  transition: translate brand.$duration-onehalf brand.$ease-default;
+}
+
+// Con el dedo abajo la fila va 1:1 con el puntero.
+.viewport[data-dragging='true'] .track {
+  transition: none;
+}
+
+// Todas del mismo tamano, siempre: la activa se marca por el color de la foto, nunca
+// creciendo, o la fila entera se recolocaria en cada paso.
 .card {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  inline-size: var(--pg-roster-card);
+  padding: spacing.$spacing-04;
+  border-radius: brand.$radius-card;
+  background-color: theme.$layer-01;
+  // La fila entra entera al cambiar de area, tarjeta a tarjeta: la nueva seleccion
+  // llega como un solo gesto y no como un parpadeo.
+  animation: roster-enter brand.$duration-base brand.$ease-default both;
+  animation-delay: calc(var(--pg-roster-card-index, 0) * #{brand.$stagger-slice});
+}
+
+@keyframes roster-enter {
+  from {
+    opacity: 0;
+    translate: 0 brand.$reveal-distance;
+  }
+}
+
+.shot {
+  position: relative;
   overflow: hidden;
+  aspect-ratio: #{$portrait-ratio};
   border-radius: brand.$radius-piece;
-  will-change: transform;
 }
 
 .photo {
-  display: block;
+  position: absolute;
+  inset: 0;
   inline-size: 100%;
-  block-size: auto;
-  aspect-ratio: #{$portrait-ratio};
+  block-size: 100%;
   object-fit: cover;
+  filter: saturate($rest-saturation);
+  transition: filter brand.$duration-base brand.$ease-default;
+  -webkit-user-drag: none;
+}
+
+.card[aria-current='true'] .photo {
+  filter: none;
+}
+
+// El boton cubre solo la foto: los enlaces del pie siguen siendo sus propios objetivos
+// y el resto de la tarjeta sigue siendo del arrastre.
+.open {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.open:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+// Encima de la foto y no en otro sitio: la bio se lee sobre la cara de quien la
+// cuenta. El velo y el texto son de la zona oscura en los dos modos, porque debajo
+// siempre hay una foto y no el fondo del tema.
+.panel {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: spacing.$spacing-02;
+  padding: spacing.$spacing-06;
+  background-color: theme.$overlay;
+  color: theme.$text-on-color;
+  -webkit-backdrop-filter: blur(brand.$glass-blur);
+  backdrop-filter: blur(brand.$glass-blur);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity brand.$duration-half brand.$ease-default;
+}
+
+.card[data-open='true'] .panel {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.closeButton {
+  position: absolute;
+  inset-block-start: spacing.$spacing-05;
+  inset-inline-end: spacing.$spacing-05;
+}
+
+.panelName {
+  @include brandtype.style('lead');
+
+  margin: 0;
+}
+
+.panelRole {
+  @include brandtype.style('label');
+
+  margin: 0;
+}
+
+.panelBio {
+  @include brandtype.style('body');
+
+  margin: 0;
+  margin-block-start: spacing.$spacing-04;
+}
+
+.foot {
+  display: flex;
+  gap: spacing.$spacing-05;
+  align-items: center;
+  justify-content: space-between;
+  padding-block-start: spacing.$spacing-05;
+}
+
+.id {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-02;
+  min-inline-size: 0;
 }
 
 .name {
@@ -73,12 +302,47 @@ $portrait-ratio: '3 / 4';
   font-weight: brandtype.$weight-medium;
 }
 
-// El oficio es METADATO y por eso va en la voz de metadato del sitio: mono y caja
-// alta. La diferencia de tamano contra el nombre no seria suficiente por si sola —
-// la familia dice que esto es una etiqueta antes de que nadie la lea.
+// El oficio es METADATO y va en la voz de metadato del sitio: la familia dice que esto
+// es una etiqueta antes de que nadie la lea.
 .role {
   @include brandtype.style('label');
 
   margin: 0;
   color: theme.$text-secondary;
+}
+
+.links {
+  display: flex;
+  flex: none;
+  gap: spacing.$spacing-02;
+}
+
+// Sin desplazamiento: una fila con scroll nativo. La ventana deja de recortar y pasa a
+// desplazarse, y todo lo que se movia se queda quieto y en su sitio.
+@media (prefers-reduced-motion: reduce) {
+  .viewport {
+    overflow-x: auto;
+    touch-action: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  :root:not([data-custom-cursor]) .viewport {
+    cursor: auto;
+  }
+
+  .track {
+    translate: none;
+    transition: none;
+  }
+
+  .card {
+    scroll-snap-align: start;
+    animation: none;
+  }
+
+  .photo,
+  .chip,
+  .panel {
+    transition: none;
+  }
 }

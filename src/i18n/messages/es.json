@@ -136,26 +136,28 @@
       "titleHighlight": "Equipo",
       "label": "Quién lo hace",
       "intro": "Un estudio pequeño en el que la persona que diseña tu marca es la misma que contesta tus correos. Sin capas de gestión entre tú y quien hace el trabajo.",
-      "one": {
-        "name": "Nombre Apellido",
-        "role": "Dirección de arte"
+      "groups": {
+        "all": "Todos",
+        "direccion": "Dirección",
+        "diseno": "Diseño",
+        "desarrollo": "Desarrollo",
+        "estrategia": "Estrategia"
       },
-      "two": {
-        "name": "Nombre Apellido",
-        "role": "Diseño de marca"
+      "filter": "Filtrar por área",
+      "previous": "Persona anterior",
+      "next": "Persona siguiente",
+      "open": "Leer más sobre {name}",
+      "close": "Cerrar",
+      "link": "{name} en {network}",
+      "networks": {
+        "linkedin": "LinkedIn",
+        "instagram": "Instagram",
+        "behance": "Behance",
+        "x": "X",
+        "web": "su sitio web"
       },
-      "three": {
-        "name": "Nombre Apellido",
-        "role": "Desarrollo web"
-      },
-      "four": {
-        "name": "Nombre Apellido",
-        "role": "Motion"
-      },
-      "five": {
-        "name": "Nombre Apellido",
-        "role": "Marketing"
-      }
+      "roster": "Equipo. Usa las flechas para recorrerlo",
+      "drag": "Arrastra"
     },
     "faq": {
       "title": "FAQ",
