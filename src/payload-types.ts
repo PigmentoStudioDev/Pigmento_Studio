@@ -73,6 +73,7 @@ export interface Config {
     projects: Project;
     proposals: Proposal;
     legal: Legal;
+    'team-members': TeamMember;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -86,6 +87,7 @@ export interface Config {
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     proposals: ProposalsSelect<false> | ProposalsSelect<true>;
     legal: LegalSelect<false> | LegalSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -487,6 +489,38 @@ export interface Legal {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  group: 'direccion' | 'diseno' | 'desarrollo' | 'estrategia';
+  /**
+   * Dos o tres lineas. Se lee en el panel que se abre sobre la foto.
+   */
+  bio?: string | null;
+  /**
+   * Retrato vertical.
+   */
+  photo: number | Media;
+  links?:
+    | {
+        network: 'linkedin' | 'instagram' | 'behance' | 'x' | 'web';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Menor primero. Empata por fecha de creacion.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * API keys control which collections, resources, tools, and prompts MCP clients can access
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -539,6 +573,24 @@ export interface PayloadMcpApiKey {
     update?: boolean | null;
     /**
      * Allow clients to delete projects.
+     */
+    delete?: boolean | null;
+  };
+  teamMembers?: {
+    /**
+     * Allow clients to find team-members.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create team-members.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update team-members.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete team-members.
      */
     delete?: boolean | null;
   };
@@ -640,6 +692,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'legal';
         value: number | Legal;
+      } | null)
+    | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
       } | null)
     | ({
         relationTo: 'payload-mcp-api-keys';
@@ -904,6 +960,28 @@ export interface LegalSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  group?: T;
+  bio?: T;
+  photo?: T;
+  links?:
+    | T
+    | {
+        network?: T;
+        url?: T;
+        id?: T;
+      };
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-mcp-api-keys_select".
  */
 export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
@@ -919,6 +997,14 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         delete?: T;
       };
   projects?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  teamMembers?:
     | T
     | {
         find?: T;

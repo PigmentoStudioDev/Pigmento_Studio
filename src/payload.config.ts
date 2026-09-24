@@ -7,6 +7,7 @@ import sharp from 'sharp';
 import { Legal } from './collections/Legal';
 import { Media } from './collections/Media';
 import { Projects } from './collections/Projects';
+import { TeamMembers } from './collections/TeamMembers';
 import { Proposals } from './collections/Proposals';
 import { Users } from './collections/Users';
 import { pigmentoMcp } from './mcp/plugin';
@@ -46,7 +47,7 @@ export default buildConfig({
     importMap: { baseDir: path.resolve(dirname) },
   },
 
-  collections: [Users, Media, Projects, Proposals, Legal],
+  collections: [Users, Media, Projects, Proposals, Legal, TeamMembers],
 
   secret: process.env.PAYLOAD_SECRET || '',
 

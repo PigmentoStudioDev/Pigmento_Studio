@@ -119,6 +119,30 @@
       ]
     },
     {
+      "name": "createTeamMembers",
+      "required": [
+        "group",
+        "name",
+        "photo",
+        "role"
+      ],
+      "props": [
+        "_status",
+        "bio",
+        "depth",
+        "draft",
+        "fallbackLocale",
+        "group",
+        "links",
+        "locale",
+        "name",
+        "order",
+        "photo",
+        "role",
+        "select"
+      ]
+    },
+    {
       "name": "deleteMedia",
       "required": [],
       "props": [
@@ -142,6 +166,17 @@
     },
     {
       "name": "deleteProposals",
+      "required": [],
+      "props": [
+        "depth",
+        "fallbackLocale",
+        "id",
+        "locale",
+        "where"
+      ]
+    },
+    {
+      "name": "deleteTeamMembers",
       "required": [],
       "props": [
         "depth",
@@ -201,6 +236,22 @@
     },
     {
       "name": "findProposals",
+      "required": [],
+      "props": [
+        "depth",
+        "draft",
+        "fallbackLocale",
+        "id",
+        "limit",
+        "locale",
+        "page",
+        "select",
+        "sort",
+        "where"
+      ]
+    },
+    {
+      "name": "findTeamMembers",
       "required": [],
       "props": [
         "depth",
@@ -340,6 +391,28 @@
         "terms",
         "termsTitle",
         "validUntil",
+        "where"
+      ]
+    },
+    {
+      "name": "updateTeamMembers",
+      "required": [],
+      "props": [
+        "_status",
+        "bio",
+        "depth",
+        "draft",
+        "fallbackLocale",
+        "group",
+        "id",
+        "links",
+        "locale",
+        "name",
+        "order",
+        "overrideLock",
+        "photo",
+        "role",
+        "select",
         "where"
       ]
     }

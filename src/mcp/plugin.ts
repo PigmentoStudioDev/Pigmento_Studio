@@ -30,6 +30,15 @@ export const MCP_COLLECTIONS = {
       'Tiene borradores: crea con draft=true y deja que la persona publique. order menor ' +
       'primero; featured lo mete en el escaparate del menu y en el manifiesto.',
   },
+  'team-members': {
+    enabled: { find: true, create: true, update: true, delete: true },
+    description:
+      'Quien forma el estudio: la franja del equipo. name no se localiza; role y bio si. ' +
+      'group (direccion | diseno | desarrollo | estrategia) es lo que filtran las pastillas. ' +
+      'photo es un id de media, retrato vertical. links[] lleva network (linkedin | instagram | ' +
+      'behance | x | web) y una url https. Tiene borradores: crea con draft=true, porque ' +
+      'publicar a una persona es decision de la persona. order menor primero.',
+  },
   legal: {
     /**
      * Sin `delete`: borrar un documento legal es un 404 en una URL indexada, y
@@ -63,7 +72,7 @@ export const MCP_COLLECTIONS = {
  * de scripts/mcp/tools.baseline.json — no la del sitio, que no le dice nada a
  * quien se conecta.
  */
-export const SERVER_INFO = { name: 'pigmento-cms', version: '3' };
+export const SERVER_INFO = { name: 'pigmento-cms', version: '4' };
 
 /**
  * 60 s es el default del plugin; se escribe para que cambiarlo sea un diff. Una

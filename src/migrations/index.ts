@@ -9,6 +9,7 @@ import * as migration_20260921_025843_mcp_api_keys from './20260921_025843_mcp_a
 import * as migration_20260921_030438_mcp_tool_toggles from './20260921_030438_mcp_tool_toggles';
 import * as migration_20260921_155324_legal from './20260921_155324_legal';
 import * as migration_20260924_225529_project_categories from './20260924_225529_project_categories';
+import * as migration_20260924_233622_team_members from './20260924_233622_team_members';
 
 export const migrations = [
   {
@@ -64,6 +65,11 @@ export const migrations = [
   {
     up: migration_20260924_225529_project_categories.up,
     down: migration_20260924_225529_project_categories.down,
-    name: '20260924_225529_project_categories'
+    name: '20260924_225529_project_categories',
+  },
+  {
+    up: migration_20260924_233622_team_members.up,
+    down: migration_20260924_233622_team_members.down,
+    name: '20260924_233622_team_members'
   },
 ];
