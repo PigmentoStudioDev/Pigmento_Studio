@@ -8,13 +8,14 @@ import { MCP_COLLECTIONS, apiKeyFromUrl } from './plugin';
  */
 describe('MCP_COLLECTIONS', () => {
   /**
-   * Las tres colecciones de contenido, con las cuatro operaciones. Enumeradas
-   * una a una: `enabled: true` a secas abriria lo que el plugin decida en la
-   * siguiente version.
+   * Las colecciones de contenido, con las cuatro operaciones. Enumeradas una a
+   * una: `enabled: true` a secas abriria lo que el plugin decida en la siguiente
+   * version. El equipo se borra por aqui a proposito: retirar a quien deja el
+   * estudio es la operacion mas comun de esa coleccion.
    */
-  it('expone media, projects, proposals y legal', () => {
-    expect(Object.keys(MCP_COLLECTIONS).sort()).toEqual(['legal', 'media', 'projects', 'proposals']);
-    for (const slug of ['media', 'projects', 'proposals'] as const) {
+  it('expone media, projects, proposals, team-members y legal', () => {
+    expect(Object.keys(MCP_COLLECTIONS).sort()).toEqual(['legal', 'media', 'projects', 'proposals', 'team-members']);
+    for (const slug of ['media', 'projects', 'proposals', 'team-members'] as const) {
       expect(MCP_COLLECTIONS[slug].enabled).toEqual({
         find: true,
         create: true,

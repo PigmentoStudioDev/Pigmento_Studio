@@ -37,6 +37,16 @@ metadatos. Reglas de los assets: \`pigmento://cms/media\`.
 - Tiene borradores (\`_status\`: draft | published). El sitio solo pinta lo publicado.
   Crea con \`draft: true\` y deja que la persona publique.
 
+### team-members — el equipo
+- \`name\` (obligatorio, NO se localiza: un nombre no se traduce), \`role\` y \`bio\`
+  (localizados, texto plano), \`photo\` (obligatorio, id de \`media\`, retrato vertical).
+- \`group\`: direccion | diseno | desarrollo | estrategia. Es lo que filtran las pastillas
+  de la franja; solo aparecen las pastillas de grupos con alguien publicado.
+- \`links[]\`: \`network\` (linkedin | instagram | behance | x | web) y \`url\`, solo https.
+- \`order\`: menor primero. Tiene borradores y el sitio solo pinta lo publicado: publicar
+  a una persona es decision de esa persona, no se publica sin confirmarlo.
+- Sin nadie publicado, la seccion del equipo no se pinta.
+
 ### proposals — cotizaciones privadas
 - Contenido no publico. Su URL publica lleva un \`accessToken\` que acuña el SERVIDOR al
   crear: no lo mandes ni lo inventes; lo que mandes se ignora.

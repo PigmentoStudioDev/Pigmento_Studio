@@ -457,7 +457,8 @@ El CMS se puede poblar desde Claude Code o cualquier cliente MCP: `POST /api/mcp
 el plugin oficial `@payloadcms/plugin-mcp` (misma version pinneada que Payload). Que
 expone y con que reglas vive en `src/mcp/`; el programa entero en `specs/mcp/`.
 
-- **Superficie**: `find/create/update/delete` de `media`, `projects` y `proposals`, y
+- **Superficie**: `find/create/update/delete` de `media`, `projects`, `proposals` y
+  `team-members`, y
   `find/create/update` de `legal` —sin borrar: un legal borrado es un 404 en una URL
   indexada— (los nombres los pone el plugin: `findProjects`, `createMedia`...), la tool propia
   `pigmento_upload_media` (URL https o base64 → R2, con alt en `es` y `en`) y dos
