@@ -39,6 +39,7 @@ const SCALE_VARS = [
   'radius-full',
   'radius-header',
   'radius-control-m',
+  'radius-control-bar',
   'radius-control-square',
   'radius-cursor-disc',
 ];

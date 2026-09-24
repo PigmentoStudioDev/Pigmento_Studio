@@ -87,6 +87,23 @@ describe("ValueCards", () => {
     expect(screen.getByText("3 de 3: Criterio antes que tendencia")).toHaveAttribute("aria-live", "polite");
   });
 
+  /**
+   * Mientras gira sola, la region viva calla: anunciar cada vuelta interrumpiria al
+   * lector de pantalla cada pocos segundos. Vuelve a hablar cuando la mueve la persona.
+   */
+  it("la region viva calla mientras gira sola y habla cuando la mueve la persona", async () => {
+    document.documentElement.style.setProperty("--pg-duration-double", "1.2s");
+    const user = userEvent.setup();
+    render(<ValueCards {...PROPS} />);
+
+    expect(screen.getByText("1 de 3: Sin intermediarios")).toHaveAttribute("aria-live", "off");
+
+    await user.click(screen.getByRole("button", { name: "Siguiente" }));
+
+    expect(screen.getByText("2 de 3: Probado con gente real")).toHaveAttribute("aria-live", "polite");
+    document.documentElement.style.removeProperty("--pg-duration-double");
+  });
+
   it("con una sola tarjeta no hay controles", () => {
     render(<ValueCards {...PROPS} cards={PROPS.cards.slice(0, 1)} />);
 
@@ -97,6 +114,12 @@ describe("ValueCards", () => {
     const { container } = render(<ValueCards {...PROPS} cards={[]} />);
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("la corona entra con el scroll, como el resto de la pagina", () => {
+    render(<ValueCards {...PROPS} />);
+
+    expect(screen.getByRole("group", { name: PROPS.title })).toHaveAttribute("data-reveal-mode", "block");
   });
 
   it("no tiene violaciones de accesibilidad", async () => {
