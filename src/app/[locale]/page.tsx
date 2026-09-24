@@ -16,6 +16,7 @@ import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { getFinalCta } from "../cta";
 import { getFaq } from "../faq";
 import { getFeaturedPieces, getWorkProjects } from "@/cms/projects";
+import { getTeamMembers } from "@/cms/team";
 import { getManifesto } from "../manifesto";
 import { getServices } from "../services";
 import { getTeam } from "../team";
@@ -56,12 +57,16 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
 
   // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
   // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
-  // Dos consultas independientes: en serie sumarian sus tiempos al primer byte.
-  const [pieces, projects] = await Promise.all([getFeaturedPieces(locale), getWorkProjects(locale)]);
+  // Consultas independientes: en serie sumarian sus tiempos al primer byte.
+  const [pieces, projects, teamMembers] = await Promise.all([
+    getFeaturedPieces(locale),
+    getWorkProjects(locale),
+    getTeamMembers(locale),
+  ]);
   const tValues = await getTranslations("home.values");
   const tWork = await getTranslations("home.work");
   const tServices = await getTranslations("home.services");
-  const tTeam = await getTranslations("home.team");
+  const team = getTeam(await getTranslations("home.team"), teamMembers);
   const tFaq = await getTranslations("home.faq");
   const tCta = await getTranslations("home.cta");
 
@@ -139,10 +144,13 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       </Section>
 
       {/* Quien hace el trabajo, antes de las objeciones: la primera pregunta de
-          cualquiera que va a contratar un estudio pequeno es con quien va a hablar. */}
-      <Section width="strip" spacing="loose" labelledBy={TEAM_TITLE_ID}>
-        <Team {...getTeam(tTeam)} titleId={TEAM_TITLE_ID} />
-      </Section>
+          cualquiera que va a contratar un estudio pequeno es con quien va a hablar.
+          Sin nadie publicado en el CMS no se pinta. */}
+      {team ? (
+        <Section width="strip" spacing="loose" labelledBy={TEAM_TITLE_ID}>
+          <Team {...team} titleId={TEAM_TITLE_ID} />
+        </Section>
+      ) : null}
 
       {/* Las objeciones, al final: quien llega hasta aqui ya sabe que hacemos y
           esta decidiendo, no explorando. A sangre porque la lista se escanea de un

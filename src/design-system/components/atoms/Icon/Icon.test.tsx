@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { Icon, type IconName } from "./Icon";
 
 /** Logotipos y senales: siluetas rellenas. */
-const FILLED: IconName[] = ["instagram", "facebook", "behance", "arrow"];
+const FILLED: IconName[] = ["instagram", "facebook", "behance", "linkedin", "x", "arrow"];
 /** De interfaz: dibujados a linea. */
 const STROKED: IconName[] = [
   "sun",
@@ -15,6 +15,8 @@ const STROKED: IconName[] = [
   "check",
   "dash",
   "arrow-up-right",
+  "globe",
+  "close",
 ];
 const NAMES: IconName[] = [...FILLED, ...STROKED];
 

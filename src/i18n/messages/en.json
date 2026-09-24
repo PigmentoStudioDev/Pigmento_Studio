@@ -136,26 +136,28 @@
       "titleHighlight": "Team",
       "label": "Who does it",
       "intro": "A small studio where the person designing your brand is the one answering your emails. No layers of account management between you and the work.",
-      "one": {
-        "name": "Nombre Apellido",
-        "role": "Art direction"
+      "groups": {
+        "all": "Everyone",
+        "direccion": "Direction",
+        "diseno": "Design",
+        "desarrollo": "Development",
+        "estrategia": "Strategy"
       },
-      "two": {
-        "name": "Nombre Apellido",
-        "role": "Brand design"
+      "filter": "Filter by area",
+      "previous": "Previous person",
+      "next": "Next person",
+      "open": "Read more about {name}",
+      "close": "Close",
+      "link": "{name} on {network}",
+      "networks": {
+        "linkedin": "LinkedIn",
+        "instagram": "Instagram",
+        "behance": "Behance",
+        "x": "X",
+        "web": "their website"
       },
-      "three": {
-        "name": "Nombre Apellido",
-        "role": "Web development"
-      },
-      "four": {
-        "name": "Nombre Apellido",
-        "role": "Motion"
-      },
-      "five": {
-        "name": "Nombre Apellido",
-        "role": "Marketing"
-      }
+      "roster": "Team. Use the arrow keys to browse",
+      "drag": "Drag"
     },
     "faq": {
       "title": "FAQ",
