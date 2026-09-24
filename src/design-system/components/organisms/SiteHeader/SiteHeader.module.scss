@@ -137,7 +137,7 @@ $hidden-scale: 0.95;
 .plate {
   position: absolute;
   inset: 0;
-  border: 1px solid theme.$border-subtle-01;
+  border: 1px solid theme.$border-subtle;
   border-radius: brand.$radius-header;
   transition:
     inset brand.$duration-base brand.$ease-default,
@@ -150,7 +150,7 @@ $hidden-scale: 0.95;
 
 .isOpen .plate {
   inset: 0;
-  border-radius: brand.$radius-08;
+  border-radius: brand.$radius-plate;
 }
 
 // Grid de tres columnas y no flex, por una razon que se ve sola en cuanto los
@@ -186,7 +186,7 @@ $hidden-scale: 0.95;
   inset-block-end: 0;
   inset-inline: 50%;
   block-size: 1px;
-  background-color: theme.$border-subtle-01;
+  background-color: theme.$border-subtle;
   opacity: 0;
   transition:
     inset-inline brand.$duration-base brand.$ease-default,
@@ -325,7 +325,7 @@ $hidden-scale: 0.95;
 // escalon de la escala y no una pildora.
 .groupFeatured {
   background-color: theme.$layer-02;
-  border-radius: brand.$radius-07;
+  border-radius: brand.$radius-card;
 }
 
 // Al PIE de la columna, no debajo de la lista principal. Es lo que hace que las

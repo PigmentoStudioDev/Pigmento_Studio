@@ -2,12 +2,7 @@
 
 @use '../../../styles/brand' as brand;
 @use '../../../styles/component-tokens' as component;
-@use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
-
-/// Cuerpo del icono. En rem y no en em: este control no vive dentro de un texto, vive
-/// en una fila de utilidades donde todos los conmutadores miden lo mismo.
-$icon-size: 1.25rem;
 
 .root {
   display: flex;
@@ -16,17 +11,24 @@ $icon-size: 1.25rem;
   inline-size: brand.$control-block-m;
   block-size: brand.$control-block-m;
   padding: 0;
-  border: none;
+  // El cuerpo de sus hermanos de fila, tema e idioma: borde y trazo del terciario.
+  border: 1px solid component.get('button-tertiary');
   border-radius: brand.$radius-control-square;
   background-color: transparent;
-  color: theme.$text-primary;
+  color: component.get('button-tertiary');
   cursor: pointer;
-  font-size: $icon-size;
-  transition: background-color brand.$duration-quarter brand.$ease-default;
+  // En rem y no en em: vive en una fila de utilidades, no dentro de un texto.
+  font-size: brand.$control-icon-size;
+  transition:
+    background-color brand.$duration-quarter brand.$ease-default,
+    color brand.$duration-quarter brand.$ease-default;
 }
 
+// Placa E icono a la vez: con solo la placa, en claro quedaba un icono oscuro sobre
+// un fondo oscuro.
 .root:hover {
   background-color: component.get('button-tertiary');
+  color: theme.$text-inverse;
 }
 
 .root:focus-visible {

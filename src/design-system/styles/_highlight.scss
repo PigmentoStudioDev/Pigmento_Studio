@@ -5,6 +5,7 @@
 // rellenado: eso lo publica useScrollHighlight en --pg-highlight-progress, sobre un
 // antepasado que no se parte.
 
+@use './brand' as brand;
 @use '@carbon/react/scss/theme';
 
 /// Va en el <mark>. El relleno sale de un NUMERO heredado y no de un estilo puesto en
@@ -20,6 +21,10 @@
   // el color tiene que seguir al tema.
   background-color: transparent;
   color: inherit;
+  // La marca se parte por lineas, y `clone` da a cada trozo sus cuatro esquinas: sin
+  // el, solo redondea el principio del primero y el final del ultimo.
+  border-radius: brand.$radius-mark;
+  box-decoration-break: clone;
 
   // Quien pide menos movimiento lee el resalte ya puesto. En la hoja y no desde JS:
   // es cierto antes de que gsap llegue, y sigue siendolo si no llega nunca.

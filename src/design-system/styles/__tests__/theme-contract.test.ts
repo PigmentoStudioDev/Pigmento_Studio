@@ -310,6 +310,25 @@ describe('todos los entries de Sass heredan la configuracion de fuentes', () => 
     expect(families.every((value) => value.includes('var(--font-'))).toBe(true);
   });
 
+  /**
+   * Y que los controles la HEREDEN. Un <button> no hereda la familia del body: el
+   * navegador le pone la del sistema. La ponia tambien el reset de Carbon, y sin el
+   * los trece botones de la home salieron en Arial —la FAQ entera— sin literal ni
+   * error: el mixin de tipo no repite la sans porque cuenta con heredarla.
+   */
+  it('los controles de formulario heredan la familia del sitio', () => {
+    const css = compile(join(STYLES, 'index.scss'), SASS).css;
+    const inheriting: string[] = [];
+
+    postcss.parse(css).walkRules((rule) => {
+      rule.walkDecls('font-family', (decl) => {
+        if (decl.value.trim() === 'inherit') inheriting.push(rule.selector);
+      });
+    });
+
+    expect(inheriting.some((selector) => /\bbutton\b/.test(selector))).toBe(true);
+  });
+
   it.each(entries)('%s no emite familias literales', (entry) => {
     const literals: string[] = [];
 

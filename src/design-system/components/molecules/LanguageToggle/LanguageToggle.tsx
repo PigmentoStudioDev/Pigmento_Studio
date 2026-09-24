@@ -19,7 +19,7 @@ import styles from "./LanguageToggle.module.scss";
  * recorte se rompe en cuanto el idioma por defecto deja de llevarlo.
  *
  * El nombre accesible dice la accion y la etiqueta visible dice el destino: quien
- * lo ve lee "EN" y sabe a donde va; quien lo escucha oye "cambiar idioma" seguido
+ * lo ve lee "en" y sabe a donde va; quien lo escucha oye "cambiar idioma" seguido
  * del codigo.
  */
 export interface LanguageToggleProps {
@@ -37,13 +37,13 @@ export function LanguageToggle({ label }: LanguageToggleProps) {
     <button
       type="button"
       lang={next}
-      aria-label={`${label}: ${next.toUpperCase()}`}
+      aria-label={`${label}: ${next}`}
       onClick={() => router.replace(pathname, { locale: next })}
       className={styles.root}
     >
       {/* aria-hidden: el codigo ya va dentro del aria-label, y contarlo dos veces
-          haria que se anunciara "cambiar idioma EN EN". */}
-      <span aria-hidden="true">{next.toUpperCase()}</span>
+          haria que se anunciara "cambiar idioma en en". */}
+      <span aria-hidden="true">{next}</span>
     </button>
   );
 }

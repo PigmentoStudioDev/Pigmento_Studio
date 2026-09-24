@@ -15,7 +15,9 @@
   display: inline-flex;
   align-items: center;
   padding-inline: spacing.$spacing-02;
-  border-radius: brand.$radius-01;
+  // Pildora, como el resto de controles y etiquetas: a 2px se leia como una caja
+  // cuadrada junto a los botones.
+  border-radius: brand.$radius-full;
   white-space: nowrap;
 }
 

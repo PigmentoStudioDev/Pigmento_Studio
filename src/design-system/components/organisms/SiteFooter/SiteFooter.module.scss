@@ -31,14 +31,9 @@ $icon-inline-size: 0.74em;
 }
 
 // Las dos filas son la MISMA lista de enlaces que el menu, en su tamano pequeno y
-// en horizontal. La fila solo aporta el aire y la caja alta.
-//
-// La caja se pone aqui y no dentro de la lista porque se HEREDA: asi el pie decide
-// como habla su propia fila sin que el componente tenga que llevar una prop de caja
-// que despues alguien tendria que mantener en dos sitios.
+// en horizontal. La fila solo aporta el aire.
 .row {
   padding-block: spacing.$spacing-06;
-  text-transform: uppercase;
 }
 
 // La fila de abajo se separa del titular y se apoya en una linea. El color es el

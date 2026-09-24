@@ -140,6 +140,28 @@ $radius-08: 1.5rem;
 /// mitad del lado corto. NO es 50%, que deforma en cuanto la caja no es cuadrada.
 $radius-full: 100rem;
 
+// Radios por ROL. La escala dice que valores existen; esto dice cual lleva cada
+// cosa, y es lo que faltaba: las fotos del hero iban a 2px, las del equipo a 8 y las
+// del trabajo a 12 — tres escalones validos para un mismo rol, y junto a botones en
+// pildora las de 2px se leian como cajas cuadradas. Suben con el tamano de la
+// superficie: una esquina es la misma forma solo si crece con la caja.
+//
+// Lo vigila radius-contract.test.ts: mismo rol, mismo radio.
+
+/// Una pieza de imagen, en tira, reticula o rueda: la unidad visual del portafolio.
+$radius-piece: $radius-06;
+
+/// Una tarjeta de contenido o una columna destacada: texto sobre fondo propio.
+$radius-card: $radius-07;
+
+/// Una placa de seccion: la llamada final, el panel abierto de la cabecera.
+$radius-plate: $radius-08;
+
+/// El resaltado que se rellena detras de un titular. Se mide contra la LINEA que
+/// resalta, casi 100px en la cima: a 6px era un 6% del alto y se leia cuadrado; a 12
+/// ronda el 12%, se ve la esquina y la marca no llega a leerse como etiqueta.
+$radius-mark: $radius-06;
+
 
 
 // Anchos de contenedor.
@@ -290,6 +312,11 @@ $header-compact-inline-size: map.get(grid.$grid-breakpoints, 'md', 'width');
 $control-block-s: spacing.$spacing-07;
 $control-block-m: spacing.$spacing-08;
 $control-block-l: spacing.$spacing-09;
+
+/// El icono de un control cuadrado: IconButton y los conmutadores de la cabecera.
+/// Uno solo porque viven en la misma fila, y habia dos — 1.25rem en el de sonido y
+/// 1.5rem en el resto — sin que nadie lo decidiera.
+$control-icon-size: spacing.$spacing-06;
 
 /// El aire lateral es IGUAL al cuerpo de la etiqueta, y por eso NO sale de la
 /// reticula.

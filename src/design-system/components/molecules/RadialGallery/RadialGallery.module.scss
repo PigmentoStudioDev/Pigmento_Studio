@@ -114,7 +114,7 @@ $thumb-lift: 25%;
   inline-size: $thumb-inline-size;
   block-size: $thumb-block-size;
   margin-block-start: $wheel-orbit;
-  border-radius: brand.$radius-05;
+  border-radius: brand.$radius-piece;
   object-fit: cover;
   // translateY(-50%) es la posicion de REPOSO: centra la miniatura sobre su punto
   // de la orbita. El empuje de cada paso se suma a este valor.

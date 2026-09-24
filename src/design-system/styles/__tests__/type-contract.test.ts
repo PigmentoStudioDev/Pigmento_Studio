@@ -11,7 +11,7 @@
  * de Carbon para UI, la de marca para lo editorial — y que ninguna hoja de
  * componente invente un cuerpo o un tracking por su cuenta.
  */
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import postcss, { type Declaration } from 'postcss';
 import { compile, compileString, type Options } from 'sass';
@@ -115,4 +115,47 @@ describe('contrato de tipografia', () => {
       expect(TRACKINGS.has(decl.value)).toBe(true);
     },
   );
+});
+
+/**
+ * Sin caja alta en el sitio, decision de Karen (2026-09-24). Se mira el CSS
+ * COMPILADO de todas las hojas del DS y no el fuente: la caja alta entraba sobre
+ * todo por el mixin de tipo, que la emitia desde un flag de la escala sin que la
+ * palabra apareciera en la hoja del componente.
+ */
+describe('sin caja alta', () => {
+  const offenders = sheets(DS).flatMap((file) => {
+    const rel = file.slice(DS.length + 1);
+    const found: string[] = [];
+
+    postcss.parse(compile(file, SASS).css).walkDecls(/^(text-transform|font-variant(-caps)?)$/, (decl) => {
+      if (/uppercase|small-caps|all-caps|titling-caps/.test(decl.value)) found.push(`${rel} · ${decl.value}`);
+    });
+
+    return found;
+  });
+
+  it('ninguna hoja pone el texto en mayusculas', () => {
+    expect(offenders).toEqual([]);
+  });
+});
+
+/**
+ * El peso sale de los tokens de _type.scss, nunca de un numero. Se lee el FUENTE y
+ * no el compilado: `600` y `brandtype.$weight-semibold` compilan igual, y el gate
+ * sobre el CSS no veria la diferencia. Habia tres `font-weight: 600` sueltos en
+ * DefinitionRow y ComparisonTable junto a una escala de pesos con nombre.
+ */
+describe('pesos con nombre', () => {
+  const literals = sheets(join(DS, 'components')).flatMap((file) =>
+    readFileSync(file, 'utf8')
+      .split('\n')
+      .map((line, index) => ({ line: line.trim(), at: `${file.slice(DS.length + 1)}:${index + 1}` }))
+      .filter(({ line }) => /^font-weight:\s*[0-9]/.test(line))
+      .map(({ at, line }) => `${at} · ${line}`),
+  );
+
+  it('ningun componente escribe un peso numerico', () => {
+    expect(literals).toEqual([]);
+  });
 });

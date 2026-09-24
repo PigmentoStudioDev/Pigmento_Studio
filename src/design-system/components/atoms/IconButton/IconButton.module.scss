@@ -104,7 +104,7 @@
   inline-size: 100%;
   block-size: 100%;
   // El icono mide 1em, asi que su tamano se declara aqui y no dentro del dibujo.
-  font-size: 1.5rem;
+  font-size: brand.$control-icon-size;
 }
 
 // La vuelta de campana. perspective() va en el propio transform y no en el padre:
