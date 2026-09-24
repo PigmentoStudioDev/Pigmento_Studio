@@ -63,7 +63,7 @@ export const MCP_COLLECTIONS = {
  * de scripts/mcp/tools.baseline.json — no la del sitio, que no le dice nada a
  * quien se conecta.
  */
-export const SERVER_INFO = { name: 'pigmento-cms', version: '2' };
+export const SERVER_INFO = { name: 'pigmento-cms', version: '3' };
 
 /**
  * 60 s es el default del plugin; se escribe para que cambiarlo sea un diff. Una
