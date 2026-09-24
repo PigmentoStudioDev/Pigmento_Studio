@@ -6,9 +6,10 @@
       "$why": "Mide el CSS que pide DE ENTRADA una pagina que un VISITANTE descarga: ni el panel de Payload ni /ds. Contar el panel pondria rojo un gate que habla de otra cosa, y la salida obvia seria subir el limite — justo lo que este gate existe para impedir. /ds salio el 2026-09-09 por decision de Karen: CLAUDE.md ya dice que es herramienta de desarrollo y no una pagina del sitio, y medirlo aqui contradecia esa linea. LOS TECHOS BAJAN CON LA MEDIDA: 161/18 -> 139/15 al sacar /ds, asi que 200/20 pasa a 178/17. Dejarlos arriba habria regalado 2.7kb de gzip de holgura que nadie midio, y un techo holgado es como vuelve a entrar Carbon sin que nadie se entere.",
       "glob": ".next/static/**/*.css",
       "$nota-2026-09-13": "17 -> 19 gzip al montar el hero: sus hojas son 1.8kb raw; los otros 8.4kb raw son hojas de /propuesta que Turbopack agrupa en el chunk de la home. cssChunking 'strict' lo arreglaria pero es solo de webpack. Vuelve a 17 cuando Turbopack deje dirigir el agrupado.",
-      "maxRawKb": 178,
-      "maxGzipKb": 21,
+      "maxRawKb": 180,
+      "maxGzipKb": 23,
       "$nota-2026-09-14": "19 -> 20 gzip TEMPORAL por la comparativa de dos heros en la home: preloader, HeroBand y HeroStatement suman ~4kb raw, y Turbopack ya mete las diez hojas Proposal* en el chunk de la home (antes siete). Al elegir hero se borra el otro y esto vuelve a 19.",
+      "$nota-2026-09-24": "178 -> 180 raw y 21 -> 23 gzip por el lenguaje visual: variables de motion en :root, roles de radio, la pastilla de controles con el cristal de la cabecera y las entradas por scroll de Servicios y FAQ. Medido en CI 179kb raw / 23kb gzip frente a 166.8 / 20.6 en main. Los techos quedan a menos de 1kb de la medida, como las notas de abajo.",
       "$nota-2026-09-21": "20 -> 21 gzip al montar la pagina de legales. Medido: 20.61kb sobre 166.8kb raw, asi que el techo nuevo deja 0.4kb de holgura y no mas. La causa es la MISMA que ya esta escrita arriba para /propuesta: la home no usa ni una regla de legales, pero Turbopack mete sus dos hojas en el chunk de es.html y en.html, que son las unicas paginas que esta medida mira. Las dos hojas propias suman ~2.2kb raw; el resto de la subida es el reagrupado. Vuelve a 20 con el mismo arreglo que el resto: cuando Turbopack deje dirigir el agrupado, o cuando al elegir hero se borre el otro."
     },
     "js": {
