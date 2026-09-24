@@ -52,10 +52,11 @@ $preview-size: 24vw;
   outline-offset: -2px;
 }
 
+// El cuerpo lo pone el Heading de dentro, a tamano de titular: la lista viene
+// despues de la reticula de trabajo, y con los nombres al cuerpo de la fila se leia
+// como una tabla.
 .name {
-  inline-size: 25%;
-  margin: 0;
-  font: inherit;
+  inline-size: 40%;
 }
 
 .scope {
@@ -88,7 +89,7 @@ $preview-size: 24vw;
   inline-size: $preview-size;
   block-size: $preview-size;
   overflow: hidden;
-  border-radius: brand.$radius-05;
+  border-radius: brand.$radius-piece;
   pointer-events: none;
   visibility: hidden;
 }

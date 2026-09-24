@@ -98,6 +98,14 @@ describe("Faq", () => {
     expect(screen.getByRole("button", { name: /producen/i })).toHaveFocus();
   });
 
+  it("las preguntas entran con el scroll, una detras de otra, como el resto de la pagina", () => {
+    const { container } = render(<Faq {...PROPS} />);
+    const rows = [...container.querySelectorAll("[data-faq-open], h3")].map((node) => node.closest("[data-reveal-mode]"));
+
+    expect(rows.length).toBeGreaterThan(0);
+    expect(rows.every((row) => row?.getAttribute("data-reveal-mode") === "block")).toBe(true);
+  });
+
   it("no tiene violaciones de accesibilidad", async () => {
     const { container } = render(<Faq {...PROPS} />);
 

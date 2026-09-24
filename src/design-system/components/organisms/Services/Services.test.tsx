@@ -57,6 +57,12 @@ describe("Services", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it("las filas entran con el scroll, una detras de otra, como el resto de la pagina", () => {
+    render(<Services {...PROPS} />);
+
+    expect(screen.getAllByRole("listitem").every((row) => row.getAttribute("data-reveal-mode") === "block")).toBe(true);
+  });
+
   it("no tiene violaciones de accesibilidad", async () => {
     const { container } = render(<Services {...PROPS} />);
 
