@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Media } from '@/payload-types';
-import { toPiece } from './projects';
+import type { Media, Project } from '@/payload-types';
+import { toPiece, toWorkProject } from './projects';
 
 /**
  * Contrato del mapeo, que es lo que este repo controla: si Payload devuelve o no
@@ -39,5 +39,33 @@ describe('toPiece', () => {
     expect(toPiece(7)).toBeNull();
     expect(toPiece(null)).toBeNull();
     expect(toPiece(undefined)).toBeNull();
+  });
+});
+
+const project = (fields: Partial<Project>) => ({ id: 1, title: 'Calderoni', slug: 'calderoni', ...fields }) as Project;
+
+describe('toWorkProject', () => {
+  const cover = media({ url: '/c.jpg', width: 2560, height: 1486 });
+
+  it('da el cliente, la disciplina y la portada con sus medidas', () => {
+    expect(toWorkProject(project({ client: 'Timbal de Azúcar', discipline: 'branding', cover }))).toEqual({
+      client: 'Timbal de Azúcar',
+      discipline: 'branding',
+      image: { src: '/c.jpg', width: 2560, height: 1486 },
+    });
+  });
+
+  /** El cliente es opcional en el CMS; la fila no puede quedarse sin nombre. */
+  it('sin cliente usa el titulo', () => {
+    expect(toWorkProject(project({ cover }))?.client).toBe('Calderoni');
+  });
+
+  it('sin disciplina no la inventa', () => {
+    expect(toWorkProject(project({ cover }))?.discipline).toBeUndefined();
+  });
+
+  /** Una fila de fotos sin foto no es una pieza: se descarta, igual que en toPiece. */
+  it('descarta el proyecto cuya portada no llego poblada', () => {
+    expect(toWorkProject(project({ cover: 4 }))).toBeNull();
   });
 });

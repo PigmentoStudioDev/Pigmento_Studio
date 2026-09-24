@@ -15,7 +15,7 @@ import { HERO_PIECES } from "../hero";
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { getFinalCta } from "../cta";
 import { getFaq } from "../faq";
-import { getFeaturedPieces } from "@/cms/projects";
+import { getFeaturedPieces, getWorkProjects } from "@/cms/projects";
 import { getManifesto } from "../manifesto";
 import { getServices } from "../services";
 import { getTeam } from "../team";
@@ -56,7 +56,8 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
 
   // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
   // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
-  const pieces = await getFeaturedPieces(locale);
+  // Dos consultas independientes: en serie sumarian sus tiempos al primer byte.
+  const [pieces, projects] = await Promise.all([getFeaturedPieces(locale), getWorkProjects(locale)]);
   const tValues = await getTranslations("home.values");
   const tWork = await getTranslations("home.work");
   const tServices = await getTranslations("home.services");
@@ -121,7 +122,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           contenedor de 1920 dejarian de leerse como algo que pasa por delante. Sin
           tema asignado: sigue al modo del sitio, como el resto de strips. */}
       <Section width="full" spacing="loose" spacingStart="none" surface="solid" labelledBy={WORK_TITLE_ID}>
-        <WorkRows {...getWork(tWork)} titleId={WORK_TITLE_ID} />
+        <WorkRows {...getWork(tWork, projects)} titleId={WORK_TITLE_ID} />
       </Section>
 
       {/* Lo que se puede contratar, justo despues de ver como se ve: quien acaba de
