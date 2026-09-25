@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { cursorAttributes } from "../../../motion/cursor";
 import { useRosterSlider } from "../../../motion/useRosterSlider";
+import { themeZoneClass } from "../../../theme/zone";
 import { IconButton } from "../../atoms/IconButton/IconButton";
 import type { IconName } from "../../atoms/Icon/Icon";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
@@ -70,6 +71,9 @@ type Filter = TeamGroup | "all";
 
 /** El orden de las areas en la columna. Fijo: el de los datos depende de quien entro antes. */
 const GROUPS: TeamGroup[] = ["direccion", "diseno", "desarrollo", "estrategia"];
+
+/** El velo es oscuro en los dos modos: sus controles tienen que resolver contra la zona oscura. */
+const PANEL_ZONE = "g100";
 
 const NETWORK_ICONS: Record<TeamNetwork, IconName> = {
   linkedin: "linkedin",
@@ -231,7 +235,7 @@ export function Team({ title, titleHighlight, label, intro, members, labels, tit
                       />
                       <div
                         id={panelId}
-                        className={styles.panel}
+                        className={[styles.panel, themeZoneClass(PANEL_ZONE)].join(" ")}
                         aria-hidden={isOpen ? undefined : true}
                         inert={!isOpen}
                       >

@@ -27,6 +27,16 @@ $portrait-ratio: '4 / 5';
 /// leeria como fotos de archivo, y la activa dejaria de destacar por contraste.
 $rest-saturation: 0.6;
 
+/// Bajo el puntero la foto se aclara un poco: la tarjeta se lee alcanzable antes del
+/// clic. Abierta se oscurece, porque encima va texto.
+$hover-saturation: 0.78;
+$hover-brightness: 1.06;
+$open-brightness: 0.9;
+
+/// Tope del retrato contra el alto de la ventana: con el ancho de la fila, en una
+/// pantalla ancha y baja el 4/5 empujaria el pie de la tarjeta fuera de la vista.
+$shot-max-block-size: 70svh;
+
 .root {
   padding-inline: spacing.$spacing-06;
 }
@@ -142,6 +152,8 @@ $rest-saturation: 0.6;
 // Un paso es una tarjeta mas su hueco. La fila se desplaza ese paso por indice, mas lo
 // que desvie el dedo, y no pasa de su final: el tope es la diferencia entre lo que mide
 // la fila (100%) y lo que mide la ventana (100cqi), y la hoja lo sabe sin que el JS mida.
+// El tope deja el margen de la pagina detras de la ultima: la ventana sangra hasta el
+// borde, y sin el la ultima tarjeta quedaria pegada al canto de la pantalla.
 // HACK: sin respaldo para navegadores sin unidades de contenedor: ahi la declaracion se
 // invalida y la fila no se desplaza. Anadir un @supports si analitica muestra trafico real de ellos.
 .track {
@@ -158,7 +170,7 @@ $rest-saturation: 0.6;
   margin: 0;
   padding: 0;
   list-style: none;
-  translate: max(min(var(--pg-roster-offset), 0px), min(calc(100cqi - 100%), 0px)) 0;
+  translate: max(min(var(--pg-roster-offset), 0px), min(calc(100cqi - 100% - #{spacing.$spacing-06}), 0px)) 0;
   transition: translate brand.$duration-onehalf brand.$ease-default;
 }
 
@@ -174,7 +186,7 @@ $rest-saturation: 0.6;
   flex: none;
   flex-direction: column;
   inline-size: var(--pg-roster-card);
-  padding: spacing.$spacing-04;
+  padding: spacing.$spacing-05;
   border-radius: brand.$radius-card;
   background-color: theme.$layer-01;
   // La fila entra entera al cambiar de area, tarjeta a tarjeta: la nueva seleccion
@@ -194,6 +206,7 @@ $rest-saturation: 0.6;
   position: relative;
   overflow: hidden;
   aspect-ratio: #{$portrait-ratio};
+  max-block-size: $shot-max-block-size;
   border-radius: brand.$radius-piece;
 }
 
@@ -210,6 +223,21 @@ $rest-saturation: 0.6;
 
 .card[aria-current='true'] .photo {
   filter: none;
+}
+
+@media (hover: hover) {
+  .card:hover .photo {
+    filter: saturate($hover-saturation) brightness($hover-brightness);
+  }
+
+  .card[aria-current='true']:hover .photo {
+    filter: brightness($hover-brightness);
+  }
+}
+
+.card[data-open='true'] .photo,
+.card[data-open='true']:hover .photo {
+  filter: brightness($open-brightness);
 }
 
 // El boton cubre solo la foto: los enlaces del pie siguen siendo sus propios objetivos
@@ -259,6 +287,31 @@ $rest-saturation: 0.6;
   position: absolute;
   inset-block-start: spacing.$spacing-05;
   inset-inline-end: spacing.$spacing-05;
+}
+
+// Nombre, oficio y bio suben uno detras de otro al abrir: el panel se lee como algo
+// que se cuenta y no como un rotulo que aparece. Al cerrar se van a la vez, sin retardo.
+.panelName,
+.panelRole,
+.panelBio {
+  opacity: 0;
+  translate: 0 spacing.$spacing-04;
+  transition:
+    opacity brand.$duration-half brand.$ease-default,
+    translate brand.$duration-half brand.$ease-default;
+}
+
+.card[data-open='true'] :is(.panelName, .panelRole, .panelBio) {
+  opacity: 1;
+  translate: none;
+}
+
+.card[data-open='true'] .panelRole {
+  transition-delay: brand.$stagger-slice;
+}
+
+.card[data-open='true'] .panelBio {
+  transition-delay: calc(#{brand.$stagger-slice} * 2);
 }
 
 .panelName {
@@ -342,7 +395,16 @@ $rest-saturation: 0.6;
 
   .photo,
   .chip,
-  .panel {
+  .panel,
+  .panelName,
+  .panelRole,
+  .panelBio {
     transition: none;
+  }
+
+  .panelName,
+  .panelRole,
+  .panelBio {
+    translate: none;
   }
 }

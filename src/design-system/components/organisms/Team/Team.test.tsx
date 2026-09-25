@@ -2,6 +2,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, expect, it } from "vitest";
+import { themeZoneClass } from "../../../theme/zone";
 import { Team, type TeamProps } from "./Team";
 
 const PHOTO = { src: "/portfolio/02.png", width: 522, height: 715 };
@@ -131,6 +132,21 @@ describe("Team", () => {
 
     expect(open).toHaveAttribute("aria-expanded", "false");
     expect(open).toHaveFocus();
+  });
+
+  /**
+   * El velo es oscuro en los dos modos, asi que el panel tiene que ser zona oscura: sin
+   * ella, en modo claro el boton de cerrar toma los tokens del claro y queda oscuro
+   * sobre oscuro.
+   */
+  it("el panel es zona oscura en cualquier modo", async () => {
+    const user = userEvent.setup();
+    render(<Team {...PROPS} />);
+
+    await user.click(screen.getByRole("button", { name: "Leer más sobre Ana Ruiz" }));
+    const close = screen.getByRole("button", { name: "Cerrar" });
+
+    expect(close.closest(`.${themeZoneClass("g100")}`)).not.toBeNull();
   });
 
   it("un clic fuera de la tarjeta cierra el panel", async () => {
