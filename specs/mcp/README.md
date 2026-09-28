@@ -32,7 +32,7 @@ aquí se pregunta a Karen.
 | M0 | Aprobación e instalación | cerrada — 2026-09-20 · handoff/M0.md · plugin 3.88.0 + zod 3.25.76 |
 | M1 | Plugin, API keys, migración, deltas de conformance | cerrada — 2026-09-20 · handoff/M1.md · 12 tools por el cable, 401 sin bearer, 3 gates en rojo |
 | M2 | Subida de assets, resources, instrucciones, oráculo | cerrada — 2026-09-20 · handoff/M2.md · PNG a R2 y borrado, oráculo verde |
-| M3 | Conexión desde Claude Code, docs y handoff | cerrada — 2026-09-20 · handoff/M3.md · sesión interactiva pendiente de Karen |
+| M3 | Conexión desde Claude Code, docs y handoff | cerrada — 2026-09-20 · handoff/M3.md · sesión interactiva hecha por Karen 2026-09-24 (carga de casos, categorías y equipo) |
 | M4 | La key en la URL, para Claude web | cerrada — 2026-09-21 · handoff/M4.md · `?key=` verificada en vivo, security APPROVE |
 
 ## Reglas del programa

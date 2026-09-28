@@ -12,7 +12,7 @@ este documento, y lo que no este escrito aqui se pregunta a Karen.
 | Archivo | Que contiene | Para quien |
 | --- | --- | --- |
 | `01-decisiones.md` | Arquitectura y auditoria contra la doc oficial. Version por version, con la fuente. | Todos, antes de tocar nada |
-| `02-sesiones.md` | S0-S7: objetivo, archivos, API, restricciones y DoD de cada una | El agente que implementa |
+| `02-sesiones.md` | S0-S9: objetivo, archivos, API, restricciones y DoD de cada una | El agente que implementa |
 | `03-conformance.md` | Los gates nuevos y los tests de build. Definidos hasta el assert. | El agente que vigila |
 | `04-agentes.md` | Orquestador, agentes, tools y protocolo de handoff | Quien arranca el programa |
 
@@ -27,10 +27,15 @@ este documento, y lo que no este escrito aqui se pregunta a Karen.
 | S4 | Coleccion `projects` (portfolio) | cerrada — 2026-09-10 · handoff/S4.md · frontera cms/ activa |
 | S5 | Coleccion `proposals` (privada) | cerrada — 2026-09-10 · handoff/S5.md · 404/403 verificados con curl |
 | S6 | Globals de navegacion y pie | pendiente — opcional |
-| S7 | Migraciones de produccion y deploy | pendiente — **bloqueada por aprobacion de deploy** |
-| S8a | Propuesta comparativa: schema y adaptador | spec escrito 2026-09-10 · sin firmar |
-| S8b | Propuesta comparativa: los siete organismos | spec escrito 2026-09-10 · sin firmar |
-| S10 | Coleccion `legal` (textos legales) | cerrada — 2026-09-21 · handoff/S10.md · esquema de secciones para el indice; pagina publica pendiente |
+| S7 | Migraciones de produccion y deploy | en produccion de hecho, sin handoff — Turso en prod y `vercel.json` corre `payload migrate` en cada build. **Abierto:** los deploys de Preview comparten la base y tambien migran produccion; falta decidir base propia para Preview o migrar solo con `VERCEL_ENV=production` |
+| S8a | Propuesta comparativa: schema y adaptador | hecha — 2026-09-11 · `7442095` · sin handoff |
+| S8b | Propuesta comparativa: los siete organismos | hecha — 2026-09-11 · `f43f380` · sin handoff |
+| S9a | Propuesta: auditoria (`findings`) y cifras (`figures`) | hecha — 2026-09-11 · `7442095`, bilingue en `44402bc` · sin handoff |
+| S9b | Propuesta: entregable -> hallazgo (`answersKey`) y limites por paquete | pendiente — spec escrita, sin codigo |
+| S10 | Coleccion `legal` (textos legales) | cerrada — 2026-09-21 · handoff/S10.md · esquema de secciones para el indice |
+| S11 | Pagina publica de legales | cerrada — 2026-09-21 · handoff/S11.md · PR #18 |
+| — | Categorias de proyecto | cerrada — 2026-09-24 · PR #19 |
+| — | Coleccion `team-members` y franja del equipo | cerrada — 2026-09-24 · PR #21, acabado en #22 · 2 placeholders publicados, faltan Direccion y Diseno y el equipo real |
 
 Un agente que cierra una sesion actualiza esta tabla y escribe
 `specs/payload/handoff/S<n>.md`. No hay otro sitio donde viva el estado.
