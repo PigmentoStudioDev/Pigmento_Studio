@@ -139,7 +139,7 @@ $card-block-size-compact: 26rem;
 
 // Flota sobre el borde de abajo, en el hueco que deja la corona bajo la tarjeta del
 // centro: asi la corona llega a los limites de la franja y los controles no le roban
-// alto. La pastilla la pone ControlBar; aqui solo se decide donde cae.
+// alto. ControlBar solo agrupa; aqui se decide donde cae.
 .controls {
   position: absolute;
   inset-block-end: spacing.$spacing-05;

@@ -348,14 +348,6 @@ $control-inline-l: 1.25rem;
 /// distinto por tamano.
 $radius-control-m: math.div($control-block-m, 2);
 
-/// La barra flotante que agrupa controles de tamano 'm' (la del carrusel de valores),
-/// con el material de la cabecera: cristal y un filo. Su alto lo conoce el CSS —el
-/// control, su aire y el filo—, asi que su pildora se deriva y no se recorta: radio
-/// del control mas lo que lo separa del borde, concentrico con lo de dentro.
-$control-bar-padding: spacing.$spacing-02;
-$control-bar-border: 1px;
-$radius-control-bar: calc(#{$radius-control-m + $control-bar-padding} + #{$control-bar-border});
-
 /// Radio de un control CUADRADO — el boton de icono.
 ///
 /// Es un escalon de la escala y no una pildora ni un 50%: la forma de referencia es
