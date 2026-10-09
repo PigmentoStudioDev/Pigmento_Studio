@@ -346,7 +346,11 @@
       }
     },
     "featuredCase": {
-      "label": "El caso"
+      "label": "El caso",
+      "previous": "Caso anterior",
+      "next": "Caso siguiente",
+      "slider": "Casos. Usa las flechas para recorrerlos",
+      "drag": "Arrastra"
     }
   },
   "proposal": {

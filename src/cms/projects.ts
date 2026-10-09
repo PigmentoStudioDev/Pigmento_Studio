@@ -95,7 +95,7 @@ export async function getWorkProjects(locale: Locale): Promise<WorkProject[]> {
 }
 
 /**
- * UN caso en profundidad, con su galeria y el texto que el CMS ya tiene escrito.
+ * Los casos en profundidad, con su galeria y el texto que el CMS ya tiene escrito.
  *
  * Es lo contrario del strip: alli pasan dieciocho portadas y no se detiene ninguna.
  * El estudio tiene ademas, sin usar, galerias de varias piezas por proyecto y un
@@ -115,10 +115,11 @@ export interface FeaturedCase {
 
 /**
  * Exportada por su test. Un caso sin galeria NO entra: con la portada sola este
- * bloque es el strip otra vez, y la pagina ya tiene uno.
+ * bloque es el strip otra vez, y la pagina ya tiene uno. Sin `summary` tampoco: el
+ * argumento del bloque ES ese parrafo, y una tarjeta con nombre y fotos no argumenta.
  */
-export function toFeaturedCase(doc: Project | undefined, maxPieces: number): FeaturedCase | null {
-  if (!doc?.summary) return null;
+export function toFeaturedCase(doc: Project, maxPieces: number): FeaturedCase | null {
+  if (!doc.summary) return null;
 
   const pieces = (doc.gallery ?? [])
     .map((entry) => toPiece(entry.image))
@@ -135,21 +136,37 @@ export function toFeaturedCase(doc: Project | undefined, maxPieces: number): Fea
   };
 }
 
-export async function getFeaturedCase(
-  slug: string,
+/**
+ * Los que tengan galeria y texto, en el orden del CMS y hasta `maxCases`.
+ *
+ * El filtro NO va en el `where`: Payload no sabe consultar "tiene al menos una
+ * entrada de galeria con imagen poblada", y pedirselo por `exists` dejaria pasar
+ * galerias con filas vacias. Se trae el portfolio y lo decide `toFeaturedCase`, que es
+ * donde esa regla ya vive y tiene test. Son dieciocho documentos: el coste de
+ * descartar en memoria es menor que el de una regla duplicada en dos sitios.
+ *
+ * Por eso el `limit` es el del portfolio entero y el recorte a `maxCases` viene
+ * DESPUES de filtrar — al contrario, un proyecto sin galeria en las primeras
+ * posiciones se comeria un hueco del carrusel y lo dejaria mas corto.
+ */
+export async function getFeaturedCases(
   locale: Locale,
   maxPieces: number,
-): Promise<FeaturedCase | null> {
+  maxCases: number,
+): Promise<FeaturedCase[]> {
   const payload = await getPayload({ config });
 
   const { docs } = await payload.find({
     collection: 'projects',
     locale,
     overrideAccess: false,
-    where: { slug: { equals: slug } },
+    sort: 'order',
     depth: 2,
-    limit: 1,
+    limit: 100,
   });
 
-  return toFeaturedCase(docs[0], maxPieces);
+  return docs
+    .map((doc: Project) => toFeaturedCase(doc, maxPieces))
+    .filter((c): c is FeaturedCase => c !== null)
+    .slice(0, maxCases);
 }
