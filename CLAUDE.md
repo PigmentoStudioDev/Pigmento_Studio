@@ -435,6 +435,18 @@ perder el handle del intervalo de sincronia de ScrollTrigger —sin `syncInterva
 llamada deja `_syncInterval` en `undefined`—, y ese intervalo ya no lo para nadie. Era
 el temporizador que despertaba con el entorno de pruebas desmontado.
 
+**Un ScrollTrigger no se cuelga de una linea de tiempo.** Se crea aparte, con la linea
+ya poblada y en pausa, y se la arranca desde `onEnter` (`useNumberRoll`); si el gesto es
+uno solo, se queda en un tween con sus `scrollTrigger` vars (`useMarquee`). Colgado de
+una linea de tiempo, gsap aplaza su primer refresh un tick —la linea puede no estar
+poblada— y lo deja en su lista con el final sin calcular; el siguiente trigger que nazca
+en ese hueco fuerza ese refresh desde su propio bucle, el refresh acaba en `update()`, y
+un `once` que ya quedo atras se mata a si mismo ahi dentro. gsap recorre esa lista sin
+defenderse del hueco que deja, asi que con dos muertos en la misma pasada lee fuera del
+array: "reading 'end'" desde el `fromTo` de quien acababa de nacer, y la pagina entera
+caida. Pasaba con las cuatro cifras de la seccion de cifras y la pagina cargada ya por
+debajo de ellas —lo que hace el navegador al recargar—: 4 de 4 recargas.
+
 **Toda seccion entra con el scroll, cabecera y contenido.** `ScrollReveal` es el
 estandar: `lines`/`words` para texto, `block` para cajas, `inner` para listas (el
 envoltorio no puede ir dentro de un `<ul>`). Una cabecera que entra sobre una lista

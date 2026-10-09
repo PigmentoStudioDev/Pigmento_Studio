@@ -172,24 +172,27 @@ export function useMarquee<T extends HTMLElement, U extends HTMLElement>({
             },
           });
 
-          const push = gsap.timeline({
-            scrollTrigger: {
-              trigger: root,
-              start: "0% 100%",
-              end: "100% 0%",
-              scrub: 0,
-            },
-          });
-
           const from = sign === -1 ? scrollSpeed : -scrollSpeed;
 
-          push.fromTo(
+          // Un tween y no una linea de tiempo, aunque sea un solo gesto: con el trigger
+          // colgado de una linea de tiempo, gsap aplaza su primer refresh un tick y lo
+          // deja en su lista con el final sin calcular. Ahi es donde el siguiente
+          // trigger que nazca fuerza ese refresh desde su propio bucle, y ese camino es
+          // el que reventaba la pagina (ver el motivo largo en `useNumberRoll`). Un
+          // tween calcula su final en el acto.
+          const push = gsap.fromTo(
             scroll,
             { x: `${from}vw` },
             {
               x: `${-from}vw`,
               // atado al scrub, la curva la pone la barra de scroll.
               ease: EASE_LINEAR,
+              scrollTrigger: {
+                trigger: root,
+                start: "0% 100%",
+                end: "100% 0%",
+                scrub: 0,
+              },
             },
           );
 
