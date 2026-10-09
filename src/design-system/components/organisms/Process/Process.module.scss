@@ -1,0 +1,99 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// La columna del numero. Lo que ocupa "01" en la voz de metadato mas su aire, no una
+/// fraccion: el numero mide lo mismo en las cinco fases y una fraccion lo movia con
+/// el ancho de la ventana.
+$ordinal-inline-size: 4rem;
+
+/// La columna del entregable. Cabe la frase mas larga en dos lineas; mas estrecha
+/// parte en tres y deja de leerse como un apunte al margen.
+$deliverable-inline-size: 18rem;
+
+.root {
+  padding-inline: spacing.$spacing-06;
+}
+
+.header {
+  margin-block-end: spacing.$spacing-09;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Una FILA por fase, con filete arriba: las filas del trabajo ya usan esa forma en
+// esta pagina, y repetirla aqui es lo que hace que los dos bloques se lean del mismo
+// sistema. Con tarjetas, el proceso seria la cuarta caja distinta de la home.
+.phase {
+  display: grid;
+  grid-template-columns: $ordinal-inline-size minmax(0, 1fr) $deliverable-inline-size;
+  gap: spacing.$spacing-06;
+  align-items: start;
+  padding-block: spacing.$spacing-07;
+  border-block-start: 1px solid theme.$border-subtle;
+}
+
+// La ultima cierra la serie: sin esto la lista acaba en aire y no se sabe si sigue.
+.phase:last-child {
+  border-block-end: 1px solid theme.$border-subtle;
+}
+
+// En movil el numero se queda arriba y el entregable baja al final. Tres columnas de
+// 120px no son tres columnas, son tres recortes.
+@include breakpoint.breakpoint-down('md') {
+  .phase {
+    grid-template-columns: minmax(0, 1fr);
+    gap: spacing.$spacing-05;
+  }
+}
+
+.ordinal {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-04;
+  min-inline-size: 0;
+}
+
+.text {
+  @include brandtype.style('body');
+
+  margin: 0;
+  max-inline-size: 52ch;
+  color: theme.$text-secondary;
+}
+
+// El entregable es un apunte al margen y se lee como tal: rotulo arriba en la voz de
+// metadato y el valor debajo a tinta plena, que es lo unico que hay que recordar.
+.deliverable {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-02;
+  margin: 0;
+}
+
+.deliverableLabel {
+  @include brandtype.style('label');
+
+  color: theme.$text-secondary;
+}
+
+.deliverableValue {
+  @include brandtype.style('body');
+}

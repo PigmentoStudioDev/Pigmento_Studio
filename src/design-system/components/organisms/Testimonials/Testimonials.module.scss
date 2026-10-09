@@ -1,0 +1,91 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// Lo que mide una cita de tres lineas a cuerpo de lectura. En rem: el ancho de una
+/// cita lo decide cuanto texto cabe en una linea, no la ventana.
+$card-min-inline-size: 20rem;
+
+.root {
+  padding-inline: spacing.$spacing-06;
+}
+
+.header {
+  margin-block-end: spacing.$spacing-09;
+}
+
+// `auto-fit` y no tres columnas escritas: con dos citas publicadas, tres columnas
+// dejan un hueco; con cuatro, una se cae sola a la fila siguiente.
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($card-min-inline-size, 1fr));
+  gap: spacing.$spacing-05;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Las celdas de una rejilla se estiran, asi que la tarjeta tiene que ocupar su celda
+// entera: sin esto, tres citas de distinto largo dan tres tarjetas de distinto alto y
+// la fila se lee como una escalera.
+.item {
+  display: flex;
+}
+
+// La tarjeta de contenido del sistema: radio de tarjeta, capa del tema y filete. El
+// mismo cuerpo que las de valores — la pagina ya tiene bastantes formas.
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+  inline-size: 100%;
+  margin: 0;
+  padding: spacing.$spacing-06;
+  border: 1px solid theme.$border-subtle;
+  border-radius: brand.$radius-card;
+  background-color: theme.$layer-01;
+}
+
+.quote {
+  margin: 0;
+  // El bloque de la cita se come el aire que sobra para que la atribucion quede
+  // pegada abajo en todas las tarjetas de la fila, no a media altura en unas y al
+  // fondo en otras.
+  flex: 1;
+}
+
+.text {
+  @include brandtype.style('lead');
+
+  margin: 0;
+}
+
+.author {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-02;
+  padding-block-start: spacing.$spacing-05;
+  border-block-start: 1px solid theme.$border-subtle;
+}
+
+// `cite` llega en cursiva del navegador y aqui no lo es: el nombre de quien firma es
+// un nombre, no un titulo de obra.
+.name {
+  @include brandtype.style('body');
+
+  font-style: normal;
+  font-weight: brandtype.$weight-medium;
+}
+
+// El cargo es METADATO y va en la voz de metadato, como el oficio en el equipo.
+.role {
+  @include brandtype.style('label');
+
+  color: theme.$text-secondary;
+}

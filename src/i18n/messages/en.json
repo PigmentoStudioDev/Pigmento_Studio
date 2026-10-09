@@ -209,6 +209,141 @@
       "title": "Book a call and let's see where your brand starts.",
       "titleHighlight": "where your brand starts",
       "cta": "Book a call"
+    },
+    "figures": {
+      "title": "What the work leaves behind",
+      "titleHighlight": "leaves behind",
+      "label": "In numbers",
+      "intro": "Studio figures, with the context that makes them readable. A number with no context says nothing about whether it is a lot.",
+      "items": {
+        "projects": {
+          "value": "120",
+          "label": "Projects delivered",
+          "context": "Identities, sites, motion pieces and campaigns, since 2018."
+        },
+        "years": {
+          "value": "8",
+          "label": "Years as a studio",
+          "context": "The same small team since the first project."
+        },
+        "industries": {
+          "value": "14",
+          "label": "Industries",
+          "context": "From food and retail to software and financial services."
+        },
+        "repeat": {
+          "value": "70%",
+          "label": "Clients who come back",
+          "context": "Seven in ten return with a second project."
+        }
+      }
+    },
+    "process": {
+      "title": "How we work",
+      "titleHighlight": "we work",
+      "label": "The process",
+      "intro": "Five phases, each one with something you receive at the end of it. You know where your project stands without having to ask.",
+      "deliverableLabel": "Deliverable",
+      "phases": {
+        "diagnosis": {
+          "title": "Diagnosis",
+          "text": "We learn the business, the market and who you are talking to. We leave with the problem written down, not a task list.",
+          "deliverable": "A brief both sides sign"
+        },
+        "strategy": {
+          "title": "Strategy",
+          "text": "What the brand promises, to whom, and why they will believe you. Everything else hangs off this decision.",
+          "deliverable": "Brand platform"
+        },
+        "design": {
+          "title": "Design",
+          "text": "The full visual system and the pieces that prove it. Reviewed with you before anything gets built.",
+          "deliverable": "Visual system and guidelines"
+        },
+        "build": {
+          "title": "Build",
+          "text": "Site, campaigns or motion pieces, made by the same team that designed them. What you approved on screen is what ships.",
+          "deliverable": "Project in production"
+        },
+        "growth": {
+          "title": "Growth",
+          "text": "We measure what happens after launch and adjust. A project without this phase is just a handsome handover.",
+          "deliverable": "Monthly report with the numbers"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "What they say",
+      "titleHighlight": "they say",
+      "label": "Clients",
+      "intro": "With a name, a role and a company. An anonymous quote proves nothing.",
+      "items": {
+        "first": {
+          "quote": "Pending: a real client quote about the work delivered.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        },
+        "second": {
+          "quote": "Pending: a real client quote about what working with the studio was like.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        },
+        "third": {
+          "quote": "Pending: a real client quote about what happened after launch.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        }
+      }
+    },
+    "difference": {
+      "title": "The difference",
+      "titleHighlight": "difference",
+      "label": "Why us",
+      "intro": "Three ways to solve the same brief. We do not win every row, and that is the point.",
+      "caption": "Small studio, large agency and freelancer, criterion by criterion",
+      "criterionLabel": "Criterion",
+      "emptyLabel": "not applicable",
+      "scrollLabel": "Comparison, scrolls horizontally",
+      "columns": {
+        "studio": "Pigmento",
+        "agency": "Large agency",
+        "freelance": "Freelancer"
+      },
+      "rows": {
+        "who": {
+          "criterion": "Who you talk to",
+          "studio": "Whoever does the work",
+          "agency": "An account manager",
+          "freelance": "Whoever does the work"
+        },
+        "start": {
+          "criterion": "Time to start",
+          "studio": "One week",
+          "agency": "Three to six weeks",
+          "freelance": "Immediately, if free"
+        },
+        "scope": {
+          "criterion": "Scope",
+          "studio": "Brand, site, motion and campaign",
+          "agency": "All of it, one team per discipline",
+          "freelance": "One discipline"
+        },
+        "after": {
+          "criterion": "After launch",
+          "studio": "Measurement and tuning included",
+          "agency": "Separate retainer",
+          "freelance": "Ends at handover"
+        },
+        "availability": {
+          "criterion": "Availability",
+          "studio": "Office hours, small team",
+          "agency": "Team on call",
+          "freelance": "Depends on their calendar"
+        }
+      }
     }
   },
   "proposal": {

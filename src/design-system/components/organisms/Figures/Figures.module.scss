@@ -1,0 +1,69 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// Lo que mide una cifra con su contexto sin que la linea se parta en tres palabras.
+/// En rem y no una fraccion: con fracciones, tres cifras y cuatro cifras dan dos
+/// anchos distintos para el mismo tipo de dato.
+$figure-min-inline-size: 15rem;
+
+.root {
+  padding-inline: spacing.$spacing-06;
+}
+
+.header {
+  margin-block-end: spacing.$spacing-09;
+}
+
+// `auto-fit` y no un numero: hoy son cuatro cifras y manana pueden ser tres. Con el
+// numero escrito, quitar una deja un hueco que hay que venir a arreglar aqui.
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($figure-min-inline-size, 1fr));
+  gap: spacing.$spacing-07;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// La cifra manda y el resto la explica, asi que la separacion dentro de la celda no
+// es uniforme: el rotulo se pega al numero —son la misma frase— y el contexto baja.
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-02;
+  padding-block-start: spacing.$spacing-05;
+  border-block-start: 1px solid theme.$border-subtle;
+  // El estilo 'figure' se mide en `cqi`, asi que la celda tiene que SER el contenedor
+  // de consulta. Sin esto, `cqi` cae al viewport y la cifra deja de escalar con su
+  // columna: cuatro en una pantalla ancha salian del mismo tamano que una sola.
+  container-type: inline-size;
+}
+
+// El filete de arriba y no una tarjeta: cuatro cajas con fondo en mitad de una pagina
+// que ya tiene tarjetas de valores y polaroids de equipo serian la tercera caja
+// distinta. Una linea agrupa igual y no anade una forma mas al sistema.
+.value {
+  @include brandtype.style('figure');
+
+  margin: 0;
+}
+
+.label {
+  @include brandtype.style('label');
+
+  margin: 0;
+}
+
+.context {
+  @include brandtype.style('body');
+
+  margin: 0;
+  margin-block-start: spacing.$spacing-03;
+  color: theme.$text-secondary;
+}
