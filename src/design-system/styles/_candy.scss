@@ -75,41 +75,6 @@
   color: map.get(-tones($family), text);
 }
 
-/// La CIFRA en gradiente: el patron candy recortado contra el texto.
-///
-/// No usa las paradas de la tarjeta y esa es toda la decision. Un numero relleno con
-/// `light -> saturated` es invisible por el extremo claro: sobre blanco, la parada
-/// clara de cualquier familia no llega ni a 1.5:1. Y la saturada tampoco basta —
-/// medida contra blanco va de 1.76:1 (lima) a 3.06:1 (periwinkle), asi que cinco de
-/// las seis familias se quedan por debajo del 3:1 que pide un texto grande.
-///
-/// Lo que si aguanta es ir de la TINTA de la familia a su parada saturada rebajada
-/// con esa misma tinta. Al 60% el peor caso sube a 3.35:1 y sigue leyendose como el
-/// color de la familia y no como un gris teñido. Lo vigila el contrato de candy, que
-/// mide las dos paradas de las seis familias contra el fondo.
-///
-/// `background-clip: text` necesita que el color sea transparente, y eso es lo que lo
-/// hace peligroso: donde no se soporte, el numero desaparece. Por eso el color plano
-/// se declara ANTES y el recorte va dentro de un `@supports` — sin el, se lee la
-/// cifra en la tinta de la familia, que es un degradado a cero.
-@mixin numeral($family) {
-  $tones: -tones($family);
-  $deep: map.get($tones, text);
-
-  color: $deep;
-
-  @supports (background-clip: text) or (-webkit-background-clip: text) {
-    background-image: linear-gradient(
-      brand.$candy-angle,
-      $deep 0%,
-      color-mix(in srgb, #{map.get($tones, saturated)} #{brand.$numeral-saturation}, #{$deep}) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-}
-
 /// El tono CLARO de una familia, suelto.
 ///
 /// Es lo que resalta texto. No vale el gradiente entero: un `linear-gradient` detras

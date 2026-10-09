@@ -55,46 +55,55 @@ $figure-min-inline-size: 15rem;
 // El filete de arriba y no una tarjeta: cuatro cajas con fondo en mitad de una pagina
 // que ya tiene tarjetas de valores y polaroids de equipo serian la tercera caja
 // distinta. Una linea agrupa igual y no anade una forma mas al sistema.
-// LA CIFRA. En la escala de titular y no en la de cifra, y no es un capricho de
+// LA CIFRA. En la escala de portada y no en la de cifra, y no es un capricho de
 // tamano: `figure` esta pensada para la tarjeta de una propuesta, donde el numero
-// comparte una columna de 430px con texto. Aqui el numero ES el titular de su celda —
-// no hay otro— y a 42px competia de igual a igual con el rotulo que lo explica.
+// comparte una columna de 430px con texto. Aqui el numero ES el titular de su celda
+// —no hay otro— y a 42px competia de igual a igual con el rotulo que lo explica.
 //
 // Ese tamano es ademas lo que hace que se VEA el rodado: el odometro siempre estuvo
 // ahi, pero a cuerpo pequeno y en gris pasaba desapercibido.
 .value {
-  @include brandtype.style('heading');
+  @include brandtype.style('display');
 
   margin: 0;
 }
 
-// El gradiente candy recortado contra la cifra, una familia por posicion.
+// El color de la cifra: la TINTA de la familia, plana.
+//
+// Fue un gradiente recortado con `background-clip: text` y duro dos revisiones: el
+// recorte se calcula contra la caja del parrafo y los digitos del odometro se mueven
+// DENTRO de ella, asi que al girar cruzaban un relleno que se quedaba quieto y el
+// numero desaparecia a medio camino. Un gradiente y un contador mecanico no pueden
+// compartir caja.
+//
+// Plano tampoco es poco color: la tinta de cada familia es su tono mas oscuro, muy
+// por encima de 4.5:1 sobre el fondo, y a este cuerpo llena la celda entera.
 //
 // Cada `styles.<clase>` se nombra entera en el TSX: el gate de modulos busca la forma
 // literal en las dos direcciones, y un nombre interpolado dejaria estas seis marcadas
 // como CSS muerto.
 .valuePeriwinkle {
-  @include candy.numeral('periwinkle');
+  @include candy.ink('periwinkle');
 }
 
 .valueTangerine {
-  @include candy.numeral('tangerine');
+  @include candy.ink('tangerine');
 }
 
 .valueCyan {
-  @include candy.numeral('cyan');
+  @include candy.ink('cyan');
 }
 
 .valuePink {
-  @include candy.numeral('pink');
+  @include candy.ink('pink');
 }
 
 .valueLime {
-  @include candy.numeral('lime');
+  @include candy.ink('lime');
 }
 
 .valueAmber {
-  @include candy.numeral('amber');
+  @include candy.ink('amber');
 }
 
 .label {
