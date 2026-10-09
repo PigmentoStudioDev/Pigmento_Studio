@@ -16,6 +16,7 @@
     },
     "servicios": {
       "label": "Servicios",
+      "branding": "Branding y diseño",
       "motion": "Motion",
       "marketing": "Marketing",
       "web": "Desarrollo web"
@@ -58,7 +59,9 @@
       "sites": "sitios",
       "afterSites": " que cargan y convierten, ",
       "motion": "motion",
-      "close": " que nadie se salta."
+      "afterMotion": " que nadie se salta y ",
+      "marketing": "marketing",
+      "close": " que mueve a la acción."
     },
     "values": {
       "title": "Cómo lo hacemos",

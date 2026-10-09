@@ -25,6 +25,8 @@ export function getManifesto(t: Translate, pieces: ProjectPiece[]): ManifestoPro
       { text: t("sites"), href: "/servicios/web-development" },
       { text: t("afterSites") },
       { text: t("motion"), href: "/servicios/motion" },
+      { text: t("afterMotion") },
+      { text: t("marketing"), href: "/servicios/marketing" },
       { text: t("close") },
     ],
     pieces,
