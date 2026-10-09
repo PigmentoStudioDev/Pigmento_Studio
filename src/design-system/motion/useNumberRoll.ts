@@ -96,7 +96,7 @@ export function useNumberRoll<T extends HTMLElement>({
       delete root.dataset.rolling;
     };
 
-    void loadMotion().then(({ gsap }) => {
+    void loadMotion().then(({ gsap, ScrollTrigger }) => {
       if (cancelled) return;
 
       mm = gsap.matchMedia();
@@ -146,10 +146,7 @@ export function useNumberRoll<T extends HTMLElement>({
 
         root.dataset.rolling = "true";
 
-        const tl = gsap.timeline({
-          scrollTrigger: { trigger: root, start: scrollStart, once: true },
-          onComplete: soltar,
-        });
+        const tl = gsap.timeline({ paused: true, onComplete: soltar });
 
         // La rueda frena con la curva de marca, que ya pasa casi todo el recorrido
         // frenando; y los digitos se desfasan con el paso de la escala, no con uno propio.
@@ -172,6 +169,37 @@ export function useNumberRoll<T extends HTMLElement>({
             desdeLaDerecha * desfase,
           );
         });
+
+        /**
+         * El trigger se crea APARTE y con la linea de tiempo ya poblada, no colgado
+         * de ella. Es el arreglo de un fallo que reventaba la pagina entera.
+         *
+         * Colgado de una linea de tiempo, gsap aplaza su primer refresh un tick —la
+         * linea puede no estar poblada todavia— y lo deja en su lista con el final sin
+         * calcular. El siguiente trigger que nazca en ese hueco fuerza ese refresh
+         * desde su propio bucle; el refresh acaba llamando al `update()` del aplazado,
+         * y un `once` que ya quedo atras se mata a si mismo ahi dentro. gsap recorre
+         * esa lista sin defenderse del hueco que deja —`curTrigger.end`, mientras el
+         * bucle hermano de la misma funcion escribe `_triggers[i] || {}`—, asi que con
+         * dos cifras muertas en la misma pasada lee fuera del array y lanza
+         * "reading 'end'" desde el `fromTo` de quien acababa de nacer.
+         *
+         * Pasaba con las cuatro cifras de la seccion de cifras montando juntas y la
+         * pagina cargada ya por debajo de ellas, que es lo que hace el navegador al
+         * recargar: 4 de 4 recargas. Creado aparte, el trigger calcula su final en el
+         * acto y nunca pasa por ese camino.
+         */
+        const trigger = ScrollTrigger.create({
+          trigger: root,
+          start: scrollStart,
+          once: true,
+          onEnter: () => tl.play(),
+        });
+
+        return () => {
+          trigger.kill();
+          tl.kill();
+        };
       });
     });
 
