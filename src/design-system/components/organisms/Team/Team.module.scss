@@ -342,12 +342,15 @@ $shot-max-block-size: 70svh;
   backdrop-filter: blur(brand.$glass-blur);
   opacity: 0;
   pointer-events: none;
-  transition: opacity brand.$duration-half brand.$ease-default;
+  // La regla base es el CIERRE: mas corta y con la curva de salida. Quien cierra una
+  // bio ya decidio; el panel estorba hasta que termina de irse.
+  transition: opacity brand.$duration-quarter brand.$ease-exit;
 }
 
 .card[data-open='true'] .panel {
   opacity: 1;
   pointer-events: auto;
+  transition: opacity brand.$duration-half brand.$ease-default;
 }
 
 .closeButton {
@@ -364,13 +367,16 @@ $shot-max-block-size: 70svh;
   opacity: 0;
   translate: 0 spacing.$spacing-04;
   transition:
-    opacity brand.$duration-half brand.$ease-default,
-    translate brand.$duration-half brand.$ease-default;
+    opacity brand.$duration-quarter brand.$ease-exit,
+    translate brand.$duration-quarter brand.$ease-exit;
 }
 
 .card[data-open='true'] :is(.panelName, .panelRole, .panelBio) {
   opacity: 1;
   translate: none;
+  transition:
+    opacity brand.$duration-half brand.$ease-default,
+    translate brand.$duration-half brand.$ease-default;
 }
 
 .card[data-open='true'] .panelRole {

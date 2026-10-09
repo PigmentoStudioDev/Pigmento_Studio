@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
+import { pauseOnIntent } from "./pauseOnIntent";
 import { EASE_LINEAR } from "./tokens";
 
 /**
@@ -192,7 +193,12 @@ export function useMarquee<T extends HTMLElement, U extends HTMLElement>({
             },
           );
 
+          // El interruptor de WCAG 2.2.2. La tira son logos enlazados o no, asi que
+          // el foco puede caer dentro: las dos maneras de acercarse la paran.
+          const detachPause = pauseOnIntent(root, () => [loop]);
+
           return () => {
+            detachPause();
             directionTrigger.kill();
             push.kill();
             loop.kill();

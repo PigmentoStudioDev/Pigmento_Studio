@@ -57,6 +57,35 @@ export function loadMotion(): Promise<Motion> {
     const follow = followEasePoints();
     if (follow) customEase.CustomEase.create(FOLLOW_EASE, follow);
 
+    /**
+     * Los dos ajustes de PAGINA de ScrollTrigger, aqui y no en cada hook: los dos
+     * valen para todos los triggers a la vez, y cada consumidor pidiendo lo suyo los
+     * dispararia en cadena.
+     *
+     * `document.fonts` es la condicion de entrada y no un detalle: es lo que pide el
+     * segundo ajuste, y de paso distingue un navegador de verdad de jsdom, que no
+     * tiene motor de maquetacion. `config()` arranca el bucle de sincronia de scroll,
+     * y arrancarlo en un entorno de pruebas deja un temporizador vivo que se despierta
+     * cuando el entorno ya no existe.
+     *
+     *   `ignoreMobileResize` — en tactil, la barra del navegador al aparecer y
+     *   desaparecer dispara un resize que NO es un cambio de maquetacion. Con el por
+     *   defecto, cada scroll hacia arriba en un movil recalcula todos los triggers y
+     *   lo que va a mitad de camino salta. Solo descarta el resize cuando el ANCHO no
+     *   cambia, que es exactamente ese caso.
+     *
+     *   La recalculada al llegar la fuente buena — son locales y con `display: swap`,
+     *   asi que el texto cambia de ancho despues del primer pintado, las alturas se
+     *   mueven y los triggers que midieron antes apuntan a posiciones que ya no
+     *   existen. El sintoma es un bloque que entra demasiado pronto o demasiado tarde,
+     *   siempre en la primera visita y nunca al recargar con la fuente en cache, que es
+     *   lo que lo vuelve dificil de ver.
+     */
+    if (typeof document !== "undefined" && document.fonts) {
+      scrollTrigger.ScrollTrigger.config({ ignoreMobileResize: true });
+      void document.fonts.ready.then(() => scrollTrigger.ScrollTrigger.refresh());
+    }
+
     loaded = {
       gsap: core.gsap,
       ScrollTrigger: scrollTrigger.ScrollTrigger,

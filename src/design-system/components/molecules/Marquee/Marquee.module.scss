@@ -89,3 +89,13 @@
 // Sin reduced-motion no hay nada que apagar aqui: el movimiento entero lo pone
 // GSAP, y el behavior no llega ni a crear el tween con esa preferencia. La tira se
 // queda como la deja este archivo, que es quieta.
+
+// Con reduced-motion no hay bucle que animar, asi que el aviso de capa es memoria de
+// video reservada para un gesto que no va a ocurrir. `will-change` es una promesa al
+// compositor, y una promesa que no se cumple se paga igual.
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .collection {
+    will-change: auto;
+  }
+}
