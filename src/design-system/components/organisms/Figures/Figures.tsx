@@ -1,3 +1,4 @@
+import { candyAt, type CycledCandyFamily } from "../../../theme/candy";
 import { NumberRoll } from "../../molecules/NumberRoll/NumberRoll";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
@@ -51,6 +52,20 @@ export interface FiguresProps {
   titleId?: string;
 }
 
+/**
+ * El color de cada cifra, por POSICION. El ciclo alterna calidos y frios para que dos
+ * numeros vecinos no caigan en el mismo tono, y quitar una cifra recoloca el resto
+ * sin tocar nada.
+ */
+const VALUE_FAMILY: Record<CycledCandyFamily, string> = {
+  periwinkle: styles.valuePeriwinkle,
+  tangerine: styles.valueTangerine,
+  cyan: styles.valueCyan,
+  pink: styles.valuePink,
+  lime: styles.valueLime,
+  amber: styles.valueAmber,
+};
+
 export function Figures({ title, titleHighlight, label, intro, figures, titleId }: FiguresProps) {
   if (figures.length === 0) return null;
 
@@ -77,7 +92,7 @@ export function Figures({ title, titleHighlight, label, intro, figures, titleId 
               puede omitir una de las dos celdas sin que nada falle. */}
           {figures.map((figure, index) => (
             <li className={styles.item} key={`${figure.label}-${index}`}>
-              <p className={styles.value}>
+              <p className={`${styles.value} ${VALUE_FAMILY[candyAt(index)]}`}>
                 <NumberRoll value={figure.value} />
               </p>
               <p className={styles.label}>{figure.label}</p>

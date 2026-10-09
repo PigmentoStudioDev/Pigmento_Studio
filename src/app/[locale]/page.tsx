@@ -43,6 +43,23 @@ import { getWork } from "../work";
  * propio. El organismo no decide ni su hueco ni su tema, para que el dia que Payload
  * arme la pagina el espacio entre bloques dependa del orden y no de cuales sean.
  */
+/**
+ * EL COLOR, repartido por la pagina y no por cada bloque.
+ *
+ * Cada strip resalta un trozo de su titular; hasta ahora las siete lo hacian con el
+ * mismo azul palido del tema, y el color del sistema —las familias candy— vivia
+ * encerrado en las tarjetas de valores, que son UN bloque. La pagina era gris sobre
+ * blanco de arriba abajo con una isla de color en medio.
+ *
+ * El orden es el de `CANDY_CYCLE`, que alterna calidos y frios justo para que dos
+ * bloques seguidos no caigan en el mismo tono. Se escriben literales y no con
+ * `candyAt(i)` porque aqui lo que importa es poder LEER el reparto de un vistazo y
+ * cambiar uno sin recolocar los demas; el ciclo sigue siendo quien dice cuales son y
+ * en que orden van.
+ *
+ * El manifiesto gasta las cuatro primeras en sus palabras calientes, asi que la
+ * pagina entera recorre el ciclo dos veces: una en una frase, otra en siete strips.
+ */
 /** Las anclas que atan cada <section> con su titular. */
 const VALUES_TITLE_ID = "valores";
 const WORK_TITLE_ID = "trabajo";
@@ -147,7 +164,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           contenedor de 1920 dejarian de leerse como algo que pasa por delante. Sin
           tema asignado: sigue al modo del sitio, como el resto de strips. */}
       <Section width="full" spacing="loose" spacingEnd="default" surface="solid" labelledBy={WORK_TITLE_ID}>
-        <WorkRows {...getWork(tWork, projects)} titleId={WORK_TITLE_ID} />
+        <WorkRows {...getWork(tWork, projects)} titleId={WORK_TITLE_ID} highlightFamily="periwinkle" />
       </Section>
 
       {/* ACTO III — la oferta y como se trabaja. Empieza aqui: quien acaba de ver las
@@ -165,7 +182,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         spacingEnd="default"
         labelledBy={SERVICES_TITLE_ID}
       >
-        <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} />
+        <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} highlightFamily="tangerine" />
       </Section>
 
       {/* El respiro, y la unica seccion de la pagina sin nada que leer.
@@ -207,14 +224,14 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         spacingStart="default"
         labelledBy={PROCESS_TITLE_ID}
       >
-        <Process {...getProcess(tProcess)} titleId={PROCESS_TITLE_ID} />
+        <Process {...getProcess(tProcess)} titleId={PROCESS_TITLE_ID} highlightFamily="cyan" />
       </Section>
 
       {/* ACTO IV — por que nosotros. Abre la corona de valores, que es la salida del
           capitulo anterior: vuelve al tono del sitio y sale por los bordes, asi que el
           cambio se nota sin necesitar otro filete. */}
       <Section width="full" spacing="loose" labelledBy={VALUES_TITLE_ID}>
-        <ValueCards {...getValues(tValues)} titleId={VALUES_TITLE_ID} />
+        <ValueCards {...getValues(tValues)} titleId={VALUES_TITLE_ID} highlightFamily="pink" />
       </Section>
 
       {/* LA COMPARATIVA SALIO DE LA HOME. Era una <table> de ocho criterios contra
@@ -242,7 +259,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         theme={{ light: "raised", dark: "raised" }}
         labelledBy={TESTIMONIALS_TITLE_ID}
       >
-        <Testimonials {...getTestimonials(tTestimonials)} titleId={TESTIMONIALS_TITLE_ID} />
+        <Testimonials {...getTestimonials(tTestimonials)} titleId={TESTIMONIALS_TITLE_ID} highlightFamily="lime" />
       </Section>
 
       {/* Y el trabajo que lo sostiene, cerrando el capitulo.
@@ -277,7 +294,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           Sin nadie publicado en el CMS no se pinta. */}
       {team ? (
         <Section width="strip" spacing="default" spacingEnd="loose" labelledBy={TEAM_TITLE_ID}>
-          <Team {...team} titleId={TEAM_TITLE_ID} />
+          <Team {...team} titleId={TEAM_TITLE_ID} highlightFamily="amber" />
         </Section>
       ) : null}
 
@@ -290,7 +307,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           La separacion la da la TARJETA de las preguntas, que sobre la base del sitio
           sale en la capa -01 — gris sobre blanco. */}
       <Section width="strip" spacing="loose" labelledBy={FAQ_TITLE_ID}>
-        <Faq {...getFaq(tFaq)} titleId={FAQ_TITLE_ID} />
+        <Faq {...getFaq(tFaq)} titleId={FAQ_TITLE_ID} highlightFamily="periwinkle" />
       </Section>
 
       {/* La ultima llamada, pegada al pie. La placa se despega de la pagina con el rol

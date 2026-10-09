@@ -15,8 +15,16 @@
  */
 export const CANDY_CYCLE = ["periwinkle", "tangerine", "cyan", "pink", "lime", "amber"] as const;
 
-export type CandyFamily = (typeof CANDY_CYCLE)[number] | "orchid";
+/** Una familia del ciclo: lo que `candyAt` puede devolver, sin orquidea. */
+export type CycledCandyFamily = (typeof CANDY_CYCLE)[number];
 
-export function candyAt(index: number): CandyFamily {
+export type CandyFamily = CycledCandyFamily | "orchid";
+
+/**
+ * El tipo de vuelta es el del CICLO y no `CandyFamily`: orquidea no entra, y
+ * prometer que podria obliga a quien reparta clases por familia a inventarse un caso
+ * que nunca ocurre — que es exactamente donde se cuela un color equivocado.
+ */
+export function candyAt(index: number): CycledCandyFamily {
   return CANDY_CYCLE[index % CANDY_CYCLE.length];
 }

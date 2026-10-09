@@ -1,5 +1,6 @@
 "use client";
 
+import type { CycledCandyFamily } from "../../../theme/candy";
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import { cursorAttributes } from "../../../motion/cursor";
@@ -43,6 +44,12 @@ export interface WorkRowsProps {
   /** Lo que dice el cursor sobre cada pieza: "Ver caso". */
   cursorLabel?: string;
   titleId?: string;
+  /**
+   * De que familia candy es el resalte del titular. Sin valor, el azul del tema.
+   * Lo reparte la PAGINA, que es quien conoce el orden de los bloques: el ciclo
+   * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
+   */
+  highlightFamily?: CycledCandyFamily;
 }
 
 /** Una fila mide media ventana, menos el titular; en movil, un carril de altura fija. */
@@ -58,6 +65,7 @@ export function WorkRows({
   ctaHref,
   cursorLabel,
   titleId,
+  highlightFamily,
 }: WorkRowsProps) {
   const rootRef = useWorkRows<HTMLDivElement>();
 
@@ -69,7 +77,14 @@ export function WorkRows({
       <div className={styles.stage} data-rows-stage="">
         <div className={styles.frame} data-rows-frame="">
           <div className={styles.header}>
-            <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
+            <StripHeader
+              title={title}
+              titleHighlight={titleHighlight}
+              label={label}
+              intro={intro}
+              titleId={titleId}
+              highlightFamily={highlightFamily}
+            />
             {/* Arriba y no al final de las filas: el bloque entero se queda fijo mientras
                 pasan, y un boton al final solo se veria cuando ya se ha terminado. */}
             <div className={styles.cta}>

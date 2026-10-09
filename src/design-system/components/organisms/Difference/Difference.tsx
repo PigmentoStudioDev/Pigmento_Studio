@@ -1,3 +1,4 @@
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import {
   ComparisonTable,
@@ -45,6 +46,12 @@ export interface DifferenceProps {
   /** Nombre de la zona desplazable, para quien la recorra con teclado. */
   scrollLabel: string;
   titleId?: string;
+  /**
+   * De que familia candy es el resalte del titular. Sin valor, el azul del tema.
+   * Lo reparte la PAGINA, que es quien conoce el orden de los bloques: el ciclo
+   * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
+   */
+  highlightFamily?: CycledCandyFamily;
 }
 
 export function Difference({
@@ -59,13 +66,21 @@ export function Difference({
   emptyLabel,
   scrollLabel,
   titleId,
+  highlightFamily,
 }: DifferenceProps) {
   if (rows.length === 0) return null;
 
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
+        <StripHeader
+          title={title}
+          titleHighlight={titleHighlight}
+          label={label}
+          intro={intro}
+          titleId={titleId}
+          highlightFamily={highlightFamily}
+        />
       </div>
 
       {/* La tabla entra como una caja y no por lineas: partir por lineas una tabla

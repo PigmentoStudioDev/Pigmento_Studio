@@ -1,5 +1,6 @@
 "use client";
 
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { useCallback, useRef, useState } from "react";
 import { Icon } from "../../atoms/Icon/Icon";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
@@ -52,6 +53,12 @@ export interface FaqProps {
   multiple?: boolean;
   /** Ancla del titular, para que la seccion pueda nombrarse a si misma. */
   titleId?: string;
+  /**
+   * De que familia candy es el resalte del titular. Sin valor, el azul del tema.
+   * Lo reparte la PAGINA, que es quien conoce el orden de los bloques: el ciclo
+   * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
+   */
+  highlightFamily?: CycledCandyFamily;
 }
 
 export function Faq({
@@ -62,6 +69,7 @@ export function Faq({
   items,
   multiple = false,
   titleId,
+  highlightFamily,
 }: FaqProps) {
   const [open, setOpen] = useState<number[]>([]);
   const triggersRef = useRef<(HTMLButtonElement | null)[]>([]);
@@ -100,7 +108,14 @@ export function Faq({
 
   return (
     <div className={styles.root}>
-      <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
+      <StripHeader
+        title={title}
+        titleHighlight={titleHighlight}
+        label={label}
+        intro={intro}
+        titleId={titleId}
+        highlightFamily={highlightFamily}
+      />
 
       {/* Las filas cuelgan de la raiz sin envoltorio: cada una trae su filete, asi
           que un contenedor intermedio no tendria nada que declarar. ScrollReveal no

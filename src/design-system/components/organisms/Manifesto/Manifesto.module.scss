@@ -3,8 +3,15 @@
 // literal 'IBM Plex Sans' que next/font no registra.
 @use '../../../styles/carbon-config';
 
+@use '../../../styles/candy';
+@use '../../../styles/highlight';
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
+
+/// La banda del resaltado, contra la linea base. Cubre de la altura de mayuscula a un
+/// pelo por debajo de la base — lo que marca un subrayador sobre una palabra.
+$mark-block-size: 0.82em;
+$mark-baseline-offset: -0.06em;
 
 /// Lado de la pieza que brota. La referencia va a 20vw — un cartel por palabra — y
 /// aqui se queda en menos de la mitad: a ese tamano las piezas tapaban la frase que
@@ -63,6 +70,56 @@ $underline-offset: 0.1em;
   text-decoration: underline;
   text-decoration-thickness: $underline-size;
   text-underline-offset: $underline-offset;
+}
+
+// EL RESALTADO de las palabras calientes, una familia candy por posicion.
+//
+// La pagina entera es gris sobre blanco y la frase que dice a que se dedica el
+// estudio era gris sobre blanco con cuatro subrayados. El color del sistema estaba
+// encerrado en las tarjetas de valores, que son UN bloque; aqui hace el trabajo que
+// no hacia: que la primera pantalla de texto de la pagina se vea.
+//
+// El tono CLARO de la familia y no el gradiente: un degradado detras de una palabra
+// se reinicia en cada linea de la marca partida, y la parada saturada no deja leer
+// lo que resalta.
+//
+// El relleno se rellena con el scroll, como el de los titulares, porque es el mismo
+// mixin: lo unico que cambia por palabra es el color.
+//
+// `.mark` NO pinta: lleva lo comun —el radio, el recorte por linea, el apagado del
+// fondo que trae <mark> del navegador— y el color lo pone la clase de la familia que
+// va al lado. Sin esta base, cada familia repetiria las seis declaraciones.
+.mark {
+  @include highlight.mark(transparent);
+
+  // La banda se ancla a la LINEA BASE y no a la caja de la linea.
+  //
+  // Aqui la frase va en la escala `display`, con interlineado 0.9: la caja en la que
+  // el navegador pinta el fondo de un <mark> es mas corta que los propios glifos y
+  // esta centrada en el medio tipografico, asi que la banda salia por encima de las
+  // mayusculas y cortaba las letras por la mitad. En un titular con interlineado 1 no
+  // se nota; a 150px de cuerpo, se nota mucho.
+  //
+  // Medidas en `em` para que sigan al cuerpo: la banda cubre de la altura de
+  // mayuscula a un pelo por debajo de la base, que es donde cae un subrayador.
+  background-size: calc(var(--pg-highlight-progress, 0) * 100%) $mark-block-size;
+  background-position: left 0 bottom $mark-baseline-offset;
+}
+
+.wordPeriwinkle {
+  @include highlight.fill(candy.light('periwinkle'));
+}
+
+.wordTangerine {
+  @include highlight.fill(candy.light('tangerine'));
+}
+
+.wordCyan {
+  @include highlight.fill(candy.light('cyan'));
+}
+
+.wordPink {
+  @include highlight.fill(candy.light('pink'));
 }
 
 .pieces {

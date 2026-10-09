@@ -35,6 +35,45 @@ const PLATE = compileString(`@use 'candy'; .plate { @include candy.control; }`, 
 
 const PLATE_STOPS = [...PLATE.matchAll(/#[0-9a-f]{6}/gi)].map(([hex]) => hex);
 
+/**
+ * El fondo contra el que se pinta una cifra: la superficie base del sitio. No sale de
+ * un literal porque el dia que la pagina deje de ser blanca, esta medida tiene que
+ * moverse con ella.
+ */
+const PAGE_BACKGROUND =
+  compileString(`@use '@carbon/react/scss/theme'; .bg { c: theme.$background; }`, {
+    loadPaths: [STYLES, 'node_modules'],
+    quietDeps: true,
+  }).css.match(/#[0-9a-f]{3,6}/i) ?? ['#ffffff'];
+
+/**
+ * Las dos paradas del gradiente de una cifra, ya mezcladas.
+ *
+ * La mezcla se hace AQUI y no se lee del CSS a proposito: el mixin la emite como
+ * `color-mix()`, que es una funcion del navegador y no un hex. Repetir la cuenta en
+ * el test es lo unico que permite medirla antes de que exista un navegador.
+ */
+function numeralStops(tones: Tones): [string, string] {
+  const mix = (a: string, b: string, p: number) =>
+    '#' +
+    [1, 3, 5]
+      .map((i) => {
+        const x = Number.parseInt(a.slice(i, i + 2), 16) * p + Number.parseInt(b.slice(i, i + 2), 16) * (1 - p);
+        return Math.round(x).toString(16).padStart(2, '0');
+      })
+      .join('');
+
+  return [tones.text, mix(tones.saturated, tones.text, NUMERAL_SATURATION)];
+}
+
+const NUMERAL_SATURATION =
+  Number(
+    compileString(`@use 'brand'; .n { c: brand.$numeral-saturation; }`, {
+      loadPaths: [STYLES, 'node_modules'],
+      quietDeps: true,
+    }).css.match(/(\d+)%/)?.[1] ?? 0,
+  ) / 100;
+
 const PLATE_INK =
   compileString(`@use 'brand'; .ink { c: brand.$text-on-control-ink; }`, {
     loadPaths: [STYLES, 'node_modules'],
@@ -80,6 +119,25 @@ describe('contrato candy', () => {
     const { light, mid, saturated, text } = FAMILIES[name];
 
     for (const stop of [light, mid, saturated]) expect(contrast(text, stop)).toBeGreaterThanOrEqual(3);
+  });
+
+  /**
+   * Una CIFRA en gradiente no es una tarjeta: no tiene fondo propio, se recorta contra
+   * el de la pagina. Las paradas de la tarjeta no sirven —la saturada de lima da
+   * 1.76:1 sobre blanco— y por eso el gradiente de la cifra va de la tinta de la
+   * familia a su saturada rebajada con esa misma tinta.
+   *
+   * 3:1 y no 4.5:1 porque es texto grande: la cifra va en la escala de titular, muy
+   * por encima de los 24px desde los que WCAG afloja el umbral. Lo que este test
+   * impide es subir `$numeral-saturation` hasta que una familia deje de leerse — al
+   * 70%, lima cae a 2.82:1.
+   */
+  it.each([...CANDY_CYCLE])('la cifra de %s se lee sobre el fondo de la pagina (3:1)', (name) => {
+    const fondo = PAGE_BACKGROUND[0];
+
+    for (const stop of numeralStops(FAMILIES[name])) {
+      expect(contrast(stop, fondo), `${name} · ${stop}`).toBeGreaterThanOrEqual(3);
+    }
   });
 
   it('la placa del control repite el patron: tres paradas y el angulo de la casa', () => {

@@ -80,6 +80,11 @@ $candy-families: (
   'amber': (light: #ffe7b0, mid: #ffbf5c, mid-stop: 52%, saturated: #ff9a33, text: #5a3408),
 );
 
+/// Cuanto de la parada saturada entra en el gradiente de una CIFRA, sobre su propia
+/// tinta. No es un gusto: es el techo que deja a las seis familias por encima de 3:1
+/// contra el fondo, que es lo que pide un texto grande. Al 70% lima cae a 2.82:1.
+$numeral-saturation: 60%;
+
 /// El angulo del gradiente candy. Uno para todas: con dos angulos, dos tarjetas
 /// vecinas parecen iluminadas desde sitios distintos.
 $candy-angle: 150deg;
