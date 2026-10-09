@@ -417,14 +417,23 @@ Lo vigilan tres gates, cada uno verificado en rojo:
 - `motion/gsap.test.ts` — la curva de marca queda registrada. Si el registro falla,
   gsap no avisa: cae a su curva por defecto y el sitio se mueve distinto sin un error.
 
-**`loadMotion()` ajusta ScrollTrigger una sola vez para toda la pagina**:
-`ignoreMobileResize` —en tactil, la barra del navegador al aparecer dispara un resize
-que no es un cambio de maquetacion, y recalcular ahi hace saltar lo que va a medio
-camino— y una recalculada cuando `document.fonts.ready` resuelve, porque las fuentes son
-locales con `display: swap` y el texto cambia de ancho despues del primer pintado. Las
-dos van tras un `if (document.fonts)`: ademas de ser lo que pide la segunda, distingue
-un navegador de jsdom, donde `config()` deja un temporizador que despierta con el
-entorno ya desmontado.
+**`loadMotion()` recalcula ScrollTrigger una sola vez para toda la pagina**, cuando
+`document.fonts.ready` resuelve: las fuentes son locales con `display: swap`, el texto
+cambia de ancho despues del primer pintado y los triggers que midieron antes apuntan a
+posiciones que ya no existen. Va tras un `if (document.fonts)`, que ademas de ser de
+donde sale el aviso distingue un navegador de jsdom.
+
+Y va en la forma **diferida**, `refresh(true)`. La inmediata recalcula dentro de la
+microtarea de la promesa, que cae en cualquier instante —incluido el que un efecto de
+React esta usando para crear sus triggers—, y ScrollTrigger recorre ahi su lista sin
+defenderse de un hueco: el sintoma era un `fromTo` reventando con "reading 'end'" desde
+un hook sin ningun fallo. La diferida lo pasa al ticker de gsap y lo agrupa.
+
+**`ScrollTrigger.config()` no se llama.** Estuvo ahi por `ignoreMobileResize`, que gsap
+ya deja en ese mismo valor al iniciarse, asi que no cambiaba nada; lo que si hacia es
+perder el handle del intervalo de sincronia de ScrollTrigger —sin `syncInterval`, la
+llamada deja `_syncInterval` en `undefined`—, y ese intervalo ya no lo para nadie. Era
+el temporizador que despertaba con el entorno de pruebas desmontado.
 
 **Toda seccion entra con el scroll, cabecera y contenido.** `ScrollReveal` es el
 estandar: `lines`/`words` para texto, `block` para cajas, `inner` para listas (el

@@ -58,32 +58,37 @@ export function loadMotion(): Promise<Motion> {
     if (follow) customEase.CustomEase.create(FOLLOW_EASE, follow);
 
     /**
-     * Los dos ajustes de PAGINA de ScrollTrigger, aqui y no en cada hook: los dos
-     * valen para todos los triggers a la vez, y cada consumidor pidiendo lo suyo los
+     * La recalculada de PAGINA cuando llega la fuente buena, aqui y no en cada hook:
+     * vale para todos los triggers a la vez y cada consumidor pidiendo la suya las
      * dispararia en cadena.
      *
-     * `document.fonts` es la condicion de entrada y no un detalle: es lo que pide el
-     * segundo ajuste, y de paso distingue un navegador de verdad de jsdom, que no
-     * tiene motor de maquetacion. `config()` arranca el bucle de sincronia de scroll,
-     * y arrancarlo en un entorno de pruebas deja un temporizador vivo que se despierta
-     * cuando el entorno ya no existe.
+     * Las fuentes son locales y con `display: swap`, asi que el texto cambia de ancho
+     * DESPUES del primer pintado: las alturas se mueven y los triggers que midieron
+     * antes apuntan a posiciones que ya no existen. El sintoma es un bloque que entra
+     * demasiado pronto o demasiado tarde, siempre en la primera visita y nunca al
+     * recargar con la fuente en cache, que es lo que lo vuelve dificil de ver.
      *
-     *   `ignoreMobileResize` — en tactil, la barra del navegador al aparecer y
-     *   desaparecer dispara un resize que NO es un cambio de maquetacion. Con el por
-     *   defecto, cada scroll hacia arriba en un movil recalcula todos los triggers y
-     *   lo que va a mitad de camino salta. Solo descarta el resize cuando el ANCHO no
-     *   cambia, que es exactamente ese caso.
+     * **En diferido (`refresh(true)`), y eso es la mitad del arreglo.** La forma
+     * inmediata recalcula dentro de la microtarea de la promesa, que cae en cualquier
+     * instante — incluido el que un efecto de React esta usando para crear sus
+     * triggers. ScrollTrigger recorre ahi su lista sin defenderse de un hueco
+     * (`curTrigger.end`, mientras el bucle hermano de la misma funcion escribe
+     * `_triggers[i] || {}`), y lo que se ve es un `fromTo` reventando con
+     * "reading 'end'" desde un hook que no tiene ningun fallo. La diferida lo pasa al
+     * ticker de gsap y lo agrupa con cualquier otra recalculada pendiente.
      *
-     *   La recalculada al llegar la fuente buena — son locales y con `display: swap`,
-     *   asi que el texto cambia de ancho despues del primer pintado, las alturas se
-     *   mueven y los triggers que midieron antes apuntan a posiciones que ya no
-     *   existen. El sintoma es un bloque que entra demasiado pronto o demasiado tarde,
-     *   siempre en la primera visita y nunca al recargar con la fuente en cache, que es
-     *   lo que lo vuelve dificil de ver.
+     * `document.fonts` es la condicion de entrada: es de donde sale el aviso, y de
+     * paso distingue un navegador de verdad de jsdom, que no tiene maquetacion.
+     *
+     * Lo que NO se hace es `config({ ignoreMobileResize: true })`. Era lo que estaba
+     * escrito aqui y no cambiaba nada: gsap ya deja `_ignoreMobileResize` en ese mismo
+     * valor al iniciarse (`Observer.isTouch === 1`). Lo que si hacia es pasar por una
+     * linea que, sin `syncInterval`, deja `_syncInterval` en `undefined` y pierde el
+     * handle del intervalo de sincronia que ScrollTrigger arranca al iniciarse: ese
+     * intervalo ya no lo para nadie, y es lo que despertaba con el entorno desmontado.
      */
     if (typeof document !== "undefined" && document.fonts) {
-      scrollTrigger.ScrollTrigger.config({ ignoreMobileResize: true });
-      void document.fonts.ready.then(() => scrollTrigger.ScrollTrigger.refresh());
+      void document.fonts.ready.then(() => scrollTrigger.ScrollTrigger.refresh(true));
     }
 
     loaded = {
