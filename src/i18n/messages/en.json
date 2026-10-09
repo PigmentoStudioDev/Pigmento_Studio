@@ -16,6 +16,7 @@
     },
     "servicios": {
       "label": "Services",
+      "branding": "Branding and design",
       "motion": "Motion",
       "marketing": "Marketing",
       "web": "Web development"
@@ -58,7 +59,9 @@
       "sites": "sites",
       "afterSites": " that load and convert, ",
       "motion": "motion",
-      "close": " nobody skips."
+      "afterMotion": " nobody skips, and ",
+      "marketing": "marketing",
+      "close": " that moves people to act."
     },
     "values": {
       "title": "How we do it",
