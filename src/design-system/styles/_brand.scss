@@ -255,6 +255,15 @@ $band-card-block-size: clamp(13.75rem, 32svh, 22.5rem);
 /// dejaba de leerse como tira.
 $band-card-block-size-compact: clamp(10rem, 28svh, 15rem);
 
+/// Alto de la banda de imagen que separa dos actos de la pagina.
+///
+/// Acotada por los dos lados y por el mismo motivo que la tira del hero. Pero mas
+/// baja a proposito: la banda es un RESPIRO, no una seccion. A pantalla completa
+/// deja de ser una pausa entre dos bloques y se convierte en un bloque mas, con el
+/// agravante de que no dice nada; y por debajo de 12rem no llega a leerse como
+/// imagen, solo como una raya de color.
+$image-band-block-size: clamp(12.5rem, 38svh, 28rem);
+
 /// El sangrado de una caja que RECORTA texto, en em.
 ///
 /// `overflow: clip` corta a ras de la caja de linea, y los glifos se salen de ella:

@@ -155,6 +155,21 @@ con la cabecera, que los observa para adoptar el tema de la seccion que tiene de
 Atributos propios y no las clases `.cds--*`: esas son de Carbon y pueden cambiar en
 cualquier minor, y la cabecera no debe conocer ninguna seccion concreta.
 
+### La pila alterna por CAPAS de superficie, no por colores
+
+Tres y no mas: base, `raised`, e imagen a sangre. Una banda cada dos o tres secciones.
+La home llego a trece bloques con solo las dos primeras y se leia como una sola
+superficie con un escalon; `ImageBand` es la tercera, y va donde se acaba un acto —hoy
+entre el proceso y los valores, que es la tirada mas larga sin corte.
+
+**La banda no lleva nada que leer, y eso ES el componente.** Un titular, una cifra o un
+boton encima la convierten en una seccion mas y la dejan sin trabajo. Tampoco lleva
+velo: el velo garantiza contraste bajo texto, y sin texto solo apaga la foto. Va a
+sangre y sin aire por ningun lado, porque con fondo distinto la banda ES la separacion.
+
+Como las bandas de ruta y los gradientes candy, **no re-tematiza**: la foto es la misma
+en claro y en oscuro.
+
 ### Nada de capas que cubren la ventana para devolver el puntero mas adentro
 
 Un contenedor a pantalla completa con `pointer-events: none` que va re-habilitando el

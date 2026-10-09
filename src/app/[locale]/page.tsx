@@ -8,6 +8,7 @@ import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta
 import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
 import { Difference } from "@/design-system/components/organisms/Difference/Difference";
 import { Figures } from "@/design-system/components/organisms/Figures/Figures";
+import { ImageBand } from "@/design-system/components/organisms/ImageBand/ImageBand";
 import { Process } from "@/design-system/components/organisms/Process/Process";
 import { Services } from "@/design-system/components/organisms/Services/Services";
 import { Testimonials } from "@/design-system/components/organisms/Testimonials/Testimonials";
@@ -15,11 +16,13 @@ import { Team } from "@/design-system/components/organisms/Team/Team";
 import { ValueCards } from "@/design-system/components/organisms/ValueCards/ValueCards";
 import { WorkRows } from "@/design-system/components/organisms/WorkRows/WorkRows";
 import { HeroStatement } from "@/design-system/components/organisms/HeroStatement/HeroStatement";
+import { BAND_IMAGE_FILENAME } from "../band";
 import { HERO_PIECES } from "../hero";
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { getFinalCta } from "../cta";
 import { getFaq } from "../faq";
 import { getFeaturedPieces, getWorkProjects } from "@/cms/projects";
+import { getSiteImage } from "@/cms/media";
 import { getTeamMembers } from "@/cms/team";
 import { getDifference } from "../difference";
 import { getFigures } from "../figures";
@@ -70,10 +73,11 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
   // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
   // Consultas independientes: en serie sumarian sus tiempos al primer byte.
-  const [pieces, projects, teamMembers] = await Promise.all([
+  const [pieces, projects, teamMembers, bandImage] = await Promise.all([
     getFeaturedPieces(locale),
     getWorkProjects(locale),
     getTeamMembers(locale),
+    getSiteImage(BAND_IMAGE_FILENAME, locale),
   ]);
   const tValues = await getTranslations("home.values");
   const tWork = await getTranslations("home.work");
@@ -189,6 +193,29 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       >
         <Process {...getProcess(tProcess)} titleId={PROCESS_TITLE_ID} />
       </Section>
+
+      {/* El respiro entre el acto II y el III, y la unica seccion de la pagina sin
+          nada que leer.
+
+          Va aqui porque es la tirada mas larga sin corte: de servicios a la llamada
+          final son ocho bloques seguidos que piden atencion, y este es el punto donde
+          se acaba "que hacemos y como" y empieza "por que nosotros". Es ademas la
+          tercera capa de superficie que le faltaba a la pila —base, `raised` e
+          imagen—, que es lo que corta la racha de trece secciones que se leian como
+          una sola.
+
+          A sangre y sin aire por ninguno de los dos lados: con fondo distinto la
+          banda ES la separacion, y un margen alrededor la convertiria en una caja
+          puesta encima. Sin `labelledBy` tampoco, que es la otra cara de lo mismo: no
+          tiene titulo porque no tiene tema.
+
+          Sin imagen no se pinta. Medio viewport de hueco vacio es peor que no tener
+          respiro. */}
+      {bandImage ? (
+        <Section width="full" spacing="none">
+          <ImageBand {...bandImage} />
+        </Section>
+      ) : null}
 
       {/* ACTO IV — por que nosotros. Abre la corona de valores, que es la salida del
           capitulo anterior: vuelve al tono del sitio y sale por los bordes, asi que el

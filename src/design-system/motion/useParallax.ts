@@ -127,6 +127,13 @@ export function useParallax<T extends HTMLElement, U extends HTMLElement>({
                 start: `clamp(${scrollStart})`,
                 end: `clamp(${scrollEnd})`,
                 scrub,
+                // El recorrido se mide en % del objetivo, y el objetivo mide lo que
+                // mide su contenedor: cuando la pagina cambia de alto —entra la
+                // fuente buena y el texto se reacomoda, se abre un acordeon— las
+                // posiciones cacheadas apuntan a donde ya no esta. Sin esto el fondo
+                // llega a su destino antes o despues de cruzar, y el sintoma es una
+                // franja vacia en un borde que solo sale en la primera visita.
+                invalidateOnRefresh: true,
               },
             },
           );
