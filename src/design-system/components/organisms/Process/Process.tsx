@@ -71,7 +71,7 @@ export function Process({
       <ScrollReveal by="block" inner>
         <ol className={styles.list}>
           {phases.map((phase, index) => (
-            <li className={styles.phase} key={phase.title}>
+            <li className={styles.phase} key={`${phase.title}-${index}`}>
               <p className={styles.ordinal}>{ordinal(index)}</p>
 
               <div className={styles.body}>
