@@ -16,12 +16,32 @@ $rail-inline-size: 12rem;
 
 /// Cuantas tarjetas caben a la vista. Con un numero entero la fila parece una rejilla
 /// que se acaba en el borde; la fraccion deja asomar la siguiente y dice que hay mas.
-$cards-per-view: 2.4;
-$cards-per-view-compact: 1.15;
+///
+/// Tres y pico y no dos y media: a dos y media el retrato medio la franja y el equipo
+/// pesaba mas que el trabajo que ha hecho. Un estudio pequeno ensena caras, no
+/// portadas.
+$cards-per-view: 3.4;
+$cards-per-view-compact: 1.4;
 
-/// Proporcion del retrato. Como CADENA: en Sass la barra divide, y `4 / 5` llegaria al
-/// CSS como `0.8`, que es el mismo numero sin la lectura de una proporcion.
-$portrait-ratio: '4 / 5';
+/// Proporcion de la ventana de la polaroid: cuadrada, como la de verdad. Como CADENA:
+/// en Sass la barra divide, y `1 / 1` llegaria al CSS como `1`, que es el mismo numero
+/// sin la lectura de una proporcion.
+$portrait-ratio: '1 / 1';
+
+/// La inclinacion de reposo. Una polaroid dejada sobre la mesa no cae recta, y es lo
+/// unico que convierte una rejilla de retratos en un monton de fotos. Pequena a
+/// proposito: pasado el par de grados deja de leerse como descuido y se lee como
+/// efecto, y ademas se come el hueco entre tarjetas.
+$tilt: 1.75deg;
+
+/// Lo que se inclina DE MAS al entrar, antes de asentarse en su pose de reposo. El
+/// gesto es el de soltar la foto, no el de desplazarla.
+$tilt-enter-ratio: 3;
+
+/// Tope de la cola de entrada. Sin el, el desfase se suma indice a indice y un area
+/// con ocho personas tarda mas de dos segundos en acabar de entrar: el desfase deja de
+/// ser ritmo y pasa a ser espera.
+$enter-delay-cap: 0.3s;
 
 /// El color de quien no esta activo. Apagado, no gris: sin color del todo la fila se
 /// leeria como fotos de archivo, y la activa dejaria de destacar por contraste.
@@ -181,25 +201,66 @@ $shot-max-block-size: 70svh;
 
 // Todas del mismo tamano, siempre: la activa se marca por el color de la foto, nunca
 // creciendo, o la fila entera se recolocaria en cada paso.
+//
+// El pie mas ancho que los lados es lo que la hace polaroid: el papel deja su margen
+// grande abajo, y ahi va escrito quien es. Lo pone `.foot` con su padding superior.
 .card {
+  --pg-tilt: #{$tilt};
+
   display: flex;
   flex: none;
   flex-direction: column;
   inline-size: var(--pg-roster-card);
-  padding: spacing.$spacing-05;
+  padding: spacing.$spacing-04;
+  border: 1px solid theme.$border-subtle;
   border-radius: brand.$radius-card;
-  background-color: theme.$layer-01;
+  background-color: theme.$layer-02;
+  rotate: var(--pg-tilt);
+  // Enderezarse es el gesto de coger una foto del monton. En `rotate` y `translate`
+  // propios y no en un `transform`: el keyframe de entrada escribe los mismos ejes, y
+  // en una sola propiedad compuesta el ultimo en declararse borraria al otro.
+  transition:
+    rotate brand.$duration-half brand.$ease-default,
+    translate brand.$duration-half brand.$ease-default;
   // La fila entra entera al cambiar de area, tarjeta a tarjeta: la nueva seleccion
   // llega como un solo gesto y no como un parpadeo.
-  animation: roster-enter brand.$duration-base brand.$ease-default both;
-  animation-delay: calc(var(--pg-roster-card-index, 0) * #{brand.$stagger-slice});
+  //
+  // `backwards` y no `both`: al terminar, la pose vuelve a la cascada y el hover puede
+  // enderezar la tarjeta. Con `both` la animacion se queda rellenando `rotate` para
+  // siempre y gana a cualquier regla de estado.
+  animation: roster-enter brand.$duration-base brand.$ease-default backwards;
+  animation-delay: min(calc(var(--pg-roster-card-index, 0) * #{brand.$stagger-slice}), $enter-delay-cap);
+}
+
+// La pose de reposo, repartida y determinista: el indice solo no sirve —inclinaria cada
+// tarjeta un poco mas que la anterior, que es un abanico y no un monton—. Misma
+// especificidad a proposito: gana la ultima que coincide, y las tres juntas no repiten
+// patron hasta la decima foto.
+.card:nth-child(2n) {
+  --pg-tilt: #{-$tilt};
+}
+
+.card:nth-child(3n) {
+  --pg-tilt: #{$tilt * 0.4};
+}
+
+.card:nth-child(5n) {
+  --pg-tilt: #{-$tilt * 0.6};
 }
 
 @keyframes roster-enter {
   from {
     opacity: 0;
     translate: 0 brand.$reveal-distance;
+    rotate: calc(var(--pg-tilt) * #{$tilt-enter-ratio});
   }
+}
+
+// Derecha la que esta activa y la que esta abierta: encima de una foto torcida el panel
+// de la bio se lee como un cartel pegado de lado.
+.card[aria-current='true'],
+.card[data-open='true'] {
+  rotate: 0deg;
 }
 
 .shot {
@@ -226,6 +287,12 @@ $shot-max-block-size: 70svh;
 }
 
 @media (hover: hover) {
+  // Se endereza y se levanta: el gesto de separar una foto del monton para verla.
+  .card:hover {
+    rotate: 0deg;
+    translate: 0 calc(#{spacing.$spacing-03} * -1);
+  }
+
   .card:hover .photo {
     filter: saturate($hover-saturation) brightness($hover-brightness);
   }
@@ -388,8 +455,12 @@ $shot-max-block-size: 70svh;
     transition: none;
   }
 
+  // Derecha y quieta: la inclinacion es decorativa, y con la transicion apagada pero la
+  // pose puesta las tarjetas se quedarian torcidas para siempre.
   .card {
     scroll-snap-align: start;
+    rotate: none;
+    transition: none;
     animation: none;
   }
 

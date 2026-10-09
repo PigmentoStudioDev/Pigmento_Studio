@@ -15,9 +15,11 @@ import styles from "./Team.module.scss";
 /**
  * Quien esta detras del estudio, filtrado por area y en una fila que se recorre.
  *
- * A la izquierda, las areas y la pastilla de flechas; a la derecha, tarjetas del mismo
- * tamano. La persona activa es la unica a color completo: la tarjeta nunca crece, asi
- * que el color es todo el estado. Flechas, teclado y arrastre mueven el mismo indice.
+ * A la izquierda, las areas y la pastilla de flechas; a la derecha, polaroids del mismo
+ * tamano —ventana cuadrada y el margen grande abajo, donde va el nombre—, cada una con
+ * su inclinacion de reposo. La persona activa es la unica a color completo y derecha: la
+ * tarjeta nunca crece, asi que color y pose son todo el estado. Flechas, teclado y
+ * arrastre mueven el mismo indice.
  *
  * La foto abre un panel encima con el oficio y la bio. El foco entra en el al abrirse y
  * vuelve a la foto al cerrarlo con Escape o con su boton: quien navega con teclado no
@@ -218,8 +220,8 @@ export function Team({ title, titleHighlight, label, intro, members, labels, tit
                         width={member.photo.width}
                         height={member.photo.height}
                         draggable={false}
-                        // Dos tarjetas y media en pantalla ancha y una en movil.
-                        sizes="(max-width: 671px) 90vw, 35vw"
+                        // Tres y pico en pantalla ancha y una y media en movil.
+                        sizes="(max-width: 671px) 70vw, 28vw"
                       />
                       <button
                         type="button"
