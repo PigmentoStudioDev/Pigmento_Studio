@@ -1,9 +1,7 @@
-@use 'sass:map';
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/a11y';
 @use '../../../styles/brand' as brand;
-@use '../../../styles/candy';
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/breakpoint';
 @use '@carbon/react/scss/spacing';
@@ -96,13 +94,14 @@ $card-block-size-compact: 26rem;
   box-sizing: border-box;
   block-size: 100%;
   padding: spacing.$spacing-06;
+  border: 1px solid theme.$border-subtle;
   border-radius: brand.$radius-card;
-}
-
-@each $family in map.keys(brand.$candy-families) {
-  .card[data-family='#{$family}'] {
-    @include candy.surface($family);
-  }
+  // Una capa del tema y no el gradiente candy: cinco tarjetas de colores girando
+  // delante del manifiesto se leian como el bloque mas fuerte de la pagina, y lo que
+  // dicen es COMO trabaja el estudio. El candy se queda para lo que se destaca de uno
+  // en uno. La estructura —corona, giro, pastilla— no cambia.
+  background-color: theme.$layer-01;
+  color: theme.$text-primary;
 }
 
 .index {

@@ -114,19 +114,12 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <Manifesto {...getManifesto(t, pieces)} />
       </Section>
 
-      {/* Como trabaja el estudio, justo despues de decir que hace: las tarjetas siguen
-          la frase sin cabecera de por medio y la contestan antes de ensenar el trabajo.
-          A sangre por lo mismo que las filas: la corona sale por los bordes. */}
-      <Section width="full" spacing="loose" spacingEnd="none" labelledBy={VALUES_TITLE_ID}>
-        <ValueCards {...getValues(tValues)} titleId={VALUES_TITLE_ID} />
-      </Section>
-
       {/* El trabajo, despues de decir que hacemos y antes de lo que se puede
           contratar: primero como se ve, luego la oferta. A sangre y
           sin techo: las filas salen por el borde de la ventana, y cortadas contra un
           contenedor de 1920 dejarian de leerse como algo que pasa por delante. Sin
           tema asignado: sigue al modo del sitio, como el resto de strips. */}
-      <Section width="full" spacing="loose" spacingStart="none" surface="solid" labelledBy={WORK_TITLE_ID}>
+      <Section width="full" spacing="loose" surface="solid" labelledBy={WORK_TITLE_ID}>
         <WorkRows {...getWork(tWork, projects)} titleId={WORK_TITLE_ID} />
       </Section>
 
@@ -141,6 +134,13 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         labelledBy={SERVICES_TITLE_ID}
       >
         <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} />
+      </Section>
+
+      {/* Como trabaja el estudio, despues de la oferta y antes del equipo: quien ya
+          sabe que puede contratar pregunta como se trabaja, y la respuesta lleva
+          directa a quien lo hace. A sangre: la corona sale por los bordes. */}
+      <Section width="full" spacing="loose" labelledBy={VALUES_TITLE_ID}>
+        <ValueCards {...getValues(tValues)} titleId={VALUES_TITLE_ID} />
       </Section>
 
       {/* Quien hace el trabajo, antes de las objeciones: la primera pregunta de
