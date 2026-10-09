@@ -344,6 +344,9 @@
           "freelance": "Depends on their calendar"
         }
       }
+    },
+    "featuredCase": {
+      "label": "The case"
     }
   },
   "proposal": {

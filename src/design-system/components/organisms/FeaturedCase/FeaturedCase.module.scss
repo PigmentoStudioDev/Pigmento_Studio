@@ -1,0 +1,91 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// Texto y galeria a la par, con el texto mas estrecho: un parrafo no llena media
+// pantalla y la medida de lectura manda sobre la simetria.
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+  gap: spacing.$spacing-09;
+  align-items: start;
+  padding-inline: spacing.$spacing-06;
+}
+
+// El texto se queda a la vista mientras la galeria pasa: el nombre del caso tiene que
+// seguir en pantalla cuando se mira la tercera pieza, o las piezas se quedan sin de
+// quien son. Es el patron de encabezado fijo de la libreria de secciones.
+.text {
+  position: sticky;
+  inset-block-start: calc(#{brand.$header-block-size} + #{spacing.$spacing-07});
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+}
+
+// En una columna el sticky no sirve —el texto ya va justo encima— y encima pelearia
+// con la cabecera al hacer scroll.
+@include breakpoint.breakpoint-down('md') {
+  .root {
+    grid-template-columns: minmax(0, 1fr);
+    gap: spacing.$spacing-07;
+  }
+
+  .text {
+    position: static;
+  }
+}
+
+.label {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.discipline {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.summary {
+  @include brandtype.style('body');
+
+  margin: 0;
+  max-inline-size: 48ch;
+  color: theme.$text-secondary;
+}
+
+// Dos columnas de piezas, que es lo que convierte la galeria en una composicion y no
+// en una lista: las piezas de una identidad se leen por parejas.
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: spacing.$spacing-05;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.piece {
+  overflow: hidden;
+  border-radius: brand.$radius-piece;
+  background-color: theme.$layer-01;
+}
+
+// Mismo encuadre para todas aunque vengan con proporciones distintas: en una rejilla,
+// dos alturas distintas en la misma fila se leen como un error de maquetacion y no
+// como una decision.
+.image {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}

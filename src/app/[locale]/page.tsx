@@ -7,6 +7,7 @@ import { Faq } from "@/design-system/components/organisms/Faq/Faq";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
 import { Difference } from "@/design-system/components/organisms/Difference/Difference";
+import { FeaturedCase } from "@/design-system/components/organisms/FeaturedCase/FeaturedCase";
 import { Figures } from "@/design-system/components/organisms/Figures/Figures";
 import { ImageBand } from "@/design-system/components/organisms/ImageBand/ImageBand";
 import { Process } from "@/design-system/components/organisms/Process/Process";
@@ -17,11 +18,12 @@ import { ValueCards } from "@/design-system/components/organisms/ValueCards/Valu
 import { WorkRows } from "@/design-system/components/organisms/WorkRows/WorkRows";
 import { HeroStatement } from "@/design-system/components/organisms/HeroStatement/HeroStatement";
 import { BAND_IMAGE_FILENAME } from "../band";
+import { FEATURED_CASE_PIECES, FEATURED_CASE_SLUG, getFeaturedCase } from "../featuredCase";
 import { HERO_PIECES } from "../hero";
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { getFinalCta } from "../cta";
 import { getFaq } from "../faq";
-import { getFeaturedPieces, getWorkProjects } from "@/cms/projects";
+import { getFeaturedCase as readFeaturedCase, getFeaturedPieces, getWorkProjects } from "@/cms/projects";
 import { getSiteImage } from "@/cms/media";
 import { getTeamMembers } from "@/cms/team";
 import { getDifference } from "../difference";
@@ -50,6 +52,7 @@ const SERVICES_TITLE_ID = "servicios";
 const FIGURES_TITLE_ID = "cifras";
 const PROCESS_TITLE_ID = "proceso";
 const DIFFERENCE_TITLE_ID = "diferencia";
+const CASE_TITLE_ID = "caso";
 const TESTIMONIALS_TITLE_ID = "clientes";
 const TEAM_TITLE_ID = "equipo";
 const FAQ_TITLE_ID = "faq";
@@ -73,11 +76,12 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
   // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
   // Consultas independientes: en serie sumarian sus tiempos al primer byte.
-  const [pieces, projects, teamMembers, bandImage] = await Promise.all([
+  const [pieces, projects, teamMembers, bandImage, featuredCase] = await Promise.all([
     getFeaturedPieces(locale),
     getWorkProjects(locale),
     getTeamMembers(locale),
     getSiteImage(BAND_IMAGE_FILENAME, locale),
+    readFeaturedCase(FEATURED_CASE_SLUG, locale, FEATURED_CASE_PIECES),
   ]);
   const tValues = await getTranslations("home.values");
   const tWork = await getTranslations("home.work");
@@ -85,6 +89,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   const tFigures = await getTranslations("home.figures");
   const tProcess = await getTranslations("home.process");
   const tDifference = await getTranslations("home.difference");
+  const tFeaturedCase = await getTranslations("home.featuredCase");
   const tTestimonials = await getTranslations("home.testimonials");
   const team = getTeam(await getTranslations("home.team"), teamMembers);
   const tFaq = await getTranslations("home.faq");
@@ -269,6 +274,33 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       >
         <Testimonials {...getTestimonials(tTestimonials)} titleId={TESTIMONIALS_TITLE_ID} />
       </Section>
+
+      {/* Y el trabajo que lo sostiene, cerrando el capitulo.
+
+          La pagina enseña el trabajo una vez, en el primer tercio, y despues
+          argumenta durante seis secciones sin una sola imagen. Aqui vuelve, y vuelve
+          justo detras de las dos secciones donde el estudio mas afirma: la comparativa
+          dice en que se diferencia, la cita lo confirma, y esto lo demuestra.
+
+          Detras y no en medio de las dos: el tono `raised` abarca la comparativa y los
+          testimonios, y meter el caso entre ellas partiria el capitulo en dos islas de
+          una seccion. Entra en el tono del sitio, asi que ademas es el cambio de
+          superficie que cierra el capitulo.
+
+          **No es un segundo strip.** Arriba pasan dieciocho portadas sin detenerse en
+          ninguna; aqui se para en una y se ven sus piezas, con el texto que el propio
+          CMS tiene escrito del proyecto. Dos formatos distintos del mismo material,
+          que es lo que hace que el trabajo pueda volver sin repetirse.
+
+          Sin galeria no se pinta: con la portada sola seria el strip otra vez. */}
+      {featuredCase ? (
+        <Section width="strip" spacing="default" spacingStart="loose" labelledBy={CASE_TITLE_ID}>
+          <FeaturedCase
+            {...getFeaturedCase(tFeaturedCase, tWork, featuredCase)}
+            titleId={CASE_TITLE_ID}
+          />
+        </Section>
+      ) : null}
 
       {/* Quien hace el trabajo, antes de las objeciones: la primera pregunta de
           cualquiera que va a contratar un estudio pequeno es con quien va a hablar.
