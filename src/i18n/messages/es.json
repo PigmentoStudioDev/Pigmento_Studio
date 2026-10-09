@@ -344,6 +344,9 @@
           "freelance": "Depende de su agenda"
         }
       }
+    },
+    "featuredCase": {
+      "label": "El caso"
     }
   },
   "proposal": {

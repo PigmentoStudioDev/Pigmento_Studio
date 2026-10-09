@@ -93,3 +93,63 @@ export async function getWorkProjects(locale: Locale): Promise<WorkProject[]> {
 
   return docs.map(toWorkProject).filter((p): p is WorkProject => p !== null);
 }
+
+/**
+ * UN caso en profundidad, con su galeria y el texto que el CMS ya tiene escrito.
+ *
+ * Es lo contrario del strip: alli pasan dieciocho portadas y no se detiene ninguna.
+ * El estudio tiene ademas, sin usar, galerias de varias piezas por proyecto y un
+ * `summary` redactado de verdad en cada uno — material que no se ve en ningun sitio
+ * del sitio y que es exactamente lo que falta donde la pagina solo argumenta.
+ *
+ * `depth: 2` para que la galeria llegue poblada: con 1 cada entrada viene como id y
+ * no hay medidas que pasarle a `next/image`.
+ */
+export interface FeaturedCase {
+  client: string;
+  discipline?: NonNullable<Project['discipline']>;
+  /** El texto del propio CMS. Nunca se reescribe aqui: es la voz del caso. */
+  summary: string;
+  pieces: ProjectPiece[];
+}
+
+/**
+ * Exportada por su test. Un caso sin galeria NO entra: con la portada sola este
+ * bloque es el strip otra vez, y la pagina ya tiene uno.
+ */
+export function toFeaturedCase(doc: Project | undefined, maxPieces: number): FeaturedCase | null {
+  if (!doc?.summary) return null;
+
+  const pieces = (doc.gallery ?? [])
+    .map((entry) => toPiece(entry.image))
+    .filter((p): p is ProjectPiece => p !== null)
+    .slice(0, maxPieces);
+
+  if (pieces.length === 0) return null;
+
+  return {
+    client: doc.client || doc.title,
+    ...(doc.discipline ? { discipline: doc.discipline } : {}),
+    summary: doc.summary,
+    pieces,
+  };
+}
+
+export async function getFeaturedCase(
+  slug: string,
+  locale: Locale,
+  maxPieces: number,
+): Promise<FeaturedCase | null> {
+  const payload = await getPayload({ config });
+
+  const { docs } = await payload.find({
+    collection: 'projects',
+    locale,
+    overrideAccess: false,
+    where: { slug: { equals: slug } },
+    depth: 2,
+    limit: 1,
+  });
+
+  return toFeaturedCase(docs[0], maxPieces);
+}
