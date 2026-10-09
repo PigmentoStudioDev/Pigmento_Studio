@@ -209,6 +209,141 @@
       "title": "Agendemos una llamada y vemos por dónde empieza tu marca.",
       "titleHighlight": "por dónde empieza tu marca",
       "cta": "Agendar una llamada"
+    },
+    "figures": {
+      "title": "Lo que deja el trabajo",
+      "titleHighlight": "deja",
+      "label": "En numeros",
+      "intro": "Cifras del estudio, con el contexto que las hace legibles. Un numero sin contexto no dice si es mucho o poco.",
+      "items": {
+        "projects": {
+          "value": "120",
+          "label": "Proyectos entregados",
+          "context": "Identidades, sitios, piezas de motion y campañas, desde 2018."
+        },
+        "years": {
+          "value": "8",
+          "label": "Años de estudio",
+          "context": "El mismo equipo pequeño desde el primer proyecto."
+        },
+        "industries": {
+          "value": "14",
+          "label": "Industrias",
+          "context": "De alimentos y retail a software y servicios financieros."
+        },
+        "repeat": {
+          "value": "70%",
+          "label": "Clientes que repiten",
+          "context": "Siete de cada diez vuelven con un segundo proyecto."
+        }
+      }
+    },
+    "process": {
+      "title": "Como trabajamos",
+      "titleHighlight": "trabajamos",
+      "label": "El proceso",
+      "intro": "Cinco fases, cada una con algo que recibes al terminarla. Sabes en que punto esta tu proyecto sin tener que preguntar.",
+      "deliverableLabel": "Entregable",
+      "phases": {
+        "diagnosis": {
+          "title": "Diagnostico",
+          "text": "Entendemos el negocio, el mercado y a quien le hablas. Salimos con el problema escrito, no con una lista de tareas.",
+          "deliverable": "Brief firmado por los dos"
+        },
+        "strategy": {
+          "title": "Estrategia",
+          "text": "Que promete la marca, a quien y por que te van a creer. Es la decision de la que cuelga todo lo demas.",
+          "deliverable": "Plataforma de marca"
+        },
+        "design": {
+          "title": "Diseno",
+          "text": "El sistema visual completo y las piezas que lo demuestran. Se revisa contigo antes de construir nada.",
+          "deliverable": "Sistema visual y manual"
+        },
+        "build": {
+          "title": "Construccion",
+          "text": "Sitio, campanas o piezas de motion, hechas por el mismo equipo que las diseno. Lo que aprobaste en pantalla es lo que sale.",
+          "deliverable": "Proyecto en produccion"
+        },
+        "growth": {
+          "title": "Crecimiento",
+          "text": "Medimos lo que pasa despues del lanzamiento y ajustamos. Un proyecto sin esta fase se queda en una entrega bonita.",
+          "deliverable": "Informe mensual con los numeros"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Lo que dicen",
+      "titleHighlight": "dicen",
+      "label": "Clientes",
+      "intro": "Con nombre, cargo y empresa. Una cita anonima no prueba nada.",
+      "items": {
+        "first": {
+          "quote": "Texto pendiente: la cita real de un cliente sobre el trabajo entregado.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        },
+        "second": {
+          "quote": "Texto pendiente: la cita real de un cliente sobre como fue trabajar con el estudio.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        },
+        "third": {
+          "quote": "Texto pendiente: la cita real de un cliente sobre lo que paso despues del lanzamiento.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        }
+      }
+    },
+    "difference": {
+      "title": "La diferencia",
+      "titleHighlight": "diferencia",
+      "label": "Por que nosotros",
+      "intro": "Tres maneras de resolver el mismo encargo. No ganamos en todas, y esa es la idea.",
+      "caption": "Estudio pequeno, agencia grande y freelance, criterio a criterio",
+      "criterionLabel": "Criterio",
+      "emptyLabel": "no aplica",
+      "scrollLabel": "Comparativa, se desplaza en horizontal",
+      "columns": {
+        "studio": "Pigmento",
+        "agency": "Agencia grande",
+        "freelance": "Freelance"
+      },
+      "rows": {
+        "who": {
+          "criterion": "Con quien hablas",
+          "studio": "Con quien hace el trabajo",
+          "agency": "Con un ejecutivo de cuenta",
+          "freelance": "Con quien hace el trabajo"
+        },
+        "start": {
+          "criterion": "Tiempo de arranque",
+          "studio": "Una semana",
+          "agency": "Tres a seis semanas",
+          "freelance": "Inmediato si esta libre"
+        },
+        "scope": {
+          "criterion": "Alcance",
+          "studio": "Marca, sitio, motion y campana",
+          "agency": "Todo, con un equipo por disciplina",
+          "freelance": "Una disciplina"
+        },
+        "after": {
+          "criterion": "Despues del lanzamiento",
+          "studio": "Medicion y ajuste incluidos",
+          "agency": "Contrato de mantenimiento aparte",
+          "freelance": "Termina con la entrega"
+        },
+        "availability": {
+          "criterion": "Disponibilidad",
+          "studio": "Horario de oficina, equipo pequeno",
+          "agency": "Equipo de guardia",
+          "freelance": "Depende de su agenda"
+        }
+      }
     }
   },
   "proposal": {

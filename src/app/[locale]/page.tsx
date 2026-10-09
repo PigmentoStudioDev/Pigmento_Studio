@@ -6,7 +6,11 @@ import { Section } from "@/design-system/components/layout/Section/Section";
 import { Faq } from "@/design-system/components/organisms/Faq/Faq";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
+import { Difference } from "@/design-system/components/organisms/Difference/Difference";
+import { Figures } from "@/design-system/components/organisms/Figures/Figures";
+import { Process } from "@/design-system/components/organisms/Process/Process";
 import { Services } from "@/design-system/components/organisms/Services/Services";
+import { Testimonials } from "@/design-system/components/organisms/Testimonials/Testimonials";
 import { Team } from "@/design-system/components/organisms/Team/Team";
 import { ValueCards } from "@/design-system/components/organisms/ValueCards/ValueCards";
 import { WorkRows } from "@/design-system/components/organisms/WorkRows/WorkRows";
@@ -17,7 +21,11 @@ import { getFinalCta } from "../cta";
 import { getFaq } from "../faq";
 import { getFeaturedPieces, getWorkProjects } from "@/cms/projects";
 import { getTeamMembers } from "@/cms/team";
+import { getDifference } from "../difference";
+import { getFigures } from "../figures";
 import { getManifesto } from "../manifesto";
+import { getProcess } from "../process";
+import { getTestimonials } from "../testimonials";
 import { getServices } from "../services";
 import { getTeam } from "../team";
 import { getValues } from "../values";
@@ -36,6 +44,10 @@ import { getWork } from "../work";
 const VALUES_TITLE_ID = "valores";
 const WORK_TITLE_ID = "trabajo";
 const SERVICES_TITLE_ID = "servicios";
+const FIGURES_TITLE_ID = "cifras";
+const PROCESS_TITLE_ID = "proceso";
+const DIFFERENCE_TITLE_ID = "diferencia";
+const TESTIMONIALS_TITLE_ID = "clientes";
 const TEAM_TITLE_ID = "equipo";
 const FAQ_TITLE_ID = "faq";
 const CTA_TITLE_ID = "contacto";
@@ -66,6 +78,10 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   const tValues = await getTranslations("home.values");
   const tWork = await getTranslations("home.work");
   const tServices = await getTranslations("home.services");
+  const tFigures = await getTranslations("home.figures");
+  const tProcess = await getTranslations("home.process");
+  const tDifference = await getTranslations("home.difference");
+  const tTestimonials = await getTranslations("home.testimonials");
   const team = getTeam(await getTranslations("home.team"), teamMembers);
   const tFaq = await getTranslations("home.faq");
   const tCta = await getTranslations("home.cta");
@@ -123,6 +139,13 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <WorkRows {...getWork(tWork, projects)} titleId={WORK_TITLE_ID} />
       </Section>
 
+      {/* Las cifras, pegadas al trabajo: quien acaba de ver las piezas se pregunta si
+          funcionan, y un numero contesta eso antes que un parrafo. Despues ya se puede
+          hablar de lo que se contrata. */}
+      <Section width="strip" spacing="loose" labelledBy={FIGURES_TITLE_ID}>
+        <Figures {...getFigures(tFigures)} titleId={FIGURES_TITLE_ID} />
+      </Section>
+
       {/* Lo que se puede contratar, justo despues de ver como se ve: quien acaba de
           mirar las piezas se pregunta que les puede pedir. Oscura en los dos modos:
           despues de la reticula, cuatro cabeceras iguales seguidas se leian como un
@@ -136,11 +159,32 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} />
       </Section>
 
+      {/* El proceso, detras de la oferta: quien ya sabe que puede contratar pregunta
+          como se lleva. La franja oscura de arriba parte la serie de cabeceras, asi
+          que esta vuelve al modo del sitio sin que se lean como el mismo documento. */}
+      <Section width="strip" spacing="loose" labelledBy={PROCESS_TITLE_ID}>
+        <Process {...getProcess(tProcess)} titleId={PROCESS_TITLE_ID} />
+      </Section>
+
       {/* Como trabaja el estudio, despues de la oferta y antes del equipo: quien ya
           sabe que puede contratar pregunta como se trabaja, y la respuesta lleva
           directa a quien lo hace. A sangre: la corona sale por los bordes. */}
       <Section width="full" spacing="loose" labelledBy={VALUES_TITLE_ID}>
         <ValueCards {...getValues(tValues)} titleId={VALUES_TITLE_ID} />
+      </Section>
+
+      {/* La comparativa, al final del argumento y no al principio: solo se discute
+          con quien ya vio el trabajo, la oferta y el proceso. Antes de eso es una
+          tabla que gana sola. */}
+      <Section width="strip" spacing="loose" labelledBy={DIFFERENCE_TITLE_ID}>
+        <Difference {...getDifference(tDifference)} titleId={DIFFERENCE_TITLE_ID} />
+      </Section>
+
+      {/* Y quien lo dice, justo detras: la tabla es lo que el estudio afirma de si
+          mismo, y una cita firmada es lo unico que la sostiene. Sin citas publicadas
+          la seccion no se pinta. */}
+      <Section width="strip" spacing="loose" labelledBy={TESTIMONIALS_TITLE_ID}>
+        <Testimonials {...getTestimonials(tTestimonials)} titleId={TESTIMONIALS_TITLE_ID} />
       </Section>
 
       {/* Quien hace el trabajo, antes de las objeciones: la primera pregunta de

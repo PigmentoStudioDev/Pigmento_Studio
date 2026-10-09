@@ -1,0 +1,20 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '@carbon/react/scss/spacing';
+
+.root {
+  padding-inline: spacing.$spacing-06;
+}
+
+.header {
+  margin-block-end: spacing.$spacing-09;
+}
+
+// La tabla trae su propia caja y su propio desplazamiento horizontal; aqui solo se
+// le da el aire que la separa de la cabecera.
+.table {
+  margin-block-start: spacing.$spacing-07;
+}
