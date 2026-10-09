@@ -7,7 +7,7 @@ import { Faq } from "@/design-system/components/organisms/Faq/Faq";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
 import { Difference } from "@/design-system/components/organisms/Difference/Difference";
-import { FeaturedCase } from "@/design-system/components/organisms/FeaturedCase/FeaturedCase";
+import { FeaturedCases } from "@/design-system/components/organisms/FeaturedCases/FeaturedCases";
 import { Figures } from "@/design-system/components/organisms/Figures/Figures";
 import { ImageBand } from "@/design-system/components/organisms/ImageBand/ImageBand";
 import { Process } from "@/design-system/components/organisms/Process/Process";
@@ -18,12 +18,12 @@ import { ValueCards } from "@/design-system/components/organisms/ValueCards/Valu
 import { WorkRows } from "@/design-system/components/organisms/WorkRows/WorkRows";
 import { HeroStatement } from "@/design-system/components/organisms/HeroStatement/HeroStatement";
 import { BAND_IMAGE_FILENAME } from "../band";
-import { FEATURED_CASE_PIECES, FEATURED_CASE_SLUG, getFeaturedCase } from "../featuredCase";
+import { FEATURED_CASE_PIECES, FEATURED_CASES_MAX, getFeaturedCases } from "../featuredCases";
 import { HERO_PIECES } from "../hero";
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { getFinalCta } from "../cta";
 import { getFaq } from "../faq";
-import { getFeaturedCase as readFeaturedCase, getFeaturedPieces, getWorkProjects } from "@/cms/projects";
+import { getFeaturedCases as readFeaturedCases, getFeaturedPieces, getWorkProjects } from "@/cms/projects";
 import { getSiteImage } from "@/cms/media";
 import { getTeamMembers } from "@/cms/team";
 import { getDifference } from "../difference";
@@ -76,12 +76,12 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
   // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
   // Consultas independientes: en serie sumarian sus tiempos al primer byte.
-  const [pieces, projects, teamMembers, bandImage, featuredCase] = await Promise.all([
+  const [pieces, projects, teamMembers, bandImage, featuredCases] = await Promise.all([
     getFeaturedPieces(locale),
     getWorkProjects(locale),
     getTeamMembers(locale),
     getSiteImage(BAND_IMAGE_FILENAME, locale),
-    readFeaturedCase(FEATURED_CASE_SLUG, locale, FEATURED_CASE_PIECES),
+    readFeaturedCases(locale, FEATURED_CASE_PIECES, FEATURED_CASES_MAX),
   ]);
   const tValues = await getTranslations("home.values");
   const tWork = await getTranslations("home.work");
@@ -288,15 +288,16 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           superficie que cierra el capitulo.
 
           **No es un segundo strip.** Arriba pasan dieciocho portadas sin detenerse en
-          ninguna; aqui se para en una y se ven sus piezas, con el texto que el propio
-          CMS tiene escrito del proyecto. Dos formatos distintos del mismo material,
-          que es lo que hace que el trabajo pueda volver sin repetirse.
+          ninguna; aqui se para en cada una y se ven sus piezas, con el texto que el
+          propio CMS tiene escrito del proyecto. Dos formatos distintos del mismo
+          material, que es lo que hace que el trabajo pueda volver sin repetirse.
 
-          Sin galeria no se pinta: con la portada sola seria el strip otra vez. */}
-      {featuredCase ? (
+          Ningun caso con galeria y texto no se pinta: con las portadas solas seria el
+          strip otra vez. */}
+      {featuredCases.length > 0 ? (
         <Section width="strip" spacing="default" spacingStart="loose" labelledBy={CASE_TITLE_ID}>
-          <FeaturedCase
-            {...getFeaturedCase(tFeaturedCase, tWork, featuredCase)}
+          <FeaturedCases
+            {...getFeaturedCases(tFeaturedCase, tWork, featuredCases)}
             titleId={CASE_TITLE_ID}
           />
         </Section>
