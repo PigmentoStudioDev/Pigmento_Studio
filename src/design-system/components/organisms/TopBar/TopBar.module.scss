@@ -15,8 +15,10 @@
   }
 }
 
-// El rol invertido y no un color fijo: oscura sobre la pagina clara y clara sobre la
-// oscura. Lo que la separa del contenido es el contraste, igual que la placa del CTA.
+// Una capa del tema, no el rol invertido. La barra invertida era una banda negra a
+// sangre antes de la cabecera: lo primero que se ve de la pagina y lo mas saturado de
+// toda ella, para lo que es — un mensaje de paso. Con una capa sigue separada del
+// contenido, pero por nivel y por su linea, no por contraste maximo.
 .root {
   position: fixed;
   inset-block-start: 0;
@@ -25,8 +27,9 @@
   display: block;
   block-size: brand.$topbar-block-size;
   overflow: clip;
-  background-color: theme.$background-inverse;
-  color: theme.$text-inverse;
+  border-block-end: 1px solid theme.$border-subtle;
+  background-color: theme.$layer-02;
+  color: theme.$text-secondary;
   text-decoration: none;
   transition: background-color brand.$duration-quarter brand.$ease-default;
   // Entra con la cabecera, mismo gesto y mismo retraso: son una sola pieza de chrome.
@@ -40,13 +43,17 @@
   animation-play-state: paused;
 }
 
+// El hover de SU capa, no el contextual: la barra se pinta con layer-02 y el
+// contextual valdria siempre -01.
 .root:hover {
-  background-color: theme.$background-inverse-hover;
+  background-color: theme.$layer-hover-02;
+  color: theme.$text-primary;
 }
 
 // Por dentro del borde: por fuera lo cortaria el overflow, y arriba no hay nada.
+// $focus y no $focus-inverse: la barra ya no es una superficie invertida.
 .root:focus-visible {
-  outline: 2px solid theme.$focus-inverse;
+  outline: 2px solid theme.$focus;
   outline-offset: -2px;
 }
 
