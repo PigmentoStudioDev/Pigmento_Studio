@@ -29,11 +29,26 @@ export function themeZoneClass(zone: ThemeZone): string {
 export type ThemeMode = "light" | "dark";
 
 /**
- * El tono de una superficie: claro u oscuro. Tiene los mismos dos valores que el modo,
- * pero no dice lo mismo — el modo es lo que ELIGE quien visita; el tono es lo que una
- * seccion PIDE en cada modo.
+ * El tono de una superficie. El modo es lo que ELIGE quien visita; el tono es lo que
+ * una seccion PIDE en cada modo.
+ *
+ * `light` y `dark` son ABSOLUTOS: dicen de que lado esta la superficie, y valen lo
+ * mismo en los dos modos. `raised` es RELATIVO: un escalon por encima del modo, sin
+ * cambiar de lado — g10 sobre una pagina clara, g90 sobre una oscura.
+ *
+ * Y ese matiz es la diferencia con el rol `alt` que se retiro de aqui. `alt` valia "la
+ * zona contraria al modo", asi que volteaba: una franja oscura por diseno se volvia
+ * blanca en modo oscuro. `raised` no puede voltear nada — solo sube un escalon dentro
+ * del modo en el que ya esta.
+ *
+ * Existe porque sin el, en modo oscuro la unica manera de marcar un capitulo es
+ * blanco a pantalla completa, que deslumbra. Un sistema oscuro no puntua invirtiendo,
+ * puntua elevando.
  */
-export type ThemeTone = "light" | "dark";
+export type ThemeTone = "light" | "dark" | "raised";
+
+/** Los tonos, para quien tenga que recorrerlos — el contrato de tema los comprueba todos. */
+export const THEME_TONES: readonly ThemeTone[] = ["light", "dark", "raised"];
 
 /**
  * El tema de una seccion, ASIGNADO por modo: que tono lleva cuando el sitio esta en
@@ -51,26 +66,30 @@ export type ThemeTone = "light" | "dark";
 export type ThemeAssignment = Partial<Record<ThemeMode, ThemeTone>>;
 
 /**
- * La zona de Carbon de cada tono. Tambien es la que carga el DOCUMENTO en cada modo:
- * un sitio en oscuro es una pagina de tono oscuro.
+ * La zona de Carbon de cada tono, POR MODO. La tabla tiene dos filas y no una porque
+ * `raised` se resuelve distinto en cada una: es el unico tono relativo, y la fila es
+ * lo que lo hace explicito en vez de esconderlo en un condicional.
+ *
+ * La diagonal —light/light y dark/dark— es ademas la que carga el DOCUMENTO: un sitio
+ * en oscuro es una pagina de tono oscuro.
  *
  * El modo no es un vocabulario nuevo ni un atributo propio: es cual de las cuatro
  * zonas lleva <html>. Asi el mecanismo sigue siendo entero el de Carbon — una de
  * sus clases, en la raiz — y no hay una segunda forma de tematizar conviviendo con
  * la suya. g10 y g90 quedan fuera de la asignacion y disponibles por su clase.
  */
-const TONE_ZONE: Record<ThemeTone, ThemeZone> = {
-  light: "white",
-  dark: "g100",
+const TONE_ZONE: Record<ThemeMode, Record<ThemeTone, ThemeZone>> = {
+  light: { light: "white", dark: "g100", raised: "g10" },
+  dark: { light: "white", dark: "g100", raised: "g90" },
 };
 
 export function themeModeClass(mode: ThemeMode): string {
-  return themeZoneClass(TONE_ZONE[mode]);
+  return themeZoneClass(TONE_ZONE[mode][mode]);
 }
 
 /** La zona de una superficie en un modo: la asignada, o la del sitio si no hay. */
 export function resolveZone(mode: ThemeMode, assignment?: ThemeAssignment): ThemeZone {
-  return TONE_ZONE[assignment?.[mode] ?? mode];
+  return TONE_ZONE[mode][assignment?.[mode] ?? mode];
 }
 
 /**
@@ -95,7 +114,7 @@ export function themeAttributes(assignment: ThemeAssignment | undefined): Record
 }
 
 function toTone(value: string | null): ThemeTone | undefined {
-  return value === "light" || value === "dark" ? value : undefined;
+  return THEME_TONES.includes(value as ThemeTone) ? (value as ThemeTone) : undefined;
 }
 
 /** Lee de vuelta la asignacion que un elemento publica. Sin atributos, ninguna. */

@@ -135,55 +135,83 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           sin techo: las filas salen por el borde de la ventana, y cortadas contra un
           contenedor de 1920 dejarian de leerse como algo que pasa por delante. Sin
           tema asignado: sigue al modo del sitio, como el resto de strips. */}
-      <Section width="full" spacing="loose" surface="solid" labelledBy={WORK_TITLE_ID}>
+      <Section width="full" spacing="loose" spacingEnd="default" surface="solid" labelledBy={WORK_TITLE_ID}>
         <WorkRows {...getWork(tWork, projects)} titleId={WORK_TITLE_ID} />
       </Section>
 
       {/* Las cifras, pegadas al trabajo: quien acaba de ver las piezas se pregunta si
-          funcionan, y un numero contesta eso antes que un parrafo. Despues ya se puede
-          hablar de lo que se contrata. */}
-      <Section width="strip" spacing="loose" labelledBy={FIGURES_TITLE_ID}>
+          funcionan, y un numero contesta eso antes que un parrafo.
+
+          Mismo fondo liso que la reticula y sin aire grande entre las dos — son un
+          solo acto, la prueba. El grano aqui volvia a aparecer justo debajo de una
+          franja que lo quitaba a proposito. */}
+      <Section
+        width="strip"
+        spacing="default"
+        spacingStart="none"
+        surface="solid"
+        labelledBy={FIGURES_TITLE_ID}
+      >
         <Figures {...getFigures(tFigures)} titleId={FIGURES_TITLE_ID} />
       </Section>
 
-      {/* Lo que se puede contratar, justo despues de ver como se ve: quien acaba de
-          mirar las piezas se pregunta que les puede pedir. Oscura en los dos modos:
-          despues de la reticula, cuatro cabeceras iguales seguidas se leian como un
-          documento, y el cambio de tono es lo que parte esa serie. */}
+      {/* ACTO III — la oferta y como se trabaja. Empieza aqui: quien acaba de ver las
+          piezas y sus cifras se pregunta que les puede pedir.
+
+          El tono `raised` abarca ESTE bloque y el siguiente, y esa es la decision: un
+          corte que dura una seccion se lee como un accidente, no como un capitulo.
+          Antes solo cortaba Servicios y Proceso volvia al modo justo detras.
+
+          `raised` y no oscuro fijo. Oscuro fijo contrasta en claro y se disuelve en
+          oscuro —el capitulo desaparecia justo para quien navega de noche—, e invertir
+          significaria blanco a pantalla completa sobre una pagina negra. `raised` sube
+          un escalon dentro del modo: g10 sobre claro, g90 sobre oscuro, y el mismo
+          ritmo en los dos. */}
       <Section
         width="strip"
         spacing="loose"
-        theme={{ light: "dark", dark: "dark" }}
+        spacingEnd="default"
+        theme={{ light: "raised", dark: "raised" }}
         labelledBy={SERVICES_TITLE_ID}
       >
         <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} />
       </Section>
 
-      {/* El proceso, detras de la oferta: quien ya sabe que puede contratar pregunta
-          como se lleva. La franja oscura de arriba parte la serie de cabeceras, asi
-          que esta vuelve al modo del sitio sin que se lean como el mismo documento. */}
-      <Section width="strip" spacing="loose" labelledBy={PROCESS_TITLE_ID}>
+      {/* Sigue el ACTO III, con el mismo tono y sin aire grande entre los dos: lo que
+          se contrata y como se lleva son la misma respuesta partida en dos bloques. El
+          aire de capitulo va fuera del acto, no dentro. */}
+      <Section
+        width="strip"
+        spacing="loose"
+        spacingStart="default"
+        theme={{ light: "raised", dark: "raised" }}
+        labelledBy={PROCESS_TITLE_ID}
+      >
         <Process {...getProcess(tProcess)} titleId={PROCESS_TITLE_ID} />
       </Section>
 
-      {/* Como trabaja el estudio, despues de la oferta y antes del equipo: quien ya
-          sabe que puede contratar pregunta como se trabaja, y la respuesta lleva
-          directa a quien lo hace. A sangre: la corona sale por los bordes. */}
+      {/* ACTO IV — por que nosotros. Abre la corona de valores, que es la salida del
+          capitulo anterior: vuelve al tono del sitio y sale por los bordes, asi que el
+          cambio se nota sin necesitar otro filete. */}
       <Section width="full" spacing="loose" labelledBy={VALUES_TITLE_ID}>
         <ValueCards {...getValues(tValues)} titleId={VALUES_TITLE_ID} />
       </Section>
 
       {/* La comparativa, al final del argumento y no al principio: solo se discute
           con quien ya vio el trabajo, la oferta y el proceso. Antes de eso es una
-          tabla que gana sola. */}
-      <Section width="strip" spacing="loose" labelledBy={DIFFERENCE_TITLE_ID}>
+          tabla que gana sola.
+
+          Aire de parrafo con lo que viene detras, no de capitulo: comparativa,
+          testimonios y equipo son tres maneras de contestar la misma pregunta, y con
+          el aire grande entre las tres se leian como tres temas distintos. */}
+      <Section width="strip" spacing="default" spacingStart="loose" labelledBy={DIFFERENCE_TITLE_ID}>
         <Difference {...getDifference(tDifference)} titleId={DIFFERENCE_TITLE_ID} />
       </Section>
 
       {/* Y quien lo dice, justo detras: la tabla es lo que el estudio afirma de si
           mismo, y una cita firmada es lo unico que la sostiene. Sin citas publicadas
           la seccion no se pinta. */}
-      <Section width="strip" spacing="loose" labelledBy={TESTIMONIALS_TITLE_ID}>
+      <Section width="strip" spacing="default" labelledBy={TESTIMONIALS_TITLE_ID}>
         <Testimonials {...getTestimonials(tTestimonials)} titleId={TESTIMONIALS_TITLE_ID} />
       </Section>
 
@@ -191,7 +219,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           cualquiera que va a contratar un estudio pequeno es con quien va a hablar.
           Sin nadie publicado en el CMS no se pinta. */}
       {team ? (
-        <Section width="strip" spacing="loose" labelledBy={TEAM_TITLE_ID}>
+        <Section width="strip" spacing="default" spacingEnd="loose" labelledBy={TEAM_TITLE_ID}>
           <Team {...team} titleId={TEAM_TITLE_ID} />
         </Section>
       ) : null}
