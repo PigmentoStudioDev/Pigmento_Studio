@@ -27,6 +27,19 @@ export interface MarqueeLogo {
   height: number;
 }
 
+/**
+ * Una resena firmada. Los tres campos de la atribucion son obligatorios por lo mismo
+ * que en el bloque de testimonios: una cita anonima no prueba nada y se lee como
+ * inventada, y el componente no puede pintar media firma.
+ */
+export interface MarqueeQuote {
+  /** La frase, sin comillas: las pone la hoja si hacen falta. */
+  quote: string;
+  author: string;
+  role: string;
+  company: string;
+}
+
 interface MarqueeBase {
   direction?: MarqueeDirection;
   /** Segundos por vuelta. Cuanto MENOR, mas rapido. */
@@ -44,7 +57,11 @@ interface MarqueeBase {
 }
 
 export type MarqueeProps = MarqueeBase &
-  ({ kind: "text"; items: string[] } | { kind: "logos"; items: MarqueeLogo[] });
+  (
+    | { kind: "text"; items: string[] }
+    | { kind: "logos"; items: MarqueeLogo[] }
+    | { kind: "quotes"; items: MarqueeQuote[] }
+  );
 
 const MIN_COPIES = 2;
 
@@ -101,13 +118,33 @@ export function Marquee({
             className={styles.collection}
             aria-hidden={copy === 0 ? undefined : "true"}
           >
-            {content.kind === "text"
-              ? content.items.map((item) => (
-                  <div key={item} className={styles.item}>
-                    <p className={styles.text}>{item}</p>
-                  </div>
-                ))
-              : content.items.map((logo) => (
+            {content.kind === "quotes" ? (
+              content.items.map((cita, posicion) => (
+                // La clave lleva la POSICION ademas de la firma: dos resenas pueden
+                // venir de la misma persona, y React avisa de claves repetidas y
+                // puede omitir una de las dos.
+                <div key={`${cita.author}-${posicion}`} className={styles.item}>
+                  <figure className={styles.quoteCard}>
+                    <blockquote className={styles.quote}>
+                      <p className={styles.quoteText}>{cita.quote}</p>
+                    </blockquote>
+                    <figcaption className={styles.quoteAuthor}>
+                      <cite className={styles.quoteName}>{cita.author}</cite>
+                      <span className={styles.quoteRole}>
+                        {cita.role}, {cita.company}
+                      </span>
+                    </figcaption>
+                  </figure>
+                </div>
+              ))
+            ) : content.kind === "text" ? (
+              content.items.map((item) => (
+                <div key={item} className={styles.item}>
+                  <p className={styles.text}>{item}</p>
+                </div>
+              ))
+            ) : (
+              content.items.map((logo) => (
                   <div key={logo.src} className={styles.item}>
                     {/*
                       <img> y no next/image, y no es un descuido. Un logo es un SVG:
@@ -128,7 +165,8 @@ export function Marquee({
                       className={styles.logo}
                     />
                   </div>
-                ))}
+              ))
+            )}
           </div>
         ))}
       </div>

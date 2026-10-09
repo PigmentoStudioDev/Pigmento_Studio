@@ -99,3 +99,79 @@
     will-change: auto;
   }
 }
+
+// Una resena ocupa una TARJETA y no una linea, y por eso no hereda ni el aire ni el
+// `nowrap` del texto corrido: una cita de dos renglones en una sola linea mide media
+// pantalla y pasa demasiado rapido para leerse.
+//
+// Estas reglas son las que TENIA el bloque de testimonios en su propia hoja, movidas
+// enteras aqui cuando la rejilla de tres citas paso a ser una tira. Estan en un solo
+// sitio a proposito: dos tarjetas de resena con dos hojas se separan en cuanto
+// alguien toca una.
+// `align-self` y no `align-items`: el carril centra sus piezas —es lo que quiere una
+// fila de logos de alturas dispares— y centrar tarjetas las dejaba flotando a cuatro
+// alturas distintas, que es como un cliente ve "esto no esta alineado". La tarjeta se
+// estira a la altura de la fila y las citas cortas reparten ese aire por dentro.
+.item:has(.quoteCard) {
+  padding-inline-end: spacing.$spacing-05;
+  align-self: stretch;
+}
+
+// `layer-01` y no blanco escrito: sobre la zona `raised` de su seccion es blanca, y
+// sobre la base del sitio seria el gris de la capa. El token es el que sabe en que
+// fondo esta, y el bloque se re-tematiza entero sin tocar esta linea.
+.quoteCard {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+  inline-size: brand.$marquee-quote-inline-size;
+  // La tarjeta ocupa la fila entera: con `align-self: stretch` arriba, la altura la
+  // marca la cita mas larga y todas acaban en la misma linea de abajo.
+  block-size: 100%;
+  margin: 0;
+  padding: spacing.$spacing-06;
+  border: 1px solid theme.$border-subtle;
+  border-radius: brand.$radius-card;
+  background-color: theme.$layer-01;
+}
+
+// El bloque de la cita se come el aire que sobra para que la atribucion quede pegada
+// abajo en todas las tarjetas de la fila, no a media altura en unas y al fondo en
+// otras.
+.quote {
+  flex: 1;
+  margin: 0;
+}
+
+.quoteText {
+  @include brandtype.style('lead');
+
+  margin: 0;
+  // La tira vive del `nowrap` del texto corrido; una cita, no: tiene que ajustarse
+  // dentro del ancho de su tarjeta.
+  white-space: normal;
+}
+
+.quoteAuthor {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-02;
+  padding-block-start: spacing.$spacing-05;
+  border-block-start: 1px solid theme.$border-subtle;
+}
+
+// `cite` llega en cursiva del navegador y aqui no lo es: el nombre de quien firma es
+// un nombre, no un titulo de obra.
+.quoteName {
+  @include brandtype.style('body');
+
+  font-style: normal;
+  font-weight: brandtype.$weight-medium;
+}
+
+// El cargo es METADATO y va en la voz de metadato, como el oficio en el equipo.
+.quoteRole {
+  @include brandtype.style('label');
+
+  color: theme.$text-secondary;
+}

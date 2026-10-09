@@ -23,8 +23,20 @@ $answer-inline-size: 120ch;
 /// cuando todavia no hay hueco donde ponerlo.
 $answer-delay: brand.$duration-quarter;
 
+// Las preguntas van CONTENIDAS en una tarjeta y no sueltas sobre la pagina. Una lista
+// de filas con filete sobre fondo liso es la forma de un indice de documento, que es
+// justo lo que esta pagina venia pareciendo; metida en una caja con su capa, su filete
+// y su radio, se lee como un bloque de la pagina.
+//
+// `layer-01` y la seccion en `raised`: sobre esa zona la capa es BLANCA, asi que la
+// tarjeta sale blanca sobre gris. Al reves —tarjeta sobre la base del sitio— seria
+// gris sobre blanco, que tambien separa pero deja las preguntas en el fondo en vez de
+// delante. El par zona + capa es lo que decide el color; aqui no hay ninguno escrito.
 .root {
-  padding-inline: spacing.$spacing-06;
+  padding: spacing.$spacing-07 spacing.$spacing-06;
+  border: 1px solid theme.$border-subtle;
+  border-radius: brand.$radius-card;
+  background-color: theme.$layer-01;
 }
 
 .row {
