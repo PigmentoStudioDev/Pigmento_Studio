@@ -1,0 +1,199 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// Un caso por pantalla. No es un carril de tarjetas que se asoman: cada tarjeta trae
+/// un parrafo y cuatro piezas, y media tarjeta al lado seria media lectura.
+$cards-per-view: 1;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-06;
+  padding-inline: spacing.$spacing-06;
+}
+
+// Los controles arriba y a la derecha, como en la fila del equipo: el mismo gesto en
+// la misma pagina se maneja desde el mismo sitio.
+.controls {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.previous {
+  display: inline-flex;
+  rotate: 180deg;
+}
+
+.viewport {
+  container-type: inline-size;
+  overflow: clip;
+  // El gesto es horizontal: el vertical sigue siendo el scroll de la pagina.
+  touch-action: pan-y;
+  user-select: none;
+
+  --pg-roster-per-view: #{$cards-per-view};
+}
+
+.viewport:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+:root:not([data-custom-cursor]) .viewport {
+  cursor: grab;
+}
+
+:root:not([data-custom-cursor]) .viewport[data-dragging='true'] {
+  cursor: grabbing;
+}
+
+// La misma mecanica que la fila del equipo, y a proposito: un paso es una tarjeta mas
+// su hueco, el tope lo sabe la hoja y el JS no mide en cada cambio de tamano.
+// HACK: sin respaldo para navegadores sin unidades de contenedor: ahi la declaracion
+// se invalida y la fila no se desplaza. Anadir un @supports si la analitica muestra
+// trafico real de ellos.
+.track {
+  --pg-roster-gap: #{spacing.$spacing-05};
+  --pg-roster-card: calc((100cqi - var(--pg-roster-gap) * 2) / var(--pg-roster-per-view));
+  --pg-roster-offset: calc(
+    var(--pg-roster-index, 0) * (var(--pg-roster-card) + var(--pg-roster-gap)) * -1 +
+      var(--pg-roster-drag, 0) * 1px
+  );
+
+  display: flex;
+  gap: var(--pg-roster-gap);
+  inline-size: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  translate: max(min(var(--pg-roster-offset), 0px), min(calc(100cqi - 100%), 0px)) 0;
+  transition: translate brand.$duration-onehalf brand.$ease-default;
+}
+
+// Con el dedo abajo la fila va 1:1 con el puntero.
+.viewport[data-dragging='true'] .track {
+  transition: none;
+}
+
+// La TARJETA es lo que le faltaba a la pila: una capa por encima del fondo, con su
+// filete y su radio. La pagina es una sucesion de bandas del mismo tono y el ojo no
+// encuentra donde acaba una cosa y empieza otra; esto le da un borde.
+//
+// `layer-01` y no un gris escrito: es la capa de Carbon sobre la superficie base, asi
+// que sube un escalon en claro y en oscuro sin que nadie elija dos colores.
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+  gap: spacing.$spacing-07;
+  // Centrado y no arriba: el texto mide un tercio de lo que mide la rejilla de piezas,
+  // y pegado al borde superior deja medio metro de nada debajo que se lee como un
+  // hueco y no como aire.
+  align-items: center;
+  flex: none;
+  inline-size: var(--pg-roster-card);
+  padding: spacing.$spacing-07;
+  border: 1px solid theme.$border-subtle;
+  border-radius: brand.$radius-card;
+  background-color: theme.$layer-01;
+}
+
+@include breakpoint.breakpoint-down('md') {
+  .card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: spacing.$spacing-06;
+    padding: spacing.$spacing-05;
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-04;
+}
+
+.label {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.discipline {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.summary {
+  @include brandtype.style('body');
+
+  margin: 0;
+  max-inline-size: 48ch;
+  color: theme.$text-secondary;
+}
+
+// Dos columnas de piezas: las piezas de una identidad se leen por parejas, y en fila
+// unica la tarjeta se haria tan alta como la pantalla.
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: spacing.$spacing-04;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// `$radius-piece` y no un escalon elegido: es el radio de TODA pieza de imagen del
+// sitio —la tira, la reticula, la vista previa—, y mismo rol es mismo radio. La
+// concentricidad no entra aqui: con el relleno de la tarjeta las piezas quedan lejos
+// de su esquina, y es la distancia corta la que obliga a derivar el radio.
+//
+// `layer-02` porque van DENTRO de una tarjeta que ya es `layer-01`: el respaldo de una
+// imagen que aun no cargo tiene que ser la capa de su sitio, no la de la pagina.
+.piece {
+  overflow: hidden;
+  border-radius: brand.$radius-piece;
+  background-color: theme.$layer-02;
+}
+
+// Mismo encuadre para todas aunque vengan con proporciones distintas: en una rejilla,
+// dos alturas distintas en la misma fila se leen como un error de maquetacion y no
+// como una decision.
+.image {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+// Con reduced-motion la fila deja de desplazarse y pasa a ser un carril con scroll
+// nativo y anclaje: el mismo contenido, recorrido por el navegador. Es lo que hace la
+// fila del equipo, y la razon es la misma — quitar el movimiento no puede dejar un
+// bloque donde solo se vea el primer caso y las flechas no hagan nada.
+@media (prefers-reduced-motion: reduce) {
+  .viewport {
+    overflow-x: auto;
+    touch-action: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  :root:not([data-custom-cursor]) .viewport {
+    cursor: auto;
+  }
+
+  .track {
+    translate: none;
+    transition: none;
+  }
+
+  .card {
+    scroll-snap-align: start;
+  }
+}

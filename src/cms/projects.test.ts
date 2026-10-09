@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Media, Project } from '@/payload-types';
-import { toPiece, toWorkProject } from './projects';
+import { toFeaturedCase, toPiece, toWorkProject } from './projects';
 
 /**
  * Contrato del mapeo, que es lo que este repo controla: si Payload devuelve o no
@@ -67,5 +67,49 @@ describe('toWorkProject', () => {
   /** Una fila de fotos sin foto no es una pieza: se descarta, igual que en toPiece. */
   it('descarta el proyecto cuya portada no llego poblada', () => {
     expect(toWorkProject(project({ cover: 4 }))).toBeNull();
+  });
+});
+
+describe('toFeaturedCase', () => {
+  const pieza = (url: string) => ({ image: media({ url, width: 800, height: 1000 }) });
+  const caso = (fields: Partial<Project>) =>
+    project({ summary: 'El reto fue sostener catalogo y tienda sin dos plantillas.', ...fields });
+
+  it('da el cliente, el texto del CMS y las piezas de la galeria', () => {
+    expect(toFeaturedCase(caso({ client: 'Señora Galleta', discipline: 'branding', gallery: [pieza('/1.jpg')] }), 4)).toEqual({
+      client: 'Señora Galleta',
+      discipline: 'branding',
+      summary: 'El reto fue sostener catalogo y tienda sin dos plantillas.',
+      pieces: [{ src: '/1.jpg', width: 800, height: 1000 }],
+    });
+  });
+
+  /**
+   * Sin galeria el bloque seria el strip de portadas otra vez, y la pagina ya tiene
+   * uno; sin texto es una tarjeta con nombre y fotos, que no argumenta nada. Las dos
+   * son la razon de existir del bloque, asi que faltando una el caso no entra.
+   */
+  it('descarta el caso sin galeria y el caso sin texto', () => {
+    expect(toFeaturedCase(caso({ gallery: [] }), 4)).toBeNull();
+    expect(toFeaturedCase(project({ gallery: [pieza('/1.jpg')] }), 4)).toBeNull();
+  });
+
+  /**
+   * El fallo silencioso: una fila de galeria cuya imagen no llego poblada no cuenta
+   * como pieza. Sin esto un caso entraria con huecos vacios en la rejilla.
+   */
+  it('una galeria entera sin poblar cuenta como ninguna pieza', () => {
+    expect(toFeaturedCase(caso({ gallery: [{ image: 9 }] }), 4)).toBeNull();
+  });
+
+  /** El tope es del bloque, no del CMS: hay casos con trece piezas publicadas. */
+  it('recorta al tope de piezas', () => {
+    const galeria = [pieza('/1.jpg'), pieza('/2.jpg'), pieza('/3.jpg')];
+    expect(toFeaturedCase(caso({ gallery: galeria }), 2)?.pieces).toHaveLength(2);
+  });
+
+  /** El cliente es opcional en el CMS; la tarjeta no puede quedarse sin titular. */
+  it('sin cliente usa el titulo', () => {
+    expect(toFeaturedCase(caso({ gallery: [pieza('/1.jpg')] }), 4)?.client).toBe('Calderoni');
   });
 });

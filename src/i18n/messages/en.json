@@ -346,7 +346,11 @@
       }
     },
     "featuredCase": {
-      "label": "The case"
+      "label": "The case",
+      "previous": "Previous case",
+      "next": "Next case",
+      "slider": "Cases. Use the arrow keys to browse",
+      "drag": "Drag"
     }
   },
   "proposal": {
