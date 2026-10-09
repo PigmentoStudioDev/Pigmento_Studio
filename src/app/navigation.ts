@@ -36,6 +36,10 @@ export function getNavigation(t: Translate, gallery: ProjectPiece[]): SiteHeader
       {
         label: t("servicios.label"),
         items: [
+          // Primero por peso en la busqueda y por ser la disciplina de entrada del
+          // estudio. Al indice y no a `/servicios/branding`: esa pagina no existe, el
+          // mismo TODO(rutas) que ya lleva el manifiesto.
+          { label: t("servicios.branding"), href: "/servicios" },
           { label: t("servicios.motion"), href: "/servicios/motion" },
           { label: t("servicios.marketing"), href: "/servicios/marketing" },
           { label: t("servicios.web"), href: "/servicios/web-development" },
