@@ -48,7 +48,19 @@
     "facebookName": "Pigmento Studio en Facebook (abre en una pestaña nueva)",
     "city": "Ciudad de México",
     "metaLabel": "Atajos del pie",
-    "linksLabel": "Redes y ubicación"
+    "linksLabel": "Redes y ubicación",
+    "tagline": "Estudio de diseño de marca y crecimiento en Ciudad de México. Branding, sitios, motion y marketing para marcas que tienen algo que decir.",
+    "columnStudio": "Estudio",
+    "columnServices": "Servicios",
+    "columnLegal": "Legal",
+    "about": "Nosotros",
+    "lab": "Laboratorio",
+    "branding": "Branding y diseño",
+    "motion": "Motion",
+    "marketing": "Marketing",
+    "web": "Desarrollo web",
+    "rights": "Todos los derechos reservados.",
+    "backToTop": "Volver arriba"
   },
   "home": {
     "manifesto": {

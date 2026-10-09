@@ -1,0 +1,120 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// Ancho minimo de una columna de enlaces. Lo que pide la etiqueta mas larga del
+/// mapa sin partirse, no una fraccion: con fracciones, en pantalla ancha la columna
+/// de legales —tres enlaces cortos— se queda con el mismo hueco que la de servicios.
+$column-min-inline-size: 10rem;
+
+/// Lo que ocupa la columna de marca frente a las de enlaces. Pesa mas porque lleva
+/// una frase y no una lista, y a igual ancho la frase sale en renglones de tres
+/// palabras.
+$brand-min-inline-size: 16rem;
+
+.root {
+  padding-block: spacing.$spacing-09;
+  border-block-end: 1px solid theme.$border-subtle;
+}
+
+// `auto-fit` y no un numero de columnas: el mapa crece cuando el sitio crezca —hoy
+// son tres grupos y manana cuatro— y una rejilla con el numero escrito obliga a
+// tocar la hoja cada vez. Las columnas se reparten solas y caen a una sin breakpoint.
+.grid {
+  display: grid;
+  grid-template-columns: minmax($brand-min-inline-size, 1.4fr) repeat(
+      auto-fit,
+      minmax($column-min-inline-size, 1fr)
+    );
+  gap: spacing.$spacing-07;
+}
+
+@include breakpoint.breakpoint-down('md') {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax($column-min-inline-size, 1fr));
+  }
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-03;
+}
+
+.name {
+  @include brandtype.style('lead');
+
+  margin: 0;
+}
+
+// La frase del estudio es apoyo, no titular: en la tinta secundaria para que el mapa
+// de la derecha siga siendo lo primero que se lee del bloque.
+.tagline {
+  @include brandtype.style('body');
+
+  margin: 0;
+  max-inline-size: 38ch;
+  color: theme.$text-secondary;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+  min-inline-size: 0;
+}
+
+// El titulo de la columna es METADATO —nombra un grupo, no lo introduce— y va en la
+// voz de metadato del sitio, la misma que el oficio de una persona del equipo.
+.columnTitle {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.close {
+  display: flex;
+  gap: spacing.$spacing-05;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-block-start: spacing.$spacing-08;
+}
+
+.copyright {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.top {
+  @include brandtype.style('label');
+
+  color: theme.$text-secondary;
+  text-decoration: none;
+  transition: color brand.$duration-quarter brand.$ease-default;
+}
+
+.top:hover {
+  color: theme.$text-primary;
+}
+
+.top:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top {
+    transition: none;
+  }
+}

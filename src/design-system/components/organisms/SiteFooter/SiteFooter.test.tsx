@@ -4,6 +4,16 @@ import { describe, expect, it } from "vitest";
 import { SiteFooter, type SiteFooterProps } from "./SiteFooter";
 
 const PROPS: SiteFooterProps = {
+  directory: {
+    brand: "Pigmento Studio®",
+    tagline: "Estudio de diseño de marca y crecimiento en Ciudad de México.",
+    copyright: "© 2026 Pigmento Studio. Todos los derechos reservados.",
+    backToTop: "Volver arriba",
+    columns: [
+      { title: "Estudio", links: [{ label: "Trabajo", href: "/trabajo" }] },
+      { title: "Legal", links: [{ label: "Aviso de privacidad", href: "/legales/privacidad" }] },
+    ],
+  },
   metaLabel: "Atajos",
   meta: [{ label: "Pigmento Studio®", plain: true }, { label: "Trabajo", href: "/trabajo" }],
   handle: {
