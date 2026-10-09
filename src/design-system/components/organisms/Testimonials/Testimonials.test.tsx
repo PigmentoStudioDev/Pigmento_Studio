@@ -34,6 +34,28 @@ describe("Testimonials", () => {
     expect(container.querySelectorAll("cite")).toHaveLength(2);
   });
 
+  /**
+   * El bug: los tres placeholders venian firmados igual y la clave era
+   * `autor-empresa`, asi que React avisaba de claves repetidas y podia omitir una de
+   * las tres tarjetas. Pasa igual con dos citas reales de la misma persona.
+   */
+  it("pinta dos citas firmadas por la misma persona en la misma empresa", () => {
+    const misma = { author: "Nombre Apellido", role: "Cargo", company: "Empresa" };
+
+    render(
+      <Testimonials
+        {...PROPS}
+        testimonials={[
+          { ...misma, quote: "La primera cosa que dijo." },
+          { ...misma, quote: "La segunda cosa que dijo." },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("La primera cosa que dijo.")).toBeInTheDocument();
+    expect(screen.getByText("La segunda cosa que dijo.")).toBeInTheDocument();
+  });
+
   /** Sin citas publicadas la seccion no existe, en vez de dejar una cabecera sola. */
   it("no se pinta sin citas", () => {
     const { container } = render(<Testimonials {...PROPS} testimonials={[]} />);

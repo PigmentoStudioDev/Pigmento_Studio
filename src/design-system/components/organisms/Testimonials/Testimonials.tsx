@@ -62,8 +62,12 @@ export function Testimonials({
       {/* `inner`: el envoltorio del gesto no puede meterse entre el <ul> y sus <li>. */}
       <ScrollReveal by="block" inner>
         <ul className={styles.list}>
-          {testimonials.map((testimonial) => (
-            <li className={styles.item} key={`${testimonial.author}-${testimonial.company}`}>
+          {/* La clave lleva la POSICION y no solo la atribucion: dos citas pueden venir
+              firmadas igual —la misma persona dice dos cosas, o los placeholders
+              comparten nombre— y React avisa de claves repetidas y puede omitir una de
+              las dos. Es la misma clave que usa la fila del equipo. */}
+          {testimonials.map((testimonial, index) => (
+            <li className={styles.item} key={`${testimonial.author}-${index}`}>
               <figure className={styles.card}>
                 <blockquote className={styles.quote}>
                   <p className={styles.text}>{testimonial.quote}</p>

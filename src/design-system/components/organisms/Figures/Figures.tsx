@@ -59,8 +59,10 @@ export function Figures({ title, titleHighlight, label, intro, figures, titleId 
           escucha. Las cifras entran juntas y escalonadas, como el resto de rejillas. */}
       <ScrollReveal by="block" inner>
         <ul className={styles.list}>
-          {figures.map((figure) => (
-            <li className={styles.item} key={figure.label}>
+          {/* La clave lleva la posicion: dos rotulos iguales son clave repetida, y React
+              puede omitir una de las dos celdas sin que nada falle. */}
+          {figures.map((figure, index) => (
+            <li className={styles.item} key={`${figure.label}-${index}`}>
               <p className={styles.value}>
                 <NumberRoll value={figure.value} />
               </p>
