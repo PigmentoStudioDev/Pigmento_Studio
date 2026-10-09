@@ -571,6 +571,14 @@ $grain-dark-opacity: 0.5;
 /// el. Lo que la hace legible es el AIRE entre marcas, no el tamano de cada una.
 $marquee-logo-block-size: 1.5rem;
 
+/// Lo que mide una tarjeta de resena en la tira.
+///
+/// Fija y en rem, no una fraccion: la tira es un carril infinito sin columnas, asi
+/// que no hay nada contra lo que repartir. 22rem cabe una cita de tres o cuatro
+/// renglones —la longitud de una resena de verdad— y deja ver tarjeta y media de la
+/// siguiente, que es lo que dice que la fila sigue.
+$marquee-quote-inline-size: 22rem;
+
 /// Tinta a la que caen los logos claros al invertirse sobre una zona clara.
 ///
 /// Un invert(1) sobre blanco da negro PURO, y el negro puro no esta en la rampa: al

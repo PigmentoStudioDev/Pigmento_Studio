@@ -28,8 +28,15 @@ $card-block-size-compact: 26rem;
   }
 }
 
-.title {
-  @include a11y.visually-hidden;
+// La cabecera dejo de estar escondida: la corona giraba sin que nada dijera de que
+// iba. El aire de abajo es el de todas las strips de la pagina.
+//
+// El aire LATERAL es suyo y no del bloque: la corona sale por los bordes de la
+// ventana a proposito —esta en una seccion `full`— y la cabecera tiene que alinear
+// con el texto del resto de la pagina, no con las tarjetas.
+.header {
+  margin-block-end: spacing.$spacing-09;
+  padding-inline: spacing.$spacing-06;
 }
 
 // Recorta en los dos ejes: las vecinas lejanas caen por debajo del borde y asoman

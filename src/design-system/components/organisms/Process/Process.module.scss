@@ -3,6 +3,7 @@
 // literal 'IBM Plex Sans' que next/font no registra.
 @use '../../../styles/carbon-config';
 
+@use '../../../styles/brand' as brand;
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/breakpoint';
 @use '@carbon/react/scss/spacing';
@@ -17,6 +18,17 @@ $ordinal-inline-size: 4rem;
 /// parte en tres y deja de leerse como un apunte al margen.
 $deliverable-inline-size: 18rem;
 
+/// El carril de la guia: lo que se reserva a la izquierda para la linea y sus hitos.
+$rail-inline-size: 2.5rem;
+
+/// Grosor de la guia. 2px y no 1: con 1 el tramo de tinta no se distingue del filete
+/// de las filas, que es exactamente lo que este trazo viene a romper.
+$rail-thickness: 2px;
+
+/// Lado del hito. Lo justo para leerse como marca y no como caja: a 12 compite con
+/// el numero de la fase, que es quien manda en esa columna.
+$dot-size: 0.625rem;
+
 .root {
   padding-inline: spacing.$spacing-06;
 }
@@ -25,16 +37,61 @@ $deliverable-inline-size: 18rem;
   margin-block-end: spacing.$spacing-09;
 }
 
+// La GUIA. Dos capas en el mismo carril: el riel, que esta siempre entero y dice
+// cuanto dura la serie, y la tinta, que mide el progreso.
+//
+// `scale-y` y no `block-size`: escalar es trabajo de compositor y no reflow, que es
+// lo unico aceptable en algo que se repinta en cada fotograma del scroll.
+//
+// El valor en reposo es 1 —la guia entera— y no 0. Sin JS, con reduced-motion o en el
+// instante antes de que gsap baje, se ve la serie completa; a 0 se veria una lista con
+// un carril vacio al lado, que es peor que no tener carril.
 .list {
+  position: relative;
   margin: 0;
   padding: 0;
+  padding-inline-start: $rail-inline-size;
   list-style: none;
+}
+
+.list::before,
+.list::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(($rail-inline-size - $rail-thickness) / 2);
+  inline-size: $rail-thickness;
+}
+
+.list::before {
+  background-color: theme.$border-subtle;
+}
+
+.list::after {
+  background-color: theme.$text-primary;
+  transform-origin: top;
+  scale: 1 var(--pg-trace-progress, 1);
+}
+
+// En movil la guia se va: con el carril, el numero, el titulo y el entregable en una
+// columna de 360px el texto se queda en 280 y la fase deja de leerse. El orden sigue
+// estando donde siempre estuvo, en la <ol> y en el numero de cada fase.
+@include breakpoint.breakpoint-down('md') {
+  .list {
+    padding-inline-start: 0;
+  }
+
+  .list::before,
+  .list::after {
+    content: none;
+  }
 }
 
 // Una FILA por fase, con filete arriba: las filas del trabajo ya usan esa forma en
 // esta pagina, y repetirla aqui es lo que hace que los dos bloques se lean del mismo
 // sistema. Con tarjetas, el proceso seria la cuarta caja distinta de la home.
 .phase {
+  position: relative;
   display: grid;
   grid-template-columns: $ordinal-inline-size minmax(0, 1fr) $deliverable-inline-size;
   gap: spacing.$spacing-06;
@@ -96,4 +153,42 @@ $deliverable-inline-size: 18rem;
 
 .deliverableValue {
   @include brandtype.style('body');
+}
+
+// EL HITO de cada fase, sobre el riel y a la altura de su filete.
+//
+// Se enciende cuando el trazo lo pasa, y la comparacion se hace con `clamp`: CSS no
+// tiene condicional, pero restar la posicion de la fase al progreso y multiplicar por
+// un numero grande da 0 antes y 1 despues, y `clamp` lo corta en esos dos. El salto
+// es duro a proposito — un hito que se enciende poco a poco no dice "ya pasaste por
+// aqui", dice "estas a medias de pasar".
+//
+// En reposo el progreso vale 1, asi que los cinco salen encendidos: es el mismo
+// estado final que ve reduced-motion.
+.phase::before {
+  --pg-phase-passed: clamp(0, (var(--pg-trace-progress, 1) - var(--pg-phase, 0)) * 100, 1);
+
+  content: '';
+  position: absolute;
+  // Centrado SOBRE el filete que abre la fila, no a la altura del numero: el hito
+  // marca donde empieza la fase, y el filete ya es esa linea.
+  inset-block-start: calc($dot-size / -2);
+  inset-inline-start: calc(($rail-inline-size + $dot-size) / -2);
+  inline-size: $dot-size;
+  block-size: $dot-size;
+  // CUADRADO y no redondo: la pildora esta reservada a los controles —lo vigila el
+  // contrato de radios— y un 10px a 50% no es un escalon de la escala. Ademas encaja
+  // mejor: esta pagina esta hecha de filetes y rejillas, no de bolitas.
+  border-radius: brand.$radius-02;
+  background-color: color-mix(
+    in srgb,
+    #{theme.$text-primary} calc(var(--pg-phase-passed) * 100%),
+    #{theme.$border-subtle}
+  );
+}
+
+@include breakpoint.breakpoint-down('md') {
+  .phase::before {
+    content: none;
+  }
 }

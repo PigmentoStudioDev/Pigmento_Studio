@@ -15,6 +15,9 @@ const KEYS = ["direct", "tested", "sameTable", "criteria", "measured"] as const;
 export function getValues(t: Translate): ValueCardsProps {
   return {
     title: t("title"),
+    titleHighlight: t("titleHighlight"),
+    label: t("label"),
+    intro: t("intro"),
     cards: KEYS.map((key, index) => ({
       title: t(`cards.${key}.title`),
       text: t(`cards.${key}.text`),
