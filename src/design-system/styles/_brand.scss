@@ -270,7 +270,12 @@ $band-card-block-size-compact: clamp(10rem, 28svh, 15rem);
 /// `svh` y no `vh`: en un movil, `vh` cuenta la barra del navegador como si no
 /// estuviera, asi que la banda mide mas que la pantalla justo en el momento en que la
 /// barra esta a la vista.
-$image-band-block-size: 40svh;
+///
+/// Subio de 40 a 70 (2026-10-09). A 40 la foto del equipo quedaba en una rendija —
+/// con una docena de caras recortadas por arriba y por abajo no se ve un equipo, se
+/// ve una textura— y el parallax no tenia donde notarse: el recorrido se mide en % de
+/// lo que se mueve, asi que una banda baja mueve pocos pixeles por mucho que cruce.
+$image-band-block-size: 70svh;
 
 /// El velo de la banda CON titular: un degradado desde abajo, no una capa plana.
 ///
