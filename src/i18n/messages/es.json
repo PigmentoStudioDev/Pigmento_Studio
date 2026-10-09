@@ -149,6 +149,9 @@
         }
       }
     },
+    "band": {
+      "title": "El trabajo se ve mejor cuando lo hace un equipo que se entiende."
+    },
     "team": {
       "title": "Equipo",
       "titleHighlight": "Equipo",

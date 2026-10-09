@@ -1,12 +1,82 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
 
 // El alto se DECLARA y no sale de la proporcion de la foto: la banda tiene que medir
 // lo mismo con cualquier imagen que le toque, y una foto vertical a ancho completo
 // ocuparia tres pantallas. `ImageBackdrop` recorta por dentro con object-fit.
+//
+// Es un MINIMO y no un alto fijo desde que puede llevar titular: una frase que se
+// parte en tres renglones en un movil tiene que poder empujar la caja en vez de
+// desbordarla.
+//
+// La columna va al REVES de lo normal —`flex-end`— porque el titular vive abajo:
+// asi el minimo es lo unico que separa el renglon del borde superior de la banda, y
+// la frase se queda pegada al pie midiendo lo que mida.
 .root {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
   position: relative;
-  block-size: brand.$image-band-block-size;
+  min-block-size: brand.$image-band-block-size;
   overflow: hidden;
+}
+
+// La foto, detras de todo y absoluta. `ImageBackdrop` recorta con `block-size: 100%`
+// y un porcentaje contra un alto automatico resuelve a cero: el unico alto definido
+// de esta caja es el de la banda entera, asi que la foto se cuelga de sus bordes.
+.media {
+  position: absolute;
+  inset: 0;
+}
+
+// El velo, y SOLO con titular. Un degradado desde abajo y no una capa plana: lo que
+// hay que proteger es el renglon, no apagar la foto.
+//
+// Va DENTRO de `.media` y no suelto en `.root`, y eso no es cosmetica. Un
+// pseudoelemento es el ULTIMO hijo de su caja: colgado de `.root` se pintaba despues
+// del titular —los dos posicionados y sin z-index, asi que manda el orden del DOM— y
+// el velo acababa encima del texto. El sintoma era exactamente el contrario al que
+// busca: blanco puro declarado que se veia gris apagado sobre el marron. Colgado de
+// la foto, el velo tapa la foto y nada mas.
+//
+// La parada media es lo que lo hace util: con el degradado repartido de arriba abajo,
+// donde esta el renglon todavia va por la mitad de la opacidad. Empieza a oscurecer
+// donde empieza el texto.
+.withTitle .media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    brand.$image-band-scrim brand.$image-band-scrim-stop,
+    brand.$image-band-scrim 100%
+  );
+}
+
+/// Lo que mide la frase de la banda. En `ch` y no en rem, como el resto de medidas de
+/// titular del sitio: lo que corta una linea es cuantos CARACTERES trae. 18ch es lo
+/// mismo que usan los heros, y es lo que parte una frase corta en dos renglones en
+/// vez de dejarla cruzar la pantalla entera.
+$title-inline-size: 18ch;
+
+// Encima del velo, centrado y pegado al pie. En `text-on-color` y no en blanco
+// escrito: es el token de primer plano sobre una superficie que no es del tema, que
+// es exactamente lo que hay debajo.
+.title {
+  @include brandtype.style('heading');
+
+  position: relative;
+  max-inline-size: $title-inline-size;
+  margin: 0;
+  // Pegado al pie, que es donde el velo esta a tope. El aire de arriba lo da el
+  // minimo de la banda, no un relleno: la frase tiene que caer en la zona oscura.
+  padding: 0 spacing.$spacing-06 spacing.$spacing-07;
+  color: theme.$text-on-color;
+  text-align: center;
 }

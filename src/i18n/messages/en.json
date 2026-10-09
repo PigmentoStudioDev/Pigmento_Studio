@@ -149,6 +149,9 @@
         }
       }
     },
+    "band": {
+      "title": "The work shows better when the team behind it gets along."
+    },
     "team": {
       "title": "Team",
       "titleHighlight": "Team",
