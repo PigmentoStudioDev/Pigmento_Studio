@@ -20,6 +20,11 @@ import type { TestimonialsProps } from "@/design-system/components/organisms/Tes
  *
  * Sin citas publicadas la seccion no se pinta: el organismo devuelve null con la
  * lista vacia, asi que quitar este bloque del borrador es dejar el array a cero.
+ *
+ * El bloque ya no tiene cabecera, asi que `title`, `label` e `intro` dejaron de
+ * viajar. Las claves siguen en los dos diccionarios a proposito: la decision es de
+ * composicion —las resenas se presentan solas debajo de la banda— y borrar la copia
+ * obligaria a reescribirla en los dos idiomas el dia que vuelva a hacer falta.
  */
 type Translate = (key: string) => string;
 
@@ -27,10 +32,6 @@ const KEYS = ["first", "second", "third", "fourth", "fifth", "sixth"] as const;
 
 export function getTestimonials(t: Translate): TestimonialsProps {
   return {
-    title: t("title"),
-    titleHighlight: t("titleHighlight"),
-    label: t("label"),
-    intro: t("intro"),
     testimonials: KEYS.map((key) => ({
       quote: t(`items.${key}.quote`),
       author: t(`items.${key}.author`),

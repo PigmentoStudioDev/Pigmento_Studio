@@ -117,22 +117,30 @@
   align-self: stretch;
 }
 
-// `layer-01` y no blanco escrito: sobre la zona `raised` de su seccion es blanca, y
-// sobre la base del sitio seria el gris de la capa. El token es el que sabe en que
-// fondo esta, y el bloque se re-tematiza entero sin tocar esta linea.
+// La tarjeta es su PROPIA zona de tema, no un color invertido a mano.
+//
+// `itemTheme` le pone encima una de las clases de Carbon, asi que aqui dentro
+// `background`, `text-primary`, `text-secondary` y `border-subtle` ya resuelven en la
+// paleta de esa zona: oscura sobre la pagina clara, elevada sobre la oscura. Lo que
+// se escribe es el ROL, igual que en cualquier otra hoja, y la tarjeta se re-tematiza
+// sin una sola regla condicional.
+//
+// `background` y no `layer-01`: la tarjeta no esta apoyada sobre otra superficie de
+// su misma zona, ES la superficie. Y por eso tampoco lleva borde — un filete alrededor
+// de un bloque oscuro sobre blanco solo repite el contorno que ya dibuja el contraste.
 .quoteCard {
   display: flex;
   flex-direction: column;
-  gap: spacing.$spacing-05;
+  gap: spacing.$spacing-06;
   inline-size: brand.$marquee-quote-inline-size;
   // La tarjeta ocupa la fila entera: con `align-self: stretch` arriba, la altura la
   // marca la cita mas larga y todas acaban en la misma linea de abajo.
   block-size: 100%;
   margin: 0;
-  padding: spacing.$spacing-06;
-  border: 1px solid theme.$border-subtle;
+  padding: spacing.$spacing-07;
   border-radius: brand.$radius-card;
-  background-color: theme.$layer-01;
+  background-color: theme.$background;
+  color: theme.$text-primary;
 }
 
 // El bloque de la cita se come el aire que sobra para que la atribucion quede pegada

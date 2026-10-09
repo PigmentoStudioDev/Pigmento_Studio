@@ -3,30 +3,55 @@
 // literal 'IBM Plex Sans' que next/font no registra.
 @use '../../../styles/carbon-config';
 
+@use '../../../styles/a11y' as a11y;
 @use '../../../styles/brand' as brand;
 
 // Los hijos los CREA el hook en tiempo de ejecucion, asi que se les llega por
 // atributo y no por clase: una clase de modulo lleva hash y el JS no lo conoce.
 // Van anidados bajo .root para que el selector de atributo no se escape a global.
 //
-// LA CAJA LA DEFINE SIEMPRE EL TEXTO PLANO, y esto es lo unico importante de este
-// archivo. Antes la pista y el texto se turnaban con `display`: mientras rodaba, la
-// caja era un `inline-flex` con sus celdas centradas; al acabar, volvia a ser un
-// `span` de texto. Son dos cajas con dos lineas base distintas, asi que en el
-// fotograma en que termina el giro la cifra DABA UN SALTO a otra posicion — el corte
-// que se veia al final de la animacion.
+// HAY UNA SOLA MAQUETACION, ruede o no, y eso es lo unico importante de este archivo.
+// Hubo dos saltos seguidos, y los dos salieron de tener dos:
 //
-// Ahora el texto plano no se va nunca: se queda en el flujo marcando el hueco y solo
-// pierde la visibilidad, y la pista se pinta ENCIMA, fuera del flujo. Entre rodando y
-// quieto no cambia de sitio ni un pixel, porque no cambia nada que ocupe sitio.
+// 1. La pista y el texto se turnaban con `display`. Rodando la caja era un
+//    `inline-flex`; al acabar, un `span` de texto. Dos lineas base, y la cifra daba
+//    un salto vertical en el fotograma final.
+// 2. Arreglado eso, las celdas se median solas por el rodillo y el texto por sus
+//    glifos, asi que la cifra rodaba mas ancha de lo que acababa siendo y al terminar
+//    se recogia hacia la izquierda — peor cuanto mas digitos, porque el error se
+//    acumula.
+//
+// Lo que los cierra a los dos es la CASILLA: el digito quieto y el rodillo ocupan la
+// misma caja de `1ch`, que en esta fuente es el ancho del "0" y por tanto el del
+// digito mas ancho. El texto no se va nunca —solo pierde la visibilidad— y la pista
+// se pinta encima, fuera del flujo. Entre rodando y quieto no cambia de sitio ni un
+// pixel porque no cambia nada que ocupe sitio.
 .root {
   position: relative;
   // `inline-block` y no `inline-flex`: la base de un flex sale de su primer hijo y
   // aqui tiene que salir del texto, que es lo unico que se queda.
   display: inline-block;
-  // Sin ancho fijo por digito, cada vuelta del rodillo cambiaria el ancho de la
-  // cifra y la linea entera bailaria mientras rueda.
-  font-variant-numeric: tabular-nums;
+}
+
+// El valor entero, para lectores de pantalla. Lo visible son casillas sueltas y
+// algunas ayudas tecnicas las anuncian una a una — "uno, dos, cero".
+.srOnly {
+  @include a11y.visually-hidden;
+}
+
+// LA CASILLA. `1ch` es el ancho del "0" de la fuente que este puesta, y en la sans de
+// la casa el "0" es ademas el digito mas ancho: medido, 83.81 contra 83.8 de `1ch`.
+// Asi que no es un numero elegido, es la medida — todos los digitos caben centrados y
+// ninguno sobra, y si la marca cambia de fuente la casilla cambia con ella.
+//
+// Hace falta porque esta fuente NO tiene cifras tabulares: el "1" mide 37.7 donde el
+// "0" mide 83.8, y ni `font-variant-numeric: tabular-nums` ni
+// `font-feature-settings: "tnum"` mueven un pixel. Sin casillas, un odometro no puede
+// tener a la vez el ancho del digito final y sitio para los nueve que pasan delante.
+.slot {
+  display: inline-block;
+  inline-size: 1ch;
+  text-align: center;
 }
 
 .rollers {
@@ -54,6 +79,22 @@
 .rollers {
   [data-roll-part='mask'] {
     display: inline-block;
+    // La celda es el marco del rodillo, que va encima y fuera del flujo.
+    position: relative;
+    // `content-box`, y es la tercera vez que esta caja se mide mal.
+    //
+    // El sitio entero va en `border-box`, asi que `1ch` incluia el sangrado de
+    // recorte: la casilla quedaba con 1ch MENOS dos sangrados de contenido, y con los
+    // margenes negativos encima cada celda avanzaba 69.4px donde el digito quieto
+    // avanza 83.8. Medido: la cifra rodaba 14px mas estrecha por digito.
+    //
+    // En `content-box` el numero declarado es el que se ve: el contenido mide la
+    // casilla, el sangrado se suma por fuera y el margen negativo lo descuenta, asi
+    // que lo que ocupa en la fila vuelve a ser exactamente 1ch.
+    box-sizing: content-box;
+    // La MISMA casilla que el digito quieto. El ancho no sale del contenido: si
+    // saliera, la cifra rodando mediria otra cosa que la cifra acabada.
+    inline-size: 1ch;
     // `clip` y no `hidden`: hidden crea un contenedor de scroll y con el rodillo
     // dentro el navegador puede saltar a el al enfocar algo de al lado.
     overflow: clip;
@@ -69,11 +110,21 @@
   }
 
   [data-roll-part='roller'] {
+    // Fuera del flujo: la casilla ya mide lo que tiene que medir y el rodillo no debe
+    // opinar sobre su ancho. Arranca en el origen del CONTENIDO, no en el del borde:
+    // la casilla lleva el sangrado de recorte como padding, asi que un cero aqui
+    // dejaria el rodillo ese sangrado a la izquierda y mas arriba de donde toca.
+    position: absolute;
+    inset-block-start: brand.$clip-bleed;
+    inset-inline-start: brand.$clip-bleed;
+    inline-size: 1ch;
     display: block;
+    // Centrado en la casilla, igual que el digito quieto: es lo que hace que el
+    // ultimo fotograma del rodado y el primero del texto sean el mismo dibujo.
+    text-align: center;
     // Los diez digitos van en un solo nodo separados por saltos de linea, asi que
     // el salto tiene que respetarse para que cada uno ocupe su celda.
     white-space: pre;
-    text-align: center;
     // La capa de compositor no sobrevive al gesto aunque este escrita suelta: el
     // rodillo entero lo borra `soltar()` al completar la timeline, asi que el aviso
     // se va con el nodo. Lo que si sobra es con reduced-motion, donde no llega a

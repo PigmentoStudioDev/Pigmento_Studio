@@ -54,6 +54,19 @@ interface MarqueeBase {
   copies?: number;
   /** El tono de la tira en cada modo. Sin valor, hereda el de su seccion. */
   theme?: ThemeAssignment;
+  /**
+   * El tono de cada PIEZA, cuando la pieza es una superficie propia.
+   *
+   * Separado de `theme` porque son dos superficies distintas: una tarjeta de resena
+   * oscura sobre la pagina clara necesita que la tira NO se pinte, y pintar la tira
+   * oscura para oscurecer la tarjeta deja una franja negra de borde a borde. La zona
+   * va en la tarjeta, asi que dentro de ella `layer-01`, `text-secondary` y
+   * `border-subtle` resuelven en la paleta que toca sin escribir un solo color
+   * invertido a mano.
+   *
+   * Solo lo leen las resenas: un logo no es una superficie, es una imagen.
+   */
+  itemTheme?: ThemeAssignment;
 }
 
 export type MarqueeProps = MarqueeBase &
@@ -71,6 +84,7 @@ export function Marquee({
   scrollSpeed,
   copies: minCopies = MIN_COPIES,
   theme,
+  itemTheme,
   ...content
 }: MarqueeProps) {
   const { rootRef, scrollRef, copies } = useMarquee<HTMLDivElement, HTMLDivElement>({
@@ -94,6 +108,12 @@ export function Marquee({
     // la toma theme/zone.ts, que es quien conoce la convencion de Carbon.
     isLightZone(zone) ? styles.onLight : undefined,
   ]
+    .filter(Boolean)
+    .join(" ");
+
+  // La zona de la pieza se resuelve con el MISMO modo que la de la tira: las dos
+  // salen del store, y leerlo dos veces podria devolver dos modos distintos.
+  const quoteCardClass = [styles.quoteCard, itemTheme ? themeZoneClass(resolveZone(mode, itemTheme)) : undefined]
     .filter(Boolean)
     .join(" ");
 
@@ -124,7 +144,7 @@ export function Marquee({
                 // venir de la misma persona, y React avisa de claves repetidas y
                 // puede omitir una de las dos.
                 <div key={`${cita.author}-${posicion}`} className={styles.item}>
-                  <figure className={styles.quoteCard}>
+                  <figure className={quoteCardClass}>
                     <blockquote className={styles.quote}>
                       <p className={styles.quoteText}>{cita.quote}</p>
                     </blockquote>

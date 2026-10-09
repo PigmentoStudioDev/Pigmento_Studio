@@ -262,7 +262,29 @@ $band-card-block-size-compact: clamp(10rem, 28svh, 15rem);
 /// deja de ser una pausa entre dos bloques y se convierte en un bloque mas, con el
 /// agravante de que no dice nada; y por debajo de 12rem no llega a leerse como
 /// imagen, solo como una raya de color.
-$image-band-block-size: clamp(12.5rem, 38svh, 28rem);
+///
+/// Es un MINIMO desde que la banda puede llevar titular (2026-10-09): con un alto
+/// fijo, una frase que se parte en tres renglones en un movil se saldria de la caja.
+/// Y sin techo, por lo mismo — el techo lo pone ahora la frase, que mide lo que mide.
+///
+/// `svh` y no `vh`: en un movil, `vh` cuenta la barra del navegador como si no
+/// estuviera, asi que la banda mide mas que la pantalla justo en el momento en que la
+/// barra esta a la vista.
+$image-band-block-size: 40svh;
+
+/// El velo de la banda CON titular: un degradado desde abajo, no una capa plana.
+///
+/// Lo que hay que garantizar es el contraste del renglon, no apagar la foto. Negro y
+/// fijo en los dos modos, como la propia banda: la imagen no re-tematiza, asi que un
+/// velo que si lo hiciera dejaria el texto blanco sobre un velo claro en modo oscuro.
+$image-band-scrim: color.change(colors.$black, $alpha: 0.66);
+
+/// Donde el velo llega a su opacidad plena. Medido contra el renglon: con el
+/// degradado repartido de 0 a 100 la frase cae todavia por la mitad de la opacidad y
+/// el blanco no llega a 4.5:1 sobre una foto clara. A partir de esta altura el velo
+/// ya esta entero, asi que el texto se apoya siempre en el mismo fondo y no en lo que
+/// toque llevar la imagen.
+$image-band-scrim-stop: 58%;
 
 /// El sangrado de una caja que RECORTA texto, en em.
 ///
@@ -574,10 +596,16 @@ $marquee-logo-block-size: 1.5rem;
 /// Lo que mide una tarjeta de resena en la tira.
 ///
 /// Fija y en rem, no una fraccion: la tira es un carril infinito sin columnas, asi
-/// que no hay nada contra lo que repartir. 22rem cabe una cita de tres o cuatro
-/// renglones —la longitud de una resena de verdad— y deja ver tarjeta y media de la
-/// siguiente, que es lo que dice que la fila sigue.
-$marquee-quote-inline-size: 22rem;
+/// que no hay nada contra lo que repartir. Cabe una cita de tres o cuatro renglones
+/// —la longitud de una resena de verdad— y deja ver tarjeta y media de la siguiente,
+/// que es lo que dice que la fila sigue.
+///
+/// 30rem y no las 22 de la primera version. A 22 la tarjeta tenia el ancho de una
+/// columna de texto de interfaz y la cita salia en siete renglones cortos: se leia
+/// como un comentario, no como una resena. La referencia que pidio Karen son bloques
+/// anchos de tres o cuatro renglones largos, y ese formato es el que hace que la fila
+/// se lea como testimonios y no como notas.
+$marquee-quote-inline-size: 30rem;
 
 /// Tinta a la que caen los logos claros al invertirse sobre una zona clara.
 ///
