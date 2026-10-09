@@ -8,9 +8,9 @@ import { ValueCards, type ValueCardsProps } from "./ValueCards";
 const PROPS: ValueCardsProps = {
   title: "Cómo trabajamos",
   cards: [
-    { title: "Sin intermediarios", text: "Quien diseña contesta.", family: "periwinkle", position: "1 de 3" },
-    { title: "Probado con gente real", text: "Se valida con quien lo usa.", family: "tangerine", position: "2 de 3" },
-    { title: "Criterio antes que tendencia", text: "Marcas que se sostienen.", family: "cyan", position: "3 de 3" },
+    { title: "Sin intermediarios", text: "Quien diseña contesta.", position: "1 de 3" },
+    { title: "Probado con gente real", text: "Se valida con quien lo usa.", position: "2 de 3" },
+    { title: "Criterio antes que tendencia", text: "Marcas que se sostienen.", position: "3 de 3" },
   ],
   labels: { carousel: "carrusel", previous: "Anterior", next: "Siguiente", picker: "Elegir valor", drag: "Arrastra" },
   titleId: "valores",

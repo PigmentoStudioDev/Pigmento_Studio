@@ -4,20 +4,19 @@ import type { CSSProperties } from "react";
 import { cursorAttributes } from "../../../motion/cursor";
 import { useAutoRotate } from "../../../motion/useAutoRotate";
 import { RADIAL_COPIES, useRadialSlider } from "../../../motion/useRadialSlider";
-import type { CandyFamily } from "../../../theme/candy";
 import { IconButton } from "../../atoms/IconButton/IconButton";
 import { ControlBar } from "../../molecules/ControlBar/ControlBar";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import styles from "./ValueCards.module.scss";
 
 /**
- * Los valores del estudio, en una corona de tarjetas candy que gira.
+ * Los valores del estudio, en una corona de tarjetas que gira.
  *
- * Va debajo del manifiesto y SIN cabecera visible: las tarjetas continuan la frase en
- * vez de abrir otro bloque. El manifiesto dice QUE hace el estudio y las tarjetas
- * dicen COMO, asi que un titular y una entradilla entre los dos cortaban justo ese
- * hilo. El titular sigue en el documento, oculto a la vista: nombra la seccion y el
- * carrusel, y da a las tarjetas un h2 del que colgar.
+ * SIN cabecera visible: la corona es la respuesta a lo que la seccion de arriba acaba
+ * de ofrecer, y un titular con entradilla delante la convertiria en un cuarto bloque
+ * con la misma forma que los tres anteriores. El titular sigue en el documento, oculto
+ * a la vista: nombra la seccion y el carrusel, y da a las tarjetas un h2 del que
+ * colgar.
  *
  * Es un carrusel de verdad y se anuncia como tal: flechas, un punto por tarjeta con
  * su titulo como nombre, y una region viva que dice que tarjeta quedo al centro. Las
@@ -39,13 +38,12 @@ import styles from "./ValueCards.module.scss";
  * llegue a los limites de la franja. Con el cristal de la cabecera, que es la otra
  * pildora flotante del sitio.
  *
- * Props serializables: cada tarjeta trae su familia de color como NOMBRE, que es lo
- * que guardaria un campo `select` de Payload.
+ * Props serializables: titulo, texto y su sitio en la vuelta. El color no viaja en las
+ * props porque ya no hay color que elegir — la tarjeta es una capa del tema.
  */
 export interface ValueCard {
   title: string;
   text: string;
-  family: CandyFamily;
   /** Ya traducida: "1 de 5". Nombra la tarjeta como grupo dentro del carrusel. */
   position: string;
 }
@@ -140,7 +138,7 @@ export function ValueCards({ title, cards, labels, titleId }: ValueCardsProps) {
                           ? { role: "group", "aria-label": card.position }
                           : { "aria-hidden": true, inert: true })}
                       >
-                        <article className={styles.card} data-family={card.family}>
+                        <article className={styles.card}>
                           <span className={styles.index} aria-hidden="true">
                             {String(index + 1).padStart(2, "0")}
                           </span>
