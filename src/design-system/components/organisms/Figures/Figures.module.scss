@@ -12,8 +12,14 @@
 /// anchos distintos para el mismo tipo de dato.
 $figure-min-inline-size: 15rem;
 
+// Sin aire lateral propio: el bloque dejo de ir a sangre dentro de una strip y pasa a
+// colgar del manifiesto, en una seccion que ya pone el suyo. Mantenerlo aqui indentaria
+// las cifras respecto de la frase de la que cuelgan.
+//
+// El aire de arriba SI es suyo, y es la excepcion: separa a dos hermanos dentro de una
+// misma seccion, y eso no lo puede poner el contenedor, que solo conoce sus bordes.
 .root {
-  padding-inline: spacing.$spacing-06;
+  margin-block-start: spacing.$spacing-10;
 }
 
 .header {

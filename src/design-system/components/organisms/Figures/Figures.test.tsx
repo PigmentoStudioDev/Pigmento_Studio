@@ -41,6 +41,17 @@ describe("Figures", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  /**
+   * En la home las cifras cuelgan del manifiesto y no abren capitulo: sin titular no
+   * puede quedar una cabecera vacia ni, peor, un h2 sin texto que el indice recoja.
+   */
+  it("sin titular no pinta cabecera", () => {
+    render(<Figures figures={PROPS.figures} />);
+
+    expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+    expect(screen.getByText("120")).toBeInTheDocument();
+  });
+
   it("todas las clases que pone existen en la hoja", () => {
     const usadas = ["root", "header", "list", "item", "value", "label", "context"];
 

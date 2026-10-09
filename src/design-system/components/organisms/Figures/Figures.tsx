@@ -6,9 +6,14 @@ import styles from "./Figures.module.scss";
 /**
  * Las cifras del estudio: lo que el trabajo de las filas de arriba ha dado de si.
  *
- * Va entre el trabajo y la oferta a proposito. Quien acaba de ver las piezas se
- * pregunta si funcionan, y un numero contesta eso antes que un parrafo. Despues ya se
- * puede hablar de lo que se contrata.
+ * Va colgando del manifiesto, sin cabecera propia. Su titular —"Lo que deja el
+ * trabajo"— era una strip entera para anunciar cuatro numeros que se explican solos:
+ * una pantalla de anuncio delante de una pantalla de contenido. La frase que dice a
+ * que se dedica el estudio es mejor entrada que cualquier rotulo, y las cifras que
+ * vienen justo debajo se leen como su respaldo en vez de como otro capitulo.
+ *
+ * Por eso el titular es OPCIONAL y no se borro: el bloque sigue sirviendo con
+ * cabecera el dia que vaya suelto en otra pagina.
  *
  * **Cada cifra trae su contexto**, y esa es la regla del bloque: un numero suelto no
  * prueba nada —"120 proyectos" puede ser mucho o poco— y lo que lo convierte en
@@ -36,11 +41,12 @@ export interface Figure {
 }
 
 export interface FiguresProps {
-  title: string;
+  /** Sin titular no hay cabecera: las cifras cuelgan de lo que tengan encima. */
+  title?: string;
   /** El trozo del titular que se resalta con el scroll. */
   titleHighlight?: string;
-  label: string;
-  intro: string;
+  label?: string;
+  intro?: string;
   figures: Figure[];
   titleId?: string;
 }
@@ -50,9 +56,17 @@ export function Figures({ title, titleHighlight, label, intro, figures, titleId 
 
   return (
     <div className={styles.root}>
-      <div className={styles.header}>
-        <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
-      </div>
+      {title ? (
+        <div className={styles.header}>
+          <StripHeader
+            title={title}
+            titleHighlight={titleHighlight}
+            label={label ?? ""}
+            intro={intro ?? ""}
+            titleId={titleId}
+          />
+        </div>
+      ) : null}
 
       {/* `inner` porque el envoltorio del gesto no puede meterse dentro del <ul>: un
           <div> entre la lista y sus items no es HTML valido y la rompe para quien la

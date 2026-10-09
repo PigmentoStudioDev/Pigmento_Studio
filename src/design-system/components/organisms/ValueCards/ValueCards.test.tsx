@@ -7,6 +7,8 @@ import { ValueCards, type ValueCardsProps } from "./ValueCards";
 
 const PROPS: ValueCardsProps = {
   title: "Cómo trabajamos",
+  label: "Criterio",
+  intro: "Cinco decisiones que no se negocian por proyecto.",
   cards: [
     { title: "Sin intermediarios", text: "Quien diseña contesta.", position: "1 de 3" },
     { title: "Probado con gente real", text: "Se valida con quien lo usa.", position: "2 de 3" },
@@ -21,10 +23,17 @@ function currentDot() {
 }
 
 describe("ValueCards", () => {
-  it("el titular no se ve pero nombra la seccion", () => {
+  /**
+   * El titular SE VE. Estuvo `visually-hidden` y quien llegaba aqui aterrizaba en
+   * unas tarjetas girando sin una palabra que dijera de que iban — con una banda de
+   * imagen justo encima, que deja al bloque de abajo sin nada que oriente.
+   */
+  it("el titular se ve, nombra la seccion y viene con su entrada", () => {
     render(<ValueCards {...PROPS} />);
 
     expect(screen.getByRole("heading", { level: 2, name: PROPS.title })).toHaveAttribute("id", "valores");
+    expect(screen.getByText(PROPS.label)).toBeInTheDocument();
+    expect(screen.getByText(PROPS.intro)).toBeInTheDocument();
   });
 
   it("el carrusel se anuncia como tal y lo nombra el titular", () => {

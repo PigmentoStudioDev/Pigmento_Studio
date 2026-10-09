@@ -77,6 +77,9 @@
     },
     "values": {
       "title": "Cómo lo hacemos",
+      "titleHighlight": "hacemos",
+      "label": "Criterio",
+      "intro": "Cinco decisiones que no se negocian por proyecto. Estan en el orden en que las vas a notar: con quien hablas, como se decide, como se construye y como se mide.",
       "carousel": "carrusel",
       "previous": "Valor anterior",
       "next": "Valor siguiente",
@@ -211,10 +214,6 @@
       "cta": "Agendar una llamada"
     },
     "figures": {
-      "title": "Lo que deja el trabajo",
-      "titleHighlight": "deja",
-      "label": "En numeros",
-      "intro": "Cifras del estudio, con el contexto que las hace legibles. Un numero sin contexto no dice si es mucho o poco.",
       "items": {
         "projects": {
           "value": "120",
@@ -276,22 +275,40 @@
       "title": "Lo que dicen",
       "titleHighlight": "dicen",
       "label": "Clientes",
-      "intro": "Con nombre, cargo y empresa. Una cita anonima no prueba nada.",
+      "intro": "Clientes que ya pasaron por aqui, en sus palabras.",
       "items": {
         "first": {
-          "quote": "Texto pendiente: la cita real de un cliente sobre el trabajo entregado.",
+          "quote": "Llegamos con un logo y una carpeta de fotos sueltas. Salimos con una marca que el equipo de ventas sabe usar sin preguntarnos nada.",
           "author": "Nombre Apellido",
           "role": "Cargo",
           "company": "Empresa"
         },
         "second": {
-          "quote": "Texto pendiente: la cita real de un cliente sobre como fue trabajar con el estudio.",
+          "quote": "Lo que mas valoro es que nos dijeron que no a dos ideas nuestras, y tenian razon en las dos.",
           "author": "Nombre Apellido",
           "role": "Cargo",
           "company": "Empresa"
         },
         "third": {
-          "quote": "Texto pendiente: la cita real de un cliente sobre lo que paso despues del lanzamiento.",
+          "quote": "El sitio nuevo lleva seis meses y no hemos tenido que pedir un solo cambio de maquetacion.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        },
+        "fourth": {
+          "quote": "Entregaron en la fecha que dijeron en la primera reunion. No me habia pasado nunca con un proveedor de diseno.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        },
+        "fifth": {
+          "quote": "Volvimos con el segundo proyecto antes de terminar el primero.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        },
+        "sixth": {
+          "quote": "Entendieron el negocio en la primera llamada. El resto fue hablar de como, no de que.",
           "author": "Nombre Apellido",
           "role": "Cargo",
           "company": "Empresa"
@@ -344,6 +361,13 @@
           "freelance": "Depende de su agenda"
         }
       }
+    },
+    "featuredCase": {
+      "label": "El caso",
+      "previous": "Caso anterior",
+      "next": "Caso siguiente",
+      "slider": "Casos. Usa las flechas para recorrerlos",
+      "drag": "Arrastra"
     }
   },
   "proposal": {

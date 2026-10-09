@@ -1,0 +1,8 @@
+@use '../../../styles/carbon-config';
+
+// Sin caja: el envoltorio solo existe para publicar el progreso que hereda la lista.
+// En una <ol> no es solo limpieza — un <div> entre la lista y sus <li> es HTML
+// invalido y la rompe para quien la escucha.
+.root {
+  display: contents;
+}

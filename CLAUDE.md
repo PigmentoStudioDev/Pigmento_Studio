@@ -170,6 +170,22 @@ sangre y sin aire por ningun lado, porque con fondo distinto la banda ES la sepa
 Como las bandas de ruta y los gradientes candy, **no re-tematiza**: la foto es la misma
 en claro y en oscuro.
 
+### El trabajo vuelve, y nunca en el mismo formato
+
+Una home de estudio que enseña el trabajo una vez y despues argumenta seis secciones
+sin una imagen se lee como un documento. El trabajo vuelve, pero **en otro formato**:
+`WorkRows` pasa dieciocho portadas sin detenerse en ninguna y `FeaturedCase` se para
+en una y enseña sus piezas. Un segundo bloque del mismo formato no es que vuelva el
+trabajo, es que se repite.
+
+El material del segundo sale de lo que el CMS YA tiene y no se ve: la `gallery` de
+cada proyecto y su `summary`. **El texto de un caso es el del CMS**, nunca uno escrito
+para la home: la prosa de un estudio funciona cuando cuelga de un caso con nombre, y
+suelta se lee como relleno.
+
+Sin galeria el bloque no se pinta, y no es cortesia: con la portada sola es el strip
+otra vez.
+
 ### Nada de capas que cubren la ventana para devolver el puntero mas adentro
 
 Un contenedor a pantalla completa con `pointer-events: none` que va re-habilitando el

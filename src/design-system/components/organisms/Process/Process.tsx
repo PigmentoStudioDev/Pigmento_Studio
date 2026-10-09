@@ -1,5 +1,7 @@
+import type { CSSProperties } from "react";
 import { Heading } from "../../atoms/Heading/Heading";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
+import { ScrollTrace } from "../../layout/ScrollTrace/ScrollTrace";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
 import styles from "./Process.module.scss";
 
@@ -20,6 +22,20 @@ import styles from "./Process.module.scss";
  *
  * Cada fase trae ademas lo que PRODUCE, que es la parte que un cliente busca: una
  * fase sin entregable es una reunion.
+ *
+ * **La serie se TRAZA con el scroll.** Cinco filas con filete contaban el orden en el
+ * documento y no lo contaban en el dibujo: la lista se leia como una tabla de cinco
+ * entradas igual de lejanas. Una guia que se dibuja conforme el bloque cruza la
+ * pantalla, con un hito por fase que se enciende al pasar, dice lo unico que esta
+ * lista tiene que decir — que esto va en orden y que hay un avance.
+ *
+ * Lo que cruza al navegador es un numero: `ScrollTrace` publica el progreso y la hoja
+ * dibuja. Sin JS, con reduced-motion o antes de que gsap baje, la guia se ve ENTERA y
+ * los cinco hitos encendidos; media guia sin nadie midiendo seria peor que ninguna.
+ *
+ * El indice de cada fase viaja ademas a la hoja en `--pg-phase`, que es donde el hito
+ * decide si el trazo ya lo paso. Es un dato de posicion, no estilo: la hoja no puede
+ * contar hermanos y saber cuantos son.
  *
  * Server component entero: lo que cruza al navegador es el envoltorio del gesto.
  *
@@ -67,28 +83,39 @@ export function Process({
       </div>
 
       {/* `inner` por lo mismo que en el resto de listas: el envoltorio del gesto no
-          puede meterse entre la <ol> y sus <li>. */}
-      <ScrollReveal by="block" inner>
-        <ol className={styles.list}>
-          {phases.map((phase, index) => (
-            <li className={styles.phase} key={`${phase.title}-${index}`}>
-              <p className={styles.ordinal}>{ordinal(index)}</p>
+          puede meterse entre la <ol> y sus <li>. Los DOS envoltorios van por fuera,
+          y en este orden: el trazo publica su numero por encima del reveal, igual que
+          el resaltado de los titulares. */}
+      <ScrollTrace>
+        <ScrollReveal by="block" inner>
+          <ol className={styles.list}>
+            {phases.map((phase, index) => (
+              <li
+                className={styles.phase}
+                key={`${phase.title}-${index}`}
+                // Donde cae esta fase en el recorrido, de 0 a 1. Con una sola fase
+                // el divisor seria cero: entonces esta en el origen, que es donde
+                // empieza el trazo.
+                style={{ "--pg-phase": phases.length > 1 ? index / (phases.length - 1) : 0 } as CSSProperties}
+              >
+                <p className={styles.ordinal}>{ordinal(index)}</p>
 
-              <div className={styles.body}>
-                <Heading level={3} size="title">
-                  {phase.title}
-                </Heading>
-                <p className={styles.text}>{phase.text}</p>
-              </div>
+                <div className={styles.body}>
+                  <Heading level={3} size="title">
+                    {phase.title}
+                  </Heading>
+                  <p className={styles.text}>{phase.text}</p>
+                </div>
 
-              <p className={styles.deliverable}>
-                <span className={styles.deliverableLabel}>{deliverableLabel}</span>
-                <span className={styles.deliverableValue}>{phase.deliverable}</span>
-              </p>
-            </li>
-          ))}
-        </ol>
-      </ScrollReveal>
+                <p className={styles.deliverable}>
+                  <span className={styles.deliverableLabel}>{deliverableLabel}</span>
+                  <span className={styles.deliverableValue}>{phase.deliverable}</span>
+                </p>
+              </li>
+            ))}
+          </ol>
+        </ScrollReveal>
+      </ScrollTrace>
     </div>
   );
 }

@@ -110,3 +110,56 @@ describe("Marquee", () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 });
+
+describe("Marquee · resenas", () => {
+  const CITAS = [
+    { quote: "Entregaron en seis semanas.", author: "Nombre Apellido", role: "Cargo", company: "Empresa" },
+    { quote: "Hablamos siempre con quien disenaba.", author: "Otro Nombre", role: "Direccion", company: "Otra" },
+  ];
+
+  /**
+   * La cita y su fuente son una relacion que el navegador ya sabe expresar: quien
+   * escucha la pagina oye donde empieza y acaba lo citado, y de quien es.
+   */
+  it("cada resena es un blockquote con su cite", () => {
+    const { container } = render(<Marquee kind="quotes" items={CITAS} copies={1} />);
+
+    // La copia que SE LEE es la primera: las demas llevan aria-hidden y repiten lo
+    // mismo, asi que contar sobre el documento entero contaria copias y no resenas.
+    const copias = container.querySelectorAll("[data-marquee-status] > div > div");
+    const leida = copias[0];
+
+    expect(leida.getAttribute("aria-hidden")).toBeNull();
+    expect(leida.querySelectorAll("blockquote")).toHaveLength(CITAS.length);
+    expect(leida.querySelectorAll("cite")).toHaveLength(CITAS.length);
+  });
+
+  it("la atribucion viaja entera", () => {
+    render(<Marquee kind="quotes" items={CITAS} copies={1} />);
+
+    expect(screen.getAllByText("Cargo, Empresa").length).toBeGreaterThan(0);
+  });
+
+  /**
+   * El bug que ya aparecio en el bloque de testimonios: los placeholders venian
+   * firmados igual, y con la firma como unica clave React avisaba de claves repetidas
+   * y podia omitir una de las dos tarjetas.
+   */
+  it("dos resenas de la misma persona se pintan las dos", () => {
+    const misma = { author: "Nombre Apellido", role: "Cargo", company: "Empresa" };
+
+    render(
+      <Marquee
+        kind="quotes"
+        copies={1}
+        items={[
+          { ...misma, quote: "La primera cosa que dijo." },
+          { ...misma, quote: "La segunda cosa que dijo." },
+        ]}
+      />,
+    );
+
+    expect(screen.getAllByText("La primera cosa que dijo.").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("La segunda cosa que dijo.").length).toBeGreaterThan(0);
+  });
+});
