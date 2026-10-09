@@ -5,11 +5,11 @@
  * contenido del sitio y no del design system, y el adaptador de media lo busca por
  * nombre para que en el diff se lea que imagen es.
  *
- * TODO(contenido): Karen pidio sustituir la textura de chocolate por una foto de
- * equipo (2026-10-09). El archivo todavia no esta en el CMS —los 60 media de
- * produccion son de proyectos de cliente, ninguno es una foto de equipo— asi que
- * entra en dos pasos: subirlo con `pigmento_upload_media` y cambiar el nombre de
- * abajo. Mientras tanto la banda sigue con el chocolate, que a sangre se lee como
- * materia; lo que ya esta puesto es el titular y el alto nuevo.
+ * Era una textura de chocolate derretido que habia entrado al CMS con el proyecto de
+ * Bendito. Funcionaba a sangre como materia, pero la banda es la unica foto grande de
+ * la home y lo que dice una foto de producto de otro cliente es "este es su trabajo",
+ * no "este es el estudio". Con un titular encima la diferencia pesa mas todavia: la
+ * frase habla del equipo y la imagen hablaba de chocolate.
  */
-export const BAND_IMAGE_FILENAME = "melted-chocolate-background-2024-10-18-09-33-51-utc.jpg";
+export const BAND_IMAGE_FILENAME =
+  "happy-business-colleagues-smiling-in-modern-office-2026-09-22-08-47-41-utc.webp";
