@@ -123,9 +123,14 @@
   --pg-on-dark: 0;
 }
 
-// Claro elevado. No lo ata ninguna asignacion: queda para quien pida la zona por su
-// clase, que es como Carbon la ofrece.
-.cds--g10 {
+// Claro elevado, y las secciones que piden tono `raised` en modo claro.
+//
+// `raised` es el unico tono RELATIVO: un escalon por encima del modo, sin cambiar de
+// lado. Existe para marcar un capitulo en los dos modos sin deslumbrar — invertir en
+// oscuro significa blanco a pantalla completa, y un sistema oscuro no puntua
+// invirtiendo, puntua elevando.
+.cds--g10,
+.cds--white [data-theme-light='raised'] {
   @include theme.theme(themes.$g10, pigmento.$overrides-light);
 
   --pg-on-dark: 0;
@@ -140,8 +145,10 @@
   --pg-on-dark: 1;
 }
 
-// Oscuro elevado. Sin asignacion que lo ate, igual que g10.
-.cds--g90 {
+// Oscuro elevado, y las secciones que piden tono `raised` en modo oscuro. La otra
+// mitad del tono relativo: el mismo escalon, del lado oscuro.
+.cds--g90,
+.cds--g100 [data-theme-dark='raised'] {
   @include theme.theme(themes.$g90, pigmento.$overrides-dark);
 
   --pg-on-dark: 1;

@@ -11,7 +11,7 @@
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import postcss, { type Rule } from 'postcss';
-import { resolveZone, THEME_ATTRIBUTE, themeModeClass } from '../../theme/zone';
+import { resolveZone, THEME_ATTRIBUTE, THEME_TONES, themeModeClass } from '../../theme/zone';
 import { compile, compileString, type Options } from 'sass';
 import { describe, expect, it } from 'vitest';
 
@@ -241,8 +241,10 @@ describe('index.scss emite las cuatro zonas de Carbon con la marca encima', () =
    * no acaba de casar con lo que tiene debajo.
    */
   it.each(
+    // Los tonos salen de THEME_TONES y no de una lista escrita aqui: un tono nuevo
+    // entra solo en el gate, que es justo donde hace falta que no se olvide nadie.
     (['light', 'dark'] as const).flatMap((mode) =>
-      (['light', 'dark'] as const).map(
+      THEME_TONES.map(
         (tone) => [`${mode}/${tone}`, mode, tone, resolveZone(mode, { [mode]: tone })] as const,
       ),
     ),
