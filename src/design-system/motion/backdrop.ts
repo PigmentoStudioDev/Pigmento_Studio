@@ -42,16 +42,25 @@ export const DEFAULT_BACKDROP_PARALLAX: ParallaxOptions = {
 /**
  * La banda que separa dos actos, que cruza la pantalla entera.
  *
+ * **`scrollStart` va ESCRITO, y no se puede quitar.** `ImageBackdrop` compone
+ * `{ ...DEFAULT_BACKDROP_PARALLAX, ...parallax }`, asi que lo que no diga esta
+ * constante no cae en el valor por defecto del hook: cae en el de la PORTADA, que es
+ * `top top`. Con ese disparador el recorrido de la banda empezaba cuando su borde
+ * superior ya tocaba el techo de la ventana —o sea, cuando la banda se estaba
+ * yendo—, y durante todo el rato en que se la mira el avance valia cero. El sintoma
+ * era exacto: un parallax que existe, se crea, no falla y no se mueve donde se mira.
+ *
  * La portada arranca pegada al borde de arriba y por eso mide desde `top top`. Una
- * banda que vive a mitad de pagina entra por abajo y sale por arriba, asi que su
- * recorrido son los valores por defecto de `useParallax`: todo el cruce.
+ * banda que vive a mitad de pagina entra por abajo y sale por arriba: todo el cruce.
  *
  * Y usa el recorrido COMPLETO. La dispersion de ritmos se recorta cuando hay texto
  * encima —una capa que se mueve rapido detras de lo que se lee cuesta leerlo, y a
- * algunas personas las marea—; aqui no hay nada que leer, que es justo el caso en el
- * que el recorrido largo se puede gastar.
+ * algunas personas las marea—; aqui lo unico que hay es una frase corta y quieta
+ * pegada al pie, no texto que se recorra.
  */
 export const BAND_PARALLAX: ParallaxOptions = {
   start: 0,
   end: MAX_TRAVEL,
+  scrollStart: "top bottom",
+  scrollEnd: "bottom top",
 };
