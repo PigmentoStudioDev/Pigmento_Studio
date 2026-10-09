@@ -48,7 +48,19 @@
     "facebookName": "Pigmento Studio on Facebook (opens in a new tab)",
     "city": "Mexico City",
     "metaLabel": "Footer shortcuts",
-    "linksLabel": "Social and location"
+    "linksLabel": "Social and location",
+    "tagline": "Brand design and growth studio in Mexico City. Branding, sites, motion and marketing for brands with something to say.",
+    "columnStudio": "Studio",
+    "columnServices": "Services",
+    "columnLegal": "Legal",
+    "about": "About",
+    "lab": "Lab",
+    "branding": "Branding and design",
+    "motion": "Motion",
+    "marketing": "Marketing",
+    "web": "Web development",
+    "rights": "All rights reserved.",
+    "backToTop": "Back to top"
   },
   "home": {
     "manifesto": {

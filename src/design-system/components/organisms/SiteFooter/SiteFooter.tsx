@@ -1,11 +1,17 @@
 import { Icon } from "../../atoms/Icon/Icon";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
+import { FooterDirectory, type FooterDirectoryProps } from "../../molecules/FooterDirectory/FooterDirectory";
 import { NavLinkList, type NavLinkItem } from "../../molecules/NavLinkList/NavLinkList";
 import styles from "./SiteFooter.module.scss";
 
 /**
- * El pie del sitio: una pantalla entera con una sola linea a sangre — la flecha y el
- * nombre al que apunta — entre dos filas de metadatos.
+ * El pie del sitio, en dos partes y en este orden: el DIRECTORIO —mapa del sitio,
+ * firma y vuelta arriba, que es lo que cualquier pie tiene que hacer— y encima de el
+ * la DECLARACION: una sola linea a sangre, la flecha y el nombre al que apunta, entre
+ * dos filas de metadatos.
+ *
+ * El directorio va primero en el documento y el nombre al final porque el nombre es el
+ * cierre de la pagina: cualquier cosa despues de un cierre se lee como un apendice.
  *
  * Las dos filas son la MISMA lista de enlaces que el menu, en su tamano pequeno y en
  * horizontal: un pie y un menu son el mismo tipo de navegacion, y con dos
@@ -23,6 +29,8 @@ import styles from "./SiteFooter.module.scss";
  * Props serializables: un bloque de Payload lo alimenta 1:1.
  */
 export interface SiteFooterProps {
+  /** El mapa del sitio, la firma y la vuelta arriba. Encima de todo lo demas. */
+  directory: FooterDirectoryProps;
   /** Fila superior: nombre del estudio y atajos. */
   meta: NavLinkItem[];
   /** Nombre accesible de esa lista. */
@@ -36,6 +44,7 @@ export interface SiteFooterProps {
 }
 
 export function SiteFooter({
+  directory,
   meta,
   metaLabel,
   handle,
@@ -44,6 +53,12 @@ export function SiteFooter({
 }: SiteFooterProps) {
   return (
     <footer className={styles.root}>
+      {/* El directorio entra por bloque y no por lineas por lo mismo que las filas:
+          sus columnas son listas de enlaces que ya parten su texto para rodarlo. */}
+      <ScrollReveal by="block">
+        <FooterDirectory {...directory} />
+      </ScrollReveal>
+
       {/* Las dos filas llegan como CAJA y no partidas por lineas: son listas de
           enlaces que ya parten su texto en caracteres para rodarlo, y dos
           particiones sobre los mismos nodos se pelean. */}
