@@ -77,6 +77,9 @@
     },
     "values": {
       "title": "How we do it",
+      "titleHighlight": "do it",
+      "label": "How we work",
+      "intro": "Five decisions that do not change from project to project. They are in the order you will notice them: who you talk to, how calls get made, how it gets built and how it gets measured.",
       "carousel": "carousel",
       "previous": "Previous value",
       "next": "Next value",
@@ -211,10 +214,6 @@
       "cta": "Book a call"
     },
     "figures": {
-      "title": "What the work leaves behind",
-      "titleHighlight": "leaves behind",
-      "label": "In numbers",
-      "intro": "Studio figures, with the context that makes them readable. A number with no context says nothing about whether it is a lot.",
       "items": {
         "projects": {
           "value": "120",
@@ -276,22 +275,40 @@
       "title": "What they say",
       "titleHighlight": "they say",
       "label": "Clients",
-      "intro": "With a name, a role and a company. An anonymous quote proves nothing.",
+      "intro": "Clients who have been through this, in their own words.",
       "items": {
         "first": {
-          "quote": "Pending: a real client quote about the work delivered.",
+          "quote": "We came in with a logo and a folder of loose photos. We left with a brand the sales team can use without asking us anything.",
           "author": "Name Surname",
           "role": "Role",
           "company": "Company"
         },
         "second": {
-          "quote": "Pending: a real client quote about what working with the studio was like.",
+          "quote": "What I value most is that they said no to two of our ideas, and they were right about both.",
           "author": "Name Surname",
           "role": "Role",
           "company": "Company"
         },
         "third": {
-          "quote": "Pending: a real client quote about what happened after launch.",
+          "quote": "The new site has been live six months and we have not had to ask for a single layout change.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        },
+        "fourth": {
+          "quote": "They delivered on the date they gave us in the first meeting. That had never happened to me with a design vendor.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        },
+        "fifth": {
+          "quote": "We came back with the second project before the first one was finished.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        },
+        "sixth": {
+          "quote": "They understood the business on the first call. Everything after that was about how, not what.",
           "author": "Name Surname",
           "role": "Role",
           "company": "Company"

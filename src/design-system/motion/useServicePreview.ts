@@ -74,8 +74,25 @@ export function useServicePreview<T extends HTMLElement>() {
         if (enabled()) container.setAttribute(SERVICE_PREVIEW_ON, "");
       };
 
+      // La vista previa se queda DENTRO del bloque. Sin esto, con el puntero en la
+      // ultima fila la caja sobresalia por abajo y la seccion siguiente la cortaba por
+      // la mitad: la de al lado es una banda de foto a sangre, que crea su propio
+      // contexto de apilado y pinta por encima. Subir un z-index la dejaria entera
+      // pero flotando sobre una foto que no es la suya, que es peor.
+      //
+      // `yPercent: -50` ya la centro en el puntero, asi que `y` es su centro y los
+      // topes son media caja por arriba y por abajo. Con una caja mas alta que el
+      // bloque —ventanas muy bajas, donde `24vw` puede pasarse— los dos topes se
+      // cruzan: ahi se queda centrada, que es lo unico que cabe.
+      const dentroDelBloque = (y: number) => {
+        const media = container.offsetHeight / 2;
+        const alto = root.offsetHeight;
+        if (media * 2 >= alto) return alto / 2;
+        return Math.min(Math.max(y, media), alto - media);
+      };
+
       const onListMove = (event: MouseEvent) => {
-        if (enabled()) yTo(event.clientY - root.getBoundingClientRect().top);
+        if (enabled()) yTo(dentroDelBloque(event.clientY - root.getBoundingClientRect().top));
       };
 
       const createMedia = (index: number) => {

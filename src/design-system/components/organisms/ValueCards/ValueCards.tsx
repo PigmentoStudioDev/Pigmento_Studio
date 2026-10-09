@@ -6,6 +6,7 @@ import { useAutoRotate } from "../../../motion/useAutoRotate";
 import { RADIAL_COPIES, useRadialSlider } from "../../../motion/useRadialSlider";
 import { IconButton } from "../../atoms/IconButton/IconButton";
 import { ControlBar } from "../../molecules/ControlBar/ControlBar";
+import { StripHeader } from "../../molecules/StripHeader/StripHeader";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import styles from "./ValueCards.module.scss";
 
@@ -62,6 +63,12 @@ export interface ValueCardsLabels {
 export interface ValueCardsProps {
   /** Solo para el lector de pantalla: nombra la seccion y el carrusel. */
   title: string;
+  /** El trozo del titular que se resalta con el scroll. */
+  titleHighlight?: string;
+  /** La etiqueta corta del bloque, en la voz de metadato: "Criterio". */
+  label: string;
+  /** El parrafo que presenta la corona. Sin el, las tarjetas giran sin contexto. */
+  intro: string;
   cards: ValueCard[];
   labels: ValueCardsLabels;
   titleId?: string;
@@ -72,7 +79,7 @@ const COPIES = Array.from({ length: RADIAL_COPIES }, (_, copy) => copy);
 /** La copia que se anuncia. Es la del medio: las demas rodean a la activa. */
 const ANNOUNCED_COPY = Math.floor(RADIAL_COPIES / 2);
 
-export function ValueCards({ title, cards, labels, titleId }: ValueCardsProps) {
+export function ValueCards({ title, titleHighlight, label, intro, cards, labels, titleId }: ValueCardsProps) {
   const count = cards.length;
   const { trackRef, step, active, dragDegrees, dragging, go, goTo, handlers, onTransitionEnd } =
     useRadialSlider<HTMLDivElement>(count);
@@ -102,9 +109,20 @@ export function ValueCards({ title, cards, labels, titleId }: ValueCardsProps) {
 
   return (
     <div className={styles.root}>
-      <h2 id={titleId} className={styles.title}>
-        {title}
-      </h2>
+      {/* La cabecera del resto de strips, y no un <h2> escondido.
+          Estaba `visually-hidden`: quien llegaba aqui aterrizaba en unas tarjetas
+          girando sin una sola palabra que dijera de que van, y una banda de imagen
+          justo encima lo empeoraba. Que el titular exista para quien escucha la
+          pagina no basta si no existe para quien la mira. */}
+      <div className={styles.header}>
+        <StripHeader
+          title={title}
+          titleHighlight={titleHighlight}
+          label={label}
+          intro={intro}
+          titleId={titleId}
+        />
+      </div>
 
       {/* La corona entra como el resto de la pagina. Entera y no tarjeta a tarjeta:
           las tarjetas ya las mueve el giro, y dos gestos sobre la misma pieza se
