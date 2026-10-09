@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { CycledCandyFamily } from "../../../theme/candy";
 import styles from "./Heading.module.scss";
 
 /**
@@ -48,6 +49,15 @@ export interface HeadingProps {
    * por texto corrido el enfasis deja de senalar nada.
    */
   highlight?: string;
+  /**
+   * De que color va ese resalte. Sin valor, el del tema — el azul palido de Carbon.
+   *
+   * El color del sistema vivia encerrado en las tarjetas de valores, que son UN
+   * bloque, y el resto de la pagina era gris sobre blanco de arriba abajo. Repartir
+   * una familia por strip es lo que hace que el acento sea de la PAGINA y no de una
+   * seccion, y es gratis: el resalte ya estaba ahi, solo era de un color.
+   */
+  highlightFamily?: CycledCandyFamily;
 }
 
 const SIZE: Record<HeadingSize, string> = {
@@ -81,28 +91,55 @@ const SIZE_FOR_LEVEL: Record<HeadingLevel, HeadingSize> = {
   6: "lead",
 };
 
-function withHighlight(text: string, highlight: string | undefined): ReactNode {
+/**
+ * La clase que pinta cada familia. Cada `styles.<clase>` se nombra entera: el gate de
+ * modulos busca la forma literal en el TSX, en las dos direcciones, y un nombre
+ * interpolado dejaria las seis marcadas como CSS muerto.
+ */
+const FAMILY_CLASS: Record<CycledCandyFamily, string> = {
+  periwinkle: styles.markPeriwinkle,
+  tangerine: styles.markTangerine,
+  cyan: styles.markCyan,
+  pink: styles.markPink,
+  lime: styles.markLime,
+  amber: styles.markAmber,
+};
+
+function withHighlight(
+  text: string,
+  highlight: string | undefined,
+  family: CycledCandyFamily | undefined,
+): ReactNode {
   const start = highlight ? text.indexOf(highlight) : -1;
   if (!highlight || start < 0) return text;
 
   const end = start + highlight.length;
+  const className = family ? `${styles.mark} ${FAMILY_CLASS[family]}` : styles.mark;
 
   return (
     <>
       {text.slice(0, start)}
-      <mark className={styles.mark}>{text.slice(start, end)}</mark>
+      <mark className={className}>{text.slice(start, end)}</mark>
       {text.slice(end)}
     </>
   );
 }
 
-export function Heading({ children, level, size, tone = "primary", id, highlight }: HeadingProps) {
+export function Heading({
+  children,
+  level,
+  size,
+  tone = "primary",
+  id,
+  highlight,
+  highlightFamily,
+}: HeadingProps) {
   const Element: `h${HeadingLevel}` = `h${level}`;
   const classes = [styles.root, SIZE[size ?? SIZE_FOR_LEVEL[level]], TONE[tone]].join(" ");
 
   return (
     <Element id={id} className={classes}>
-      {withHighlight(children, highlight)}
+      {withHighlight(children, highlight, highlightFamily)}
     </Element>
   );
 }

@@ -1,3 +1,4 @@
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { Marquee } from "../../molecules/Marquee/Marquee";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
 import styles from "./Testimonials.module.scss";
@@ -48,6 +49,12 @@ export interface TestimonialsProps {
   intro: string;
   testimonials: Testimonial[];
   titleId?: string;
+  /**
+   * De que familia candy es el resalte del titular. Sin valor, el azul del tema.
+   * Lo reparte la PAGINA, que es quien conoce el orden de los bloques: el ciclo
+   * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
+   */
+  highlightFamily?: CycledCandyFamily;
 }
 
 /**
@@ -63,13 +70,21 @@ export function Testimonials({
   intro,
   testimonials,
   titleId,
+  highlightFamily,
 }: TestimonialsProps) {
   if (testimonials.length === 0) return null;
 
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
+        <StripHeader
+          title={title}
+          titleHighlight={titleHighlight}
+          label={label}
+          intro={intro}
+          titleId={titleId}
+          highlightFamily={highlightFamily}
+        />
       </div>
 
       {/* Sin ScrollReveal: la tira ya entra moviendose, y una entrada por scroll

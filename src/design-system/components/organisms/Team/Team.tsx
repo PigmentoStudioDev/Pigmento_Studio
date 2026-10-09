@@ -1,5 +1,6 @@
 "use client";
 
+import type { CycledCandyFamily } from "../../../theme/candy";
 import Image from "next/image";
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { cursorAttributes } from "../../../motion/cursor";
@@ -67,6 +68,12 @@ export interface TeamProps {
   members: TeamMember[];
   labels: TeamLabels;
   titleId?: string;
+  /**
+   * De que familia candy es el resalte del titular. Sin valor, el azul del tema.
+   * Lo reparte la PAGINA, que es quien conoce el orden de los bloques: el ciclo
+   * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
+   */
+  highlightFamily?: CycledCandyFamily;
 }
 
 type Filter = TeamGroup | "all";
@@ -89,7 +96,16 @@ function fill(template: string, values: Record<string, string>): string {
   return Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, value), template);
 }
 
-export function Team({ title, titleHighlight, label, intro, members, labels, titleId }: TeamProps) {
+export function Team({
+  title,
+  titleHighlight,
+  label,
+  intro,
+  members,
+  labels,
+  titleId,
+  highlightFamily,
+}: TeamProps) {
   const [filter, setFilter] = useState<Filter>("all");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const idBase = useId();
@@ -148,7 +164,14 @@ export function Team({ title, titleHighlight, label, intro, members, labels, tit
 
   return (
     <div className={styles.root}>
-      <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
+      <StripHeader
+        title={title}
+        titleHighlight={titleHighlight}
+        label={label}
+        intro={intro}
+        titleId={titleId}
+        highlightFamily={highlightFamily}
+      />
 
       <ScrollReveal by="block">
         <div className={styles.body}>
