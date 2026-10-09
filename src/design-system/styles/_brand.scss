@@ -412,6 +412,14 @@ $ease-natural: cubic-bezier(0.32, 0.12, 0.2, 1);
 /// El anillo de foco. Rapidisima: un foco que tarda es un foco que ya no se sigue.
 $ease-focus: cubic-bezier(0.32, 0.72, 0, 1);
 
+/// La SALIDA. Arranca inmediata y acelera al irse: lo que se va no se mira, y las
+/// cinco de arriba estan hechas para lo que llega — frenan al final, que es justo lo
+/// que hace que cerrar un panel cueste lo mismo que abrirlo.
+///
+/// La salida ademas es mas CORTA que la entrada, y eso no necesita token nuevo: la
+/// escala es de ratio, asi que lo que abre en `base` cierra en `half`.
+$ease-exit: cubic-bezier(0.3, 0, 1, 1);
+
 /// Lo que PERSIGUE al puntero: el cursor, la vista previa que lo acompana. Se reapunta
 /// en cada movimiento, y cada reapunte arranca un tramo nuevo desde donde va; con una
 /// curva que arranca lenta, como la de arriba, cada tramo vuelve a arrancar lento y la
@@ -428,6 +436,16 @@ $stagger-char: 0.024s;
 /// leerian como una sola, y con un paso suelto habria dos ritmos de desfase en el
 /// sitio sin nada que los relacione.
 $stagger-slice: $stagger-char * 2;
+
+/// El TOPE de una cola escalonada, sea de letras o de lonjas. Un desfase se suma
+/// indice a indice, asi que lo que en cinco piezas es ritmo en veinte es espera: una
+/// etiqueta de catorce letras acababa de rodar casi un segundo despues de entrar el
+/// puntero, y un area de ocho personas tardaba mas de dos segundos en entrar.
+///
+/// Con el tope, pasada cierta pieza todas arrancan a la vez: la cola se reparte dentro
+/// de un presupuesto en vez de crecer con la lista. Se escribe `min(cola, tope)` en el
+/// retardo, y el tope es un escalon de la escala como cualquier otro.
+$stagger-cap: $duration-quarter;
 
 /// Cuando entra el chrome de pagina —barra de promos y cabecera— contado desde que
 /// la cortina del preloader empieza a abrirse (o desde la carga, sin preloader).

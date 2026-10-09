@@ -70,4 +70,11 @@
     cursor: auto;
     transition: none;
   }
+
+  // Sin bucle que animar, el aviso de capa es memoria de video reservada para un
+  // gesto que no va a ocurrir.
+  .item,
+  .card {
+    will-change: auto;
+  }
 }

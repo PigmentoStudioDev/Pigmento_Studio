@@ -50,12 +50,19 @@ $-clip-end: 1 + math.div(brand.$roll-descender, 1em);
   :global(.pg-char) {
     translate: 0 calc(#{brand.$roll-distance} * -1);
     text-shadow: 0 brand.$roll-distance currentcolor;
-    // El color va medio gesto por detras del movimiento: asi cambia a mitad de
-    // vuelo y no se nota que son dos letras.
+    // El color va medio gesto por detras del movimiento: asi cambia a mitad de vuelo
+    // y no se nota que son dos letras. Medio gesto de MEDIA, que es lo que dura ahora.
+    //
+    // La cola lleva tope y el gesto dura media y no una: esto es feedback de hover, y
+    // una etiqueta de catorce letras acababa de rodar 0.94s despues de entrar el
+    // puntero, mas de lo que la mayoria deja el raton encima. Con el tope, a partir de
+    // la sexta letra todas arrancan juntas y el peor caso queda en 0.45s.
     transition:
-      translate brand.$duration-base brand.$ease-default
-        calc(var(--char, 0) * #{brand.$stagger-char}),
+      translate brand.$duration-half brand.$ease-default
+        min(calc(var(--char, 0) * #{brand.$stagger-char}), #{brand.$stagger-cap}),
       text-shadow brand.$duration-quarter brand.$ease-natural
-        calc(var(--char, 0) * #{brand.$stagger-char} + #{brand.$duration-half});
+        calc(
+          min(var(--char, 0) * #{brand.$stagger-char}, #{brand.$stagger-cap}) + #{brand.$duration-quarter}
+        );
   }
 }

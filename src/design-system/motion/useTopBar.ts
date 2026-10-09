@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
+import { pauseOnIntent, type Pausable } from "./pauseOnIntent";
 import { EASE_LINEAR } from "./tokens";
 
 /**
@@ -74,6 +75,8 @@ export function useTopBar<T extends HTMLElement>() {
       mm.add({ ...MOTION_BREAKPOINTS, isReduced: REDUCED_MOTION }, (context) => {
         if (context.conditions?.isReduced) return;
 
+        const loops: Pausable[] = [];
+
         rows.forEach((row, index) => {
           const collections = Array.from(
             row.querySelectorAll<HTMLElement>("[data-topbar-collection]"),
@@ -85,16 +88,18 @@ export function useTopBar<T extends HTMLElement>() {
           // mensajes que se cruzan se leen como dos, no como uno repetido.
           const toLeft = index % 2 === 0;
 
-          gsap.fromTo(
-            collections,
-            { xPercent: toLeft ? 0 : -100 },
-            {
-              xPercent: toLeft ? -100 : 0,
-              repeat: -1,
-              duration,
-              // un bucle a velocidad constante: el ritmo lo marca la duracion, no una curva.
-              ease: EASE_LINEAR,
-            },
+          loops.push(
+            gsap.fromTo(
+              collections,
+              { xPercent: toLeft ? 0 : -100 },
+              {
+                xPercent: toLeft ? -100 : 0,
+                repeat: -1,
+                duration,
+                // un bucle a velocidad constante: el ritmo lo marca la duracion, no una curva.
+                ease: EASE_LINEAR,
+              },
+            ),
           );
         });
 
@@ -111,6 +116,11 @@ export function useTopBar<T extends HTMLElement>() {
             },
           });
         }
+
+        // El interruptor de WCAG 2.2.2: la barra es un enlace, asi que se alcanza con
+        // el puntero y con el teclado, y las dos cosas la paran. Se devuelve como
+        // limpieza de la rama, que es como matchMedia deshace lo que monta.
+        return pauseOnIntent(root, () => loops);
       });
     });
 

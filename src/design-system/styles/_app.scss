@@ -95,9 +95,10 @@ body {
   display: inline-block;
   text-shadow: 0 brand.$roll-distance var(--pg-char-shine, currentcolor);
   // Al salir se deshace sin escalonar: revertir letra a letra parece que el
-  // control se queda enganchado.
+  // control se queda enganchado. Y mas corto que al entrar, con la curva de salida:
+  // lo que vuelve a su sitio no es un gesto que mirar.
   transition:
-    translate brand.$duration-half brand.$ease-default,
+    translate brand.$duration-quarter brand.$ease-exit,
     text-shadow brand.$duration-quarter brand.$ease-natural;
 }
 
@@ -140,7 +141,14 @@ body {
   transition: translate brand.$duration-onehalf brand.$ease-default;
   // `--pg-reveal-step` y `--pg-reveal-offset` los pone un organismo que necesite otro
   // ritmo entre lineas o retrasar el bloque entero.
-  transition-delay: calc(var(--line, var(--word, 0)) * var(--pg-reveal-step, #{brand.$stagger-slice}) + var(--pg-reveal-offset, 0s));
+  // La cola lleva TOPE: sin el, el retardo crece linea a linea y un parrafo largo
+  // acaba de entrar un segundo despues de empezar. Con `min` el desfase se reparte
+  // dentro de un presupuesto y a partir de cierta linea todas arrancan juntas.
+  // El retraso del bloque entero se suma FUERA del tope: no es cola, es cuando empieza.
+  transition-delay: calc(
+    min(var(--line, var(--word, 0)) * var(--pg-reveal-step, #{brand.$stagger-slice}), #{brand.$stagger-cap}) +
+      var(--pg-reveal-offset, 0s)
+  );
 }
 
 // La palabra, en cambio, tiene que seguir fluyendo en la linea: a bloque, cada una
@@ -170,7 +178,7 @@ body {
   transition:
     opacity brand.$duration-onehalf brand.$ease-default,
     translate brand.$duration-onehalf brand.$ease-default;
-  transition-delay: calc(var(--pg-reveal-index, 0) * #{brand.$stagger-slice});
+  transition-delay: min(calc(var(--pg-reveal-index, 0) * #{brand.$stagger-slice}), #{brand.$stagger-cap});
 }
 
 [data-reveal-mode='block'][data-reveal='idle'] {

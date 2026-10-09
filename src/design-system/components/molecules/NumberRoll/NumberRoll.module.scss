@@ -57,6 +57,19 @@
     // el salto tiene que respetarse para que cada uno ocupe su celda.
     white-space: pre;
     text-align: center;
+    // La capa de compositor no sobrevive al gesto aunque este escrita suelta: el
+    // rodillo entero lo borra `soltar()` al completar la timeline, asi que el aviso
+    // se va con el nodo. Lo que si sobra es con reduced-motion, donde no llega a
+    // rodar nunca; va abajo.
     will-change: transform;
+  }
+}
+
+// Con reduced-motion no hay bucle que animar, asi que el aviso de capa es memoria de
+// video reservada para un gesto que no va a ocurrir. `will-change` es una promesa al
+// compositor, y una promesa que no se cumple se paga igual.
+@media (prefers-reduced-motion: reduce) {
+  .rollers [data-roll-part='roller'] {
+    will-change: auto;
   }
 }

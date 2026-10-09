@@ -57,14 +57,20 @@ $hidden-scale: 0.95;
   // visibility, y no solo opacity: un fondo transparente pero visible seguiria
   // comiendose los clics de toda la pagina con el panel cerrado.
   visibility: hidden;
+  // La regla base ES el cierre: una transicion declarada aqui gobierna el camino de
+  // vuelta al estado cerrado. Mas corta que la entrada y con la curva de salida —
+  // mirar irse un velo cuesta lo mismo que mirarlo llegar y no dice nada.
   transition:
-    opacity brand.$duration-half brand.$ease-default,
-    visibility brand.$duration-half brand.$ease-default;
+    opacity brand.$duration-quarter brand.$ease-exit,
+    visibility brand.$duration-quarter brand.$ease-exit;
 }
 
 .isOpen .backdrop {
   opacity: 1;
   visibility: visible;
+  transition:
+    opacity brand.$duration-half brand.$ease-default,
+    visibility brand.$duration-half brand.$ease-default;
 }
 
 // La barra se ENSANCHA al abrir, y el modo extendido va a sangre: de borde a borde
@@ -87,8 +93,11 @@ $hidden-scale: 0.95;
   max-inline-size: brand.$header-compact-inline-size;
   color: theme.$text-primary;
   margin-block-start: spacing.$spacing-06;
+  // `max-inline-size` cierra en base y con la curva de salida; abre en una y media
+  // desde `.isOpen`. `transform` y `scale` no entran en el reparto: son el gesto de
+  // esconderse al bajar, que no es abrir ni cerrar nada.
   transition:
-    max-inline-size brand.$duration-onehalf brand.$ease-default,
+    max-inline-size brand.$duration-base brand.$ease-exit,
     transform brand.$duration-half brand.$ease-default,
     scale brand.$duration-half brand.$ease-default;
 }
@@ -114,6 +123,8 @@ $hidden-scale: 0.95;
 // aunque su contenido ya se haya parado: el hueco se lee como un borde vacio.
 .isOpen .nav {
   max-inline-size: min(100%, brand.$container-mega);
+  transition-duration: brand.$duration-onehalf;
+  transition-timing-function: brand.$ease-default;
 }
 
 // Cerrada es una pildora exacta — $radius-header, que es la mitad de su alto — y
@@ -189,13 +200,16 @@ $hidden-scale: 0.95;
   background-color: theme.$border-subtle;
   opacity: 0;
   transition:
-    inset-inline brand.$duration-base brand.$ease-default,
-    opacity brand.$duration-quarter brand.$ease-default;
+    inset-inline brand.$duration-half brand.$ease-exit,
+    opacity brand.$duration-quarter brand.$ease-exit;
 }
 
 .isOpen .line {
   inset-inline: 0;
   opacity: 1;
+  transition:
+    inset-inline brand.$duration-base brand.$ease-default,
+    opacity brand.$duration-quarter brand.$ease-default;
 }
 
 // Sin margin-inline: auto — ahora la centra el grid, y dejarlo la volveria a
@@ -230,11 +244,12 @@ $hidden-scale: 0.95;
   display: grid;
   grid-template-rows: 0fr;
   overflow: hidden;
-  transition: grid-template-rows brand.$duration-base brand.$ease-default;
+  transition: grid-template-rows brand.$duration-half brand.$ease-exit;
 }
 
 .isOpen .panel {
   grid-template-rows: 1fr;
+  transition: grid-template-rows brand.$duration-base brand.$ease-default;
 }
 
 // El item del grid, y nada mas. Sin padding, sin borde: `min-block-size: 0` solo
@@ -280,15 +295,17 @@ $hidden-scale: 0.95;
 .panelRow > * {
   opacity: 0;
   transform: translateY(spacing.$spacing-05);
+  // Ya salia mas corto que entraba (media contra una); le faltaba la curva.
   transition:
-    opacity brand.$duration-half brand.$ease-default,
-    transform brand.$duration-half brand.$ease-default;
+    opacity brand.$duration-half brand.$ease-exit,
+    transform brand.$duration-half brand.$ease-exit;
 }
 
 .isOpen .panelRow > * {
   opacity: 1;
   transform: none;
   transition-duration: brand.$duration-base;
+  transition-timing-function: brand.$ease-default;
   transition-delay: brand.$duration-quarter;
 }
 

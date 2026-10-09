@@ -363,13 +363,34 @@ gestos y que suenen juntos. Un desfase se escribe como MULTIPLOS de un paso
 el tercero y reafinar el ritmo obliga a recalcular cada suma a mano.
 
 **Una curva por ROL, y todas de la marca.** `$ease-default` para los gestos que se
-miran, `$ease-natural` para lo que acompana (el cierre de un panel, el brillo del
-rodado), `$ease-click` y `$ease-focus` para la pulsacion y el anillo de los atomos, y
+miran, `$ease-natural` para lo que acompana (el brillo del rodado), `$ease-exit` para la
+SALIDA, `$ease-click` y `$ease-focus` para la pulsacion y el anillo de los atomos, y
 `$ease-follow` para lo que persigue al puntero (cursor, vista previa): se reapunta en
-cada movimiento, y una curva que arranca lenta, reapuntada a cada frame, no llega
-nunca — el cursor se rompio asi. Nada fuera de esas cinco: tambien los micro-gestos, donde un hover usa el cuarto de
-la escala y no el registro productivo de Carbon. Dos curvas para el mismo rol son dos
-sensaciones distintas, y eso se nota aunque no se sepa nombrar.
+cada movimiento, y una curva que arranca lenta, reapuntada a cada frame, no llega nunca
+— el cursor se rompio asi. Nada fuera de esas seis: tambien los micro-gestos, donde un
+hover usa el cuarto de la escala y no el registro productivo de Carbon. Dos curvas para
+el mismo rol son dos sensaciones distintas, y eso se nota aunque no se sepa nombrar.
+
+**La salida es mas corta que la entrada, y se escribe en la regla BASE.** Lo que se va
+no se mira: mirarlo irse cuesta lo mismo que mirarlo llegar y no dice nada. En CSS el
+reparto cae solo — la regla base gobierna el camino de vuelta al estado cerrado y la
+regla de estado (`.isOpen`, `[data-open]`) gobierna la ida —, asi que la base lleva
+`$ease-exit` y un escalon menos de la escala, y el estado abierto redeclara la suya. No
+hace falta un token de duracion nuevo: la escala es de ratio, y lo que abre en `base`
+cierra en `half`. Las propiedades que sirven a DOS gestos distintos se quedan fuera del
+reparto —el `inset` de la placa de la cabecera, que es a la vez abrir y hacer scroll— y
+eso va escrito al lado.
+
+**Toda cola escalonada lleva tope** (`$stagger-cap`), escrito como
+`min(indice * paso, tope)`. Un desfase se suma indice a indice: lo que en cinco piezas
+es ritmo, en veinte es espera — una etiqueta de catorce letras acababa de rodar 0.94s
+despues de entrar el puntero. Pasado el tope, las piezas restantes arrancan juntas.
+
+**Un bucle infinito se puede parar** (`motion/pauseOnIntent.ts`). WCAG 2.2.2 es nivel A
+y `prefers-reduced-motion` no lo cubre: el criterio habla de quien NO declaro la
+preferencia. El puntero encima o el foco dentro paran el bucle y lo reanudan donde
+estaba, nunca lo reinician. Lo que queda fuera —tactil, que no tiene ninguna de las
+dos— esta escrito como `HACK:` en ese archivo, con su disparador de subida.
 
 **GSAP usa los mismos tokens, leidos y no copiados.** `_app.scss` publica la escala,
 los desfases y la curva de marca como `--pg-duration-*`, `--pg-stagger-*` y
@@ -395,6 +416,15 @@ Lo vigilan tres gates, cada uno verificado en rojo:
   porque nada los estaba leyendo. La valvula cuenta solo en la MISMA linea.
 - `motion/gsap.test.ts` — la curva de marca queda registrada. Si el registro falla,
   gsap no avisa: cae a su curva por defecto y el sitio se mueve distinto sin un error.
+
+**`loadMotion()` ajusta ScrollTrigger una sola vez para toda la pagina**:
+`ignoreMobileResize` —en tactil, la barra del navegador al aparecer dispara un resize
+que no es un cambio de maquetacion, y recalcular ahi hace saltar lo que va a medio
+camino— y una recalculada cuando `document.fonts.ready` resuelve, porque las fuentes son
+locales con `display: swap` y el texto cambia de ancho despues del primer pintado. Las
+dos van tras un `if (document.fonts)`: ademas de ser lo que pide la segunda, distingue
+un navegador de jsdom, donde `config()` deja un temporizador que despierta con el
+entorno ya desmontado.
 
 **Toda seccion entra con el scroll, cabecera y contenido.** `ScrollReveal` es el
 estandar: `lines`/`words` para texto, `block` para cajas, `inner` para listas (el
