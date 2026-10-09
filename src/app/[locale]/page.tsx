@@ -181,9 +181,37 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} />
       </Section>
 
-      {/* Sigue el ACTO III, con el mismo tono y sin aire grande entre los dos: lo que
-          se contrata y como se lleva son la misma respuesta partida en dos bloques. El
-          aire de capitulo va fuera del acto, no dentro. */}
+      {/* El respiro, y la unica seccion de la pagina sin nada que leer.
+
+          Va entre estos dos y no mas abajo, que es donde estaba. Una banda entrega al
+          bloque que tiene debajo, asi que ese bloque tiene que ORIENTAR: debajo de la
+          corona de valores no hay titular —su `h2` es `visually-hidden`— y se aterrizaba
+          en unas tarjetas girando sin nada que dijera de que van. Aqui entrega a "Como
+          trabajamos", que abre con titular, rotulo y entrada.
+
+          Lo que gana ademas es que deja de ser solo una pausa: a sangre y justo encima
+          de un titular grande, la imagen se lee como la PORTADA del proceso. Y sigue
+          haciendo su trabajo de capa —base, `raised` e imagen son las tres superficies
+          de la pila—, porque de servicios a la llamada final son ocho bloques seguidos
+          que piden atencion y este es el unico sitio donde no hay nada que procesar.
+
+          La banda no lleva aire propio por ningun lado: con fondo distinto ella ES la
+          separacion, y un margen alrededor la convertiria en una caja puesta encima.
+          Las tres superficies se tocan. El aire que se ve arriba y abajo es el relleno
+          de Servicios y de Proceso dentro de SU propia banda, que es donde tiene que
+          estar — un titular contra el borde de una foto no se lee.
+
+          Sin imagen no se pinta: medio viewport de hueco vacio es peor que no tener
+          respiro. */}
+      {bandImage ? (
+        <Section width="full" spacing="none">
+          <ImageBand {...bandImage} />
+        </Section>
+      ) : null}
+
+      {/* Sigue el ACTO III, con el mismo tono: lo que se contrata y como se lleva son
+          la misma respuesta partida en dos bloques, y el aire de capitulo va fuera del
+          acto. Lo que los separa ahora es la banda, que no es aire sino superficie. */}
       <Section
         width="strip"
         spacing="loose"
@@ -193,29 +221,6 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       >
         <Process {...getProcess(tProcess)} titleId={PROCESS_TITLE_ID} />
       </Section>
-
-      {/* El respiro entre el acto II y el III, y la unica seccion de la pagina sin
-          nada que leer.
-
-          Va aqui porque es la tirada mas larga sin corte: de servicios a la llamada
-          final son ocho bloques seguidos que piden atencion, y este es el punto donde
-          se acaba "que hacemos y como" y empieza "por que nosotros". Es ademas la
-          tercera capa de superficie que le faltaba a la pila —base, `raised` e
-          imagen—, que es lo que corta la racha de trece secciones que se leian como
-          una sola.
-
-          A sangre y sin aire por ninguno de los dos lados: con fondo distinto la
-          banda ES la separacion, y un margen alrededor la convertiria en una caja
-          puesta encima. Sin `labelledBy` tampoco, que es la otra cara de lo mismo: no
-          tiene titulo porque no tiene tema.
-
-          Sin imagen no se pinta. Medio viewport de hueco vacio es peor que no tener
-          respiro. */}
-      {bandImage ? (
-        <Section width="full" spacing="none">
-          <ImageBand {...bandImage} />
-        </Section>
-      ) : null}
 
       {/* ACTO IV — por que nosotros. Abre la corona de valores, que es la salida del
           capitulo anterior: vuelve al tono del sitio y sale por los bordes, asi que el
@@ -230,15 +235,38 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
 
           Aire de parrafo con lo que viene detras, no de capitulo: comparativa,
           testimonios y equipo son tres maneras de contestar la misma pregunta, y con
-          el aire grande entre las tres se leian como tres temas distintos. */}
-      <Section width="strip" spacing="default" spacingStart="loose" labelledBy={DIFFERENCE_TITLE_ID}>
+          el aire grande entre las tres se leian como tres temas distintos.
+
+          Y en `raised`, igual que la oferta y el proceso. Tras la banda venian SEIS
+          secciones blancas seguidas —valores, comparativa, testimonios, equipo,
+          preguntas y llamada— y la pila volvia a leerse como una sola superficie: la
+          alternancia pide una banda secundaria cada dos o tres secciones, no una por
+          pagina.
+
+          **El tono abarca esta y la siguiente**, que es la misma regla que ya gobierna
+          servicios y proceso: un corte que dura una seccion se lee como un accidente y
+          no como un capitulo. Y las dos van juntas por su contenido, no para rellenar
+          el par — la tabla es lo que el estudio afirma de si mismo y la cita firmada es
+          lo unico que la sostiene. */}
+      <Section
+        width="strip"
+        spacing="default"
+        spacingStart="loose"
+        theme={{ light: "raised", dark: "raised" }}
+        labelledBy={DIFFERENCE_TITLE_ID}
+      >
         <Difference {...getDifference(tDifference)} titleId={DIFFERENCE_TITLE_ID} />
       </Section>
 
       {/* Y quien lo dice, justo detras: la tabla es lo que el estudio afirma de si
           mismo, y una cita firmada es lo unico que la sostiene. Sin citas publicadas
-          la seccion no se pinta. */}
-      <Section width="strip" spacing="default" labelledBy={TESTIMONIALS_TITLE_ID}>
+          la seccion no se pinta. Cierra el capitulo `raised` que abrio la comparativa. */}
+      <Section
+        width="strip"
+        spacing="default"
+        theme={{ light: "raised", dark: "raised" }}
+        labelledBy={TESTIMONIALS_TITLE_ID}
+      >
         <Testimonials {...getTestimonials(tTestimonials)} titleId={TESTIMONIALS_TITLE_ID} />
       </Section>
 
