@@ -1,0 +1,12 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+
+// El alto se DECLARA y no sale de la proporcion de la foto: la banda tiene que medir
+// lo mismo con cualquier imagen que le toque, y una foto vertical a ancho completo
+// ocuparia tres pantallas. `ImageBackdrop` recorta por dentro con object-fit.
+.root {
+  position: relative;
+  block-size: brand.$image-band-block-size;
+  overflow: hidden;
+}
