@@ -291,6 +291,20 @@ $image-band-scrim: color.change(colors.$black, $alpha: 0.66);
 /// toque llevar la imagen.
 $image-band-scrim-stop: 58%;
 
+/// La banda va en BLANCO Y NEGRO con contraste alto.
+///
+/// Es la unica foto grande de la home y la unica que no es trabajo de un cliente: en
+/// color compite con las portadas del strip, que son lo que si hay que mirar, y a
+/// la vez se lee como otra pieza del portafolio. Desaturada deja de competir y pasa a
+/// hacer de fondo, que es lo que una banda hace.
+///
+/// El contraste va con la desaturacion y no suelto: quitar el color aplana una foto
+/// —lo que separaba dos tonos era el tono, no la luminancia— y sin subirlo la imagen
+/// se queda en una franja de grises medios. Y de paso ayuda al titular: cuanto mas
+/// contrastada la foto, mas marcada la zona oscura del pie donde se apoya el texto.
+$image-band-grayscale: 1;
+$image-band-contrast: 1.4;
+
 /// El sangrado de una caja que RECORTA texto, en em.
 ///
 /// `overflow: clip` corta a ras de la caja de linea, y los glifos se salen de ella:

@@ -26,6 +26,18 @@
   overflow: hidden;
 }
 
+// Blanco y negro con contraste alto. Va sobre el <img> y no sobre `.media`, que es
+// quien lleva el velo: un filtro en el padre tambien desaturaria el velo —que ya es
+// negro, asi que no cambiaria— pero sobre todo le aplicaria el contraste, y subir el
+// contraste de una capa semitransparente le cambia la opacidad efectiva.
+//
+// Por elemento y no por clase: la clase del <img> la pone el modulo de
+// `ImageBackdrop` y lleva su hash, asi que desde aqui no hay forma de nombrarla —
+// y tampoco deberia haberla: el filtro es de ESTA banda, no de todos los fondos.
+.media img {
+  filter: grayscale(brand.$image-band-grayscale) contrast(brand.$image-band-contrast);
+}
+
 // La foto, detras de todo y absoluta. `ImageBackdrop` recorta con `block-size: 100%`
 // y un porcentaje contra un alto automatico resuelve a cero: el unico alto definido
 // de esta caja es el de la banda entera, asi que la foto se cuelga de sus bordes.
