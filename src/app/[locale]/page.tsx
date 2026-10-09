@@ -66,7 +66,6 @@ const WORK_TITLE_ID = "trabajo";
 const SERVICES_TITLE_ID = "servicios";
 const PROCESS_TITLE_ID = "proceso";
 const CASE_TITLE_ID = "caso";
-const TESTIMONIALS_TITLE_ID = "clientes";
 const TEAM_TITLE_ID = "equipo";
 const FAQ_TITLE_ID = "faq";
 const CTA_TITLE_ID = "contacto";
@@ -101,6 +100,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   const tServices = await getTranslations("home.services");
   const tFigures = await getTranslations("home.figures");
   const tProcess = await getTranslations("home.process");
+  const tBand = await getTranslations("home.band");
   const tFeaturedCase = await getTranslations("home.featuredCase");
   const tTestimonials = await getTranslations("home.testimonials");
   const team = getTeam(await getTranslations("home.team"), teamMembers);
@@ -210,9 +210,25 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           respiro. */}
       {bandImage ? (
         <Section width="full" spacing="none">
-          <ImageBand {...bandImage} />
+          <ImageBand {...bandImage} title={tBand("title")} />
         </Section>
       ) : null}
+
+      {/* Quien lo dice, PEGADO a la banda y sin cabecera.
+
+          Estaba al final, entre los valores y los casos, con titular, rotulo y
+          entradilla como las otras ocho strips — una pantalla entera para presentar
+          seis frases que se presentan solas. Aqui hace un trabajo que alli no hacia:
+          la banda es la unica superficie de la pagina que no pide nada a cambio, y
+          justo despues de ella una fila de resenas se lee como el respaldo de lo que
+          se acaba de ver, no como otra seccion que argumenta.
+
+          Sin aire arriba, por lo mismo que la banda no lo lleva: las dos superficies
+          se tocan y ese contacto ES la separacion. Sin citas no se pinta, asi que el
+          hueco tampoco queda. */}
+      <Section width="full" spacing="loose" spacingStart="none">
+        <Testimonials {...getTestimonials(tTestimonials)} />
+      </Section>
 
       {/* Sigue el ACTO III: lo que se contrata y como se lleva son la misma respuesta
           partida en dos bloques, y lo que los separa es la banda, que no es aire sino
@@ -245,22 +261,6 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
 
           Lo que ocupaba su sitio en el argumento lo hacen ya dos bloques que SI son
           web: los casos con sus piezas y las resenas firmadas. */}
-
-      {/* Quien lo dice. Tras la corona de valores, que es lo ultimo que el estudio
-          afirma de si mismo, y antes de los casos, que es lo que lo demuestra.
-
-          En `raised` y sola: aqui el tono no marca capitulo, hace de FONDO. Las
-          resenas son tarjetas blancas, y una tarjeta blanca sobre una pagina blanca
-          no es una tarjeta. Es la misma figura contra fondo que usan las preguntas al
-          final. Sin citas publicadas la seccion no se pinta. */}
-      <Section
-        width="strip"
-        spacing="default"
-        theme={{ light: "raised", dark: "raised" }}
-        labelledBy={TESTIMONIALS_TITLE_ID}
-      >
-        <Testimonials {...getTestimonials(tTestimonials)} titleId={TESTIMONIALS_TITLE_ID} highlightFamily="lime" />
-      </Section>
 
       {/* Y el trabajo que lo sostiene, cerrando el capitulo.
 

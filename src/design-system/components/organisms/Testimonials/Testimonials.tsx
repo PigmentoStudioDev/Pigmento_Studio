@@ -1,7 +1,4 @@
-import type { CycledCandyFamily } from "../../../theme/candy";
 import { Marquee } from "../../molecules/Marquee/Marquee";
-import { StripHeader } from "../../molecules/StripHeader/StripHeader";
-import styles from "./Testimonials.module.scss";
 
 /**
  * Lo que dicen los clientes, con nombre y cargo, en una tira que corre sola.
@@ -31,6 +28,14 @@ import styles from "./Testimonials.module.scss";
  * razon — `blockquote` ya dice que esto es una cita, y el signo solo lo repetia en el
  * dibujo a cambio de un tamano inventado.
  *
+ * **Sin cabecera, y eso es la pieza.** El bloque tenia titular, rotulo y entradilla
+ * como cualquier otra strip de la pagina, y entre los dos se gastaban una pantalla en
+ * presentar seis frases que se presentan solas: una resena firmada no necesita que
+ * nadie anuncie que viene una resena. Lo que quedaba era una seccion mas con la misma
+ * forma que las otras ocho — justo lo que hacia que la pagina se leyera como un
+ * documento. Ahora es solo la fila, debajo de la banda, donde funciona como lo que es:
+ * el respaldo de la imagen que acaba de pasar.
+ *
  * Server component entero: lo que cruza al navegador es la tira, que ya cruzaba.
  */
 export interface Testimonial {
@@ -42,19 +47,7 @@ export interface Testimonial {
 }
 
 export interface TestimonialsProps {
-  title: string;
-  /** El trozo del titular que se resalta con el scroll. */
-  titleHighlight?: string;
-  label: string;
-  intro: string;
   testimonials: Testimonial[];
-  titleId?: string;
-  /**
-   * De que familia candy es el resalte del titular. Sin valor, el azul del tema.
-   * Lo reparte la PAGINA, que es quien conoce el orden de los bloques: el ciclo
-   * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
-   */
-  highlightFamily?: CycledCandyFamily;
 }
 
 /**
@@ -63,35 +56,19 @@ export interface TestimonialsProps {
  */
 const SPEED = 90;
 
-export function Testimonials({
-  title,
-  titleHighlight,
-  label,
-  intro,
-  testimonials,
-  titleId,
-  highlightFamily,
-}: TestimonialsProps) {
+/**
+ * El tono de las tarjetas. Oscuras sobre la pagina clara y elevadas sobre la oscura:
+ * en los dos casos un bloque que se despega del fondo, que es lo que convierte una
+ * fila de texto en una fila de tarjetas. No se invierte en oscuro —seis rectangulos
+ * blancos a pantalla completa deslumbran— y por eso no es `light`/`dark` sino el
+ * escalon que cada modo tiene.
+ */
+const CARD_THEME = { light: "dark", dark: "raised" } as const;
+
+export function Testimonials({ testimonials }: TestimonialsProps) {
   if (testimonials.length === 0) return null;
 
-  return (
-    <div className={styles.root}>
-      <div className={styles.header}>
-        <StripHeader
-          title={title}
-          titleHighlight={titleHighlight}
-          label={label}
-          intro={intro}
-          titleId={titleId}
-          highlightFamily={highlightFamily}
-        />
-      </div>
-
-      {/* Sin ScrollReveal: la tira ya entra moviendose, y una entrada por scroll
-          encima de un bucle es el mismo bloque animandose dos veces. */}
-      <div className={styles.strip}>
-        <Marquee kind="quotes" items={testimonials} speed={SPEED} />
-      </div>
-    </div>
-  );
+  // Sin ScrollReveal: la tira ya entra moviendose, y una entrada por scroll encima de
+  // un bucle es el mismo bloque animandose dos veces.
+  return <Marquee kind="quotes" items={testimonials} speed={SPEED} itemTheme={CARD_THEME} />;
 }

@@ -162,10 +162,14 @@ La home llego a trece bloques con solo las dos primeras y se leia como una sola
 superficie con un escalon; `ImageBand` es la tercera, y va donde se acaba un acto —hoy
 entre el proceso y los valores, que es la tirada mas larga sin corte.
 
-**La banda no lleva nada que leer, y eso ES el componente.** Un titular, una cifra o un
-boton encima la convierten en una seccion mas y la dejan sin trabajo. Tampoco lleva
-velo: el velo garantiza contraste bajo texto, y sin texto solo apaga la foto. Va a
-sangre y sin aire por ningun lado, porque con fondo distinto la banda ES la separacion.
+**La banda admite UNA frase abajo y nada mas** (`title`, decision de Karen 2026-10-09).
+Sin ella es el caso por defecto y lo que era la regla entera: nada que procesar entre
+dos bloques que piden atencion. Lo que no admite —y es lo que la separaria de ser una
+pausa— es un segundo elemento: una entradilla, un boton o una cifra obligan a decidir
+que se lee primero, y ahi ya es la seccion siguiente. El velo va atado al titular por
+la misma logica: garantiza contraste bajo texto, asi que sin texto solo apaga la foto.
+Va a sangre y sin aire por ningun lado, porque con fondo distinto la banda ES la
+separacion. Su alto es un MINIMO desde que puede llevar texto, no un valor fijo.
 
 Como las bandas de ruta y los gradientes candy, **no re-tematiza**: la foto es la misma
 en claro y en oscuro.

@@ -118,6 +118,20 @@ describe("Marquee · resenas", () => {
   ];
 
   /**
+   * `itemTheme` es OTRA superficie, no la misma con otro nombre: una tarjeta de resena
+   * oscura sobre la pagina clara necesita que la tira NO se pinte. Si la zona acabara
+   * en el carril, lo que se veria es una franja negra de borde a borde.
+   */
+  it("el tema de la pieza va en la tarjeta y no en el carril", () => {
+    const { container } = render(
+      <Marquee kind="quotes" items={CITAS} itemTheme={{ light: "dark", dark: "raised" }} />,
+    );
+
+    expect(container.firstElementChild?.className).not.toMatch(/cds--/);
+    expect(container.querySelector("figure")?.className).toMatch(/cds--(white|g10|g90|g100)/);
+  });
+
+  /**
    * La cita y su fuente son una relacion que el navegador ya sabe expresar: quien
    * escucha la pagina oye donde empieza y acaba lo citado, y de quien es.
    */
