@@ -8,12 +8,22 @@
 // Los hijos los CREA el hook en tiempo de ejecucion, asi que se les llega por
 // atributo y no por clase: una clase de modulo lleva hash y el JS no lo conoce.
 // Van anidados bajo .root para que el selector de atributo no se escape a global.
-// Mientras rueda se ve la pista y se esconde el texto; el resto del tiempo, al
-// reves. `display: none` y no `visibility`: la pista vacia ocuparia una caja de
-// linea y separaria la cifra de lo que lleve al lado.
+//
+// LA CAJA LA DEFINE SIEMPRE EL TEXTO PLANO, y esto es lo unico importante de este
+// archivo. Antes la pista y el texto se turnaban con `display`: mientras rodaba, la
+// caja era un `inline-flex` con sus celdas centradas; al acabar, volvia a ser un
+// `span` de texto. Son dos cajas con dos lineas base distintas, asi que en el
+// fotograma en que termina el giro la cifra DABA UN SALTO a otra posicion — el corte
+// que se veia al final de la animacion.
+//
+// Ahora el texto plano no se va nunca: se queda en el flujo marcando el hueco y solo
+// pierde la visibilidad, y la pista se pinta ENCIMA, fuera del flujo. Entre rodando y
+// quieto no cambia de sitio ni un pixel, porque no cambia nada que ocupe sitio.
 .root {
-  display: inline-flex;
-  align-items: center;
+  position: relative;
+  // `inline-block` y no `inline-flex`: la base de un flex sale de su primer hijo y
+  // aqui tiene que salir del texto, que es lo unico que se queda.
+  display: inline-block;
   // Sin ancho fijo por digito, cada vuelta del rodillo cambiaria el ancho de la
   // cifra y la linea entera bailaria mientras rueda.
   font-variant-numeric: tabular-nums;
@@ -24,13 +34,20 @@
 }
 
 .root[data-rolling='true'] {
+  // `visibility` y no `display`: el hueco tiene que seguir ahi. Es lo contrario de lo
+  // que hacia antes, y es justo el arreglo.
   .plain {
-    display: none;
+    visibility: hidden;
   }
 
+  // Encima del texto y pegada a sus cuatro bordes. `start` y no `center`: las celdas
+  // miden el interlineado real del texto, asi que alineadas arriba su primera linea
+  // base cae exactamente donde la del texto que tapan.
   .rollers {
-    display: inline-flex;
-    align-items: center;
+    display: flex;
+    position: absolute;
+    inset: 0;
+    align-items: start;
   }
 }
 
