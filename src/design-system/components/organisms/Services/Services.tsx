@@ -1,5 +1,6 @@
 "use client";
 
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { getImageProps } from "next/image";
 import { cursorAttributes } from "../../../motion/cursor";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
@@ -37,12 +38,27 @@ export interface ServicesProps {
   cta: string;
   services: ServiceItem[];
   titleId?: string;
+  /**
+   * De que familia candy es el resalte del titular. Sin valor, el azul del tema.
+   * Lo reparte la PAGINA, que es quien conoce el orden de los bloques: el ciclo
+   * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
+   */
+  highlightFamily?: CycledCandyFamily;
 }
 
 /** La caja mide 24vw, como en la referencia. */
 const PREVIEW_SIZES = "24vw";
 
-export function Services({ title, titleHighlight, label, intro, cta, services, titleId }: ServicesProps) {
+export function Services({
+  title,
+  titleHighlight,
+  label,
+  intro,
+  cta,
+  services,
+  titleId,
+  highlightFamily,
+}: ServicesProps) {
   const rootRef = useServicePreview<HTMLDivElement>();
 
   if (services.length === 0) return null;
@@ -50,7 +66,14 @@ export function Services({ title, titleHighlight, label, intro, cta, services, t
   return (
     <div ref={rootRef} className={styles.root}>
       <div className={styles.header}>
-        <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
+        <StripHeader
+          title={title}
+          titleHighlight={titleHighlight}
+          label={label}
+          intro={intro}
+          titleId={titleId}
+          highlightFamily={highlightFamily}
+        />
       </div>
 
       {/* Las filas entran como el resto de la pagina, una detras de otra: con solo la

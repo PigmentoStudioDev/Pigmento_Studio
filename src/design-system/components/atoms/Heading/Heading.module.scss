@@ -1,5 +1,6 @@
 @use '../../../styles/carbon-config';
 
+@use '../../../styles/candy';
 @use '../../../styles/highlight';
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/theme';
@@ -53,6 +54,41 @@
 
 // El trozo resaltado. Vacio hasta que un ScrollHighlight por encima publique el
 // progreso; sin el, el titular se lee igual y sin resalte.
+// `.mark` lleva lo COMUN —el radio, el recorte por linea, el apagado del fondo que
+// trae <mark> del navegador— y por defecto el resaltado del tema. Una clase de familia
+// al lado le cambia solo el color.
 .mark {
   @include highlight.mark;
+}
+
+// Una familia candy por strip. El color del sistema estaba encerrado en las tarjetas
+// de valores —UN bloque— y el resto de la pagina era gris sobre blanco de arriba
+// abajo. El resalte ya existia en cada titular: lo unico que cambia es que deja de
+// ser siempre el mismo azul.
+//
+// El tono CLARO y no el gradiente, por lo mismo que en la frase del manifiesto: un
+// degradado detras de un titular se reinicia en cada linea de la marca partida, y la
+// parada saturada no deja leer lo que resalta.
+.markPeriwinkle {
+  @include highlight.fill(candy.light('periwinkle'));
+}
+
+.markTangerine {
+  @include highlight.fill(candy.light('tangerine'));
+}
+
+.markCyan {
+  @include highlight.fill(candy.light('cyan'));
+}
+
+.markPink {
+  @include highlight.fill(candy.light('pink'));
+}
+
+.markLime {
+  @include highlight.fill(candy.light('lime'));
+}
+
+.markAmber {
+  @include highlight.fill(candy.light('amber'));
 }

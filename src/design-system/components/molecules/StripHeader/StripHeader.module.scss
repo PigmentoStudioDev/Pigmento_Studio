@@ -5,6 +5,11 @@
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
+/// Lo que mide la entradilla cuando va centrada. 60ch: el mismo techo que usan los
+/// parrafos largos del sitio, y el que la columna derecha da de hecho en el reparto
+/// partido.
+$centered-measure: 60ch;
+
 // Dos columnas y el texto en la derecha. El hueco de la izquierda esta vacio a
 // proposito: es lo que hace que el ojo baje del titular a lo que viene sin tropezar
 // con un parrafo por el camino.
@@ -43,4 +48,27 @@
   .band {
     grid-template-columns: 1fr;
   }
+}
+
+// La variante CENTRADA: una sola columna, los tres al medio y la entradilla con su
+// propia medida.
+//
+// La medida es lo unico que no se hereda del reparto partido. Alli la columna derecha
+// ES la medida; centrado, el parrafo correria los 1900px de la banda y un texto
+// centrado de cien caracteres por linea no se lee — el ojo pierde el renglon de vuelta
+// porque no tiene un borde izquierdo fijo al que volver. En `ch` y no en rem: lo que
+// limita una linea es cuantos CARACTERES trae, no cuantos pixeles mide.
+.centered .band {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  text-align: center;
+}
+
+.centered .intro {
+  max-inline-size: $centered-measure;
+}
+
+// El titular tambien, y por el mismo motivo: es el que marca el eje.
+.centered {
+  text-align: center;
 }

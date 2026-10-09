@@ -1,3 +1,4 @@
+import type { CycledCandyFamily } from "../../../theme/candy";
 import type { CSSProperties } from "react";
 import { Heading } from "../../atoms/Heading/Heading";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
@@ -58,6 +59,12 @@ export interface ProcessProps {
   deliverableLabel: string;
   phases: ProcessPhase[];
   titleId?: string;
+  /**
+   * De que familia candy es el resalte del titular. Sin valor, el azul del tema.
+   * Lo reparte la PAGINA, que es quien conoce el orden de los bloques: el ciclo
+   * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
+   */
+  highlightFamily?: CycledCandyFamily;
 }
 
 /** Dos cifras: "01" y no "1". Es la misma voz que el indice de las tarjetas de valores. */
@@ -73,13 +80,21 @@ export function Process({
   deliverableLabel,
   phases,
   titleId,
+  highlightFamily,
 }: ProcessProps) {
   if (phases.length === 0) return null;
 
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <StripHeader title={title} titleHighlight={titleHighlight} label={label} intro={intro} titleId={titleId} />
+        <StripHeader
+          title={title}
+          titleHighlight={titleHighlight}
+          label={label}
+          intro={intro}
+          titleId={titleId}
+          highlightFamily={highlightFamily}
+        />
       </div>
 
       {/* `inner` por lo mismo que en el resto de listas: el envoltorio del gesto no

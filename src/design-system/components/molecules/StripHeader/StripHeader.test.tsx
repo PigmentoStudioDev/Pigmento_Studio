@@ -36,4 +36,25 @@ describe("StripHeader", () => {
 
     expect(await axe(container)).toHaveNoViolations();
   });
+
+  /**
+   * El reparto partido deja el titular a un lado y la entradilla al otro. Sobre un
+   * bloque simetrico —la corona de valores— eso apunta a un eje que abajo no existe,
+   * y por eso la variante existe y no es una preferencia.
+   */
+  it("centrado envuelve los tres en una sola caja", () => {
+    const { container } = render(<StripHeader {...PROPS} align="center" />);
+
+    const caja = container.firstElementChild;
+    expect(caja?.className).toContain("centered");
+    expect(caja?.querySelector("h2")).not.toBeNull();
+    expect(caja?.textContent).toContain(PROPS.intro);
+  });
+
+  /** Sin la prop, nada cambia: es el reparto de todas las strips de la pagina. */
+  it("sin align no lleva la clase de centrado", () => {
+    const { container } = render(<StripHeader {...PROPS} />);
+
+    expect(container.firstElementChild?.className).toBe("");
+  });
 });

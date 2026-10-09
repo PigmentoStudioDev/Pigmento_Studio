@@ -12,8 +12,17 @@
 /// la marca: el partido por lineas del reveal corta la marca en una copia por linea, y
 /// un estilo escrito en la original no llegaria a las copias. Una custom property del
 /// antepasado les llega a todas.
-@mixin mark {
-  background-image: linear-gradient(theme.$highlight, theme.$highlight);
+///
+/// `$fill` es un COLOR plano y nunca un gradiente, aunque el relleno se dibuje con
+/// `linear-gradient`: ese gradiente no es decoracion, es la forma de poder animar
+/// cuanto hay pintado con `background-size`. Un degradado de verdad ahi dentro se
+/// reiniciaria en cada linea de la marca partida.
+///
+/// Por defecto, el resaltado del tema. Las familias candy entran por aqui —
+/// `candy.light('pink')`— y es lo que permite tener un color por palabra sin que cada
+/// bloque se escriba su propio relleno.
+@mixin mark($fill: theme.$highlight) {
+  background-image: linear-gradient($fill, $fill);
   background-repeat: no-repeat;
   background-position: 0 0;
   background-size: calc(var(--pg-highlight-progress, 0) * 100%) 100%;
@@ -31,4 +40,15 @@
   @media (prefers-reduced-motion: reduce) {
     background-size: 100% 100%;
   }
+}
+
+/// SOLO el color, para una clase que acompana a `mark`.
+///
+/// Existe porque repetir el mixin entero por familia no es solo CSS de mas: la copia
+/// trae consigo `background-size` y `background-position`, asi que pisa cualquier
+/// ajuste de geometria que el bloque haya hecho sobre `.mark` — y lo pisa en silencio,
+/// porque las dos reglas son validas y gana la ultima. Paso con la frase del
+/// manifiesto: la banda seguia anclada a la caja de la linea con el ajuste escrito.
+@mixin fill($color) {
+  background-image: linear-gradient($color, $color);
 }

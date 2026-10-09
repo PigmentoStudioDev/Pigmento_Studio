@@ -8,6 +8,7 @@ import {
   useMediaBurst,
 } from "../../../motion/useMediaBurst";
 import { SectionChip } from "../../atoms/SectionChip/SectionChip";
+import { ScrollHighlight } from "../../layout/ScrollHighlight/ScrollHighlight";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import styles from "./Manifesto.module.scss";
 
@@ -51,6 +52,29 @@ export interface ManifestoProps {
   pieces: ManifestoPiece[];
 }
 
+/**
+ * El color de cada palabra caliente, en el orden del ciclo candy.
+ *
+ * Por POSICION entre las calientes y no por lo que diga la palabra: "branding" no es
+ * periwinkle, es la primera. Un mapa por contenido obligaria a tocar codigo cada vez
+ * que Pigmento reescriba la frase, y el ciclo ya alterna calidos y frios para que dos
+ * palabras seguidas no caigan en la misma temperatura.
+ *
+ * Cada clase se nombra entera y no se construye: el gate de modulos busca la forma
+ * literal en el TSX, en las dos direcciones, y un nombre interpolado dejaria estas
+ * cuatro marcadas como CSS muerto.
+ */
+const WORD_FAMILY = [styles.wordPeriwinkle, styles.wordTangerine, styles.wordCyan, styles.wordPink];
+
+/**
+ * Cuantas palabras calientes van ANTES de esta. El indice del segmento no sirve: los
+ * trozos de texto plano van entre medias y contarlos repartiria dos familias
+ * salteadas de las cuatro.
+ */
+function hotIndex(segments: ManifestoSegment[], index: number): number {
+  return segments.slice(0, index).filter((segment) => segment.href).length % WORD_FAMILY.length;
+}
+
 export function Manifesto({ eyebrow, segments, pieces }: ManifestoProps) {
   const { rootRef, start, stop } = useMediaBurst<HTMLDivElement>();
 
@@ -63,31 +87,41 @@ export function Manifesto({ eyebrow, segments, pieces }: ManifestoProps) {
         <SectionChip>{eyebrow}</SectionChip>
       </ScrollReveal>
 
-      <ScrollReveal>
-        <p className={styles.sentence}>
-          {segments.map((segment, index) =>
-            segment.href ? (
-              <Link
-                // El indice entra en la clave porque el mismo texto puede repetirse en
-                // una frase, y dos trozos iguales serian dos claves iguales.
-                key={`${segment.text}-${index}`}
-                href={segment.href}
-                className={styles.word}
-                onMouseEnter={(event) => start(event.currentTarget)}
-                onMouseLeave={stop}
-                onFocus={(event) => start(event.currentTarget)}
-                onBlur={stop}
-              >
-                {segment.text}
-              </Link>
-            ) : (
-              <Fragment key={`${segment.text}-${index}`}>
-                {segment.text}
-              </Fragment>
-            ),
-          )}
-        </p>
-      </ScrollReveal>
+      {/* El resaltado va POR FUERA del reveal, igual que en los titulares: el reveal
+          parte la frase por lineas y se lleva las marcas con ella, asi que el progreso
+          tiene que publicarse por encima de todo lo que se parte. */}
+      <ScrollHighlight>
+        <ScrollReveal>
+          <p className={styles.sentence}>
+            {segments.map((segment, index) =>
+              segment.href ? (
+                <Link
+                  // El indice entra en la clave porque el mismo texto puede repetirse
+                  // en una frase, y dos trozos iguales serian dos claves iguales.
+                  key={`${segment.text}-${index}`}
+                  href={segment.href}
+                  className={styles.word}
+                  onMouseEnter={(event) => start(event.currentTarget)}
+                  onMouseLeave={stop}
+                  onFocus={(event) => start(event.currentTarget)}
+                  onBlur={stop}
+                >
+                  {/* La marca va DENTRO del enlace y no al reves: lo que navega es la
+                      palabra entera, y un <a> dentro de un <mark> deja el resaltado
+                      fuera del area de clic. El subrayado se queda — un resaltado es
+                      color, y un enlace en medio de un parrafo no puede distinguirse
+                      solo por color. */}
+                  <mark className={`${styles.mark} ${WORD_FAMILY[hotIndex(segments, index)]}`}>
+                    {segment.text}
+                  </mark>
+                </Link>
+              ) : (
+                <Fragment key={`${segment.text}-${index}`}>{segment.text}</Fragment>
+              ),
+            )}
+          </p>
+        </ScrollReveal>
+      </ScrollHighlight>
 
       {/*
         La reserva de piezas. Vive fuera del flujo y sin puntero: no ocupa sitio, no

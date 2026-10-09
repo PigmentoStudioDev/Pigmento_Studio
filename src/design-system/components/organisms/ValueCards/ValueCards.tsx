@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { cursorAttributes } from "../../../motion/cursor";
+import { candyAt, type CycledCandyFamily } from "../../../theme/candy";
 import { useAutoRotate } from "../../../motion/useAutoRotate";
 import { RADIAL_COPIES, useRadialSlider } from "../../../motion/useRadialSlider";
 import { IconButton } from "../../atoms/IconButton/IconButton";
@@ -72,6 +73,12 @@ export interface ValueCardsProps {
   cards: ValueCard[];
   labels: ValueCardsLabels;
   titleId?: string;
+  /**
+   * De que familia candy es el resalte del titular. Sin valor, el azul del tema.
+   * Lo reparte la PAGINA, que es quien conoce el orden de los bloques: el ciclo
+   * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
+   */
+  highlightFamily?: CycledCandyFamily;
 }
 
 const COPIES = Array.from({ length: RADIAL_COPIES }, (_, copy) => copy);
@@ -79,7 +86,36 @@ const COPIES = Array.from({ length: RADIAL_COPIES }, (_, copy) => copy);
 /** La copia que se anuncia. Es la del medio: las demas rodean a la activa. */
 const ANNOUNCED_COPY = Math.floor(RADIAL_COPIES / 2);
 
-export function ValueCards({ title, titleHighlight, label, intro, cards, labels, titleId }: ValueCardsProps) {
+/**
+ * La clase que pinta cada familia del candy.
+ *
+ * El mapa existe porque la FORMA del gradiente —tres paradas, 150deg, la media al
+ * 52%— vive en `_candy.scss` y solo se puede invocar desde Sass; aqui viaja el
+ * nombre. Explicito y no un nombre construido a mano: una clase
+ * interpolada no la ve el gate que comprueba que toda clase del TSX exista en la
+ * hoja, y el dia que se renombre una familia la tarjeta saldria transparente sin que
+ * nada falle. Y al estar tipado contra el ciclo, anadir una familia al ciclo sin su
+ * clase es un error de compilacion.
+ */
+const FAMILY_CLASS: Record<CycledCandyFamily, string> = {
+  periwinkle: styles.familyPeriwinkle,
+  tangerine: styles.familyTangerine,
+  cyan: styles.familyCyan,
+  pink: styles.familyPink,
+  lime: styles.familyLime,
+  amber: styles.familyAmber,
+};
+
+export function ValueCards({
+  title,
+  titleHighlight,
+  label,
+  intro,
+  cards,
+  labels,
+  titleId,
+  highlightFamily,
+}: ValueCardsProps) {
   const count = cards.length;
   const { trackRef, step, active, dragDegrees, dragging, go, goTo, handlers, onTransitionEnd } =
     useRadialSlider<HTMLDivElement>(count);
@@ -121,6 +157,7 @@ export function ValueCards({ title, titleHighlight, label, intro, cards, labels,
           label={label}
           intro={intro}
           titleId={titleId}
+          align="center" highlightFamily={highlightFamily}
         />
       </div>
 
@@ -156,7 +193,12 @@ export function ValueCards({ title, titleHighlight, label, intro, cards, labels,
                           ? { role: "group", "aria-label": card.position }
                           : { "aria-hidden": true, inert: true })}
                       >
-                        <article className={styles.card}>
+                        {/* La familia sale de la POSICION y no de una prop: el ciclo
+                            alterna calidos y frios para que dos tarjetas vecinas no
+                            caigan en la misma temperatura, y eso es una decision del
+                            sistema, no del contenido. Quitar un valor del CMS
+                            recoloca el resto solo. */}
+                        <article className={`${styles.card} ${FAMILY_CLASS[candyAt(index)]}`}>
                           <span className={styles.index} aria-hidden="true">
                             {String(index + 1).padStart(2, "0")}
                           </span>

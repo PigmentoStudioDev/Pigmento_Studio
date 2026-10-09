@@ -3,6 +3,7 @@
 // literal 'IBM Plex Sans' que next/font no registra.
 @use '../../../styles/carbon-config';
 
+@use '../../../styles/candy';
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
@@ -54,10 +55,46 @@ $figure-min-inline-size: 15rem;
 // El filete de arriba y no una tarjeta: cuatro cajas con fondo en mitad de una pagina
 // que ya tiene tarjetas de valores y polaroids de equipo serian la tercera caja
 // distinta. Una linea agrupa igual y no anade una forma mas al sistema.
+// LA CIFRA. En la escala de titular y no en la de cifra, y no es un capricho de
+// tamano: `figure` esta pensada para la tarjeta de una propuesta, donde el numero
+// comparte una columna de 430px con texto. Aqui el numero ES el titular de su celda —
+// no hay otro— y a 42px competia de igual a igual con el rotulo que lo explica.
+//
+// Ese tamano es ademas lo que hace que se VEA el rodado: el odometro siempre estuvo
+// ahi, pero a cuerpo pequeno y en gris pasaba desapercibido.
 .value {
-  @include brandtype.style('figure');
+  @include brandtype.style('heading');
 
   margin: 0;
+}
+
+// El gradiente candy recortado contra la cifra, una familia por posicion.
+//
+// Cada `styles.<clase>` se nombra entera en el TSX: el gate de modulos busca la forma
+// literal en las dos direcciones, y un nombre interpolado dejaria estas seis marcadas
+// como CSS muerto.
+.valuePeriwinkle {
+  @include candy.numeral('periwinkle');
+}
+
+.valueTangerine {
+  @include candy.numeral('tangerine');
+}
+
+.valueCyan {
+  @include candy.numeral('cyan');
+}
+
+.valuePink {
+  @include candy.numeral('pink');
+}
+
+.valueLime {
+  @include candy.numeral('lime');
+}
+
+.valueAmber {
+  @include candy.numeral('amber');
 }
 
 .label {

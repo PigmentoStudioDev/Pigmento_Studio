@@ -1,3 +1,4 @@
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { Heading } from "../../atoms/Heading/Heading";
 import { ScrollHighlight } from "../../layout/ScrollHighlight/ScrollHighlight";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
@@ -13,6 +14,12 @@ import styles from "./StripHeader.module.scss";
  *
  * El hueco de la izquierda esta vacio a proposito: es lo que hace que el ojo baje del
  * titular a lo que viene sin tropezar con un parrafo por el camino.
+ *
+ * **`align="center"` apila los tres al medio.** No es una preferencia: lo pide el
+ * bloque que tiene debajo. Una cabecera partida en dos columnas entrega a una lista o
+ * a una rejilla que empieza por la izquierda; sobre una corona de tarjetas, que es
+ * simetrica y nace del centro, la misma cabecera deja el titular en una esquina y la
+ * entradilla en la otra, apuntando a un eje que abajo no existe.
  *
  * Los tres textos entran por scroll y no todos igual: el titular y la entradilla por
  * LINEAS —el gesto de leer— y el rotulo por PALABRAS. La diferencia no es decorativa:
@@ -37,14 +44,38 @@ export interface StripHeaderProps {
   titleId?: string;
   /** El trozo del titular que se resalta con el scroll. */
   titleHighlight?: string;
+  /** De que familia candy es ese resalte. Sin valor, el azul del tema. */
+  highlightFamily?: CycledCandyFamily;
+  /**
+   * Como se reparte. `split` —el de siempre— deja el titular a la izquierda y la
+   * entradilla en la columna derecha; `center` apila los tres al medio, para los
+   * bloques que debajo son simetricos.
+   */
+  align?: "split" | "center";
 }
 
-export function StripHeader({ title, label, intro, titleId, titleHighlight }: StripHeaderProps) {
+export function StripHeader({
+  title,
+  label,
+  intro,
+  titleId,
+  titleHighlight,
+  highlightFamily,
+  align = "split",
+}: StripHeaderProps) {
+  const centered = align === "center";
+
   return (
-    <>
+    <div className={centered ? styles.centered : undefined}>
       <ScrollHighlight>
         <ScrollReveal>
-          <Heading level={2} size="heading" id={titleId} highlight={titleHighlight}>
+          <Heading
+            level={2}
+            size="heading"
+            id={titleId}
+            highlight={titleHighlight}
+            highlightFamily={highlightFamily}
+          >
             {title}
           </Heading>
         </ScrollReveal>
@@ -59,6 +90,6 @@ export function StripHeader({ title, label, intro, titleId, titleHighlight }: St
           <p className={styles.intro}>{intro}</p>
         </ScrollReveal>
       </div>
-    </>
+    </div>
   );
 }
