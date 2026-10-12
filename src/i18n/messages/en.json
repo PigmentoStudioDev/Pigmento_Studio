@@ -373,6 +373,38 @@
       "drag": "Drag"
     }
   },
+  "pending": {
+    "action": "Back to the home page",
+    "instagram": "Message us on Instagram",
+    "work": {
+      "title": "Work",
+      "intro": "The full portfolio is not published yet. The home page shows eighteen projects and five cases with their pieces."
+    },
+    "services": {
+      "title": "Services",
+      "intro": "The detail of each service is not written yet. The home page covers the four disciplines and how we work."
+    },
+    "about": {
+      "title": "About",
+      "intro": "The studio page is not written yet. The home page has the team and the figures."
+    },
+    "contact": {
+      "title": "Contact",
+      "intro": "The form is not in place yet. In the meantime, message us on Instagram and we answer there."
+    },
+    "motion": {
+      "title": "Motion",
+      "intro": "The motion page is not written yet. The home page covers what the discipline includes."
+    },
+    "marketing": {
+      "title": "Marketing",
+      "intro": "The marketing page is not written yet. The home page covers what the discipline includes."
+    },
+    "web": {
+      "title": "Web development",
+      "intro": "The web development page is not written yet. The home page covers what the discipline includes."
+    }
+  },
   "proposal": {
     "title": "Proposal",
     "concept": "Item",
