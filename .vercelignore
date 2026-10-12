@@ -1,0 +1,33 @@
+# Lo que NO se sube cuando el deploy sale del CLI.
+#
+# Existe por un fallo concreto, no por prolijidad. Los deploys por git de este repo
+# estan bloqueados (la cuenta de GitHub resuelve a dos equipos de Vercel y el check de
+# membresia del autor falla), asi que produccion se despliega con `vercel --prod`, que
+# sube el DIRECTORIO LOCAL. Y el directorio local tiene un `.env` con
+# `DATABASE_URI=file:./pigmento.db`.
+#
+# Ese valor viajaba al deployment y ganaba, porque la config hace
+# `DATABASE_URI || TURSO_DATABASE_URL`: en produccion Payload intentaba abrir un SQLite
+# que alli no existe y no arrancaba —
+#
+#   cannot connect to SQLite: ConnectionFailed(
+#     "Unable to open connection to local database ./pigmento.db: 14")
+#
+# El sintoma no era un error en pantalla: la pagina se habia horneado en el build, asi
+# que seguia pintando, y lo unico que se veia es que la banda de la home desaparecia
+# —su imagen se lee en cada peticion— mientras `/api/media` devolvia 500.
+#
+# Fuera de aqui, el entorno de produccion lo define SOLO el proyecto de Vercel, que ya
+# tiene PAYLOAD_SECRET, los cinco R2_* y TURSO_DATABASE_URL / TURSO_AUTH_TOKEN. Un
+# archivo de entorno local no puede volver a pisarlo.
+#
+# `.env.example` no hace falta excluirlo —no lleva ni un valor real— pero tampoco
+# aporta nada al bundle, y la regla es mas facil de leer sin excepciones.
+.env*
+
+# La base local y sus diarios de escritura. Es el archivo que el `.env` de arriba
+# nombra: si llegara a subirse, produccion leeria datos congelados en el ultimo deploy
+# en vez de Turso, que es peor que no arrancar — no falla, miente.
+*.db
+*.db-shm
+*.db-wal
