@@ -373,6 +373,38 @@
       "drag": "Arrastra"
     }
   },
+  "pending": {
+    "action": "Volver al inicio",
+    "instagram": "Escribenos por Instagram",
+    "work": {
+      "title": "Trabajo",
+      "intro": "El portafolio completo todavia no esta publicado. En la home hay dieciocho proyectos y cinco casos con sus piezas."
+    },
+    "services": {
+      "title": "Servicios",
+      "intro": "El detalle de cada servicio todavia no esta escrito. En la home estan las cuatro disciplinas y como trabajamos."
+    },
+    "about": {
+      "title": "Nosotros",
+      "intro": "La pagina del estudio todavia no esta escrita. En la home estan el equipo y las cifras."
+    },
+    "contact": {
+      "title": "Contacto",
+      "intro": "El formulario todavia no esta puesto. Mientras tanto, escribenos por Instagram y contestamos ahi."
+    },
+    "motion": {
+      "title": "Motion",
+      "intro": "La pagina de motion todavia no esta escrita. En la home esta lo que incluye la disciplina."
+    },
+    "marketing": {
+      "title": "Marketing",
+      "intro": "La pagina de marketing todavia no esta escrita. En la home esta lo que incluye la disciplina."
+    },
+    "web": {
+      "title": "Desarrollo web",
+      "intro": "La pagina de desarrollo web todavia no esta escrita. En la home esta lo que incluye la disciplina."
+    }
+  },
   "proposal": {
     "title": "Propuesta",
     "concept": "Concepto",
