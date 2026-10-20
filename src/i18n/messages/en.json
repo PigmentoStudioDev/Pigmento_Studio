@@ -63,6 +63,13 @@
     "backToTop": "Back to top"
   },
   "home": {
+    "hero": {
+      "eyebrow": "Brand design and growth",
+      "title": "We design brands with a vision for the future.",
+      "titleHighlight": "vision for the future",
+      "subtitle": "Strategy, design and technology working together to turn ideas into brands that grow, evolve and endure.",
+      "cta": "Start a project"
+    },
     "manifesto": {
       "eyebrow": "What we do",
       "open": "We build brands people recognise: ",
@@ -440,5 +447,18 @@
   "legal": {
     "effectiveSince": "In effect since {date}",
     "tocLabel": "Document contents"
+  },
+  "metadata": {
+    "description": "Brand design and growth studio in Santa Fe, Mexico City. Branding, digital marketing, web development and motion graphics."
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "We couldn't load this section. You can try again.",
+    "retry": "Try again"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or has moved.",
+    "action": "Back to home"
   }
 }

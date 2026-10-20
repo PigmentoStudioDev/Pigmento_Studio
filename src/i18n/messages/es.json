@@ -63,6 +63,13 @@
     "backToTop": "Volver arriba"
   },
   "home": {
+    "hero": {
+      "eyebrow": "Diseño de marca y crecimiento",
+      "title": "Diseñamos marcas con visión de futuro.",
+      "titleHighlight": "visión de futuro",
+      "subtitle": "Estrategia, diseño y tecnología trabajando juntos para convertir ideas en marcas que crecen, evolucionan y perduran.",
+      "cta": "Empezar un proyecto"
+    },
     "manifesto": {
       "eyebrow": "Qué hacemos",
       "open": "Construimos marcas que se reconocen: ",
@@ -440,5 +447,18 @@
   "legal": {
     "effectiveSince": "Vigente desde el {date}",
     "tocLabel": "Contenido del documento"
+  },
+  "metadata": {
+    "description": "Estudio de diseño y crecimiento de marca en Santa Fe, Ciudad de México. Branding, marketing digital, programación web y motion graphics."
+  },
+  "error": {
+    "title": "Algo salió mal",
+    "description": "No pudimos cargar esta sección. Puedes intentarlo de nuevo.",
+    "retry": "Reintentar"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "La ruta que buscas no existe o cambió de sitio.",
+    "action": "Volver al inicio"
   }
 }

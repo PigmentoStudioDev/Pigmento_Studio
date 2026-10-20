@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { Button } from "@/design-system/components/atoms/Button/Button";
 import { Heading } from "@/design-system/components/atoms/Heading/Heading";
@@ -15,6 +16,8 @@ export default function Error({
   readonly error: Error & { digest?: string };
   readonly reset: () => void;
 }) {
+  const t = useTranslations("error");
+
   useEffect(() => {
     console.error("Error de ruta", { digest: error.digest });
   }, [error]);
@@ -22,12 +25,12 @@ export default function Error({
   return (
     <main className="pg-status">
       <Heading level={1} size="lead">
-        Algo salio mal
+        {t("title")}
       </Heading>
 
-      <Subheading>No pudimos cargar esta seccion. Puedes intentarlo de nuevo.</Subheading>
+      <Subheading>{t("description")}</Subheading>
       {error.digest ? <p><code>{error.digest}</code></p> : null}
-      <Button onClick={reset}>Reintentar</Button>
+      <Button onClick={reset}>{t("retry")}</Button>
     </main>
   );
 }

@@ -72,20 +72,30 @@ const serif = IBM_Plex_Serif({
   weight: ["400"],
 });
 
-export const metadata: Metadata = {
-  // Sin metadataBase, las URLs relativas de Open Graph no resuelven y las tarjetas
-  // sociales salen sin imagen. En local apunta al dev server; en Vercel se define
-  // NEXT_PUBLIC_SITE_URL.
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  ),
-  title: {
-    default: "Pigmento Studio",
-    template: "%s · Pigmento Studio",
-  },
-  description:
-    "Estudio de diseño y crecimiento de marca en Santa Fe, Ciudad de México. Branding, marketing digital, programación web y motion graphics.",
-};
+// La descripcion sigue al idioma de la ruta; el nombre del estudio es marca y no se
+// traduce. `generateMetadata` y no un `metadata` estatico porque este necesita el locale.
+export async function generateMetadata({
+  params,
+}: LayoutProps<"/[locale]">): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+
+  const t = await getTranslations({ locale, namespace: "metadata" });
+
+  return {
+    // Sin metadataBase, las URLs relativas de Open Graph no resuelven y las tarjetas
+    // sociales salen sin imagen. En local apunta al dev server; en Vercel se define
+    // NEXT_PUBLIC_SITE_URL.
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+    ),
+    title: {
+      default: "Pigmento Studio",
+      template: "%s · Pigmento Studio",
+    },
+    description: t("description"),
+  };
+}
 
 /**
  * Las dos versiones se prerenderizan. Sin esto, cada ruta con idioma se volveria

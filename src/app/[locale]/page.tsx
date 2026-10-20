@@ -18,7 +18,7 @@ import { WorkRows } from "@/design-system/components/organisms/WorkRows/WorkRows
 import { HeroStatement } from "@/design-system/components/organisms/HeroStatement/HeroStatement";
 import { BAND_IMAGE_FILENAME } from "../band";
 import { FEATURED_CASE_PIECES, FEATURED_CASES_MAX, getFeaturedCases } from "../featuredCases";
-import { HERO_PIECES } from "../hero";
+import { getHero } from "../hero";
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { getFinalCta } from "../cta";
 import { getFaq } from "../faq";
@@ -95,6 +95,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
     getSiteImage(BAND_IMAGE_FILENAME, locale),
     readFeaturedCases(locale, FEATURED_CASE_PIECES, FEATURED_CASES_MAX),
   ]);
+  const tHero = await getTranslations("home.hero");
   const tValues = await getTranslations("home.values");
   const tWork = await getTranslations("home.work");
   const tServices = await getTranslations("home.services");
@@ -113,15 +114,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           centro) sigue en el design system por si la comparativa vuelve: montarlo es
           volver a importarlo aqui. */}
       <Section width="full" spacing="none">
-        <HeroStatement
-          eyebrow="Diseño de marca y crecimiento"
-          title="Diseñamos marcas con visión de futuro."
-          titleHighlight="visión de futuro"
-          subtitle="Estrategia, diseño y tecnología trabajando juntos para convertir ideas en marcas que crecen, evolucionan y perduran."
-          ctaLabel="Empezar un proyecto"
-          ctaHref={`#${CTA_TITLE_ID}`}
-          pieces={HERO_PIECES}
-        />
+        <HeroStatement {...getHero(tHero, `#${CTA_TITLE_ID}`)} />
       </Section>
 
       {/* Debajo del hero, y a sangre: una tira que se cortara contra un contenedor
