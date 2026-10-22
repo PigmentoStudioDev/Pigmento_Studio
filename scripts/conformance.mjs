@@ -358,7 +358,7 @@ function sectionStructure() {
 }
 
 /**
- * Los archivos que piden DE ENTRADA las paginas PUBLICAS ya renderizadas.
+ * Lo que pide DE ENTRADA cada pagina PUBLICA ya renderizada, una lista por pagina.
  *
  * Existe desde que hay carga bajo demanda. Sumar todo lo emitido media una cosa
  * distinta de la que este contrato dice medir: partir gsap en su propio trozo baja
@@ -387,7 +387,7 @@ function firstLoadFiles(dir, ext) {
   const pages = join(ROOT, '.next/server/app');
   if (!existsSync(pages) || (ext !== '.js' && ext !== '.css')) return null;
 
-  const referenced = new Set();
+  const visits = [];
 
   for (const page of walk(pages, '.html')) {
     if (FUERA_DE_LA_VISITA.some(([fragment]) => page.includes(fragment))) continue;
@@ -396,13 +396,15 @@ function firstLoadFiles(dir, ext) {
       ext === '.css'
         ? /<link\b[^>]*\brel=["']stylesheet["'][^>]*href=["']\/_next\/(static\/[^"'?]+\.css)/gi
         : /\/_next\/(static\/[^"'?]+\.js)/g;
+    const files = new Set();
     for (const [, ref] of html.matchAll(pattern)) {
       const file = join(ROOT, '.next', ref);
-      if (existsSync(file)) referenced.add(file);
+      if (existsSync(file)) files.add(file);
     }
+    if (files.size > 0) visits.push({ page: relative(pages, page), files: [...files] });
   }
 
-  return referenced.size > 0 ? [...referenced] : null;
+  return visits.length > 0 ? visits : null;
 }
 
 /** budgets — peso de lo que viaja al navegador. */
@@ -418,24 +420,40 @@ function sectionBudgets() {
     }
 
     const ext = artifact.glob.slice(artifact.glob.lastIndexOf('.'));
-    const files = firstLoadFiles(dir, ext) ?? [...walk(dir, ext)];
-    let raw = 0;
-    let gzip = 0;
-    for (const file of files) {
-      const buf = readFileSync(file);
-      raw += buf.length;
-      gzip += gzipSync(buf).length;
-    }
+    // Se mide la VISITA mas pesada y no la union de todas: la union crecia con cada
+    // pagina nueva aunque nadie descargue sus hojas junto con las de la home. Cinco
+    // paginas de servicio y /nosotros la subieron 4kb de CSS y 9kb de JS sin que
+    // ninguna visita pesara un byte mas (decision de Karen, 2026-10-22). Raw y gzip se
+    // toman por separado: la pagina que mas pesa en uno no tiene por que serlo en el otro.
+    const visits = firstLoadFiles(dir, ext) ?? [{ page: '(todo lo emitido)', files: [...walk(dir, ext)] }];
+    const sizes = new Map();
+    const sizeOf = (file) => {
+      if (!sizes.has(file)) {
+        const buf = readFileSync(file);
+        sizes.set(file, { raw: buf.length, gzip: gzipSync(buf).length });
+      }
+      return sizes.get(file);
+    };
+    const measured = visits.map(({ page, files }) => ({
+      page,
+      raw: files.reduce((n, file) => n + sizeOf(file).raw, 0),
+      gzip: files.reduce((n, file) => n + sizeOf(file).gzip, 0),
+    }));
+    const heaviestRaw = measured.reduce((a, b) => (b.raw > a.raw ? b : a));
+    const heaviestGzip = measured.reduce((a, b) => (b.gzip > a.gzip ? b : a));
 
-    const rawKb = Math.round(raw / 1024);
-    const gzipKb = Math.round(gzip / 1024);
+    const rawKb = Math.round(heaviestRaw.raw / 1024);
+    const gzipKb = Math.round(heaviestGzip.gzip / 1024);
 
     if (rawKb > artifact.maxRawKb) {
-      fail('budgets', `${name}: ${rawKb}kb raw > ${artifact.maxRawKb}kb`);
+      fail('budgets', `${name}: ${rawKb}kb raw > ${artifact.maxRawKb}kb en ${heaviestRaw.page}`);
     } else if (gzipKb > artifact.maxGzipKb) {
-      fail('budgets', `${name}: ${gzipKb}kb gzip > ${artifact.maxGzipKb}kb`);
+      fail('budgets', `${name}: ${gzipKb}kb gzip > ${artifact.maxGzipKb}kb en ${heaviestGzip.page}`);
     } else {
-      ok('budgets', `${name}: ${rawKb}kb raw / ${gzipKb}kb gzip (limite ${artifact.maxRawKb}/${artifact.maxGzipKb})`);
+      ok(
+        'budgets',
+        `${name}: ${rawKb}kb raw / ${gzipKb}kb gzip (limite ${artifact.maxRawKb}/${artifact.maxGzipKb}) — mas pesada: ${heaviestRaw.page}`,
+      );
     }
   }
 }
