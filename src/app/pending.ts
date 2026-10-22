@@ -19,28 +19,13 @@ import { routing } from "@/i18n/routing";
  * `pending` en los dos diccionarios; mientras la entrada exista, la ruta es un
  * marcador, y eso se ve en el diff sin tener que abrir siete archivos.
  */
-export type PendingKey =
-  | "work"
-  | "services"
-  | "about"
-  | "contact"
-  | "motion"
-  | "marketing"
-  | "web";
+export type PendingKey = "work" | "contact";
 
 /**
  * El inventario, para quien tenga que recorrerlo. Su test lo usa para comprobar que
  * ninguna se queda sin texto en ninguno de los dos idiomas.
  */
-export const PENDING_KEYS: readonly PendingKey[] = [
-  "work",
-  "services",
-  "about",
-  "contact",
-  "motion",
-  "marketing",
-  "web",
-];
+export const PENDING_KEYS: readonly PendingKey[] = ["work", "contact"];
 
 /**
  * El Instagram del estudio, que es el unico canal de contacto REAL que existe hoy.

@@ -505,7 +505,7 @@ Las reglas que no son de un componente sino de todos. Cada una tiene su gate.
 - **Foco** (`focus-contract.test.ts`): 2px en `$focus` (o `$focus-inverse` sobre
   superficie invertida), por dentro (-2px) en filas y superficies a sangre, por fuera
   (2px) en controles con borde propio, o con `box-shadow` en Button e IconButton.
-- **Conmutadores** (`toggle-contract.test.ts`): tema, sonido e idioma son hermanos —
+- **Conmutadores** (`toggle-contract.test.ts`): tema e idioma son hermanos —
   mismo cuerpo, mismo hover que invierte placa E icono. El icono de un control mide
   `$control-icon-size`, uno solo.
 - **Hover de una superficie**: el `layer-hover` de SU capa (`-01` sobre `$layer-01`,

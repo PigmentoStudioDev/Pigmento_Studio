@@ -1,0 +1,251 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// La tarjeta es una capa sobre la placa: `layer-01` dentro de la zona que la placa ya
+// invirtio, asi que en los dos modos se despega un escalon de lo que tiene detras.
+// `overflow: clip` porque al cambiar de cara la altura se interpola y el contenido
+// nuevo, mas alto o mas bajo, no puede asomar mientras tanto.
+.card {
+  container: contact-form / inline-size;
+  overflow: clip;
+  inline-size: 100%;
+  border: 1px solid theme.$border-subtle;
+  border-radius: brand.$radius-card;
+  background-color: theme.$layer-01;
+  color: theme.$text-primary;
+  text-align: start;
+}
+
+.face {
+  padding: spacing.$spacing-07;
+}
+
+// Una sola columna que no crece con su contenido: sin `minmax(0, 1fr)` el track toma
+// el ancho minimo del boton y empuja la tarjeta fuera de la placa en movil.
+.form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: spacing.$spacing-06;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: spacing.$spacing-05;
+}
+
+.topicField {
+  display: grid;
+}
+
+.topicLabel {
+  @include brandtype.style('label');
+
+  margin-block-end: spacing.$spacing-03;
+  color: theme.$text-secondary;
+}
+
+// El resaltado se posiciona contra este contenedor, asi que el contenedor es su
+// marco y quien aisla la pila: el resaltado pasa por DEBAJO de cada etiqueta.
+.topics {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-wrap: wrap;
+  gap: spacing.$spacing-03;
+}
+
+.topic {
+  @include brandtype.style('control-s');
+
+  block-size: brand.$chip-block-size;
+  padding-inline: spacing.$spacing-05;
+  border: 1px solid theme.$border-strong;
+  border-radius: brand.$radius-chip;
+  background: none;
+  color: theme.$text-secondary;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &[aria-checked='true'] {
+    border-color: transparent;
+    color: theme.$text-inverse;
+  }
+
+  &[data-filled='true'] {
+    background-color: theme.$background-inverse;
+  }
+
+  &:focus-visible {
+    outline: 2px solid theme.$focus;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .topic:not([aria-checked='true'], :disabled):hover {
+    border-color: theme.$text-primary;
+    color: theme.$text-primary;
+  }
+}
+
+.highlight {
+  position: absolute;
+  z-index: -1;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  // Llegan como numeros sin unidad: un literal en px dentro del TSX es justo lo que
+  // el contrato de estilos en linea prohibe.
+  inline-size: calc(var(--w) * 1px);
+  block-size: calc(var(--h) * 1px);
+  translate: calc(var(--x) * 1px) calc(var(--y) * 1px);
+  border-radius: brand.$radius-chip;
+  background-color: theme.$background-inverse;
+  pointer-events: none;
+}
+
+// Mismo truco de filas que el error de un campo: la fila existe siempre y abre su
+// altura desde cero, asi que el aviso no empuja el boton de golpe.
+.failure {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin: 0;
+  color: theme.$text-error;
+  opacity: 0;
+
+  &[data-open='true'] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+}
+
+.failureInner {
+  overflow: hidden;
+}
+
+.failure[data-open='true'] .failureInner {
+  padding-block-end: spacing.$spacing-05;
+}
+
+// El aviso y el boton van juntos y sin gap entre ellos: con el aviso cerrado, el gap
+// del formulario se pagaria igual por una fila vacia.
+// `isolation`: el boton pinta su etiqueta con `z-index` propio, y sin un contexto aqui
+// esa etiqueta compite con la lista de paises del telefono y le gana.
+.footer {
+  isolation: isolate;
+  display: grid;
+}
+
+// Acciones a la derecha: es la ultima lectura de la fila y el sitio donde se busca.
+.submitRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.success {
+  display: grid;
+  justify-items: center;
+  gap: spacing.$spacing-05;
+  padding-block: spacing.$spacing-09;
+  text-align: center;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  // 3rem de lado y el escalon de 1.5rem: el circulo sale de la escala, sin pildora.
+  inline-size: spacing.$spacing-09;
+  block-size: spacing.$spacing-09;
+  border-radius: brand.$radius-08;
+  background-color: theme.$support-success;
+  color: theme.$text-on-color;
+  // El icono mide 1em: el cuerpo de la marca es el que decide el trazo.
+  font-size: spacing.$spacing-07;
+}
+
+.successTitle {
+  @include brandtype.style('lead');
+
+  margin: 0;
+
+  // Recibe el foco por programa para que el lector anuncie la confirmacion, no porque
+  // se pueda activar: un anillo ahi se lee como un control que no lo es.
+  &:focus {
+    outline: none;
+  }
+}
+
+.successText {
+  max-inline-size: 36ch;
+  margin: 0;
+  color: theme.$text-secondary;
+  text-wrap: pretty;
+}
+
+// Por debajo de esto dos campos en fila dejan un correo cortado a la mitad.
+@container contact-form (max-width: 32rem) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .face {
+    padding: spacing.$spacing-05;
+  }
+
+  .submitRow > * {
+    inline-size: 100%;
+  }
+}
+
+// La cara nueva llega subiendo desde un desenfoque corto, como en Arc. Se apaga entera
+// con reduced-motion: ahi la cara cambia sin viaje y la altura salta, que es lo que se
+// pidio.
+@keyframes face-enter {
+  from {
+    opacity: 0;
+    translate: 0 spacing.$spacing-05;
+    filter: blur(spacing.$spacing-01);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card {
+    transition: block-size brand.$duration-base brand.$ease-default;
+  }
+
+  // Solo despues del primer cambio de cara: al cargar la pagina no hay cara de la que
+  // venir, y un formulario que aparece desenfocandose se lee como un fallo de carga.
+  .card[data-morphed='true'] .face {
+    animation: face-enter brand.$duration-base brand.$ease-default both;
+  }
+
+  .highlight {
+    transition:
+      translate brand.$duration-half brand.$ease-default,
+      inline-size brand.$duration-half brand.$ease-default,
+      block-size brand.$duration-half brand.$ease-default;
+  }
+
+  .topic {
+    transition:
+      color brand.$duration-tint brand.$ease-tint,
+      border-color brand.$duration-tint brand.$ease-tint;
+  }
+
+  .failure {
+    transition:
+      grid-template-rows brand.$duration-half brand.$ease-default,
+      opacity brand.$duration-quarter brand.$ease-default;
+  }
+}

@@ -176,6 +176,7 @@ export function Marquee({
                     */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
+                      draggable={false}
                       src={logo.src}
                       alt={copy === 0 ? logo.alt : ""}
                       width={logo.width}

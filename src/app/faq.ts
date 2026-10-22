@@ -26,3 +26,26 @@ export function getFaq(t: Translate): FaqProps {
     })),
   };
 }
+
+/**
+ * Las mismas preguntas como `FAQPage` de schema.org, para buscadores y motores de
+ * respuesta. Se monta SOLO donde la lista tambien se ve: las directrices de datos
+ * estructurados de Google piden que el marcado describa contenido visible, y marcar
+ * preguntas que la pagina no ensena se trata como spam.
+ *
+ * Sale ya serializado y con `<` escapado, como indica la guia de JSON-LD de Next: un
+ * `</script>` dentro de una respuesta cerraria la etiqueta y el resto se leeria como HTML.
+ */
+export function faqJsonLd(items: FaqProps["items"]): string {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map(({ question, answer }) => ({
+      "@type": "Question",
+      name: question,
+      acceptedAnswer: { "@type": "Answer", text: answer },
+    })),
+  };
+
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}

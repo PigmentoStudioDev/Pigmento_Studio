@@ -56,8 +56,13 @@ export function HeroVideo({
           </Reveal>
         ) : null}
 
+        {/* Un cuerpo por debajo del display: a media pantalla, un nombre de tres palabras
+            en display ("Branding y diseño") ocupa tres renglones y se mete bajo la
+            cabecera. Sigue siendo el h1 de la pagina. */}
         <Reveal step={1}>
-          <Heading level={1}>{title}</Heading>
+          <Heading level={1} size="heading">
+            {title}
+          </Heading>
         </Reveal>
 
         {/* Los dos, o ninguno: un boton sin destino no es un boton, y un destino

@@ -1,0 +1,107 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// Sin gap entre filas: una fila de error cerrada pagaria el gap igual, porque un track
+// de grid no baja de cero. Cada fila lleva su propio aire por dentro.
+.root {
+  display: grid;
+  min-inline-size: 0;
+  text-align: start;
+}
+
+.label {
+  @include brandtype.style('label');
+
+  margin-block-end: spacing.$spacing-03;
+  color: theme.$text-secondary;
+}
+
+// `field-02` y no `field-01`: el campo vive sobre la tarjeta del formulario, que ya
+// es una capa, y el de la capa 01 se confundiria con ella.
+.control {
+  inline-size: 100%;
+  min-block-size: brand.$control-block-m;
+  padding-block: spacing.$spacing-04;
+  padding-inline: spacing.$spacing-05;
+  border: 1px solid theme.$border-strong;
+  border-radius: brand.$radius-05;
+  background-color: theme.$field-02;
+  color: theme.$text-primary;
+  font: inherit;
+  outline: none;
+
+  &::placeholder {
+    color: theme.$text-placeholder;
+  }
+
+  // El foco responde solo con el borde, como en Arc: un anillo por fuera haria que la
+  // caja pareciera crecer, y aqui el campo no cambia de tamano nunca.
+  &:focus-visible {
+    border-color: theme.$focus;
+  }
+
+  &[aria-invalid='true'] {
+    border-color: theme.$support-error;
+  }
+
+  &[readonly] {
+    color: theme.$text-secondary;
+  }
+}
+
+textarea.control {
+  resize: vertical;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .control:hover:not(:focus-visible, [aria-invalid='true'], [readonly]) {
+    border-color: theme.$text-primary;
+  }
+}
+
+.hint {
+  padding-block-start: spacing.$spacing-03;
+  color: theme.$text-helper;
+}
+
+// La fila del error abre su altura desde un cero real: `0fr` a `1fr` interpola la
+// altura del contenido sin medirla en JS.
+.message {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+
+  &[data-open='true'] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+}
+
+.messageInner {
+  overflow: hidden;
+}
+
+.error {
+  display: block;
+  padding-block-start: spacing.$spacing-03;
+  color: theme.$text-error;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .control {
+    transition: border-color brand.$duration-tint brand.$ease-tint;
+  }
+
+  .message {
+    transition:
+      grid-template-rows brand.$duration-half brand.$ease-default,
+      opacity brand.$duration-quarter brand.$ease-default;
+  }
+}

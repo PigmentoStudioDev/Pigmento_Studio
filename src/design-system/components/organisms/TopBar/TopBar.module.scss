@@ -31,7 +31,7 @@
   background-color: theme.$layer-02;
   color: theme.$text-secondary;
   text-decoration: none;
-  transition: background-color brand.$duration-quarter brand.$ease-default;
+  transition: background-color brand.$duration-tint brand.$ease-tint;
   // Entra con la cabecera, mismo gesto y mismo retraso: son una sola pieza de chrome.
   // backwards y no both: al terminar, la opacidad vuelve a la cascada.
   animation: pg-topbar-enter brand.$duration-base brand.$ease-default backwards;

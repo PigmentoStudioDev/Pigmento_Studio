@@ -6,7 +6,6 @@ import { cursorAttributes } from "../../../motion/cursor";
 import { useRosterSlider } from "../../../motion/useRosterSlider";
 import { Heading } from "../../atoms/Heading/Heading";
 import { IconButton } from "../../atoms/IconButton/IconButton";
-import { ControlBar } from "../../molecules/ControlBar/ControlBar";
 import styles from "./FeaturedCases.module.scss";
 
 /**
@@ -89,27 +88,6 @@ export function FeaturedCases({ label, cases, labels, titleId }: FeaturedCasesPr
 
   return (
     <div className={styles.root}>
-      {/* Las flechas solo tienen sentido con mas de un caso: con uno estarian las dos
-          apagadas, que es un control que solo dice que no se puede usar. */}
-      {cases.length > 1 ? (
-        <div className={styles.controls}>
-          <ControlBar>
-            {/* La flecha es una sola y apunta a la derecha: la de atras es la misma
-                reflejada, en un envoltorio para no pisar la escala del gesto de pulsar. */}
-            <span className={styles.previous}>
-              <IconButton icon="arrow" label={labels.previous} disabled={index === 0} onClick={() => go(-1)} />
-            </span>
-            <IconButton
-              icon="arrow"
-              label={labels.next}
-              emphasis="primary"
-              disabled={index >= cases.length - 1}
-              onClick={() => go(1)}
-            />
-          </ControlBar>
-        </div>
-      ) : null}
-
       <div
         ref={viewportRef}
         role="group"
@@ -146,6 +124,7 @@ export function FeaturedCases({ label, cases, labels, titleId }: FeaturedCasesPr
                         descrita por su texto, y describir una a una las piezas de una
                         identidad repite lo que ya se dijo. */}
                     <Image
+                      draggable={false}
                       className={styles.image}
                       src={piece.src}
                       alt=""
@@ -160,6 +139,26 @@ export function FeaturedCases({ label, cases, labels, titleId }: FeaturedCasesPr
           ))}
         </ul>
       </div>
+
+      {/* Las flechas solo tienen sentido con mas de un caso: con uno estarian las dos
+          apagadas, que es un control que solo dice que no se puede usar. Debajo de las
+          tarjetas y en los extremos, cada una del lado hacia el que mueve. */}
+      {cases.length > 1 ? (
+        <div className={styles.controls}>
+          {/* La flecha es una sola y apunta a la derecha: la de atras es la misma
+              reflejada, en un envoltorio para no pisar la escala del gesto de pulsar. */}
+          <span className={styles.previous}>
+            <IconButton icon="arrow" label={labels.previous} disabled={index === 0} onClick={() => go(-1)} />
+          </span>
+          <IconButton
+            icon="arrow"
+            label={labels.next}
+            emphasis="primary"
+            disabled={index >= cases.length - 1}
+            onClick={() => go(1)}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

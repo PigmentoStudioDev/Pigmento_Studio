@@ -9,7 +9,9 @@
 // —absoluta, a sangre— con el texto centrado encima, y eso obligaba a que la
 // tarjeta se leyera a traves de las miniaturas. Puestos en dos filas, cada uno
 // tiene su sitio y ninguno compite con el otro por contraste.
+// Contenedor de su titular: 'card-title' se mide contra la tarjeta (ver `_type.scss`).
 .root {
+  container-type: inline-size;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -25,7 +27,7 @@
   background-color: theme.$layer-02;
   color: theme.$text-primary;
   text-decoration: none;
-  transition: background-color brand.$duration-quarter brand.$ease-default;
+  transition: background-color brand.$duration-tint brand.$ease-tint;
 }
 
 .root:hover {
@@ -84,7 +86,7 @@
 }
 
 .title {
-  @include brandtype.style('heading');
+  @include brandtype.style('card-title');
 }
 
 // Aspecto de boton, pero no es un boton: la tarjeta entera ya es el enlace y un

@@ -4,12 +4,10 @@
     "homeLabel": "Pigmento Studio, ir al inicio",
     "toggleLabel": "Menu",
     "themeToggle": "Cambiar entre modo claro y oscuro",
-    "soundToggle": "Activar o silenciar el sonido de la interfaz",
     "languageToggle": "Cambiar idioma",
     "estudio": {
       "label": "Estudio",
       "trabajo": "Trabajo",
-      "servicios": "Servicios",
       "nosotros": "Nosotros",
       "laboratorio": "Laboratorio",
       "pronto": "Pronto"
@@ -36,7 +34,6 @@
   "footer": {
     "studio": "Pigmento Studio®",
     "work": "Trabajo",
-    "services": "Servicios",
     "contact": "Contacto",
     "handle": "@pigmento__studio",
     "handleName": "Pigmento Studio en Instagram (abre en una pestaña nueva)",
@@ -123,6 +120,8 @@
       "intro": "Identidades, sitios, piezas de motion y campañas. Una muestra de lo que sale del estudio cuando el encargo se toma en serio.",
       "cta": "Ver todo el trabajo",
       "cursor": "Ver caso",
+      "previous": "Ver piezas anteriores",
+      "next": "Ver más piezas",
       "placeholderClient": "Cliente",
       "disciplines": {
         "branding": "Branding",
@@ -219,9 +218,52 @@
     },
     "cta": {
       "label": "Hablemos",
-      "title": "Agendemos una llamada y vemos por dónde empieza tu marca.",
+      "title": "Cuéntanos qué tienes en mente y vemos por dónde empieza tu marca.",
       "titleHighlight": "por dónde empieza tu marca",
-      "cta": "Agendar una llamada"
+      "form": {
+        "formLabel": "Formulario de contacto",
+        "name": "Nombre",
+        "namePlaceholder": "Ana Torres",
+        "email": "Correo",
+        "emailPlaceholder": "ana@empresa.com",
+        "phone": {
+          "label": "Teléfono (opcional)",
+          "country": "País: {country}, +{dial}",
+          "search": "Buscar país o lada",
+          "searchPlaceholder": "País o lada",
+          "clearSearch": "Borrar búsqueda",
+          "suggested": "Sugeridos",
+          "allCountries": "Todos los países",
+          "noMatches": "Ningún país coincide con “{query}”",
+          "results": "{count} países",
+          "valid": "Número válido de {country}"
+        },
+        "topic": "Qué necesitas",
+        "message": "Mensaje",
+        "messagePlaceholder": "Cuéntanos del proyecto: qué es, para cuándo y qué te gustaría lograr.",
+        "remaining": "Quedan {count} caracteres",
+        "submit": "Escríbenos",
+        "sending": "Enviando",
+        "failure": "No pudimos enviar tu mensaje. Revisa tu conexión e inténtalo de nuevo.",
+        "successTitle": "Gracias, {name}",
+        "successText": "Recibimos tu mensaje. Te escribimos al correo que nos dejaste.",
+        "again": "Escribir otro mensaje",
+        "errors": {
+          "nameRequired": "Escribe tu nombre",
+          "emailRequired": "Escribe tu correo",
+          "emailInvalid": "Escribe un correo como nombre@empresa.com",
+          "messageRequired": "Cuéntanos en qué podemos ayudarte",
+          "messageShort": "Danos un poco más de detalle, al menos 20 caracteres",
+          "phoneInvalid": "Revisa el número: no tiene los dígitos de ese país"
+        },
+        "topics": {
+          "branding": "Branding",
+          "web": "Desarrollo web",
+          "motion": "Motion",
+          "marketing": "Marketing",
+          "other": "Otro"
+        }
+      }
     },
     "figures": {
       "items": {
@@ -387,29 +429,9 @@
       "title": "Trabajo",
       "intro": "El portafolio completo todavia no esta publicado. En la home hay dieciocho proyectos y cinco casos con sus piezas."
     },
-    "services": {
-      "title": "Servicios",
-      "intro": "El detalle de cada servicio todavia no esta escrito. En la home estan las cuatro disciplinas y como trabajamos."
-    },
-    "about": {
-      "title": "Nosotros",
-      "intro": "La pagina del estudio todavia no esta escrita. En la home estan el equipo y las cifras."
-    },
     "contact": {
       "title": "Contacto",
       "intro": "El formulario todavia no esta puesto. Mientras tanto, escribenos por Instagram y contestamos ahi."
-    },
-    "motion": {
-      "title": "Motion",
-      "intro": "La pagina de motion todavia no esta escrita. En la home esta lo que incluye la disciplina."
-    },
-    "marketing": {
-      "title": "Marketing",
-      "intro": "La pagina de marketing todavia no esta escrita. En la home esta lo que incluye la disciplina."
-    },
-    "web": {
-      "title": "Desarrollo web",
-      "intro": "La pagina de desarrollo web todavia no esta escrita. En la home esta lo que incluye la disciplina."
     }
   },
   "proposal": {
@@ -460,5 +482,241 @@
     "title": "Página no encontrada",
     "description": "La ruta que buscas no existe o cambió de sitio.",
     "action": "Volver al inicio"
+    },
+  "servicePages": {
+    "common": {
+      "processLabel": "El proceso",
+      "deliverableLabel": "Entregable",
+      "faqTitle": "Preguntas",
+      "faqLabel": "Preguntas frecuentes"
+    },
+    "branding": {
+      "title": "Branding y diseño",
+      "description": "Identidad, naming y sistema visual para marcas que necesitan verse como lo que ya son.",
+      "process": {
+        "title": "Qué incluye una identidad",
+        "titleHighlight": "identidad",
+        "intro": "Cuatro fases, y cada una cierra con algo que recibes. Una identidad completa toma entre seis y diez semanas.",
+        "phases": {
+          "diagnosis": {
+            "title": "Diagnóstico",
+            "text": "Hablamos con quien dirige el negocio y vemos cómo se lee hoy tu marca junto a su competencia.",
+            "deliverable": "Brief firmado por los dos"
+          },
+          "strategy": {
+            "title": "Estrategia",
+            "text": "Qué promete la marca, a quién le habla y con qué voz. Si hace falta un nombre, se decide aquí.",
+            "deliverable": "Plataforma de marca"
+          },
+          "identity": {
+            "title": "Identidad",
+            "text": "Logotipo, tipografía, color y las reglas que los unen. Lo revisas sobre piezas reales, no sobre láminas sueltas.",
+            "deliverable": "Sistema visual"
+          },
+          "rollout": {
+            "title": "Aplicaciones",
+            "text": "Empaque, papelería, señalización o redes: lo que tu marca necesita para salir a la calle.",
+            "deliverable": "Manual de marca y archivos editables"
+          }
+        }
+      },
+      "faq": {
+        "intro": "Lo que nos preguntan antes de empezar una identidad.",
+        "items": {
+          "price": {
+            "question": "¿Cuánto cuesta una identidad?",
+            "answer": "Depende de lo que incluya: no cuesta lo mismo un logotipo con su manual que un sistema con naming, empaque y señalización. Trabajamos con presupuesto cerrado, así que sabes el número antes de empezar."
+          },
+          "naming": {
+            "question": "¿También hacen el nombre?",
+            "answer": "Sí, cuando la marca lo necesita. Va en la fase de estrategia, antes del diseño, porque el nombre cambia lo que el logotipo tiene que resolver."
+          },
+          "rebrand": {
+            "question": "¿Pueden evolucionar una marca que ya existe?",
+            "answer": "Sí, y es buena parte de lo que hacemos. Primero vemos qué reconoce ya tu gente para no tirarlo, y a partir de ahí decidimos qué cambia."
+          },
+          "ownership": {
+            "question": "¿De quién son los archivos?",
+            "answer": "Tuyos. Al cerrar entregamos los editables, las tipografías con su licencia y el manual, sin nada que dependa de nosotros."
+          }
+        }
+      },
+      "cta": {
+        "title": "Cuéntanos de tu marca y vemos por dónde empezar.",
+        "titleHighlight": "por dónde empezar"
+      }
+    },
+    "motion": {
+      "title": "Motion",
+      "description": "Animación de marca, video e interfaz, hecha por el mismo equipo que diseña la identidad.",
+      "process": {
+        "title": "De la idea a la pieza final",
+        "titleHighlight": "pieza final",
+        "intro": "Cada fase se aprueba antes de pasar a la siguiente, para que los cambios lleguen cuando todavía son baratos.",
+        "phases": {
+          "script": {
+            "title": "Guion",
+            "text": "Definimos qué tiene que pasar en los primeros segundos y qué se lleva quien lo ve.",
+            "deliverable": "Guion y referencias aprobados"
+          },
+          "storyboard": {
+            "title": "Storyboard",
+            "text": "Cuadro a cuadro, antes de animar nada. Es el momento en que cambiar algo cuesta poco.",
+            "deliverable": "Storyboard y estilo de cuadro"
+          },
+          "animation": {
+            "title": "Animación",
+            "text": "Movimiento, ritmo y sonido sobre el estilo que ya aprobaste.",
+            "deliverable": "Corte para revisión"
+          },
+          "delivery": {
+            "title": "Entrega",
+            "text": "Exportamos cada pieza en el formato y la medida del canal donde va a vivir.",
+            "deliverable": "Archivos finales por canal"
+          }
+        }
+      },
+      "faq": {
+        "intro": "Lo que conviene saber antes de pedir una pieza animada.",
+        "items": {
+          "price": {
+            "question": "¿Cuánto cuesta una pieza?",
+            "answer": "Lo mueven tres cosas: cuánto dura, qué tan complejo es el estilo y en cuántos formatos se entrega. Con el guion en la mano te damos un presupuesto cerrado."
+          },
+          "time": {
+            "question": "¿Cuánto tarda?",
+            "answer": "Depende de la duración y del estilo. La fecha de entrega se acuerda antes de empezar, junto con el guion."
+          },
+          "what": {
+            "question": "¿Qué tipo de piezas hacen?",
+            "answer": "Logotipos animados, el movimiento de una identidad, piezas para redes, video para eventos y animación de interfaz para sitios y productos."
+          },
+          "brand": {
+            "question": "¿Lo pueden hacer sobre una marca que no diseñaron?",
+            "answer": "Sí. Partimos de tu manual y, si falta, definimos cómo se mueve la marca antes de animar la primera pieza."
+          }
+        }
+      },
+      "cta": {
+        "title": "Cuéntanos qué pieza necesitas y para cuándo.",
+        "titleHighlight": "para cuándo"
+      }
+    },
+    "marketing": {
+      "title": "Marketing",
+      "description": "Campañas, contenido y pauta diseñados por el mismo equipo que hace la marca.",
+      "process": {
+        "title": "Cómo armamos una estrategia",
+        "titleHighlight": "estrategia",
+        "intro": "Antes de proponer canales vemos qué ya te funciona. Cada fase deja un documento que puedes leer sin nosotros.",
+        "phases": {
+          "diagnosis": {
+            "title": "Diagnóstico",
+            "text": "Revisamos tus canales, tu contenido y los números que ya tienes.",
+            "deliverable": "Diagnóstico con prioridades"
+          },
+          "plan": {
+            "title": "Plan",
+            "text": "Qué canales, con qué mensaje y con qué presupuesto. Sin paquetes cerrados: el plan sale de tu negocio.",
+            "deliverable": "Plan de canales y calendario"
+          },
+          "execution": {
+            "title": "Ejecución",
+            "text": "Campañas, contenido y pauta hechos por quien diseña la marca, así que todo dice lo mismo.",
+            "deliverable": "Campañas en circulación"
+          },
+          "measurement": {
+            "title": "Medición",
+            "text": "Leemos los números contigo y ajustamos lo que no está funcionando.",
+            "deliverable": "Informe mensual con los números"
+          }
+        }
+      },
+      "faq": {
+        "intro": "Lo que nos preguntan antes de mover una marca en canales.",
+        "items": {
+          "price": {
+            "question": "¿Cuánto cuesta?",
+            "answer": "Depende de los canales y del presupuesto de pauta, que se separa de nuestros honorarios para que sepas qué paga cada cosa. El número sale del diagnóstico."
+          },
+          "results": {
+            "question": "¿Cuándo se ven resultados?",
+            "answer": "Depende del canal: la pauta da señales pronto y el contenido tarda más en acumular. En el plan te decimos qué esperar de cada uno y cuándo revisarlo."
+          },
+          "accounts": {
+            "question": "¿De quién son las cuentas?",
+            "answer": "Tuyas. Las cuentas de anuncios, redes y analítica van a nombre de tu empresa; nosotros entramos con acceso."
+          },
+          "brand": {
+            "question": "¿Necesito tener la marca hecha?",
+            "answer": "No, pero ayuda. Si la marca todavía no está clara, empezamos por ahí, porque una campaña no arregla una marca que no sabe qué decir."
+          }
+        }
+      },
+      "cta": {
+        "title": "Cuéntanos dónde está tu marca hoy y adónde quieres llevarla.",
+        "titleHighlight": "adónde quieres llevarla"
+      }
+    },
+    "web": {
+      "title": "Desarrollo web",
+      "description": "Sitios a la medida, rápidos y editables, diseñados y construidos por el mismo equipo.",
+      "process": {
+        "title": "Cómo hacemos un sitio",
+        "titleHighlight": "un sitio",
+        "intro": "Diseño y código en el mismo equipo, así que lo que apruebas en pantalla es lo que se publica. Un sitio toma entre cuatro y ocho semanas.",
+        "phases": {
+          "architecture": {
+            "title": "Arquitectura",
+            "text": "Qué páginas, qué contenido y qué tiene que poder hacer quien llega.",
+            "deliverable": "Mapa del sitio y contenidos"
+          },
+          "design": {
+            "title": "Diseño",
+            "text": "Pantallas en escritorio y móvil, revisadas contigo antes de escribir una línea de código.",
+            "deliverable": "Diseño aprobado"
+          },
+          "build": {
+            "title": "Desarrollo",
+            "text": "Lo construimos con un gestor de contenido para que tu equipo cambie textos e imágenes sin pedírnoslo.",
+            "deliverable": "Sitio en un entorno de prueba"
+          },
+          "launch": {
+            "title": "Lanzamiento",
+            "text": "Publicamos, revisamos velocidad, buscadores y accesibilidad, y te enseñamos a usar el gestor.",
+            "deliverable": "Sitio publicado y accesos"
+          }
+        }
+      },
+      "faq": {
+        "intro": "Lo que conviene saber antes de rehacer un sitio.",
+        "items": {
+          "price": {
+            "question": "¿Cuánto cuesta un sitio?",
+            "answer": "Depende de cuántas páginas, cuántos idiomas y qué tiene que conectar, como una tienda o un CRM. Con el mapa del sitio te damos un presupuesto cerrado."
+          },
+          "time": {
+            "question": "¿Cuánto tarda?",
+            "answer": "Entre cuatro y ocho semanas. Lo que más lo mueve es cuándo llega el contenido: textos, fotos y decisiones."
+          },
+          "edit": {
+            "question": "¿Lo podré editar yo?",
+            "answer": "Sí. Todo lo que cambia seguido, como textos, imágenes o proyectos, se edita desde un gestor, sin tocar código."
+          },
+          "ownership": {
+            "question": "¿De quién es el sitio?",
+            "answer": "Tuyo: el código, el dominio y los accesos quedan a nombre de tu empresa."
+          }
+        }
+      },
+      "cta": {
+        "title": "Cuéntanos qué sitio necesitas y para cuándo.",
+        "titleHighlight": "para cuándo"
+      }
+    }
+  },
+  "about": {
+    "title": "Nosotros",
+    "description": "Pigmento Studio, estudio de diseño de marca y crecimiento en Ciudad de México: quiénes somos y qué ha dejado el trabajo."
   }
 }

@@ -23,8 +23,8 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition:
-    background-color brand.$duration-quarter brand.$ease-default,
-    color brand.$duration-quarter brand.$ease-default;
+    background-color brand.$duration-tint brand.$ease-tint,
+    color brand.$duration-tint brand.$ease-tint;
 }
 
 .root:hover {

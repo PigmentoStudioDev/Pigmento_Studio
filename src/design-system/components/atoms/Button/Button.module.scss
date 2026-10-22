@@ -70,13 +70,16 @@
   border-radius: brand.$radius-full;
   transition:
     scale brand.$duration-half brand.$ease-default,
-    background-color brand.$duration-quarter brand.$ease-default,
-    border-color brand.$duration-quarter brand.$ease-default,
+    background-color brand.$duration-tint brand.$ease-tint,
+    border-color brand.$duration-tint brand.$ease-tint,
     filter brand.$duration-quarter brand.$ease-default;
 }
 
 .inner {
   grid-area: 1 / 1;
+  // El texto cambia de color con la placa en la secundaria: sin transicion propia
+  // saltaba mientras el fondo se fundia debajo.
+  transition: color brand.$duration-tint brand.$ease-tint;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -240,7 +243,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .root::after,
-  .bg {
+  .bg,
+  .inner {
     transition: none;
   }
 }

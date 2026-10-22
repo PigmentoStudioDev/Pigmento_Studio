@@ -476,6 +476,15 @@ $ease-exit: cubic-bezier(0.3, 0, 1, 1);
 /// pieza no llega mientras el raton se mueve. Esta sale a toda velocidad y frena.
 $ease-follow: cubic-bezier(0.215, 0.61, 0.355, 1);
 
+/// El TINTE: un cambio de color, fondo o borde al hover o al foco. No es una curva
+/// nueva sino un rol con nombre sobre dos que ya existen. Iba con `quarter` y
+/// `$ease-default`, y esa curva arranca lenta y frena largo: en 0.15s el tramo lento se
+/// come casi todo el tiempo y el color llega de golpe al final (decision de Karen,
+/// 2026-10-22: suavizarlo). `half` con la curva de lo que acompana —un color acompana
+/// al gesto, no lo lidera— se lee como un fundido.
+$duration-tint: $duration-half;
+$ease-tint: $ease-natural;
+
 /// El paso del desfase por CARACTER. No cabe en la escala de duracion: el escalon
 /// mas corto son 0.15s, que en una palabra de seis letras es casi un segundo solo
 /// de retardo.

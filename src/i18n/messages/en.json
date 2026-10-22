@@ -4,12 +4,10 @@
     "homeLabel": "Pigmento Studio, go to home",
     "toggleLabel": "Menu",
     "themeToggle": "Switch between light and dark mode",
-    "soundToggle": "Turn interface sound on or off",
     "languageToggle": "Change language",
     "estudio": {
       "label": "Studio",
       "trabajo": "Work",
-      "servicios": "Services",
       "nosotros": "About",
       "laboratorio": "Lab",
       "pronto": "Soon"
@@ -36,7 +34,6 @@
   "footer": {
     "studio": "Pigmento Studio®",
     "work": "Work",
-    "services": "Services",
     "contact": "Contact",
     "handle": "@pigmento__studio",
     "handleName": "Pigmento Studio on Instagram (opens in a new tab)",
@@ -123,6 +120,8 @@
       "intro": "Identities, websites, motion pieces and campaigns. A sample of what leaves the studio when the brief is taken seriously.",
       "cta": "See all work",
       "cursor": "View case",
+      "previous": "Show previous pieces",
+      "next": "Show more pieces",
       "placeholderClient": "Client",
       "disciplines": {
         "branding": "Branding",
@@ -219,9 +218,52 @@
     },
     "cta": {
       "label": "Get in touch",
-      "title": "Book a call and let's see where your brand starts.",
+      "title": "Tell us what you have in mind and let's see where your brand starts.",
       "titleHighlight": "where your brand starts",
-      "cta": "Book a call"
+      "form": {
+        "formLabel": "Contact form",
+        "name": "Name",
+        "namePlaceholder": "Ana Torres",
+        "email": "Email",
+        "emailPlaceholder": "ana@company.com",
+        "phone": {
+          "label": "Phone (optional)",
+          "country": "Country: {country}, +{dial}",
+          "search": "Search country or calling code",
+          "searchPlaceholder": "Country or code",
+          "clearSearch": "Clear search",
+          "suggested": "Suggested",
+          "allCountries": "All countries",
+          "noMatches": "No countries match “{query}”",
+          "results": "{count} countries",
+          "valid": "Valid {country} number"
+        },
+        "topic": "What you need",
+        "message": "Message",
+        "messagePlaceholder": "Tell us about the project: what it is, when you need it and what you want to achieve.",
+        "remaining": "{count} characters left",
+        "submit": "Get in touch",
+        "sending": "Sending",
+        "failure": "We couldn't send your message. Check your connection and try again.",
+        "successTitle": "Thanks, {name}",
+        "successText": "We got your message. We'll reply to the email you left us.",
+        "again": "Write another message",
+        "errors": {
+          "nameRequired": "Enter your name",
+          "emailRequired": "Enter your email",
+          "emailInvalid": "Enter an email like name@company.com",
+          "messageRequired": "Tell us how we can help",
+          "messageShort": "Add a little more detail, at least 20 characters",
+          "phoneInvalid": "Check the number: it does not have that country's digits"
+        },
+        "topics": {
+          "branding": "Branding",
+          "web": "Web development",
+          "motion": "Motion",
+          "marketing": "Marketing",
+          "other": "Other"
+        }
+      }
     },
     "figures": {
       "items": {
@@ -387,29 +429,9 @@
       "title": "Work",
       "intro": "The full portfolio is not published yet. The home page shows eighteen projects and five cases with their pieces."
     },
-    "services": {
-      "title": "Services",
-      "intro": "The detail of each service is not written yet. The home page covers the four disciplines and how we work."
-    },
-    "about": {
-      "title": "About",
-      "intro": "The studio page is not written yet. The home page has the team and the figures."
-    },
     "contact": {
       "title": "Contact",
       "intro": "The form is not in place yet. In the meantime, message us on Instagram and we answer there."
-    },
-    "motion": {
-      "title": "Motion",
-      "intro": "The motion page is not written yet. The home page covers what the discipline includes."
-    },
-    "marketing": {
-      "title": "Marketing",
-      "intro": "The marketing page is not written yet. The home page covers what the discipline includes."
-    },
-    "web": {
-      "title": "Web development",
-      "intro": "The web development page is not written yet. The home page covers what the discipline includes."
     }
   },
   "proposal": {
@@ -460,5 +482,241 @@
     "title": "Page not found",
     "description": "The page you're looking for doesn't exist or has moved.",
     "action": "Back to home"
+    },
+  "servicePages": {
+    "common": {
+      "processLabel": "The process",
+      "deliverableLabel": "Deliverable",
+      "faqTitle": "Questions",
+      "faqLabel": "Frequently asked questions"
+    },
+    "branding": {
+      "title": "Branding and design",
+      "description": "Identity, naming and visual systems for brands that need to look like what they already are.",
+      "process": {
+        "title": "What an identity includes",
+        "titleHighlight": "identity",
+        "intro": "Four phases, each one ending with something you receive. A full identity takes six to ten weeks.",
+        "phases": {
+          "diagnosis": {
+            "title": "Diagnosis",
+            "text": "We talk to whoever runs the business and look at how your brand reads today next to its competitors.",
+            "deliverable": "Brief signed by both of us"
+          },
+          "strategy": {
+            "title": "Strategy",
+            "text": "What the brand promises, who it speaks to and in what voice. If it needs a name, this is where we decide it.",
+            "deliverable": "Brand platform"
+          },
+          "identity": {
+            "title": "Identity",
+            "text": "Logo, type, color and the rules that hold them together. You review it on real pieces, not on loose boards.",
+            "deliverable": "Visual system"
+          },
+          "rollout": {
+            "title": "Applications",
+            "text": "Packaging, stationery, signage or social: whatever your brand needs to go out into the world.",
+            "deliverable": "Brand guidelines and editable files"
+          }
+        }
+      },
+      "faq": {
+        "intro": "What people ask us before starting an identity.",
+        "items": {
+          "price": {
+            "question": "How much does an identity cost?",
+            "answer": "It depends on what it includes: a logo with its guidelines doesn't cost the same as a system with naming, packaging and signage. We work with a fixed budget, so you know the number before we start."
+          },
+          "naming": {
+            "question": "Do you do naming too?",
+            "answer": "Yes, when the brand needs it. It happens in the strategy phase, before design, because the name changes what the logo has to solve."
+          },
+          "rebrand": {
+            "question": "Can you evolve a brand that already exists?",
+            "answer": "Yes, and it's a good part of what we do. First we look at what your people already recognize so we don't throw it away, and then we decide what changes."
+          },
+          "ownership": {
+            "question": "Who owns the files?",
+            "answer": "You do. At the end we hand over the editable files, the licensed typefaces and the guidelines, with nothing that depends on us."
+          }
+        }
+      },
+      "cta": {
+        "title": "Tell us about your brand and let's see where to start.",
+        "titleHighlight": "where to start"
+      }
+    },
+    "motion": {
+      "title": "Motion",
+      "description": "Brand animation, video and interface motion, made by the same team that designs the identity.",
+      "process": {
+        "title": "From idea to final piece",
+        "titleHighlight": "final piece",
+        "intro": "Each phase is approved before the next one starts, so changes come while they are still cheap.",
+        "phases": {
+          "script": {
+            "title": "Script",
+            "text": "We decide what has to happen in the first few seconds and what the viewer takes away.",
+            "deliverable": "Approved script and references"
+          },
+          "storyboard": {
+            "title": "Storyboard",
+            "text": "Frame by frame, before animating anything. This is when changing something costs little.",
+            "deliverable": "Storyboard and style frames"
+          },
+          "animation": {
+            "title": "Animation",
+            "text": "Movement, rhythm and sound on top of the style you already approved.",
+            "deliverable": "Review cut"
+          },
+          "delivery": {
+            "title": "Delivery",
+            "text": "We export each piece in the format and size of the channel where it will live.",
+            "deliverable": "Final files per channel"
+          }
+        }
+      },
+      "faq": {
+        "intro": "What is worth knowing before ordering an animated piece.",
+        "items": {
+          "price": {
+            "question": "How much does a piece cost?",
+            "answer": "Three things drive it: how long it runs, how complex the style is and how many formats it ships in. With the script in hand we give you a fixed budget."
+          },
+          "time": {
+            "question": "How long does it take?",
+            "answer": "It depends on length and style. The delivery date is agreed before we start, together with the script."
+          },
+          "what": {
+            "question": "What kind of pieces do you make?",
+            "answer": "Animated logos, the motion of an identity, social pieces, event video and interface animation for sites and products."
+          },
+          "brand": {
+            "question": "Can you work on a brand you didn't design?",
+            "answer": "Yes. We start from your guidelines and, if something is missing, we define how the brand moves before animating the first piece."
+          }
+        }
+      },
+      "cta": {
+        "title": "Tell us what piece you need and when.",
+        "titleHighlight": "and when"
+      }
+    },
+    "marketing": {
+      "title": "Marketing",
+      "description": "Campaigns, content and paid media designed by the same team that makes the brand.",
+      "process": {
+        "title": "How we build a strategy",
+        "titleHighlight": "strategy",
+        "intro": "Before proposing channels we look at what already works for you. Each phase leaves a document you can read without us.",
+        "phases": {
+          "diagnosis": {
+            "title": "Diagnosis",
+            "text": "We review your channels, your content and the numbers you already have.",
+            "deliverable": "Diagnosis with priorities"
+          },
+          "plan": {
+            "title": "Plan",
+            "text": "Which channels, with what message and what budget. No fixed packages: the plan comes from your business.",
+            "deliverable": "Channel plan and calendar"
+          },
+          "execution": {
+            "title": "Execution",
+            "text": "Campaigns, content and paid media made by the people who design the brand, so everything says the same thing.",
+            "deliverable": "Campaigns running"
+          },
+          "measurement": {
+            "title": "Measurement",
+            "text": "We read the numbers with you and adjust what isn't working.",
+            "deliverable": "Monthly report with the numbers"
+          }
+        }
+      },
+      "faq": {
+        "intro": "What people ask us before taking a brand into channels.",
+        "items": {
+          "price": {
+            "question": "How much does it cost?",
+            "answer": "It depends on the channels and the media budget, which is kept separate from our fees so you know what pays for what. The number comes out of the diagnosis."
+          },
+          "results": {
+            "question": "When do results show?",
+            "answer": "It depends on the channel: paid media gives signals early and content takes longer to build up. The plan tells you what to expect from each one and when to review it."
+          },
+          "accounts": {
+            "question": "Who owns the accounts?",
+            "answer": "You do. Ad, social and analytics accounts are in your company's name; we get access."
+          },
+          "brand": {
+            "question": "Do I need the brand done first?",
+            "answer": "No, but it helps. If the brand isn't clear yet, we start there, because a campaign can't fix a brand that doesn't know what to say."
+          }
+        }
+      },
+      "cta": {
+        "title": "Tell us where your brand is today and where you want to take it.",
+        "titleHighlight": "where you want to take it"
+      }
+    },
+    "web": {
+      "title": "Web development",
+      "description": "Custom sites that are fast and editable, designed and built by the same team.",
+      "process": {
+        "title": "How we make a site",
+        "titleHighlight": "a site",
+        "intro": "Design and code in the same team, so what you approve on screen is what gets published. A site takes four to eight weeks.",
+        "phases": {
+          "architecture": {
+            "title": "Architecture",
+            "text": "Which pages, what content and what visitors need to be able to do.",
+            "deliverable": "Sitemap and content plan"
+          },
+          "design": {
+            "title": "Design",
+            "text": "Desktop and mobile screens, reviewed with you before writing a line of code.",
+            "deliverable": "Approved design"
+          },
+          "build": {
+            "title": "Development",
+            "text": "We build it on a content management system so your team can change text and images without asking us.",
+            "deliverable": "Site on a staging environment"
+          },
+          "launch": {
+            "title": "Launch",
+            "text": "We publish, check speed, search and accessibility, and show you how to use the CMS.",
+            "deliverable": "Live site and access"
+          }
+        }
+      },
+      "faq": {
+        "intro": "What is worth knowing before rebuilding a site.",
+        "items": {
+          "price": {
+            "question": "How much does a site cost?",
+            "answer": "It depends on how many pages, how many languages and what it has to connect to, like a store or a CRM. With the sitemap we give you a fixed budget."
+          },
+          "time": {
+            "question": "How long does it take?",
+            "answer": "Four to eight weeks. What moves it most is when the content arrives: copy, photos and decisions."
+          },
+          "edit": {
+            "question": "Will I be able to edit it?",
+            "answer": "Yes. Everything that changes often, like copy, images or projects, is edited from a CMS, without touching code."
+          },
+          "ownership": {
+            "question": "Who owns the site?",
+            "answer": "You do: the code, the domain and the access are in your company's name."
+          }
+        }
+      },
+      "cta": {
+        "title": "Tell us what site you need and when.",
+        "titleHighlight": "and when"
+      }
+    }
+  },
+  "about": {
+    "title": "About",
+    "description": "Pigmento Studio, a brand design and growth studio in Mexico City: who we are and what the work has left."
   }
 }

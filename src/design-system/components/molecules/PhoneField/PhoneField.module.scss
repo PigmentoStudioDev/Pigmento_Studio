@@ -1,0 +1,366 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/a11y';
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// La misma anatomia que TextField: sin gap entre filas, cada fila trae su aire.
+.root {
+  display: grid;
+  min-inline-size: 0;
+  text-align: start;
+}
+
+.label {
+  @include brandtype.style('label');
+
+  margin-block-end: spacing.$spacing-03;
+  color: theme.$text-secondary;
+}
+
+// Boton de pais y numero comparten UNA caja: es un solo campo con dos partes, y el
+// foco de cualquiera de las dos enciende el borde entero, como el foco de TextField.
+.control {
+  display: flex;
+  align-items: stretch;
+  min-block-size: brand.$control-block-m;
+  border: 1px solid theme.$border-strong;
+  border-radius: brand.$radius-05;
+  background-color: theme.$field-02;
+  color: theme.$text-primary;
+
+  &:focus-within {
+    border-color: theme.$focus;
+  }
+
+  &[data-invalid='true'] {
+    border-color: theme.$support-error;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .control:hover:not(:focus-within, [data-invalid='true'], [data-readonly='true']) {
+    border-color: theme.$text-primary;
+  }
+}
+
+.trigger {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: spacing.$spacing-02;
+  padding-inline: spacing.$spacing-05 spacing.$spacing-03;
+  border: 0;
+  border-inline-end: 1px solid theme.$border-subtle;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus {
+    outline: none;
+  }
+
+  // Por dentro: el anillo de fuera se montaria sobre el borde de la caja.
+  &:focus-visible {
+    outline: 2px solid theme.$focus;
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.flag {
+  line-height: 1;
+}
+
+.dial {
+  font-variant-numeric: tabular-nums;
+}
+
+.chevron {
+  display: inline-flex;
+  inline-size: spacing.$spacing-05;
+  block-size: spacing.$spacing-05;
+  color: theme.$icon-secondary;
+}
+
+.root[data-open='true'] .chevron {
+  transform: rotate(180deg);
+}
+
+// La guia va DETRAS del numero, con el mismo cuerpo y relleno: lo escrito en ella es
+// transparente y deja asomar solo lo que falta.
+.numberWrap {
+  position: relative;
+  display: grid;
+  flex: 1;
+  align-items: center;
+  min-inline-size: 0;
+}
+
+.guide,
+.number {
+  grid-area: 1 / 1;
+  padding-block: spacing.$spacing-04;
+  padding-inline: spacing.$spacing-04 spacing.$spacing-07;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.guide {
+  overflow: hidden;
+  color: theme.$text-placeholder;
+  white-space: pre;
+  pointer-events: none;
+}
+
+.guideTyped {
+  color: transparent;
+}
+
+.number {
+  inline-size: 100%;
+  border: 0;
+  background: none;
+  color: theme.$text-primary;
+  outline: none;
+
+  &[readonly] {
+    color: theme.$text-secondary;
+  }
+}
+
+.valid {
+  position: absolute;
+  inset-inline-end: spacing.$spacing-04;
+  display: inline-flex;
+  inline-size: spacing.$spacing-05;
+  block-size: spacing.$spacing-05;
+  color: theme.$support-success;
+  opacity: 0;
+
+  &[data-on='true'] {
+    opacity: 1;
+  }
+}
+
+// El panel se cuelga del campo y no del bloque entero: debajo del control va la fila
+// del error, y la lista no puede saltar cuando esa fila se abre.
+.anchor {
+  position: relative;
+}
+
+// Flota sobre los campos que siguen (ver el HACK del componente). `z-index` porque
+// los temas de debajo son posicionados y vienen despues en el DOM.
+.picker {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline: 0;
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(calc(-1 * #{spacing.$spacing-02}));
+}
+
+.root[data-open='true'] .picker {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+// Busqueda y lista son UNA hoja con el borde del campo: el borde enciende con el foco
+// de la busqueda, como el del control.
+.sheet {
+  overflow: hidden;
+  margin-block-start: spacing.$spacing-03;
+  border: 1px solid theme.$border-strong;
+  border-radius: brand.$radius-05;
+  background-color: theme.$field-02;
+
+  &:focus-within {
+    border-color: theme.$focus;
+  }
+}
+
+.searchRow {
+  display: flex;
+  align-items: center;
+  border-block-end: 1px solid theme.$border-subtle;
+}
+
+.search {
+  flex: 1;
+  min-inline-size: 0;
+  padding-block: spacing.$spacing-04;
+  padding-inline: spacing.$spacing-05;
+  border: 0;
+  background: none;
+  color: theme.$text-primary;
+  font: inherit;
+  outline: none;
+
+  &::placeholder {
+    color: theme.$text-placeholder;
+  }
+}
+
+.clear {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: brand.$control-block-s;
+  block-size: brand.$control-block-s;
+  margin-inline-end: spacing.$spacing-02;
+  border: 0;
+  border-radius: brand.$radius-control-square;
+  background: none;
+  color: theme.$icon-secondary;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid theme.$focus;
+    outline-offset: -2px;
+  }
+}
+
+.scroll {
+  // `--pf-room` lo mide el componente al abrir: lo que queda hasta el borde de la tarjeta.
+  max-block-size: min(calc(spacing.$spacing-13 * 2), var(--pf-room, calc(spacing.$spacing-13 * 2)));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.options {
+  position: relative;
+  padding-block: spacing.$spacing-02;
+}
+
+.groupLabel {
+  @include brandtype.style('label');
+
+  padding-block: spacing.$spacing-03 spacing.$spacing-02;
+  padding-inline: spacing.$spacing-05;
+  color: theme.$text-helper;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-03;
+  padding-block: spacing.$spacing-03;
+  padding-inline: spacing.$spacing-05;
+  cursor: pointer;
+
+  &[data-active='true'] {
+    background-color: theme.$field-hover-02;
+  }
+}
+
+.name {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  color: theme.$text-secondary;
+  font-variant-numeric: tabular-nums;
+}
+
+.check {
+  display: inline-flex;
+  inline-size: spacing.$spacing-05;
+  block-size: spacing.$spacing-05;
+  color: theme.$icon-primary;
+  opacity: 0;
+
+  &[data-on='true'] {
+    opacity: 1;
+  }
+}
+
+.empty {
+  padding-block: spacing.$spacing-05;
+  padding-inline: spacing.$spacing-05;
+  color: theme.$text-secondary;
+}
+
+.message {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+
+  &[data-open='true'] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+}
+
+.messageInner {
+  overflow: hidden;
+}
+
+.error {
+  display: block;
+  padding-block-start: spacing.$spacing-03;
+  color: theme.$text-error;
+}
+
+.srOnly {
+  @include a11y.visually-hidden;
+}
+
+// La regla base gobierna el cierre: mas corto y con la curva de salida.
+@media (prefers-reduced-motion: no-preference) {
+  .control,
+  .sheet {
+    transition: border-color brand.$duration-tint brand.$ease-tint;
+  }
+
+  .chevron {
+    transition: transform brand.$duration-half brand.$ease-default;
+  }
+
+  .valid,
+  .check {
+    transition: opacity brand.$duration-quarter brand.$ease-default;
+  }
+
+  // `visibility` cambia al final del cierre y al principio de la apertura: asi el
+  // panel se ve salir y no desaparece de golpe.
+  .picker {
+    transition:
+      opacity brand.$duration-quarter brand.$ease-exit,
+      transform brand.$duration-quarter brand.$ease-exit,
+      visibility 0s linear brand.$duration-quarter;
+  }
+
+  .root[data-open='true'] .picker {
+    transition:
+      opacity brand.$duration-half brand.$ease-default,
+      transform brand.$duration-half brand.$ease-default,
+      visibility 0s;
+  }
+
+  .message {
+    transition:
+      grid-template-rows brand.$duration-half brand.$ease-default,
+      opacity brand.$duration-quarter brand.$ease-default;
+  }
+}

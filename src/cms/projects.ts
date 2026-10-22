@@ -45,19 +45,29 @@ export function toPiece(media: Media | number | null | undefined): ProjectPiece 
 export async function getFeaturedPieces(locale: Locale): Promise<ProjectPiece[]> {
   const payload = await getPayload({ config });
 
-  const { docs } = await payload.find({
-    collection: 'projects',
-    locale,
-    overrideAccess: false,
-    where: { featured: { equals: true } },
-    sort: 'order',
-    // 2 para que `cover` llegue poblado; con 1 vendria como id y no habria medidas.
-    depth: 2,
-    limit: 50,
-  });
+  const find = (featuredOnly: boolean) =>
+    payload.find({
+      collection: 'projects',
+      locale,
+      overrideAccess: false,
+      ...(featuredOnly ? { where: { featured: { equals: true } } } : {}),
+      sort: 'order',
+      // 2 para que `cover` llegue poblado; con 1 vendria como id y no habria medidas.
+      depth: 2,
+      limit: featuredOnly ? 50 : FALLBACK_PIECES,
+    });
+
+  // Sin ninguno marcado, los primeros del portfolio en el orden del CMS: con `featured`
+  // en falso en todos, el menu y el manifiesto se quedaban sin una sola pieza (medido
+  // en prod, 2026-10-22). Marcar alguno en el panel vuelve a mandar la seleccion.
+  const featured = await find(true);
+  const { docs } = featured.docs.length > 0 ? featured : await find(false);
 
   return docs.map((doc: Project) => toPiece(doc.cover)).filter((p): p is ProjectPiece => p !== null);
 }
+
+/** Cuantas piezas toma el respaldo: las que caben en la corona del menu sin repetirse. */
+const FALLBACK_PIECES = 14;
 
 /** Una fila del strip de trabajo: la disciplina viaja como clave, la traduce la pagina. */
 export interface WorkProject {
@@ -153,6 +163,7 @@ export async function getFeaturedCases(
   locale: Locale,
   maxPieces: number,
   maxCases: number,
+  discipline?: FeaturedCase['discipline'],
 ): Promise<FeaturedCase[]> {
   const payload = await getPayload({ config });
 
@@ -168,5 +179,8 @@ export async function getFeaturedCases(
   return docs
     .map((doc: Project) => toFeaturedCase(doc, maxPieces))
     .filter((c): c is FeaturedCase => c !== null)
+    // La pagina de una disciplina ensena solo sus casos: uno de motion en la de
+    // branding argumenta la disciplina equivocada.
+    .filter((c) => !discipline || c.discipline === discipline)
     .slice(0, maxCases);
 }

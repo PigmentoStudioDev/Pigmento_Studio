@@ -45,7 +45,6 @@ export function getFooter(t: Translate, legals: LegalLink[] = [], year = new Dat
           title: t("columnStudio"),
           links: [
             { label: t("work"), href: "/trabajo" },
-            { label: t("services"), href: "/servicios" },
             { label: t("about"), href: "/nosotros" },
             // Sin href: anunciada y todavia no navegable, como en el menu.
             { label: t("lab") },
@@ -54,9 +53,7 @@ export function getFooter(t: Translate, legals: LegalLink[] = [], year = new Dat
         {
           title: t("columnServices"),
           links: [
-            // Al indice mientras branding no tenga pagina propia: el mismo
-            // TODO(rutas) que ya llevan el manifiesto y la navegacion.
-            { label: t("branding"), href: "/servicios" },
+            { label: t("branding"), href: "/servicios/branding" },
             { label: t("motion"), href: "/servicios/motion" },
             { label: t("marketing"), href: "/servicios/marketing" },
             { label: t("web"), href: "/servicios/web-development" },
@@ -85,7 +82,6 @@ export function getFooter(t: Translate, legals: LegalLink[] = [], year = new Dat
     meta: [
       { label: t("studio"), plain: true },
       { label: t("work"), href: "/trabajo" },
-      { label: t("services"), href: "/servicios" },
       { label: t("contact"), href: "/contacto" },
     ],
 

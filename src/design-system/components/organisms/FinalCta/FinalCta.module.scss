@@ -6,6 +6,7 @@
 @use '../../../styles/brand' as brand;
 @use '../../../styles/grain' as grain;
 @use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
@@ -14,20 +15,20 @@
 /// el texto de la FAQ o del equipo — el margen no es un adorno, es la reticula.
 $panel-inline-margin: spacing.$spacing-06;
 
-/// Medida del titular, en las dos lineas que pide una llamada final: mas y deja de
-/// leerse de un vistazo. En ch y no en px para que parta por donde tiene que partir a
-/// cualquier cuerpo — sin acotar, en una pantalla de 2500px el titular se estira de un
-/// borde al otro y deja de ser un titular para ser una fila.
-$title-inline-size: 34ch;
+/// Medida del titular. En ch y no en px para que parta por donde tiene que partir a
+/// cualquier cuerpo — sin acotar, en una pantalla ancha el titular se estira hasta
+/// tocar el formulario y deja de leerse como su presentacion.
+$title-inline-size: 18ch;
 
 // La placa. `background-color` y `color` salen del rol que publica el atributo: la
 // hoja global ya re-declaro los tokens dentro de este subarbol, asi que aqui se piden
 // por su nombre de siempre y salen invertidos solos.
+// Dos columnas, como el bloque de Arc: el titular presenta y el formulario actua.
 .panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: spacing.$spacing-06;
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: spacing.$spacing-10;
   margin-inline: $panel-inline-margin;
   padding-block: spacing.$spacing-12;
   padding-inline: spacing.$spacing-06;
@@ -36,11 +37,15 @@ $title-inline-size: 34ch;
   border-radius: brand.$radius-plate;
   background-color: theme.$background;
   color: theme.$text-primary;
-  text-align: center;
 
   // El grano tambien aqui: es una superficie de fondo plano como las demas, y sin el
   // seria la unica caja lisa de la pagina.
   @include grain.surface;
+}
+
+.intro {
+  display: grid;
+  gap: spacing.$spacing-06;
 }
 
 .label {
@@ -54,4 +59,13 @@ $title-inline-size: 34ch;
 .panel h2 {
   max-inline-size: $title-inline-size;
   text-wrap: balance;
+}
+
+// Por debajo de `lg` los dos campos de la primera fila ya no caben al lado del
+// titular sin partir el correo: la placa apila y el formulario toma el ancho entero.
+@include breakpoint.breakpoint-down('lg') {
+  .panel {
+    grid-template-columns: minmax(0, 1fr);
+    gap: spacing.$spacing-07;
+  }
 }

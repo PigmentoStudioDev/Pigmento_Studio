@@ -110,6 +110,12 @@ $-styles: (
   // 12cqi serian 35px, legibles, pero en una banda a ancho completo se dispararian.
   'figure': (size: clamp(2rem, 12cqi, 3.5rem), height: 1, tracking: -0.03em, weight: 400),
 
+  // El TITULAR de una tarjeta: el mismo trato que 'figure', medido contra la caja y no
+  // contra la ventana, con la misma TRAMPA (declarar `container-type: inline-size`). La
+  // tarjeta del menu usaba 'heading', que a 1440 de ventana daba 80px dentro de una
+  // columna de 380 y partia "Ultimo caso publicado" en tres lineas de cartel.
+  'card-title': (size: clamp(1.5rem, 9cqi, 2.5rem), height: 1.05, tracking: -0.025em, weight: 400),
+
   // El cuerpo grande que acompana a un display. No es texto corrido y por eso su
   // interlineado es de titular: al lado de una cima de 144px, un parrafo de 19 no se
   // leia como entradilla sino como letra pequena.

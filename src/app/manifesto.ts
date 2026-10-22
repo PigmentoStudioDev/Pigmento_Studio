@@ -18,9 +18,7 @@ export function getManifesto(t: Translate, pieces: ProjectPiece[]): ManifestoPro
     eyebrow: t("eyebrow"),
     segments: [
       { text: t("open") },
-      // TODO(rutas): branding no tiene pagina propia — la navegacion lista Motion,
-      // Marketing y Desarrollo web — asi que apunta al indice hasta que exista.
-      { text: t("branding"), href: "/servicios" },
+      { text: t("branding"), href: "/servicios/branding" },
       { text: t("afterBranding") },
       { text: t("sites"), href: "/servicios/web-development" },
       { text: t("afterSites") },

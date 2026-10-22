@@ -101,7 +101,7 @@ $brand-min-inline-size: 16rem;
 
   color: theme.$text-secondary;
   text-decoration: none;
-  transition: color brand.$duration-quarter brand.$ease-default;
+  transition: color brand.$duration-tint brand.$ease-tint;
 }
 
 .top:hover {
