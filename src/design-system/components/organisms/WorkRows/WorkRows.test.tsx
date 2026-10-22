@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { axe } from "jest-axe";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { WorkRows } from "./WorkRows";
 
 const IMAGE = { src: "/portfolio/01.png", width: 520, height: 700 };
@@ -72,5 +72,28 @@ describe("WorkRows", () => {
     const { container } = render(<WorkRows {...PROPS} />);
 
     expect(await axe(container)).toHaveNoViolations();
+  });
+});
+
+describe("WorkRows: flechas", () => {
+  /** Sin motion (jsdom, movil, reduced-motion) cada fila es un carril y la flecha lo desplaza. */
+  it("la siguiente desplaza los carriles, y la anterior empieza apagada", () => {
+    const scrollTo = vi.fn();
+    Element.prototype.scrollTo = scrollTo;
+    // jsdom no maqueta: sin medidas, cada carril mide cero y ya estaria en su final.
+    vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(500);
+    vi.spyOn(HTMLElement.prototype, "scrollWidth", "get").mockReturnValue(2000);
+    // Cada pieza 300px mas a la derecha que la anterior: los puntos de snap del carril.
+    vi.spyOn(HTMLElement.prototype, "offsetLeft", "get").mockImplementation(function (this: HTMLElement) {
+      return Array.from(this.parentElement?.children ?? []).indexOf(this) * 300;
+    });
+    render(<WorkRows {...PROPS} labels={{ previous: "Anteriores", next: "Siguientes" }} />);
+
+    expect(screen.getByRole("button", { name: "Anteriores" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Siguientes" }));
+
+    expect(scrollTo).toHaveBeenCalledTimes(2);
+    expect(scrollTo.mock.calls[0][0].left).toBeGreaterThan(0);
+    vi.restoreAllMocks();
   });
 });

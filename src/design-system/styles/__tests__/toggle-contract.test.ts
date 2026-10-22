@@ -15,7 +15,7 @@ import { describe, expect, it } from 'vitest';
 const MOLECULES = join(process.cwd(), 'src/design-system/components/molecules');
 const SASS: Options<'sync'> = { loadPaths: ['node_modules'], quietDeps: true };
 
-const TOGGLES = ['ThemeToggle', 'SoundToggle', 'LanguageToggle'] as const;
+const TOGGLES = ['ThemeToggle', 'LanguageToggle'] as const;
 
 /** Las declaraciones de un selector de primer nivel, sin las de dentro de @media. */
 function declarations(name: string, selector: string, props: readonly string[]): Record<string, string> {

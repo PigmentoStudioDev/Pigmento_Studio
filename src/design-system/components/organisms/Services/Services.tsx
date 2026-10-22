@@ -116,7 +116,7 @@ export function Services({
           // <img> con las props que calcula next/image, y no <Image>: el hook lee
           // `currentSrc` para copiarlo a la capa, y necesita el elemento tal cual.
           // eslint-disable-next-line @next/next/no-img-element
-          return <img key={service.href + service.name} {...props} alt="" />;
+          return <img key={service.href + service.name} {...props} alt="" draggable={false} />;
         })}
       </div>
 

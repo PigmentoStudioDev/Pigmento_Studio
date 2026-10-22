@@ -111,9 +111,9 @@ $shot-max-block-size: 70svh;
   color: theme.$text-secondary;
   cursor: pointer;
   transition:
-    color brand.$duration-quarter brand.$ease-default,
-    background-color brand.$duration-quarter brand.$ease-default,
-    border-color brand.$duration-quarter brand.$ease-default;
+    color brand.$duration-tint brand.$ease-tint,
+    background-color brand.$duration-tint brand.$ease-tint,
+    border-color brand.$duration-tint brand.$ease-tint;
 }
 
 .chip:hover {

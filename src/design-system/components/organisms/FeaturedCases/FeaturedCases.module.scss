@@ -17,11 +17,15 @@ $cards-per-view: 1;
   padding-inline: spacing.$spacing-06;
 }
 
-// Los controles arriba y a la derecha, como en la fila del equipo: el mismo gesto en
-// la misma pagina se maneja desde el mismo sitio.
+// Debajo de las tarjetas, en los extremos y con ancho tope: en pantallas grandes las
+// dos flechas no se separan hasta perderse de vista una de la otra (decision de Karen,
+// 2026-10-22). El mismo reparto que las de la galeria de trabajo.
 .controls {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  inline-size: 100%;
+  max-inline-size: brand.$container-content;
+  margin-inline: auto;
 }
 
 .previous {

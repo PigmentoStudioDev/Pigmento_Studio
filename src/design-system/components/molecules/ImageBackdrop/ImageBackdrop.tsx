@@ -49,6 +49,7 @@ export function ImageBackdrop({
     <div ref={triggerRef} className={styles.mask}>
       <div ref={targetRef} className={styles.target}>
         <Image
+          draggable={false}
           className={styles.image}
           src={src}
           alt={alt}

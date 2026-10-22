@@ -2,10 +2,13 @@
 
 import type { CycledCandyFamily } from "../../../theme/candy";
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties, type RefObject } from "react";
+import { REDUCED_MOTION } from "../../../motion/breakpoints";
 import { cursorAttributes } from "../../../motion/cursor";
+import { scrollToY } from "../../../motion/useSmoothScroll";
 import { useWorkRows } from "../../../motion/useWorkRows";
 import { Button } from "../../atoms/Button/Button";
+import { IconButton } from "../../atoms/IconButton/IconButton";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
 import styles from "./WorkRows.module.scss";
 
@@ -45,6 +48,11 @@ export interface WorkRowsProps {
   cursorLabel?: string;
   titleId?: string;
   /**
+   * Las flechas, para quien no puede o no quiere recorrer las filas con la rueda o
+   * arrastrando. Sin ellas no se pintan.
+   */
+  labels?: { previous: string; next: string };
+  /**
    * De que familia candy es el resalte del titular. Sin valor, el azul del tema.
    * Lo reparte la PAGINA, que es quien conoce el orden de los bloques: el ciclo
    * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
@@ -65,9 +73,11 @@ export function WorkRows({
   ctaHref,
   cursorLabel,
   titleId,
+  labels,
   highlightFamily,
 }: WorkRowsProps) {
   const rootRef = useWorkRows<HTMLDivElement>();
+  const edge = useRowsEdge(rootRef);
 
   const filled = rows.filter((row) => row.length > 0);
   if (filled.length === 0) return null;
@@ -103,9 +113,16 @@ export function WorkRows({
                   style={{ "--pg-piece-ratio": piece.image.width / piece.image.height } as CSSProperties}
                   data-rows-piece=""
                 >
-                  <a className={styles.card} href={piece.href} {...cursorAttributes("scramble", cursorLabel)}>
+                  {/* Sin arrastre en el enlace tampoco: arrastrar la pieza se lleva su URL, y en
+                      una fila que se recorre es un gesto que se dispara sin querer. */}
+                  <a
+                    className={styles.card}
+                    href={piece.href}
+                    draggable={false}
+                    {...cursorAttributes("scramble", cursorLabel)}
+                  >
                     {/* Decorativa: el nombre del enlace lo ponen los textos de abajo. */}
-                    <Image className={styles.image} src={piece.image.src} alt="" fill sizes={PIECE_SIZES} />
+                    <Image className={styles.image} src={piece.image.src} alt="" fill sizes={PIECE_SIZES} draggable={false} />
                     <span className={styles.caption}>
                       <span className={styles.client}>{piece.client}</span>
                       {/* Sin el espacio, el nombre del enlace sale "Cliente 01Branding". En
@@ -117,8 +134,126 @@ export function WorkRows({
               ))}
             </ul>
           ))}
+
+          {/* Debajo de las filas y en los dos extremos: cada flecha queda del lado hacia
+              el que mueve las piezas. Con ancho tope para que en pantallas grandes no se
+              separen hasta perderse de vista una de la otra. */}
+          {labels ? (
+            <div className={styles.controls}>
+              {/* La de atras es la misma flecha reflejada, como en los casos. */}
+              <span className={styles.previous}>
+                <IconButton
+                  icon="arrow"
+                  label={labels.previous}
+                  disabled={edge.start}
+                  onClick={() => stepRows(rootRef.current, -1)}
+                />
+              </span>
+              <IconButton
+                icon="arrow"
+                label={labels.next}
+                disabled={edge.end}
+                onClick={() => stepRows(rootRef.current, 1)}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
   );
+}
+
+/**
+ * Lo que avanza una flecha: tres cuartos de ventana. Queda a la vista un trozo de lo
+ * que ya se vio, y eso es lo que dice que la fila siguio y no salto a otra.
+ */
+const STEP = 0.75;
+
+const isMotion = (root: HTMLElement) => root.hasAttribute("data-rows-motion");
+
+/**
+ * Las filas se mueven de dos maneras y la flecha sigue a la que este puesta. Con motion
+ * las lleva el scroll de la PAGINA (la fila mas larga avanza un pixel por pixel), asi que
+ * la flecha desplaza la pagina dentro del tramo fijo; sin motion cada fila es un carril y
+ * la flecha desplaza los carriles.
+ */
+function stepRows(root: HTMLElement | null, direction: 1 | -1) {
+  if (!root) return;
+  const frame = root.querySelector<HTMLElement>("[data-rows-frame]");
+  const distance = (frame?.clientWidth ?? window.innerWidth) * STEP * direction;
+
+  if (isMotion(root)) {
+    const { start, end } = pinnedRange(root);
+    scrollToY(Math.min(Math.max(window.scrollY + distance, start), end));
+    return;
+  }
+
+  const behavior = window.matchMedia(REDUCED_MOTION).matches ? "auto" : "smooth";
+  root.querySelectorAll<HTMLElement>("[data-rows-row]").forEach((row) => {
+    row.scrollTo({ left: snapTarget(row, distance), behavior });
+  });
+}
+
+/**
+ * Donde deja la flecha un carril: en la pieza que cae dentro del paso, y como minimo en
+ * la siguiente. El carril tiene snap obligatorio, y un desplazamiento menor que una
+ * pieza ancha se lo devolveria el snap al punto de partida: la flecha no haria nada.
+ */
+function snapTarget(row: HTMLElement, distance: number) {
+  const padding = parseFloat(getComputedStyle(row).scrollPaddingInlineStart) || 0;
+  const stops = Array.from(row.children, (child) => (child as HTMLElement).offsetLeft - padding);
+  const from = row.scrollLeft;
+  const wanted = from + distance;
+
+  if (distance > 0) {
+    const ahead = stops.filter((stop) => stop > from + 1);
+    return ahead.filter((stop) => stop <= wanted).pop() ?? ahead[0] ?? from;
+  }
+  const behind = stops.filter((stop) => stop < from - 1);
+  return behind.find((stop) => stop >= wanted) ?? behind.pop() ?? from;
+}
+
+/** El tramo de scroll en que el bloque esta fijo y las filas avanzan. */
+function pinnedRange(root: HTMLElement) {
+  const stage = root.querySelector<HTMLElement>("[data-rows-stage]") ?? root;
+  const start = stage.getBoundingClientRect().top + window.scrollY;
+  return { start, end: start + stage.offsetHeight - window.innerHeight };
+}
+
+/**
+ * Si las filas estan en su principio o en su final, para apagar la flecha que ya no
+ * lleva a ningun sitio. Se recalcula con el scroll de la pagina y con el de cada carril.
+ */
+function useRowsEdge(rootRef: RefObject<HTMLElement | null>) {
+  const [edge, setEdge] = useState({ start: true, end: false });
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const rows = Array.from(root.querySelectorAll<HTMLElement>("[data-rows-row]"));
+
+    const update = () => {
+      if (isMotion(root)) {
+        const { start, end } = pinnedRange(root);
+        setEdge({ start: window.scrollY <= start + 1, end: window.scrollY >= end - 1 });
+        return;
+      }
+      setEdge({
+        start: rows.every((row) => row.scrollLeft <= 1),
+        end: rows.every((row) => row.scrollLeft + row.clientWidth >= row.scrollWidth - 1),
+      });
+    };
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    rows.forEach((row) => row.addEventListener("scroll", update, { passive: true }));
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      rows.forEach((row) => row.removeEventListener("scroll", update));
+    };
+  }, [rootRef]);
+
+  return edge;
 }

@@ -1,24 +1,67 @@
 import { render, screen } from "@testing-library/react";
 import { axe } from "jest-axe";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { FinalCta, type FinalCtaProps } from "./FinalCta";
+
+const ERRORS = {
+  nameRequired: "a",
+  emailRequired: "b",
+  emailInvalid: "c",
+  phoneInvalid: "f",
+  messageRequired: "d",
+  messageShort: "e",
+};
 
 const PROPS: FinalCtaProps = {
   label: "Hablemos",
-  title: "Agendemos una llamada.",
-  cta: "Agendar una llamada",
-  href: "/contacto",
+  title: "Cuentanos que tienes en mente.",
+  form: {
+    locale: "es",
+    topics: [{ value: "branding", label: "Branding" }],
+    copy: {
+      formLabel: "Formulario de contacto",
+      name: "Nombre",
+      namePlaceholder: "",
+      email: "Correo",
+      emailPlaceholder: "",
+      phone: {
+        label: "Telefono",
+        country: "Pais: {country}, +{dial}",
+        search: "Buscar pais o lada",
+        searchPlaceholder: "Pais o lada",
+        clearSearch: "Borrar busqueda",
+        suggested: "Sugeridos",
+        allCountries: "Todos los paises",
+        noMatches: "Ningun pais coincide con {query}",
+        results: "{count} paises",
+        valid: "Numero valido de {country}",
+      },
+      topic: "Que necesitas",
+      message: "Mensaje",
+      messagePlaceholder: "",
+      remaining: "Quedan {count}",
+      submit: "Empezar la conversacion",
+      sending: "Enviando",
+      failure: "Fallo",
+      successTitle: "Gracias, {name}",
+      successText: "Recibido",
+      again: "Otro",
+      errors: ERRORS,
+    },
+  },
+  onSubmit: vi.fn(),
 };
 
 describe("FinalCta", () => {
-  /** Un solo destino: una llamada final con dos opciones deja de ser una llamada. */
-  it("ofrece un unico destino", () => {
+  /**
+   * Una sola accion: el envio. Si volviera el enlace a /contacto junto al formulario,
+   * la llamada final ofreceria dos salidas y dejaria de ser una llamada.
+   */
+  it("la unica accion es enviar el formulario", () => {
     render(<FinalCta {...PROPS} />);
 
-    const links = screen.getAllByRole("link");
-
-    expect(links).toHaveLength(1);
-    expect(links[0]).toHaveAttribute("href", "/contacto");
+    expect(screen.queryAllByRole("link")).toHaveLength(0);
+    expect(screen.getByRole("form", { name: "Formulario de contacto" })).toBeInTheDocument();
   });
 
   it("el titular nombra la seccion", () => {

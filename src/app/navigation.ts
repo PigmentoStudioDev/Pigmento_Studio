@@ -28,7 +28,6 @@ export function getNavigation(t: Translate, gallery: ProjectPiece[]): SiteHeader
         featured: true,
         items: [
           { label: t("estudio.trabajo"), href: "/trabajo" },
-          { label: t("estudio.servicios"), href: "/servicios" },
           { label: t("estudio.nosotros"), href: "/nosotros" },
         ],
         secondary: [{ label: t("estudio.laboratorio"), tag: t("estudio.pronto") }],
@@ -37,9 +36,8 @@ export function getNavigation(t: Translate, gallery: ProjectPiece[]): SiteHeader
         label: t("servicios.label"),
         items: [
           // Primero por peso en la busqueda y por ser la disciplina de entrada del
-          // estudio. Al indice y no a `/servicios/branding`: esa pagina no existe, el
-          // mismo TODO(rutas) que ya lleva el manifiesto.
-          { label: t("servicios.branding"), href: "/servicios" },
+          // estudio. No hay indice de servicios: cada disciplina es su propia pagina.
+          { label: t("servicios.branding"), href: "/servicios/branding" },
           { label: t("servicios.motion"), href: "/servicios/motion" },
           { label: t("servicios.marketing"), href: "/servicios/marketing" },
           { label: t("servicios.web"), href: "/servicios/web-development" },
@@ -53,7 +51,6 @@ export function getNavigation(t: Translate, gallery: ProjectPiece[]): SiteHeader
           { icon: "behance", href: "https://www.behance.net/pigmentostudio1", label: t("social.behance") },
         ],
         themeToggle: { label: t("themeToggle") },
-        soundToggle: { label: t("soundToggle") },
         languageToggle: { label: t("languageToggle") },
       },
     ],

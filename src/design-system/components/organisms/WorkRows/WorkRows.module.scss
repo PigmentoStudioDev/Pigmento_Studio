@@ -31,6 +31,22 @@ $piece-gap: spacing.$spacing-03;
   }
 }
 
+.controls {
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  justify-content: space-between;
+  inline-size: 100%;
+  max-inline-size: brand.$container-content;
+  margin-inline: auto;
+  padding-inline: spacing.$spacing-06;
+}
+
+.previous {
+  display: inline-flex;
+  rotate: 180deg;
+}
+
 .frame {
   display: flex;
   flex-direction: column;

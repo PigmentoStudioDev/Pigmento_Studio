@@ -3,16 +3,12 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Section } from "@/design-system/components/layout/Section/Section";
-import { Faq } from "@/design-system/components/organisms/Faq/Faq";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
 import { FeaturedCases } from "@/design-system/components/organisms/FeaturedCases/FeaturedCases";
-import { Figures } from "@/design-system/components/organisms/Figures/Figures";
 import { ImageBand } from "@/design-system/components/organisms/ImageBand/ImageBand";
-import { Process } from "@/design-system/components/organisms/Process/Process";
 import { Services } from "@/design-system/components/organisms/Services/Services";
 import { Testimonials } from "@/design-system/components/organisms/Testimonials/Testimonials";
-import { Team } from "@/design-system/components/organisms/Team/Team";
 import { ValueCards } from "@/design-system/components/organisms/ValueCards/ValueCards";
 import { WorkRows } from "@/design-system/components/organisms/WorkRows/WorkRows";
 import { HeroStatement } from "@/design-system/components/organisms/HeroStatement/HeroStatement";
@@ -21,16 +17,12 @@ import { FEATURED_CASE_PIECES, FEATURED_CASES_MAX, getFeaturedCases } from "../f
 import { getHero } from "../hero";
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { getFinalCta } from "../cta";
-import { getFaq } from "../faq";
+import { sendContact } from "../contact-action";
 import { getFeaturedCases as readFeaturedCases, getFeaturedPieces, getWorkProjects } from "@/cms/projects";
 import { getSiteImage } from "@/cms/media";
-import { getTeamMembers } from "@/cms/team";
-import { getFigures } from "../figures";
 import { getManifesto } from "../manifesto";
-import { getProcess } from "../process";
 import { getTestimonials } from "../testimonials";
 import { getServices } from "../services";
-import { getTeam } from "../team";
 import { getValues } from "../values";
 import { getWork } from "../work";
 
@@ -64,10 +56,7 @@ import { getWork } from "../work";
 const VALUES_TITLE_ID = "valores";
 const WORK_TITLE_ID = "trabajo";
 const SERVICES_TITLE_ID = "servicios";
-const PROCESS_TITLE_ID = "proceso";
 const CASE_TITLE_ID = "caso";
-const TEAM_TITLE_ID = "equipo";
-const FAQ_TITLE_ID = "faq";
 const CTA_TITLE_ID = "contacto";
 
 export default async function Home({ params }: PageProps<"/[locale]">) {
@@ -88,10 +77,9 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
   // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
   // Consultas independientes: en serie sumarian sus tiempos al primer byte.
-  const [pieces, projects, teamMembers, bandImage, featuredCases] = await Promise.all([
+  const [pieces, projects, bandImage, featuredCases] = await Promise.all([
     getFeaturedPieces(locale),
     getWorkProjects(locale),
-    getTeamMembers(locale),
     getSiteImage(BAND_IMAGE_FILENAME, locale),
     readFeaturedCases(locale, FEATURED_CASE_PIECES, FEATURED_CASES_MAX),
   ]);
@@ -99,13 +87,9 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   const tValues = await getTranslations("home.values");
   const tWork = await getTranslations("home.work");
   const tServices = await getTranslations("home.services");
-  const tFigures = await getTranslations("home.figures");
-  const tProcess = await getTranslations("home.process");
   const tBand = await getTranslations("home.band");
   const tFeaturedCase = await getTranslations("home.featuredCase");
   const tTestimonials = await getTranslations("home.testimonials");
-  const team = getTeam(await getTranslations("home.team"), teamMembers);
-  const tFaq = await getTranslations("home.faq");
   const tCta = await getTranslations("home.cta");
 
   return (
@@ -137,18 +121,12 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         />
       </Section>
 
-      {/* La frase que dice a que se dedica el estudio, y colgando de ella las cifras.
-          Va aqui, entre la tira de logos y los servicios: primero quien confia, luego
-          que hacemos, y el trabajo dos bloques mas abajo.
-
-          Las cifras ENTRAN AQUI y no en una strip propia. Tenian una, con su titular
-          —"Lo que deja el trabajo"— y su intro: una pantalla entera de anuncio delante
-          de cuatro numeros que se explican solos, en una pagina cuyo problema es
-          justamente que anuncia mas de lo que ensena. Debajo de la frase que dice a
-          que se dedica el estudio se leen como su respaldo, que es lo que son. */}
+      {/* La frase que dice a que se dedica el estudio. Va aqui, entre la tira de logos
+          y los servicios: primero quien confia, luego que hacemos, y el trabajo dos
+          bloques mas abajo. Las cifras que colgaban de ella se fueron a /nosotros
+          (reunion con Pigmento, 2026-10-22): son del estudio, no de la oferta. */}
       <Section spacing="loose" width="wide">
         <Manifesto {...getManifesto(t, pieces)} />
-        <Figures {...getFigures(tFigures)} />
       </Section>
 
       {/* El trabajo, despues de decir que hacemos y antes de lo que se puede
@@ -178,29 +156,13 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} highlightFamily="tangerine" />
       </Section>
 
-      {/* El respiro, y la unica seccion de la pagina sin nada que leer.
+      {/* El respiro, y la unica seccion de la pagina sin nada que leer. Entrega a las
+          resenas, que van pegadas a ella: la banda es la unica superficie que no pide
+          nada a cambio, y justo despues una fila de citas se lee como su respaldo.
 
-          Va entre estos dos y no mas abajo, que es donde estaba. Una banda entrega al
-          bloque que tiene debajo, asi que ese bloque tiene que ORIENTAR: debajo de la
-          corona de valores no hay titular —su `h2` es `visually-hidden`— y se aterrizaba
-          en unas tarjetas girando sin nada que dijera de que van. Aqui entrega a "Como
-          trabajamos", que abre con titular, rotulo y entrada.
-
-          Lo que gana ademas es que deja de ser solo una pausa: a sangre y justo encima
-          de un titular grande, la imagen se lee como la PORTADA del proceso. Y sigue
-          haciendo su trabajo de superficie, y desde que servicios y proceso dejaron el
-          gris es la UNICA cosa que separa esos dos bloques: de servicios a la llamada
-          final son siete bloques seguidos que piden atencion y este es el unico sitio
-          donde no hay nada que procesar.
-
-          La banda no lleva aire propio por ningun lado: con fondo distinto ella ES la
-          separacion, y un margen alrededor la convertiria en una caja puesta encima.
-          Las tres superficies se tocan. El aire que se ve arriba y abajo es el relleno
-          de Servicios y de Proceso dentro de SU propia banda, que es donde tiene que
-          estar — un titular contra el borde de una foto no se lee.
-
-          Sin imagen no se pinta: medio viewport de hueco vacio es peor que no tener
-          respiro. */}
+          Sin aire propio por ningun lado: con fondo distinto ella ES la separacion, y
+          un margen alrededor la convertiria en una caja puesta encima. Sin imagen no se
+          pinta: medio viewport de hueco vacio es peor que no tener respiro. */}
       {bandImage ? (
         <Section width="full" spacing="none">
           <ImageBand {...bandImage} title={tBand("title")} />
@@ -223,18 +185,9 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <Testimonials {...getTestimonials(tTestimonials)} />
       </Section>
 
-      {/* Sigue el ACTO III: lo que se contrata y como se lleva son la misma respuesta
-          partida en dos bloques, y lo que los separa es la banda, que no es aire sino
-          superficie. Tampoco lleva tono — la guia que se traza con el scroll es lo que
-          distingue a este bloque, y no hacia falta ademas pintarlo de gris. */}
-      <Section
-        width="strip"
-        spacing="loose"
-        spacingStart="default"
-        labelledBy={PROCESS_TITLE_ID}
-      >
-        <Process {...getProcess(tProcess)} titleId={PROCESS_TITLE_ID} highlightFamily="cyan" />
-      </Section>
+      {/* El proceso salio de aqui a las paginas de servicio (reunion con Pigmento,
+          2026-10-22): cada disciplina tiene sus fases y su entregable, y uno general en
+          la home repetia en abstracto lo que alli se dice en concreto. */}
 
       {/* ACTO IV — por que nosotros. Abre la corona de valores, que es la salida del
           capitulo anterior: vuelve al tono del sitio y sale por los bordes, asi que el
@@ -282,32 +235,15 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         </Section>
       ) : null}
 
-      {/* Quien hace el trabajo, antes de las objeciones: la primera pregunta de
-          cualquiera que va a contratar un estudio pequeno es con quien va a hablar.
-          Sin nadie publicado en el CMS no se pinta. */}
-      {team ? (
-        <Section width="strip" spacing="default" spacingEnd="loose" labelledBy={TEAM_TITLE_ID}>
-          <Team {...team} titleId={TEAM_TITLE_ID} highlightFamily="amber" />
-        </Section>
-      ) : null}
-
-      {/* Las objeciones, al final: quien llega hasta aqui ya sabe que hacemos y
-          esta decidiendo, no explorando. A sangre porque la lista se escanea de un
-          borde al otro. `labelledBy` convierte el <section> en un landmark con
-          nombre, y quien pone ese nombre es el titular del bloque. */}
-      {/* Sin tono: el mismo fondo que el pie, que es lo que tiene justo debajo. Un
-          escalon de gris aqui partiria en dos lo que se lee como un solo cierre.
-          La separacion la da la TARJETA de las preguntas, que sobre la base del sitio
-          sale en la capa -01 — gris sobre blanco. */}
-      <Section width="strip" spacing="loose" labelledBy={FAQ_TITLE_ID}>
-        <Faq {...getFaq(tFaq)} titleId={FAQ_TITLE_ID} highlightFamily="periwinkle" />
-      </Section>
+      {/* El equipo se fue a /nosotros y las preguntas, a las paginas de servicio con su
+          FAQPage en JSON-LD (reunion con Pigmento, 2026-10-22). Las de la home no se
+          marcan aqui sin verse: el marcado tiene que describir contenido visible. */}
 
       {/* La ultima llamada, pegada al pie. La placa se despega de la pagina con el rol
           invertido: oscura sobre claro y clara sobre oscuro — lo que la hace placa es
           el contraste, no un color fijo. */}
       <Section width="strip" spacing="loose" labelledBy={CTA_TITLE_ID}>
-        <FinalCta {...getFinalCta(tCta)} titleId={CTA_TITLE_ID} />
+        <FinalCta {...getFinalCta(tCta, locale)} titleId={CTA_TITLE_ID} onSubmit={sendContact} />
       </Section>
 
     </main>

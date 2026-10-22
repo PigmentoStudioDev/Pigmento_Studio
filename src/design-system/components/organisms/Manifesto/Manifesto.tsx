@@ -131,6 +131,7 @@ export function Manifesto({ eyebrow, segments, pieces }: ManifestoProps) {
       <div aria-hidden="true" className={styles.pieces}>
         {pieces.map((piece) => (
           <Image
+            draggable={false}
             key={piece.src}
             className={styles.piece}
             src={piece.src}

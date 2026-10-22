@@ -1,10 +1,13 @@
 @use '../../../styles/carbon-config';
 
+@use '../../../styles/brand' as brand;
 @use '@carbon/react/scss/spacing';
 
-// svh y no vh: en movil 100vh cuenta la barra de URL que el navegador recoge al
-// primer scroll, asi que el hero mide de mas al cargar y da un salto en cuanto
-// alguien se mueve. svh es el alto MINIMO, con la barra desplegada.
+// Media pantalla y no entera: abre las paginas de servicio, y ahi el video presenta la
+// disciplina sin tapar lo que viene debajo (decision de Karen 2026-10-20). svh y no vh:
+// en movil vh cuenta la barra de URL que el navegador recoge al primer scroll, asi que
+// el hero mediria de mas al cargar y daria un salto en cuanto alguien se mueve. El tope
+// en vh es el limite que se pidio, para cuando la barra ya se recogio.
 .root {
   position: relative;
   display: flex;
@@ -12,7 +15,8 @@
   align-items: flex-start;
   justify-content: flex-end;
   overflow: clip;
-  min-block-size: 100svh;
+  block-size: 50svh;
+  max-block-size: 50vh;
   padding: spacing.$spacing-09;
 }
 
@@ -22,6 +26,22 @@
 .backdrop {
   position: absolute;
   inset: 0;
+}
+
+// El mismo velo que la banda y por lo mismo: el titular va en blanco sobre un video
+// que no se elige por su contraste. Degradado desde abajo, que es donde vive el texto,
+// para no apagar el video entero. Cuelga del fondo y no de `.root` para pintarse
+// debajo del contenido sin escalar z-index.
+.backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    brand.$image-band-scrim brand.$image-band-scrim-stop,
+    brand.$image-band-scrim 100%
+  );
 }
 
 .content {

@@ -5,7 +5,6 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProgressiveBlur } from "@/design-system/components/atoms/ProgressiveBlur/ProgressiveBlur";
 import { CustomCursor } from "@/design-system/components/layout/CustomCursor/CustomCursor";
-import { InterfaceSound } from "@/design-system/components/layout/InterfaceSound/InterfaceSound";
 import { SmoothScroll } from "@/design-system/components/layout/SmoothScroll/SmoothScroll";
 import { SiteFooter } from "@/design-system/components/organisms/SiteFooter/SiteFooter";
 import { SiteHeader } from "@/design-system/components/organisms/SiteHeader/SiteHeader";
@@ -176,10 +175,6 @@ export default async function RootLayout({
               bloque se registre a el. */}
           <Preloader />
           <SmoothScroll />
-          {/* Tampoco pinta nada: enlaza los sonidos de la interfaz con los atributos
-              que ya viajan en el HTML. Con el sonido apagado —que es como arranca— no
-              carga ni un byte de la libreria. */}
-          <InterfaceSound />
           {/* El cursor del sitio. Cambia de forma por el atributo `data-cursor` de lo
               que tiene debajo, asi que ningun bloque tiene que montarlo ni conocerlo. */}
           <CustomCursor />

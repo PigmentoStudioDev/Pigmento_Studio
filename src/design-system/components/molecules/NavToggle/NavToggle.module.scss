@@ -28,7 +28,7 @@
   color: inherit;
   cursor: pointer;
   transition:
-    background-color brand.$duration-quarter brand.$ease-default,
+    background-color brand.$duration-tint brand.$ease-tint,
     gap brand.$duration-half brand.$ease-default;
 }
 

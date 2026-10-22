@@ -76,6 +76,7 @@ export function getWork(t: Translate, projects: WorkProject[]): WorkRowsProps {
     intro: t("intro"),
     ctaLabel: t("cta"),
     cursorLabel: t("cursor"),
+    labels: { previous: t("previous"), next: t("next") },
     // TODO(rutas): /trabajo todavia no existe.
     ctaHref: "/trabajo",
     rows: ROW_LENGTHS.map((length, row) => Array.from({ length }, (_, i) => piece(starts[row] + i))),
