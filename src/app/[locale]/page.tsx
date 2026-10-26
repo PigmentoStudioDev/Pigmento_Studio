@@ -188,7 +188,10 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       {/* ACTO IV — por que nosotros. Abre la corona de valores, que es la salida del
           capitulo anterior: vuelve al tono del sitio y sale por los bordes, asi que el
           cambio se nota sin necesitar otro filete. */}
-      <Section width="full" spacing="loose" labelledBy={VALUES_TITLE_ID}>
+      {/* Sin aire abajo, y la strip siguiente sin aire arriba: la rueda ya trae su
+          propio hueco en el arco y con los dos paddings la pagina se partia ahi
+          (decision de Karen, 2026-10-26). */}
+      <Section width="full" spacing="loose" spacingEnd="none" labelledBy={VALUES_TITLE_ID}>
         <ValueCards {...getValues(tValues)} titleId={VALUES_TITLE_ID} highlightFamily="pink" />
       </Section>
 
@@ -223,7 +226,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           Ningun caso con galeria y texto no se pinta: con las portadas solas seria el
           strip otra vez. */}
       {featuredCases.length > 0 ? (
-        <Section width="strip" spacing="default" spacingStart="loose" labelledBy={CASE_TITLE_ID}>
+        <Section width="strip" spacing="default" spacingStart="none" labelledBy={CASE_TITLE_ID}>
           <FeaturedCases
             {...getFeaturedCases(tFeaturedCase, tWork, featuredCases)}
             titleId={CASE_TITLE_ID}
@@ -238,7 +241,12 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       {/* La ultima llamada, pegada al pie. La placa se despega de la pagina con el rol
           invertido: oscura sobre claro y clara sobre oscuro — lo que la hace placa es
           el contraste, no un color fijo. */}
-      <Section width="strip" spacing="loose" labelledBy={CTA_TITLE_ID}>
+      <Section
+        width="strip"
+        spacing="loose"
+        spacingStart={featuredCases.length > 0 ? undefined : "none"}
+        labelledBy={CTA_TITLE_ID}
+      >
         <FinalCta {...getFinalCta(tCta, locale)} titleId={CTA_TITLE_ID} onSubmit={sendContact} />
       </Section>
 
