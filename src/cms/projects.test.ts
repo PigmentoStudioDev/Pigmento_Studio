@@ -14,8 +14,9 @@ const media = (fields: Partial<Media>) => ({ id: 1, ...fields }) as Media;
 
 describe('toPiece', () => {
   it('saca las medidas del documento de media, no de una constante', () => {
-    expect(toPiece(media({ url: '/a.png', width: 522, height: 715 }))).toEqual({
+    expect(toPiece(media({ url: '/a.png', alt: 'Empaque', width: 522, height: 715 }))).toEqual({
       src: '/a.png',
+      alt: 'Empaque',
       width: 522,
       height: 715,
     });
@@ -51,7 +52,7 @@ describe('toWorkProject', () => {
     expect(toWorkProject(project({ client: 'Timbal de Azúcar', discipline: 'branding', cover }))).toEqual({
       client: 'Timbal de Azúcar',
       discipline: 'branding',
-      image: { src: '/c.jpg', width: 2560, height: 1486 },
+      image: { src: '/c.jpg', alt: '', width: 2560, height: 1486 },
     });
   });
 
@@ -80,7 +81,7 @@ describe('toFeaturedCase', () => {
       client: 'Señora Galleta',
       discipline: 'branding',
       summary: 'El reto fue sostener catalogo y tienda sin dos plantillas.',
-      pieces: [{ src: '/1.jpg', width: 800, height: 1000 }],
+      pieces: [{ src: '/1.jpg', alt: '', width: 800, height: 1000 }],
     });
   });
 

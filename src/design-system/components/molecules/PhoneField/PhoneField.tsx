@@ -324,8 +324,21 @@ export function PhoneField({
       scroller.style.setProperty("--pf-room", `${Math.max(0, Math.floor(room))}px`);
     };
     fit();
-    window.addEventListener("resize", fit);
-    return () => window.removeEventListener("resize", fit);
+    // El resize llega a decenas de eventos por segundo y `fit` mide layout: se
+    // coalesce a una medicion por frame.
+    let frame = 0;
+    const onResize = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        fit();
+      });
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", onResize);
+    };
   }, [open]);
 
   // La opcion activa se mantiene a la vista al moverse con teclado.
@@ -583,7 +596,7 @@ export function PhoneField({
 
       <span className={styles.message} data-open={error ? "true" : "false"}>
         <span className={styles.messageInner}>
-          <span id={error ? errorId : undefined} className={styles.error} role={error ? "alert" : undefined}>
+          <span id={error ? errorId : undefined} className={styles.error} role="alert">
             {error ?? lastError}
           </span>
         </span>

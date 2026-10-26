@@ -225,7 +225,7 @@ export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps
           />
 
           <div className={styles.footer}>
-            <p className={styles.failure} data-open={failed ? "true" : "false"} role={failed ? "alert" : undefined}>
+            <p className={styles.failure} data-open={failed ? "true" : "false"} role="alert">
               <span className={styles.failureInner}>{failed ? copy.failure : null}</span>
             </p>
 

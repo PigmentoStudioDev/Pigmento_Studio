@@ -7,7 +7,7 @@ const t = (key: string) => key;
 const project = (n: number): WorkProject => ({
   client: `Cliente real ${n}`,
   discipline: n % 2 ? 'motion' : undefined,
-  image: { src: `/p${n}.jpg`, width: 100, height: 100 + n },
+  image: { src: `/p${n}.jpg`, alt: '', width: 100, height: 100 + n },
 });
 
 describe('getWork', () => {

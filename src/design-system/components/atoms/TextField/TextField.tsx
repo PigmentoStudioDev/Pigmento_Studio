@@ -94,10 +94,12 @@ export function TextField({
       ) : null}
 
       {/* La fila existe siempre y se abre por atributo: montarla al aparecer el error
-          no deja nada desde donde interpolar la altura. */}
+          no deja nada desde donde interpolar la altura. Tambien por eso el role="alert"
+          es fijo: una region viva anuncia lo que CAMBIA dentro de ella, y los lectores
+          de pantalla no siempre anuncian un nodo que nace ya con el role puesto. */}
       <span className={styles.message} data-open={error ? "true" : "false"}>
         <span className={styles.messageInner}>
-          <span id={errorId} className={styles.error} role={error ? "alert" : undefined}>
+          <span id={errorId} className={styles.error} role="alert">
             {error ?? lastError}
           </span>
         </span>

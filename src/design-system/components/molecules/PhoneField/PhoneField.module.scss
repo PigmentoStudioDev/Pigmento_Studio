@@ -118,7 +118,8 @@
 
 .guide {
   overflow: hidden;
-  color: theme.$text-placeholder;
+  // text-helper por contraste (4.5:1 sobre field-02), igual que el placeholder real.
+  color: theme.$text-helper;
   white-space: pre;
   pointer-events: none;
 }
@@ -209,7 +210,7 @@
   outline: none;
 
   &::placeholder {
-    color: theme.$text-placeholder;
+    color: theme.$text-helper;
   }
 }
 

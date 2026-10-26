@@ -43,6 +43,8 @@ import styles from "./FeaturedCases.module.scss";
  */
 export interface FeaturedCasePiece {
   src: string;
+  /** Opcional: una pieza sin descripcion se trata como decorativa. */
+  alt?: string;
   width: number;
   height: number;
 }
@@ -120,14 +122,14 @@ export function FeaturedCases({ label, cases, labels, titleId }: FeaturedCasesPr
                 {/* La clave lleva la posicion: dos piezas pueden venir del mismo archivo. */}
                 {item.pieces.map((piece, pieceIndex) => (
                   <li className={styles.piece} key={`${piece.src}-${pieceIndex}`}>
-                    {/* Decorativas: la tarjeta ya esta nombrada por el cliente y
-                        descrita por su texto, y describir una a una las piezas de una
-                        identidad repite lo que ya se dijo. */}
+                    {/* El alt es el que el CMS obliga a escribir en cada media: son
+                        la prueba del trabajo y no adorno. Vacio solo si el documento
+                        no lo trae. */}
                     <Image
                       draggable={false}
                       className={styles.image}
                       src={piece.src}
-                      alt=""
+                      alt={piece.alt ?? ""}
                       width={piece.width}
                       height={piece.height}
                       sizes={PIECE_SIZES}

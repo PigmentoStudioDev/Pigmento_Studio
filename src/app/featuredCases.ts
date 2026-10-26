@@ -38,6 +38,7 @@ function toItem(caso: FeaturedCase, tWork: Translate): FeaturedCaseItem {
     summary: caso.summary,
     pieces: caso.pieces.map((piece) => ({
       src: piece.src,
+      alt: piece.alt,
       width: piece.width,
       height: piece.height,
     })),

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Tag } from "../../atoms/Tag/Tag";
 import { RadialGallery, type RadialGalleryImage } from "../RadialGallery/RadialGallery";
 import styles from "./NavBanner.module.scss";

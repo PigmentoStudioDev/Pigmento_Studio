@@ -30,8 +30,6 @@
   border-block-end: 1px solid theme.$border-subtle;
   background-color: theme.$layer-02;
   color: theme.$text-secondary;
-  text-decoration: none;
-  transition: background-color brand.$duration-tint brand.$ease-tint;
   // Entra con la cabecera, mismo gesto y mismo retraso: son una sola pieza de chrome.
   // backwards y no both: al terminar, la opacidad vuelve a la cascada.
   animation: pg-topbar-enter brand.$duration-base brand.$ease-default backwards;
@@ -41,20 +39,6 @@
 // Quieta y oculta mientras la cortina esta cerrada, como la cabecera.
 [data-page-status='loading'] .root {
   animation-play-state: paused;
-}
-
-// El hover de SU capa, no el contextual: la barra se pinta con layer-02 y el
-// contextual valdria siempre -01.
-.root:hover {
-  background-color: theme.$layer-hover-02;
-  color: theme.$text-primary;
-}
-
-// Por dentro del borde: por fuera lo cortaria el overflow, y arriba no hay nada.
-// $focus y no $focus-inverse: la barra ya no es una superficie invertida.
-.root:focus-visible {
-  outline: 2px solid theme.$focus;
-  outline-offset: -2px;
 }
 
 .rows {

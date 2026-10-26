@@ -79,7 +79,9 @@ describe("ContactForm", () => {
   it("los errores aparecen al enviar y el foco va al primero", () => {
     render(<ContactForm {...PROPS} onSubmit={vi.fn()} />);
     fireEvent.change(screen.getByLabelText("Nombre"), { target: { value: "" } });
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    // La region del error esta montada desde el principio y vacia: es lo que hace que
+    // el lector de pantalla anuncie el texto cuando llega.
+    expect(screen.queryByText("Escribe tu nombre")).not.toBeInTheDocument();
 
     submit();
 

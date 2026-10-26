@@ -184,7 +184,9 @@ describe("SiteHeader", () => {
     const target = panel();
     if (!target) throw new Error("sin panel");
 
-    expect(within(target).getByRole("heading", { name: "Estudio" })).toBeInTheDocument();
+    expect(within(target).getByText("Estudio")).toBeInTheDocument();
+    // Antes del h1 de la pagina: un encabezado aqui rompe el orden de todas.
+    expect(within(target).queryByRole("heading")).not.toBeInTheDocument();
     expect(within(target).getByRole("link", { name: /Servicios/ })).toBeInTheDocument();
     expect(within(target).getByRole("link", { name: "Como trabajamos" })).toBeInTheDocument();
   });
@@ -196,6 +198,35 @@ describe("SiteHeader", () => {
     await userEvent.keyboard("{Escape}");
 
     expect(screen.getByRole("button", { name: "Menu" })).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("al abrir el foco entra al primer enlace y al cerrar con Escape vuelve al boton", async () => {
+    render(<SiteHeader {...PROPS} />);
+    await openPanel();
+
+    expect(screen.getByRole("link", { name: "Trabajo" })).toHaveFocus();
+
+    await userEvent.keyboard("{Escape}");
+
+    expect(screen.getByRole("button", { name: "Menu" })).toHaveFocus();
+  });
+
+  it("abierto deja inertes main y footer, y los libera al cerrar", async () => {
+    render(
+      <>
+        <SiteHeader {...PROPS} />
+        <main data-testid="main" />
+        <footer data-testid="footer" />
+      </>,
+    );
+    await openPanel();
+
+    expect(screen.getByTestId("main")).toHaveAttribute("inert");
+    expect(screen.getByTestId("footer")).toHaveAttribute("inert");
+
+    await userEvent.keyboard("{Escape}");
+
+    expect(screen.getByTestId("main")).not.toHaveAttribute("inert");
   });
 
   it("navegar por un enlace del panel lo cierra", async () => {

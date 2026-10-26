@@ -54,7 +54,7 @@ export function getNavigation(t: Translate, gallery: ProjectPiece[]): SiteHeader
         languageToggle: { label: t("languageToggle") },
       },
     ],
-    actions: [{ label: t("cta"), href: "/contacto", emphasis: "primary" }],
+    actions: [{ label: t("cta"), href: "/#contacto", emphasis: "primary" }],
 
     // La tercera columna del panel. En la referencia es una pieza promocional fija —
     // no una lista mas — y por eso el componente es otro: no tiene enlaces sueltos,
