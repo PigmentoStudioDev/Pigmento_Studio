@@ -125,7 +125,9 @@
         "web": "Desarrollo web",
         "motion": "Motion",
         "marketing": "Marketing"
-      }
+      },
+      "stage": "Portafolio de proyectos",
+      "drag": "Arrastrar"
     },
     "services": {
       "title": "Servicios",
@@ -214,7 +216,8 @@
       }
     },
     "cta": {
-      "label": "Hablemos",
+      "label": "Contacto",
+      "intro": "Una idea a medias también sirve: te respondemos por correo con los siguientes pasos.",
       "title": "Cuéntanos qué tienes en mente y vemos por dónde empieza tu marca.",
       "titleHighlight": "por dónde empieza tu marca",
       "form": {
@@ -239,7 +242,7 @@
         "message": "Mensaje",
         "messagePlaceholder": "Cuéntanos del proyecto: qué es, para cuándo y qué te gustaría lograr.",
         "remaining": "Quedan {count} caracteres",
-        "submit": "Escríbenos",
+        "submit": "Enviar mensaje",
         "sending": "Enviando",
         "failure": "No pudimos enviar tu mensaje. Revisa tu conexión e inténtalo de nuevo.",
         "successTitle": "Gracias, {name}",
@@ -384,10 +387,6 @@
   "pending": {
     "action": "Volver al inicio",
     "instagram": "Escribenos por Instagram",
-    "work": {
-      "title": "Trabajo",
-      "intro": "El portafolio completo todavia no esta publicado. En la home hay dieciocho proyectos y cinco casos con sus piezas."
-    },
     "contact": {
       "title": "Contacto",
       "intro": "El formulario todavia no esta puesto. Mientras tanto, escribenos por Instagram y contestamos ahi."
@@ -677,5 +676,12 @@
   "about": {
     "title": "Nosotros",
     "description": "Pigmento Studio, estudio de diseño de marca y crecimiento en Ciudad de México: quiénes somos y qué ha dejado el trabajo."
+  },
+  "project": {
+    "back": "Volver al trabajo",
+    "client": "Cliente",
+    "discipline": "Disciplina",
+    "year": "Año",
+    "gallery": "Galería"
   }
 }

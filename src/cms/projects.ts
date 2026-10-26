@@ -73,10 +73,18 @@ export async function getFeaturedPieces(locale: Locale): Promise<ProjectPiece[]>
 /** Cuantas piezas toma el respaldo: las que caben en la corona del menu sin repetirse. */
 const FALLBACK_PIECES = 14;
 
-/** Una fila del strip de trabajo: la disciplina viaja como clave, la traduce la pagina. */
+/**
+ * Una fila del strip de trabajo: la disciplina viaja como clave, la traduce la pagina.
+ * `slug`, `title`, `year` y `summary` son lo que la pagina de proyecto necesita para
+ * enlazar al caso sin volver a consultar el CMS.
+ */
 export interface WorkProject {
+  slug: string;
+  title: string;
   client: string;
   discipline?: NonNullable<Project['discipline']>;
+  year?: number;
+  summary?: string;
   image: ProjectPiece;
 }
 
@@ -86,8 +94,12 @@ export function toWorkProject(doc: Project): WorkProject | null {
   if (!image) return null;
 
   return {
+    slug: doc.slug,
+    title: doc.title,
     client: doc.client || doc.title,
     ...(doc.discipline ? { discipline: doc.discipline } : {}),
+    ...(typeof doc.year === 'number' ? { year: doc.year } : {}),
+    ...(doc.summary ? { summary: doc.summary } : {}),
     image,
   };
 }
@@ -187,4 +199,105 @@ export async function getFeaturedCases(
     // branding argumenta la disciplina equivocada.
     .filter((c) => !discipline || c.discipline === discipline)
     .slice(0, maxCases);
+}
+
+/**
+ * Un proyecto completo para su pagina. Mismos campos que `WorkProject` mas la galeria
+ * entera, sin tope: la pagina del caso es el lugar donde se ve todo.
+ */
+export interface ProjectDetail {
+  slug: string;
+  title: string;
+  client: string;
+  discipline?: NonNullable<Project['discipline']>;
+  year?: number;
+  summary?: string;
+  cover: ProjectPiece;
+  gallery: ProjectPiece[];
+}
+
+/**
+ * Exportada por su test. Sin portada poblada no hay pagina: la misma regla que el
+ * strip, para que un proyecto no salga en el listado y responda 404 al abrirse.
+ * Las piezas de galeria sin poblar se descartan, no se pintan con medidas inventadas.
+ */
+export function toProjectDetail(doc: Project): ProjectDetail | null {
+  const cover = toPiece(doc.cover);
+  if (!cover) return null;
+
+  const gallery = (doc.gallery ?? [])
+    .map((entry) => toPiece(entry.image))
+    .filter((p): p is ProjectPiece => p !== null);
+
+  return {
+    slug: doc.slug,
+    title: doc.title,
+    client: doc.client || doc.title,
+    ...(doc.discipline ? { discipline: doc.discipline } : {}),
+    ...(typeof doc.year === 'number' ? { year: doc.year } : {}),
+    ...(doc.summary ? { summary: doc.summary } : {}),
+    cover,
+    gallery,
+  };
+}
+
+/**
+ * Un proyecto publicado por su direccion, en el idioma pedido.
+ *
+ * `overrideAccess: false` es lo que impide que un borrador tenga pagina: sin el, la
+ * Local API devolveria el documento sin error. `depth: 2` para que `cover` y cada
+ * imagen de la galeria lleguen con sus medidas.
+ */
+export async function getProjectBySlug(slug: string, locale: Locale): Promise<ProjectDetail | null> {
+  const payload = await getPayload({ config });
+
+  const { docs } = await payload.find({
+    collection: 'projects',
+    locale,
+    overrideAccess: false,
+    where: { slug: { equals: slug } },
+    depth: 2,
+    limit: 1,
+  });
+
+  const doc = docs[0];
+  return doc ? toProjectDetail(doc) : null;
+}
+
+/**
+ * Las direcciones de los proyectos publicados, para prerenderizar la ruta. El slug no
+ * se localiza, asi que la lista sirve para los dos idiomas.
+ */
+export async function getProjectSlugs(): Promise<string[]> {
+  const payload = await getPayload({ config });
+
+  const { docs } = await payload.find({
+    collection: 'projects',
+    overrideAccess: false,
+    depth: 0,
+    limit: 100,
+    select: { slug: true },
+  });
+
+  return docs.map((doc) => doc.slug);
+}
+
+/** Un proyecto para el sitemap: su direccion y cuando cambio por ultima vez. */
+export interface ProjectSitemapEntry {
+  slug: string;
+  updatedAt: string;
+}
+
+export async function getProjectSitemapEntries(): Promise<ProjectSitemapEntry[]> {
+  const payload = await getPayload({ config });
+
+  const { docs } = await payload.find({
+    collection: 'projects',
+    overrideAccess: false,
+    depth: 0,
+    limit: 100,
+    select: { slug: true, updatedAt: true },
+  });
+
+  return docs.map((doc) => ({ slug: doc.slug, updatedAt: doc.updatedAt }));
 }

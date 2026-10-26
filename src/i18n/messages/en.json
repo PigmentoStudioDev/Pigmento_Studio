@@ -125,7 +125,9 @@
         "web": "Web development",
         "motion": "Motion",
         "marketing": "Marketing"
-      }
+      },
+      "stage": "Project portfolio",
+      "drag": "Drag"
     },
     "services": {
       "title": "Services",
@@ -214,7 +216,8 @@
       }
     },
     "cta": {
-      "label": "Get in touch",
+      "label": "Contact",
+      "intro": "A half-formed idea is fine: we'll reply by email with the next steps.",
       "title": "Tell us what you have in mind and let's see where your brand starts.",
       "titleHighlight": "where your brand starts",
       "form": {
@@ -239,7 +242,7 @@
         "message": "Message",
         "messagePlaceholder": "Tell us about the project: what it is, when you need it and what you want to achieve.",
         "remaining": "{count} characters left",
-        "submit": "Get in touch",
+        "submit": "Send message",
         "sending": "Sending",
         "failure": "We couldn't send your message. Check your connection and try again.",
         "successTitle": "Thanks, {name}",
@@ -384,10 +387,6 @@
   "pending": {
     "action": "Back to the home page",
     "instagram": "Message us on Instagram",
-    "work": {
-      "title": "Work",
-      "intro": "The full portfolio is not published yet. The home page shows eighteen projects and five cases with their pieces."
-    },
     "contact": {
       "title": "Contact",
       "intro": "The form is not in place yet. In the meantime, message us on Instagram and we answer there."
@@ -677,5 +676,12 @@
   "about": {
     "title": "About",
     "description": "Pigmento Studio, a brand design and growth studio in Mexico City: who we are and what the work has left."
+  },
+  "project": {
+    "back": "Back to work",
+    "client": "Client",
+    "discipline": "Discipline",
+    "year": "Year",
+    "gallery": "Gallery"
   }
 }

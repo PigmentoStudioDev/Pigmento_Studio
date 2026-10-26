@@ -1,0 +1,140 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/a11y';
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// Oscuro en los dos modos: la pieza se pinta sobre foto y la foto no re-tematiza.
+.stage {
+  position: relative;
+  overflow: hidden;
+  inline-size: 100%;
+  block-size: 100svh;
+  background-color: theme.$background;
+  overscroll-behavior: none;
+  touch-action: none;
+  user-select: none;
+
+  // En tactil el escenario ocupa la pantalla entera: sin pan-y, deslizar vertical
+  // sobre la cupula no bajaba la pagina y el pie quedaba inalcanzable. El vertical es
+  // de la pagina; el horizontal sigue moviendo el grid.
+  @media (pointer: coarse) {
+    touch-action: pan-y;
+  }
+  -webkit-user-select: none;
+}
+
+// La mano del sistema solo cuando no hay disco propio; si no, dos pistas a la vez.
+:root:not([data-custom-cursor]) .stage {
+  cursor: grab;
+}
+
+:root:not([data-custom-cursor]) .stage[data-dragging] {
+  cursor: grabbing;
+}
+
+.hiddenTitle {
+  @include a11y.visually-hidden;
+}
+
+// La linterna: oscurece todo menos el hueco que sigue al cursor. Su mascara la escribe
+// el motor; sin JS no hay mascara y no se pinta.
+.shade {
+  position: absolute;
+  inset: 0;
+  opacity: 0.7;
+  pointer-events: none;
+  background-color: theme.$background;
+}
+
+.stage:not([data-armed]) .shade {
+  display: none;
+}
+
+// La cortina solo existe si el motor llego a armarse: sin JS la reticula no se oculta.
+// Salida corta y curva de salida en la base; la entrada redeclara la suya.
+.cover {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background-color: theme.$background;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity brand.$duration-half brand.$ease-exit;
+}
+
+.stage[data-armed]:not([data-loaded]) .cover {
+  opacity: 1;
+  transition: opacity brand.$duration-half brand.$ease-default;
+}
+
+// Sin JS la lista es una cuadricula de cuatro; el motor la sustituye al medir.
+.list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: spacing.$spacing-05;
+  inline-size: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  position: relative;
+  aspect-ratio: 1;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: brand.$radius-piece;
+  background-color: theme.$layer-01;
+  color: brand.$text-on-control-ink;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid theme.$focus;
+    outline-offset: -2px;
+  }
+}
+
+// El escalado de reposo da margen para el desplazamiento de la imagen hacia el cursor.
+.image {
+  object-fit: cover;
+  scale: 1.1;
+}
+
+.caption {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-02;
+  padding-block: spacing.$spacing-05;
+  padding-inline: spacing.$spacing-05;
+  background-image: linear-gradient(transparent 40%, brand.$image-band-scrim);
+}
+
+.name {
+  @include brandtype.style('body');
+
+  font-weight: brandtype.$weight-medium;
+}
+
+.meta {
+  @include brandtype.style('label');
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover,
+  .stage[data-armed]:not([data-loaded]) .cover {
+    transition: none;
+  }
+}

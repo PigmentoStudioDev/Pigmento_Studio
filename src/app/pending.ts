@@ -20,13 +20,13 @@ import { alternatesFor } from "./seo";
  * `pending` en los dos diccionarios; mientras la entrada exista, la ruta es un
  * marcador, y eso se ve en el diff sin tener que abrir siete archivos.
  */
-export type PendingKey = "work" | "contact";
+export type PendingKey = "contact";
 
 /**
  * El inventario, para quien tenga que recorrerlo. Su test lo usa para comprobar que
  * ninguna se queda sin texto en ninguno de los dos idiomas.
  */
-export const PENDING_KEYS: readonly PendingKey[] = ["work", "contact"];
+export const PENDING_KEYS: readonly PendingKey[] = ["contact"];
 
 /**
  * El Instagram del estudio, que es el unico canal de contacto REAL que existe hoy.
@@ -57,7 +57,7 @@ function localeValido(locale: string) {
   setRequestLocale(locale);
 }
 
-const PENDING_PATHS: Record<PendingKey, string> = { work: "/trabajo", contact: "/contacto" };
+const PENDING_PATHS: Record<PendingKey, string> = { contact: "/contacto" };
 
 export async function pendingMetadata(
   { locale }: { locale: string },

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Media, Project } from '@/payload-types';
-import { toFeaturedCase, toPiece, toWorkProject } from './projects';
+import { toFeaturedCase, toPiece, toProjectDetail, toWorkProject } from './projects';
 
 /**
  * Contrato del mapeo, que es lo que este repo controla: si Payload devuelve o no
@@ -50,9 +50,21 @@ describe('toWorkProject', () => {
 
   it('da el cliente, la disciplina y la portada con sus medidas', () => {
     expect(toWorkProject(project({ client: 'Timbal de Azúcar', discipline: 'branding', cover }))).toEqual({
+      slug: 'calderoni',
+      title: 'Calderoni',
       client: 'Timbal de Azúcar',
       discipline: 'branding',
       image: { src: '/c.jpg', alt: '', width: 2560, height: 1486 },
+    });
+  });
+
+  /** La pagina del caso enlaza con el slug y el titulo que el strip ya tiene a mano. */
+  it('lleva slug, titulo, ano y resumen cuando el CMS los trae', () => {
+    expect(toWorkProject(project({ cover, year: 2025, summary: 'Un reto.' }))).toMatchObject({
+      slug: 'calderoni',
+      title: 'Calderoni',
+      year: 2025,
+      summary: 'Un reto.',
     });
   });
 
@@ -112,5 +124,61 @@ describe('toFeaturedCase', () => {
   /** El cliente es opcional en el CMS; la tarjeta no puede quedarse sin titular. */
   it('sin cliente usa el titulo', () => {
     expect(toFeaturedCase(caso({ gallery: [pieza('/1.jpg')] }), 4)?.client).toBe('Calderoni');
+  });
+});
+
+/**
+ * La pagina del proyecto. Lo que se prueba es la regla que falla en silencio: una
+ * portada sin medidas no puede salir como pagina, y una pieza de galeria sin poblar
+ * no puede entrar con huecos.
+ */
+describe('toProjectDetail', () => {
+  const cover = media({ url: '/c.jpg', alt: 'Portada', width: 2560, height: 1486 });
+  const pieza = (url: string) => ({ image: media({ url, width: 800, height: 1000 }) });
+
+  it('da titulo, cliente, ano, resumen, portada y galeria completa', () => {
+    expect(
+      toProjectDetail(
+        project({
+          title: 'Calderoni',
+          client: 'Timbal de Azúcar',
+          discipline: 'web',
+          year: 2024,
+          summary: 'El reto fue sostener catalogo y tienda.',
+          cover,
+          gallery: [pieza('/1.jpg'), pieza('/2.jpg')],
+        }),
+      ),
+    ).toEqual({
+      slug: 'calderoni',
+      title: 'Calderoni',
+      client: 'Timbal de Azúcar',
+      discipline: 'web',
+      year: 2024,
+      summary: 'El reto fue sostener catalogo y tienda.',
+      cover: { src: '/c.jpg', alt: 'Portada', width: 2560, height: 1486 },
+      gallery: [
+        { src: '/1.jpg', alt: '', width: 800, height: 1000 },
+        { src: '/2.jpg', alt: '', width: 800, height: 1000 },
+      ],
+    });
+  });
+
+  it('sin portada poblada no hay pagina', () => {
+    expect(toProjectDetail(project({ cover: 4, gallery: [] }))).toBeNull();
+  });
+
+  /** Una fila de galeria sin imagen poblada se descarta; no deja un hueco en la pagina. */
+  it('descarta las piezas de galeria sin poblar', () => {
+    const detalle = toProjectDetail(project({ cover, gallery: [{ image: 9 }, pieza('/1.jpg')] }));
+    expect(detalle?.gallery).toHaveLength(1);
+    expect(detalle?.gallery[0].src).toBe('/1.jpg');
+  });
+
+  it('sin cliente usa el titulo y sin ano o resumen no los inventa', () => {
+    const detalle = toProjectDetail(project({ cover, gallery: [] }));
+    expect(detalle?.client).toBe('Calderoni');
+    expect(detalle?.year).toBeUndefined();
+    expect(detalle?.summary).toBeUndefined();
   });
 });
