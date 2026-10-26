@@ -54,8 +54,11 @@
 //
 // Los reflejos y los cantos SI son fijos, y no es una incoherencia: lo que cambia
 // con la zona es la superficie, no la luz que le da.
+//
+// layer-02 y no layer-01: es el escalon que sube en los dos modos (blanco en claro,
+// un gris mas alto en oscuro). Sobre layer-01 la barra se leia gris en claro.
 .fill {
-  background-color: color-mix(in srgb, theme.$layer-01 brand.$glass-fill-opacity, transparent);
+  background-color: color-mix(in srgb, theme.$layer-02 brand.$glass-fill-opacity, transparent);
 }
 
 // Cuerpo. Un color-burn muy tenue oscurece los medios tonos sin tocar los claros,
@@ -63,7 +66,7 @@
 .fillBurn {
   background-color: currentcolor;
   mix-blend-mode: color-burn;
-  opacity: 0.05;
+  opacity: 0.03;
 }
 
 // Los dos reflejos especulares, en cantos opuestos. El fuerte marca por donde
