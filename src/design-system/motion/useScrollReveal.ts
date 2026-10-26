@@ -206,12 +206,17 @@ export function useScrollReveal<T extends HTMLElement>({
       // Lo que nace bajo el pliegue no compite con el primer pintado: gsap llega al
       // ralenti. Lo que ya se ve (el titular del hero) se parte sin esperar.
       const belowFold = !blocks.some(alreadyInView);
+      // Un bloque desmontado mientras esperaba el ralenti no pide nada: seguiria
+      // descargando gsap y leyendo `document` para una pagina que ya no esta.
       const load = () =>
-        Promise.all([loadMotion(), document.fonts?.ready ?? Promise.resolve(), whenPageReady()]);
+        cancelled
+          ? null
+          : Promise.all([loadMotion(), document.fonts?.ready ?? Promise.resolve(), whenPageReady()]);
 
-      void (belowFold ? whenIdle().then(load) : load()).then(
-        ([{ SplitText }]) => {
-          if (cancelled) return;
+      void (belowFold ? whenIdle().then(load) : Promise.resolve(load())).then(
+        (loaded) => {
+          if (cancelled || !loaded) return;
+          const [{ SplitText }] = loaded;
 
           splits = blocks.map((block) =>
             SplitText.create(block, {
