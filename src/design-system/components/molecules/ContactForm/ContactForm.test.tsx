@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { describe, expect, it, vi } from "vitest";
 import { ContactForm, type ContactFormProps } from "./ContactForm";
-import { validateContact } from "./validate";
+import { MAX_MESSAGE, validateContact } from "./validate";
 
 const PROPS: ContactFormProps = {
   locale: "es",
@@ -117,6 +117,16 @@ describe("ContactForm", () => {
   it("sin onSubmit no ofrece enviar", () => {
     render(<ContactForm {...PROPS} />);
     expect(screen.queryByRole("button", { name: PROPS.copy.submit })).not.toBeInTheDocument();
+  });
+
+  /** Un "quedan 1000" fijo bajo un campo vacio es ruido; solo cuenta cerca del limite. */
+  it("el contador de caracteres solo aparece cerca del limite", () => {
+    render(<ContactForm {...PROPS} onSubmit={vi.fn()} />);
+    expect(screen.queryByText(/^Quedan/)).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Mensaje"), { target: { value: "a".repeat(MAX_MESSAGE - 40) } });
+
+    expect(screen.getByText("Quedan 40 caracteres")).toBeInTheDocument();
   });
 
   it("las flechas mueven la eleccion de tema", () => {

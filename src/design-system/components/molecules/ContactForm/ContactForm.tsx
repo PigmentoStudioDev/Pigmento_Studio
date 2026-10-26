@@ -20,8 +20,9 @@ import {
  *
  * Es el bloque `contact-section` de Arc en su variante `form`, portado por ANATOMIA:
  * los mismos campos, los errores que aparecen tras el primer envio y se corrigen al
- * escribir, los temas como grupo de radio con un resaltado que se desliza, y la
- * tarjeta que pasa de formulario a confirmacion cambiando de altura en vez de saltar.
+ * escribir, los temas como grupo de radio, y la cara que pasa de formulario a
+ * confirmacion cambiando de altura en vez de saltar. La forma ya no es la de Arc:
+ * cada pregunta es una fila numerada con filete, la banda con la que abre cada bloque.
  * Lo que no viene es `motion`: aqui cada gesto es una transicion de su hoja.
  *
  * El envio llega como callback y NO se simula si falta. Un formulario que dice
@@ -67,6 +68,12 @@ export interface ContactFormProps {
 type Phase = "editing" | "sending" | "sent";
 
 const EMPTY: ContactValues = { name: "", email: "", phone: "", message: "" };
+
+/**
+ * Desde cuantos caracteres restantes se ve el contador. Un "quedan 1000" fijo bajo un
+ * campo vacio es ruido: solo informa cuando el limite empieza a estar cerca.
+ */
+const REMAINING_HINT = 100;
 
 export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps) {
   const [values, setValues] = useState(EMPTY);
@@ -148,12 +155,13 @@ export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps
   }
 
   const errorText = (code?: ContactErrorCode) => (code ? copy.errors[code] : undefined);
+  const markers = numberRows(topics.length > 0);
   const sending = phase === "sending";
 
   return (
     <div ref={card} className={styles.card} data-morphed={morphed ? "true" : undefined}>
       {phase === "sent" ? (
-        <div key="sent" className={styles.face} aria-live="polite">
+        <div key="sent" aria-live="polite">
           <div className={styles.success}>
             <span className={styles.mark}>
               <Icon name="check" />
@@ -168,36 +176,51 @@ export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps
           </div>
         </div>
       ) : (
-        <form key="form" className={`${styles.face} ${styles.form}`} onSubmit={submit} noValidate aria-label={copy.formLabel}>
-          <div className={styles.row}>
-            <TextField
-              ref={nameRef}
-              label={copy.name}
-              name="name"
-              autoComplete="name"
-              placeholder={copy.namePlaceholder}
-              value={values.name}
-              onChange={update("name")}
-              error={errorText(errors.name)}
-              readOnly={sending}
+        <form key="form" className={styles.form} onSubmit={submit} noValidate aria-label={copy.formLabel}>
+          {/* El tema primero, como en un brief: decir que se necesita ordena lo demas,
+              y es la unica pregunta que se contesta sin escribir. */}
+          {topics.length > 0 ? (
+            <TopicPicker
+              marker={markers.topic}
+              label={copy.topic}
+              topics={topics}
+              value={topic}
+              onChange={setTopic}
+              disabled={sending}
             />
-            <TextField
-              ref={emailRef}
-              label={copy.email}
-              name="email"
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder={copy.emailPlaceholder}
-              value={values.email}
-              onChange={update("email")}
-              error={errorText(errors.email)}
-              readOnly={sending}
-            />
-          </div>
+          ) : null}
+
+          <TextField
+            ref={nameRef}
+            marker={markers.name}
+            label={copy.name}
+            name="name"
+            autoComplete="name"
+            placeholder={copy.namePlaceholder}
+            value={values.name}
+            onChange={update("name")}
+            error={errorText(errors.name)}
+            readOnly={sending}
+          />
+
+          <TextField
+            ref={emailRef}
+            marker={markers.email}
+            label={copy.email}
+            name="email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            placeholder={copy.emailPlaceholder}
+            value={values.email}
+            onChange={update("email")}
+            error={errorText(errors.email)}
+            readOnly={sending}
+          />
 
           <PhoneField
             ref={phoneRef}
+            marker={markers.phone}
             copy={copy.phone}
             locale={locale}
             name="phone"
@@ -206,20 +229,22 @@ export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps
             readOnly={sending}
           />
 
-          {topics.length > 0 ? (
-            <TopicPicker label={copy.topic} topics={topics} value={topic} onChange={setTopic} disabled={sending} />
-          ) : null}
-
           <TextField
             ref={messageRef}
+            marker={markers.message}
             multiline
+            rows={3}
             label={copy.message}
             name="message"
             placeholder={copy.messagePlaceholder}
             maxLength={MAX_MESSAGE}
             value={values.message}
             onChange={update("message")}
-            description={copy.remaining.replace("{count}", String(MAX_MESSAGE - values.message.length))}
+            description={
+              MAX_MESSAGE - values.message.length <= REMAINING_HINT
+                ? copy.remaining.replace("{count}", String(MAX_MESSAGE - values.message.length))
+                : undefined
+            }
             error={errorText(errors.message)}
             readOnly={sending}
           />
@@ -243,19 +268,32 @@ export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps
   );
 }
 
+const pad = (n: number) => String(n).padStart(2, "0");
+
+/** El numero de cada fila. Sin temas la cuenta empieza en el nombre: un "02" de entrada lee como una fila perdida. */
+function numberRows(withTopics: boolean) {
+  const order = withTopics ? ["topic", "name", "email", "phone", "message"] : ["name", "email", "phone", "message"];
+  return Object.fromEntries(order.map((row, i) => [row, pad(i + 1)])) as Record<
+    "topic" | "name" | "email" | "phone" | "message",
+    string
+  >;
+}
+
 /**
- * Los temas como grupo de radio: un solo punto de tabulacion y las flechas mueven la
- * eleccion, como un grupo de radio nativo. El resaltado es UNA pieza que viaja a la
- * opcion elegida, no un fondo por chip que se enciende — es lo que hace que el gesto
- * se lea como un cambio y no como dos parpadeos.
+ * Los temas como grupo de radio, en lista: un solo punto de tabulacion y las flechas
+ * mueven la eleccion, como un grupo de radio nativo. Es la misma fila que los campos —
+ * numero y pregunta a la izquierda, las respuestas a la derecha al cuerpo de lo
+ * escrito —, asi que la lista se lee como una pregunta mas y no como un control aparte.
  */
 function TopicPicker({
+  marker,
   label,
   topics,
   value,
   onChange,
   disabled,
 }: {
+  marker: string;
   label: string;
   topics: ContactTopic[];
   value: string;
@@ -263,25 +301,8 @@ function TopicPicker({
   disabled: boolean;
 }) {
   const labelId = useId();
-  const group = useRef<HTMLDivElement>(null);
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const index = Math.max(0, topics.findIndex((topic) => topic.value === value));
-  const [box, setBox] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
-
-  // Se mide la opcion real: los chips parten en varias filas segun el ancho, asi que
-  // la posicion no se puede deducir del indice.
-  useLayoutEffect(() => {
-    const chip = refs.current[index];
-    const node = group.current;
-    if (!chip || !node) return;
-    const measure = () =>
-      setBox({ x: chip.offsetLeft, y: chip.offsetTop, w: chip.offsetWidth, h: chip.offsetHeight });
-    measure();
-    if (typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [index]);
 
   function onKeyDown(event: KeyboardEvent) {
     const delta =
@@ -299,22 +320,13 @@ function TopicPicker({
 
   return (
     <div className={styles.topicField}>
-      <span id={labelId} className={styles.topicLabel}>
-        {label}
-      </span>
-      <div ref={group} className={styles.topics} role="radiogroup" aria-labelledby={labelId} onKeyDown={onKeyDown}>
-        {box ? (
-          <span
-            aria-hidden="true"
-            className={styles.highlight}
-            style={{
-              ["--x" as string]: box.x,
-              ["--y" as string]: box.y,
-              ["--w" as string]: box.w,
-              ["--h" as string]: box.h,
-            }}
-          />
-        ) : null}
+      <div className={styles.topicHead}>
+        <span className={styles.topicMarker} aria-hidden="true">
+          {marker}
+        </span>
+        <span id={labelId}>{label}</span>
+      </div>
+      <div className={styles.topics} role="radiogroup" aria-labelledby={labelId} onKeyDown={onKeyDown}>
         {topics.map((topic, i) => {
           const checked = i === index;
           return (
@@ -328,12 +340,10 @@ function TopicPicker({
               aria-checked={checked}
               tabIndex={checked ? 0 : -1}
               disabled={disabled}
-              // Sin resaltado medido todavia, el elegido se marca con su propio fondo:
-              // el primer pintado no puede quedarse sin eleccion visible.
-              data-filled={checked && !box ? "true" : undefined}
               className={styles.topic}
               onClick={() => onChange(topic.value)}
             >
+              <span className={styles.box} aria-hidden="true" />
               {topic.label}
             </button>
           );

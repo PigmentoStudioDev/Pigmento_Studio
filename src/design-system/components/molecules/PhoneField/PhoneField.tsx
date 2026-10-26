@@ -68,6 +68,8 @@ export interface PhoneFieldCopy {
 
 export interface PhoneFieldProps {
   copy: PhoneFieldCopy;
+  /** El numero de la fila ("04"), como en TextField. */
+  marker?: string;
   /** El idioma de los nombres de pais, que da `Intl.DisplayNames`. */
   locale: string;
   /** Lleva el E.164 en un input oculto para el envio nativo. */
@@ -116,6 +118,7 @@ function caretAfterDigits(text: string, count: number) {
 
 export function PhoneField({
   copy,
+  marker,
   locale,
   name,
   onChange,
@@ -447,14 +450,22 @@ export function PhoneField({
       ref={rootRef}
       className={styles.root}
       data-open={open ? "true" : "false"}
+      data-invalid={error ? "true" : undefined}
       onBlur={(event) => {
         const next = event.relatedTarget as Node | null;
         if (open && next && !event.currentTarget.contains(next)) close(null);
       }}
     >
-      <label className={styles.label} htmlFor={inputId}>
-        {copy.label}
-      </label>
+      <div className={styles.head}>
+        {marker ? (
+          <span className={styles.marker} aria-hidden="true">
+            {marker}
+          </span>
+        ) : null}
+        <label className={styles.label} htmlFor={inputId}>
+          {copy.label}
+        </label>
+      </div>
 
       <div className={styles.anchor}>
       <div className={styles.control} data-invalid={error ? "true" : undefined} data-readonly={readOnly ? "true" : undefined}>

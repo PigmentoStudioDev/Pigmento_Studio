@@ -1,0 +1,27 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+// Llena la superficie que lo contiene y queda debajo de su contenido. `z-index: -1`
+// exige que la superficie cree su propio contexto de apilamiento (`isolation:
+// isolate`); si no, el papel se iria detras del fondo de la pagina.
+//
+// Sin fondo propio: hasta que el canvas pinta, se ve el de la superficie con su grano
+// CSS, que es tambien lo que queda si no hay WebGL2. El radio se hereda para que el
+// canvas no asome por las esquinas de una placa redondeada.
+.paper {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}

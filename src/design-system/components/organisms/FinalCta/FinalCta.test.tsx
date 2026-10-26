@@ -13,8 +13,9 @@ const ERRORS = {
 };
 
 const PROPS: FinalCtaProps = {
-  label: "Hablemos",
+  label: "Contacto",
   title: "Cuentanos que tienes en mente.",
+  intro: "Una idea a medias tambien sirve.",
   form: {
     locale: "es",
     topics: [{ value: "branding", label: "Branding" }],

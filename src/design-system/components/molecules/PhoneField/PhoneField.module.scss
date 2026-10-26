@@ -5,48 +5,41 @@
 
 @use '../../../styles/a11y';
 @use '../../../styles/brand' as brand;
+@use '../../../styles/field-row';
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
-// La misma anatomia que TextField: sin gap entre filas, cada fila trae su aire.
+// La misma fila que TextField: filete, etiqueta a la izquierda, numero a la derecha.
 .root {
-  display: grid;
-  min-inline-size: 0;
-  text-align: start;
+  @include field-row.root('.head');
+}
+
+.head {
+  @include field-row.head;
+}
+
+.marker {
+  font-variant-numeric: tabular-nums;
 }
 
 .label {
-  @include brandtype.style('label');
-
-  margin-block-end: spacing.$spacing-03;
-  color: theme.$text-secondary;
+  color: inherit;
 }
 
-// Boton de pais y numero comparten UNA caja: es un solo campo con dos partes, y el
-// foco de cualquiera de las dos enciende el borde entero, como el foco de TextField.
-.control {
-  display: flex;
-  align-items: stretch;
-  min-block-size: brand.$control-block-m;
-  border: 1px solid theme.$border-strong;
-  border-radius: brand.$radius-05;
-  background-color: theme.$field-02;
+.root:focus-within .head {
   color: theme.$text-primary;
-
-  &:focus-within {
-    border-color: theme.$focus;
-  }
-
-  &[data-invalid='true'] {
-    border-color: theme.$support-error;
-  }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .control:hover:not(:focus-within, [data-invalid='true'], [data-readonly='true']) {
-    border-color: theme.$text-primary;
-  }
+// Boton de pais y numero son UN campo con dos partes, sin caja: lo que los une es la
+// fila, y el foco de cualquiera de los dos enciende su filete.
+.control {
+  @include brandtype.style('lead');
+
+  display: flex;
+  align-items: baseline;
+  gap: spacing.$spacing-04;
+  color: theme.$text-primary;
 }
 
 .trigger {
@@ -54,9 +47,8 @@
   flex: none;
   align-items: center;
   gap: spacing.$spacing-02;
-  padding-inline: spacing.$spacing-05 spacing.$spacing-03;
+  padding: 0;
   border: 0;
-  border-inline-end: 1px solid theme.$border-subtle;
   background: none;
   color: inherit;
   font: inherit;
@@ -70,7 +62,7 @@
   // Por dentro: el anillo de fuera se montaria sobre el borde de la caja.
   &:focus-visible {
     outline: 2px solid theme.$focus;
-    outline-offset: -2px;
+    outline-offset: 2px;
   }
 
   &:disabled {
@@ -110,15 +102,15 @@
 .guide,
 .number {
   grid-area: 1 / 1;
-  padding-block: spacing.$spacing-04;
-  padding-inline: spacing.$spacing-04 spacing.$spacing-07;
+  padding: 0;
+  padding-inline-end: spacing.$spacing-07;
   font: inherit;
   font-variant-numeric: tabular-nums;
 }
 
 .guide {
   overflow: hidden;
-  // text-helper por contraste (4.5:1 sobre field-02), igual que el placeholder real.
+  // text-helper por contraste (4.5:1), igual que el placeholder real.
   color: theme.$text-helper;
   white-space: pre;
   pointer-events: none;
@@ -142,7 +134,7 @@
 
 .valid {
   position: absolute;
-  inset-inline-end: spacing.$spacing-04;
+  inset-inline-end: 0;
   display: inline-flex;
   inline-size: spacing.$spacing-05;
   block-size: spacing.$spacing-05;
@@ -329,7 +321,14 @@
 
 // La regla base gobierna el cierre: mas corto y con la curva de salida.
 @media (prefers-reduced-motion: no-preference) {
-  .control,
+  .root {
+    transition: border-color brand.$duration-tint brand.$ease-tint;
+  }
+
+  .head {
+    transition: color brand.$duration-tint brand.$ease-tint;
+  }
+
   .sheet {
     transition: border-color brand.$duration-tint brand.$ease-tint;
   }
