@@ -34,8 +34,11 @@ export interface StripHeaderProps {
   title: string;
   /** La etiqueta corta de la columna izquierda, en la voz de metadato del sitio. */
   label: string;
-  /** El parrafo que presenta el bloque. */
-  intro: string;
+  /**
+   * El parrafo que presenta el bloque. Opcional: un bloque cuyo titular ya dice lo que
+   * hay debajo no necesita una segunda frase que lo repita.
+   */
+  intro?: string;
   /**
    * Ancla del titular. `Section labelledBy` lo necesita para convertir su <section>
    * en un landmark con nombre, y sin un id en el titular esa prop no tiene a quien
@@ -86,9 +89,11 @@ export function StripHeader({
           <p className={styles.label}>{label}</p>
         </ScrollReveal>
 
-        <ScrollReveal>
-          <p className={styles.intro}>{intro}</p>
-        </ScrollReveal>
+        {intro ? (
+          <ScrollReveal>
+            <p className={styles.intro}>{intro}</p>
+          </ScrollReveal>
+        ) : null}
       </div>
     </div>
   );

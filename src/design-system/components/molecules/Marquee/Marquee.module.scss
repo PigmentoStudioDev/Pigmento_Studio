@@ -22,6 +22,28 @@
   padding-block: spacing.$spacing-07;
 }
 
+// El eyebrow de la tira, alineado con el texto del resto de la pagina y no con la
+// cinta, que va de borde a borde.
+.label {
+  @include brandtype.style('label');
+
+  display: flex;
+  gap: spacing.$spacing-03;
+  align-items: center;
+  margin: 0 0 spacing.$spacing-05;
+  padding-inline: spacing.$spacing-05;
+  color: theme.$text-secondary;
+}
+
+// La mitad del lado y no la pildora: esa es de los controles.
+.dot {
+  flex-shrink: 0;
+  inline-size: spacing.$spacing-03;
+  block-size: spacing.$spacing-03;
+  border-radius: brand.$radius-03;
+  background-color: theme.$text-primary;
+}
+
 // El carril. Lo ensancha y lo recentra el behavior, que es quien conoce cuanto
 // empuja el scroll; aqui solo se declara que es una fila.
 .track {

@@ -67,6 +67,15 @@ $-styles: (
   // lo que lo distingue del display de contenedor. Sin caja alta desde 2026-09-24.
   'display-bleed': (size: 10.5vw, height: 0.9, tracking: -0.05em, weight: 500),
 
+  // Una PALABRA que no cabe en la ventana y la cruza con el scroll: el titular del
+  // Showcase de locomotive (scroll.locomotive.ca), medido de su hoja. La mitad del
+  // ancho por letra es lo que la hace desbordar a proposito; sin clamp por lo mismo
+  // que 'display-bleed'.
+  'display-pass': (size: 50vw, height: 0.85, tracking: -0.03em, weight: 400),
+  // La misma palabra en pantalla vertical, donde el original deja de fijarla y la
+  // encoge para que quepa entera.
+  'display-pass-narrow': (size: 29.6vw, height: 0.85, tracking: -0.03em, weight: 400),
+
   // La segunda cima, y fluida por el MISMO motivo que la primera: un titular fijo
   // solo esta calibrado para un ancho. 48px eran grandes en un movil y pequenos en
   // un monitor de 2560.

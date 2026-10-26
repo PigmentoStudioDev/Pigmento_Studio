@@ -21,7 +21,15 @@ import styles from "./PaperSurface.module.scss";
  * Con reduced motion el papel es estatico; al cambiar esa preferencia el canvas se
  * rehace, porque un canvas cuyo contexto se libero no puede pedir otro.
  */
-export function PaperSurface() {
+export interface PaperSurfaceProps {
+  /**
+   * El ancestro que recibe el puntero, como selector para `closest()`. Sin el, el
+   * padre: es lo que vale cuando el papel cuelga de la superficie que se toca.
+   */
+  hostSelector?: string;
+}
+
+export function PaperSurface({ hostSelector }: PaperSurfaceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,7 +56,8 @@ export function PaperSurface() {
       canvas = document.createElement("canvas");
       canvas.className = styles.canvas;
       container.append(canvas);
-      stop = startPaper(container, canvas, { reducedMotion: query.matches, ticker: motion.gsap.ticker });
+      const host = hostSelector ? (container.closest<HTMLElement>(hostSelector) ?? undefined) : undefined;
+      stop = startPaper(container, canvas, { reducedMotion: query.matches, ticker: motion.gsap.ticker, host });
       // Un contexto alpha:false que no llego a dibujar se ve negro: se oculta y manda el CSS.
       if (!stop) canvas.hidden = true;
     };
@@ -64,7 +73,7 @@ export function PaperSurface() {
       query.removeEventListener("change", restart);
       teardown();
     };
-  }, []);
+  }, [hostSelector]);
 
   return <div ref={containerRef} className={styles.paper} aria-hidden="true" />;
 }

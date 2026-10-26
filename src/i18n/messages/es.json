@@ -89,22 +89,27 @@
       "position": "{current} de {total}",
       "cards": {
         "direct": {
+          "tag": "Trato directo",
           "title": "Hablas con quien lo hace",
           "text": "Sin ejecutivos de cuenta de por medio: quien diseña tu marca es quien contesta tus correos."
         },
         "tested": {
+          "tag": "Validación",
           "title": "Se prueba antes de lanzarse",
           "text": "Cada decisión se valida con la gente que la va a usar, no en una sala de juntas."
         },
         "sameTable": {
+          "tag": "Un solo equipo",
           "title": "Diseño y código, un solo equipo",
           "text": "Lo que apruebas en pantalla es lo que se publica, sin nada perdido entre equipos."
         },
         "criteria": {
+          "tag": "Durabilidad",
           "title": "Pensado para durar",
           "text": "Decisiones que siguen funcionando cuando pase la moda de este año."
         },
         "measured": {
+          "tag": "Medición",
           "title": "Resultados a la vista",
           "text": "Velocidad, conversiones y alcance medidos desde el primer día, con números que puedes revisar."
         }
@@ -130,29 +135,31 @@
       "drag": "Arrastrar"
     },
     "services": {
-      "title": "Servicios",
-      "titleHighlight": "Servicios",
-      "label": "Oferta",
-      "intro": "Cuatro disciplinas que trabajan juntas: puedes contratar una o el proyecto completo.",
-      "cta": "Ver servicio",
+      "label": "Servicios",
+      "title": "Cuatro disciplinas que trabajan juntas.",
       "items": {
         "branding": {
           "name": "Branding",
-          "scope": "Identidad, naming y sistema visual"
+          "title": "Una identidad que se sostiene",
+          "text": "Nombre, logotipo y sistema visual pensados para funcionar igual en una etiqueta que en una pantalla."
         },
         "web": {
           "name": "Desarrollo web",
-          "scope": "Sitios, e-commerce y rendimiento"
+          "title": "Sitios que cargan y convierten",
+          "text": "Diseñados y desarrollados por el mismo equipo, rápidos desde el primer día y fáciles de editar después."
         },
         "motion": {
           "name": "Motion",
-          "scope": "Animación de marca, video e interfaz"
+          "title": "La marca en movimiento",
+          "text": "Animación de marca, video e interfaz para que la identidad se reconozca también cuando se mueve."
         },
         "marketing": {
           "name": "Marketing",
-          "scope": "Campañas, contenido y pauta"
+          "title": "Pauta con la marca dentro",
+          "text": "Campañas, contenido y pauta con el mismo sistema visual, medidos desde el lanzamiento."
         }
-      }
+      },
+      "intro": "Una marca no vive en una sola pieza. Por eso la identidad, el sitio, el movimiento y la pauta salen del mismo equipo y con el mismo criterio."
     },
     "band": {
       "title": "Diseño con criterio, hecho en equipo."
@@ -382,6 +389,10 @@
       "next": "Caso siguiente",
       "slider": "Casos. Usa las flechas para recorrerlos",
       "drag": "Arrastra"
+    },
+    "clients": {
+      "title": "Marcas",
+      "description": "Marcas con las que trabajamos."
     }
   },
   "pending": {

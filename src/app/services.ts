@@ -4,32 +4,22 @@ import type { ServicesProps } from "@/design-system/components/organisms/Service
  * El strip de servicios. Vive en app/ por lo mismo que el resto del contenido.
  *
  * Los destinos son los del menu: el dia que cambie una ruta, cambia en los dos sitios
- * o en ninguno.
- *
- * TODO(cms): la vista previa usa piezas del portafolio de marcador, la de la misma
- * disciplina que en las filas de trabajo, hasta que cada servicio tenga sus casos.
+ * o en ninguno. La clave de cada servicio es tambien la de su icono.
  */
 type Translate = (key: string) => string;
 
-const SERVICES = [
-  { key: "branding", href: "/servicios/branding", image: { src: "/portfolio/01.png", width: 522, height: 522 } },
-  { key: "web", href: "/servicios/web-development", image: { src: "/portfolio/02.png", width: 522, height: 715 } },
-  { key: "motion", href: "/servicios/motion", image: { src: "/portfolio/03.png", width: 521, height: 737 } },
-  { key: "marketing", href: "/servicios/marketing", image: { src: "/portfolio/04.png", width: 521, height: 690 } },
-] as const;
+const SERVICES = ["branding", "web", "motion", "marketing"] as const;
 
 export function getServices(t: Translate): ServicesProps {
   return {
-    title: t("title"),
-    titleHighlight: t("titleHighlight"),
     label: t("label"),
+    title: t("title"),
     intro: t("intro"),
-    cta: t("cta"),
-    services: SERVICES.map(({ key, href, image }) => ({
+    services: SERVICES.map((key) => ({
+      key,
       name: t(`items.${key}.name`),
-      scope: t(`items.${key}.scope`),
-      href,
-      image,
+      title: t(`items.${key}.title`),
+      text: t(`items.${key}.text`),
     })),
   };
 }

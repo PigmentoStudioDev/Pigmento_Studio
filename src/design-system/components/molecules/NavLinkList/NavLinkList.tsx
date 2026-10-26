@@ -2,6 +2,8 @@
 
 import { Link } from "@/i18n/navigation";
 import { useCharRoll } from "../../../motion/useCharRoll";
+import { LineDrawing } from "../../atoms/LineDrawing/LineDrawing";
+import type { LineDrawingName } from "../../atoms/LineDrawing/drawings";
 import { Tag } from "../../atoms/Tag/Tag";
 import styles from "./NavLinkList.module.scss";
 
@@ -45,6 +47,11 @@ export interface NavLinkItem {
    * lo escucha.
    */
   name?: string;
+  /**
+   * Dibujo de linea delante de la etiqueta, por nombre. Quieto: al hover solo toma
+   * el tono del texto.
+   */
+  icon?: LineDrawingName;
 }
 
 export interface NavLinkListProps {
@@ -80,6 +87,7 @@ function NavLink({ item, onNavigate }: { item: NavLinkItem; onNavigate?: () => v
   // necesite una asercion. Sin destino no rueda, asi que tampoco se parte.
   const href = item.href;
   const textRef = useCharRoll<HTMLSpanElement>(item.label, href !== undefined);
+  const icon = item.icon ? <LineDrawing name={item.icon} className={styles.icon} /> : null;
 
   // Texto y punto: ni enlace, ni promesa de enlace. Va antes que la rama de
   // deshabilitado porque las dos se reconocen por no tener destino y solo esta
@@ -88,7 +96,10 @@ function NavLink({ item, onNavigate }: { item: NavLinkItem; onNavigate?: () => v
     return (
       <li className={styles.item}>
         <span className={styles.link}>
-          <span className={styles.text}>{item.label}</span>
+          <span className={styles.lead}>
+            {icon}
+            <span className={styles.text}>{item.label}</span>
+          </span>
         </span>
       </li>
     );
@@ -100,7 +111,10 @@ function NavLink({ item, onNavigate }: { item: NavLinkItem; onNavigate?: () => v
         {/* Sin destino no hay enlace. Un <a> sin href no es alcanzable con teclado
             ni se anuncia como enlace: aparentaria serlo solo con raton. */}
         <span aria-disabled="true" className={[styles.link, styles.isDisabled].join(" ")}>
-          <span className={styles.text}>{item.label}</span>
+          <span className={styles.lead}>
+            {icon}
+            <span className={styles.text}>{item.label}</span>
+          </span>
           {item.tag ? <Tag tone="progress">{item.tag}</Tag> : null}
         </span>
       </li>
@@ -125,8 +139,11 @@ function NavLink({ item, onNavigate }: { item: NavLinkItem; onNavigate?: () => v
         // window.opener y el primero ademas no filtra de donde viene la visita.
         rel={item.external ? "noopener noreferrer" : undefined}
       >
-        <span aria-hidden="true" ref={textRef} className={styles.text}>
-          {item.label}
+        <span className={styles.lead}>
+          {icon}
+          <span aria-hidden="true" ref={textRef} className={styles.text}>
+            {item.label}
+          </span>
         </span>
         {item.tag ? <Tag tone="progress">{item.tag}</Tag> : null}
       </Anchor>

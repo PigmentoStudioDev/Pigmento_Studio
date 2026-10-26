@@ -4,6 +4,25 @@
 
 Sitio del estudio. Next 16 (App Router, Turbopack) + React 19 + IBM Carbon v11 + Sass.
 
+## El concepto: papel, pigmento y trazo
+
+El nombre ya es la idea: pigmento es color depositado sobre un soporte. El sitio tiene
+tres capas y cada pieza nueva se mide contra ellas (decision de Karen, 2026-10-26).
+
+- **Papel — el borrador.** El soporte en reposo: el grano de las superficies, el papel
+  WebGL quieto y su pulso lento. Es FONDO, nunca contenido, y no tiene color propio:
+  toma la tinta de su zona. El pulso es papel y no trazo, porque late sin que nadie
+  actue.
+- **Pigmento — la marca.** Las familias candy. Se DEPOSITA, no se vierte: resalte de un
+  titular, una tarjeta que destaca, la huella de un gesto. Nunca de relleno plano en
+  un area grande; un bloque entero de color es pintura, no pigmento.
+- **Trazo — la tecnica.** Lo que responde a la persona: la estela y los anillos del
+  papel, el cursor, la cortina entre paginas. Solo existe si alguien actua; lo que se
+  mueve solo no es trazo, y por eso los bucles se paran en cuanto nadie los mira.
+
+El pigmento no se le pone al trazo por defecto: la estela de la placa de contacto
+solo hunde la tinta del papel, sin color (decision de Karen, 2026-10-26).
+
 ## La idea del design system
 
 **Carbon es una plantilla de tokens por capas, y solo eso.** No autoramos primitivas
