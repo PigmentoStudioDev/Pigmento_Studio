@@ -29,22 +29,19 @@
       "title": "Latest published case",
       "cta": "See the work",
       "tag": "Featured"
-    }
+    },
+    "skip": "Skip to content"
   },
   "footer": {
     "studio": "Pigmento Studio®",
     "work": "Work",
-    "contact": "Contact",
     "handle": "@pigmento__studio",
-    "handleName": "Pigmento Studio on Instagram (opens in a new tab)",
-    "instagram": "Instagram",
-    "instagramName": "Pigmento Studio on Instagram (opens in a new tab)",
+    "handleName": "@pigmento__studio on Instagram (opens in a new tab)",
     "behance": "Behance",
     "behanceName": "Pigmento Studio on Behance (opens in a new tab)",
     "facebook": "Facebook",
     "facebookName": "Pigmento Studio on Facebook (opens in a new tab)",
     "city": "Mexico City",
-    "metaLabel": "Footer shortcuts",
     "linksLabel": "Social and location",
     "tagline": "Brand design and growth studio in Mexico City. Branding, sites, motion and marketing for brands with something to say.",
     "columnStudio": "Studio",
@@ -327,45 +324,7 @@
       "title": "What they say",
       "titleHighlight": "they say",
       "label": "Clients",
-      "intro": "Clients who have been through this, in their own words.",
-      "items": {
-        "first": {
-          "quote": "We came in with a logo and a folder of loose photos. We left with a brand the sales team can use without asking us anything.",
-          "author": "Name Surname",
-          "role": "Role",
-          "company": "Company"
-        },
-        "second": {
-          "quote": "What I value most is that they said no to two of our ideas, and they were right about both.",
-          "author": "Name Surname",
-          "role": "Role",
-          "company": "Company"
-        },
-        "third": {
-          "quote": "The new site has been live six months and we have not had to ask for a single layout change.",
-          "author": "Name Surname",
-          "role": "Role",
-          "company": "Company"
-        },
-        "fourth": {
-          "quote": "They delivered on the date they gave us in the first meeting. That had never happened to me with a design vendor.",
-          "author": "Name Surname",
-          "role": "Role",
-          "company": "Company"
-        },
-        "fifth": {
-          "quote": "We came back with the second project before the first one was finished.",
-          "author": "Name Surname",
-          "role": "Role",
-          "company": "Company"
-        },
-        "sixth": {
-          "quote": "They understood the business on the first call. Everything after that was about how, not what.",
-          "author": "Name Surname",
-          "role": "Role",
-          "company": "Company"
-        }
-      }
+      "intro": "Clients who have been through this, in their own words."
     },
     "difference": {
       "title": "The difference",
@@ -482,7 +441,7 @@
     "title": "Page not found",
     "description": "The page you're looking for doesn't exist or has moved.",
     "action": "Back to home"
-    },
+  },
   "servicePages": {
     "common": {
       "processLabel": "The process",

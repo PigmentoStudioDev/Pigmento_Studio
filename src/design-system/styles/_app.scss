@@ -8,6 +8,7 @@
 @use './brand' as brand;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/type';
+@use '@carbon/react/scss/theme';
 
 // content-box es el valor inicial de CSS: sin esto el padding se suma al tamano
 // declarado, y cualquier caja que mezcle aspect-ratio con padding pierde su
@@ -43,6 +44,7 @@
   --pg-stagger-slice: #{brand.$stagger-slice};
   --pg-ease-default: #{brand.$ease-default};
   --pg-ease-follow: #{brand.$ease-follow};
+  --pg-ease-exit: #{brand.$ease-exit};
 }
 
 // Con el cursor propio a la vista, el del sistema se esconde. Lo marca useCustomCursor
@@ -226,4 +228,25 @@ body {
 // que se sumaria al gap de la columna.
 .pg-status p {
   margin: 0;
+}
+
+// Saltar al contenido: TopBar, cabecera y menu van antes que <main>, y sin esto el
+// primer Tab los recorre todos. Fuera de pantalla hasta que recibe el foco; por
+// encima de la cabecera (100) porque aparece sobre ella.
+.pg-skip {
+  position: fixed;
+  inset-block-start: spacing.$spacing-03;
+  inset-inline-start: spacing.$spacing-03;
+  z-index: 110;
+  padding: spacing.$spacing-03 spacing.$spacing-05;
+  border-radius: brand.$radius-full;
+  background: theme.$background-inverse;
+  color: theme.$text-inverse;
+  translate: 0 calc(-100% - #{spacing.$spacing-07});
+
+  &:focus-visible {
+    translate: none;
+    outline: 2px solid theme.$focus;
+    outline-offset: 2px;
+  }
 }

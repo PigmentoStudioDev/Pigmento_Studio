@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { expect } from 'vitest';
+import { expect, vi } from 'vitest';
 import { toHaveNoViolations } from 'jest-axe';
 
 expect.extend(toHaveNoViolations);
@@ -47,3 +47,22 @@ if (!window.AnimationEvent) {
     }
   } as unknown as typeof AnimationEvent;
 }
+
+/**
+ * El Link con idioma lee el locale del contexto de next-intl, y un test de componente
+ * no monta ese proveedor. Se sustituye por un <a> plano: lo que los tests comprueban
+ * es el enlace que sale, no el prefijo, que es de next-intl y esta probado alli.
+ */
+vi.mock('@/i18n/navigation', async (importOriginal) => {
+  const { createElement } = await import('react');
+  // Solo se sustituye lo que pide el provider de next-intl; getPathname es puro y lo
+  // usan seo y sitemap, que necesitan el real.
+  const actual = await importOriginal<typeof import('@/i18n/navigation')>();
+
+  return {
+    getPathname: actual.getPathname,
+    Link: ({ href, ...rest }: { href: string } & Record<string, unknown>) => createElement('a', { href, ...rest }),
+    usePathname: () => '/',
+    useRouter: () => ({ replace: () => {}, push: () => {} }),
+  };
+});

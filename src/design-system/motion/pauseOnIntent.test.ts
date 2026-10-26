@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { pauseOnIntent, type Pausable } from "./pauseOnIntent";
 
 function spy(): Pausable & { paused: number; resumed: number } {
@@ -67,5 +67,57 @@ describe("pauseOnIntent", () => {
 
     root.dispatchEvent(new Event("pointerenter"));
     expect(loop.paused).toBe(1);
+  });
+
+  describe("fuera de pantalla", () => {
+    let notify: (isIntersecting: boolean) => void;
+
+    beforeEach(() => {
+      vi.stubGlobal(
+        "IntersectionObserver",
+        class {
+          constructor(cb: (entries: { isIntersecting: boolean }[]) => void) {
+            notify = (isIntersecting) => cb([{ isIntersecting }]);
+          }
+          observe() {}
+          disconnect() {}
+        },
+      );
+    });
+
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("pausa al salir de pantalla y reanuda al volver", () => {
+      const loop = spy();
+      pauseOnIntent(root, () => [loop]);
+
+      notify(false);
+      expect(loop.paused).toBe(1);
+
+      notify(true);
+      expect(loop.resumed).toBe(1);
+    });
+
+    it("no reanuda al volver a pantalla si el puntero sigue encima", () => {
+      const loop = spy();
+      pauseOnIntent(root, () => [loop]);
+
+      root.dispatchEvent(new Event("pointerenter"));
+      notify(false);
+      notify(true);
+
+      expect(loop.resumed).toBe(0);
+    });
+
+    it("no reanuda al soltar el puntero si esta fuera de pantalla", () => {
+      const loop = spy();
+      pauseOnIntent(root, () => [loop]);
+
+      notify(false);
+      root.dispatchEvent(new Event("pointerenter"));
+      root.dispatchEvent(new Event("pointerleave"));
+
+      expect(loop.resumed).toBe(0);
+    });
   });
 });

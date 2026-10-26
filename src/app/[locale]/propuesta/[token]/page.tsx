@@ -128,7 +128,7 @@ function hoja(
   const { t, intlLocale, fecha } = ctx;
 
   return (
-    <main>
+    <main id="main">
       <Section width={ANCHO} spacing="loose" labelledBy={IDS.cover}>
         <ProposalSheet
           client={proposal.client}
@@ -163,7 +163,7 @@ function documento(
   const { t, intlLocale, unitLabel, fecha, UNIDAD } = ctx;
 
   return (
-    <main>
+    <main id="main">
       <Section width={ANCHO} spacing="compact" labelledBy={IDS.cover}>
         <ProposalCover
           client={proposal.client}

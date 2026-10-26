@@ -147,3 +147,23 @@ export async function getLegalLinks(locale: Locale): Promise<LegalLink[]> {
 
   return docs.map((doc) => ({ slug: doc.slug, title: doc.title }));
 }
+
+/** Un legal para el sitemap: su direccion y cuando cambio, que es lo que `lastModified` pide. */
+export interface LegalSitemapEntry {
+  slug: string;
+  updatedAt: string;
+}
+
+export async function getLegalSitemapEntries(): Promise<LegalSitemapEntry[]> {
+  const payload = await getPayload({ config });
+
+  const { docs } = await payload.find({
+    collection: 'legal',
+    overrideAccess: false,
+    depth: 0,
+    limit: 100,
+    select: { slug: true, updatedAt: true },
+  });
+
+  return docs.map((doc) => ({ slug: doc.slug, updatedAt: doc.updatedAt }));
+}

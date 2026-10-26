@@ -16,6 +16,7 @@ import { sendContact } from "./contact-action";
 import { getFinalCta } from "./cta";
 import { faqJsonLd } from "./faq";
 import { FEATURED_CASE_PIECES, FEATURED_CASES_MAX, getFeaturedCases } from "./featuredCases";
+import { alternatesFor } from "./seo";
 import { getServiceFaq, getServiceProcess, type ServiceKey } from "./service-pages";
 
 /**
@@ -30,6 +31,14 @@ const CASE_TITLE_ID = "casos";
 const FAQ_TITLE_ID = "faq";
 const CTA_TITLE_ID = "contacto";
 
+/** Las rutas de las cuatro paginas, que no siempre coinciden con la clave (web-development). */
+const SERVICE_PATHS: Record<ServiceKey, string> = {
+  branding: "/servicios/branding",
+  motion: "/servicios/motion",
+  marketing: "/servicios/marketing",
+  web: "/servicios/web-development",
+};
+
 /**
  * Sin indexar mientras el copy sea borrador: cuatro paginas con texto sin aprobar en los
  * resultados del estudio son peor que ninguna. Se quita cuando Karen apruebe el copy.
@@ -38,7 +47,12 @@ export async function serviceMetadata({ locale }: { locale: string }, key: Servi
   if (!hasLocale(routing.locales, locale)) return {};
   const t = await getTranslations({ locale, namespace: `servicePages.${key}` });
 
-  return { title: t("title"), description: t("description"), robots: { index: false, follow: true } };
+  return {
+    title: t("title"),
+    description: t("description"),
+    alternates: alternatesFor(SERVICE_PATHS[key], locale),
+    robots: { index: false, follow: true },
+  };
 }
 
 /**
@@ -61,7 +75,7 @@ export async function ServicePage({ locale, service }: { locale: string; service
   const faq = getServiceFaq(t, service);
 
   return (
-    <main>
+    <main id="main">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqJsonLd(faq.items) }} />
 
       {/* Oscura en los dos modos: el titular va sobre video, y el video no re-tematiza.

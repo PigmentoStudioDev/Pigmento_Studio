@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload';
 import { criterionKey } from './Proposals';
+import { revalidateAfterChange, revalidateAfterDelete } from './revalidate';
 
 /**
  * Los textos legales del sitio: aviso de privacidad, terminos, cookies. Una
@@ -159,6 +160,9 @@ export const Legal: CollectionConfig = {
     // Antes de validar, como en Proposals: asi el ancla existe cuando Payload
     // comprueba los campos, y no despues.
     beforeValidate: [({ data, originalDoc }) => (data ? anchorSections(data, originalDoc) : data)],
+    // El sitemap lista los legales y es una ruta aparte del layout.
+    afterChange: [revalidateAfterChange(['/sitemap.xml'])],
+    afterDelete: [revalidateAfterDelete(['/sitemap.xml'])],
   },
 
   fields: [
