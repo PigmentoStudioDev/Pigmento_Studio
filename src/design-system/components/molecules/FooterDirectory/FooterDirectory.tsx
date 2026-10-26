@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { NavLinkList, type NavLinkItem } from "../NavLinkList/NavLinkList";
 import styles from "./FooterDirectory.module.scss";
 
@@ -37,6 +38,8 @@ export interface FooterColumn {
 export interface FooterDirectoryProps {
   /** El nombre que firma, con la frase corta de debajo. */
   brand: string;
+  /** A donde lleva la firma: la home, como el logo de la cabecera. */
+  homeHref: string;
   tagline: string;
   columns: FooterColumn[];
   /** Ya compuesta y traducida: "© 2026 Pigmento Studio. Todos los derechos reservados." */
@@ -47,6 +50,7 @@ export interface FooterDirectoryProps {
 
 export function FooterDirectory({
   brand,
+  homeHref,
   tagline,
   columns,
   copyright,
@@ -56,7 +60,11 @@ export function FooterDirectory({
     <div className={styles.root}>
       <div className={styles.grid}>
         <div className={styles.brand}>
-          <p className={styles.name}>{brand}</p>
+          <p className={styles.name}>
+            <Link href={homeHref} className={styles.home}>
+              {brand}
+            </Link>
+          </p>
           <p className={styles.tagline}>{tagline}</p>
         </div>
 
