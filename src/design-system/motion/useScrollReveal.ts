@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { REDUCED_MOTION } from "./breakpoints";
-import { loadMotion, type Motion } from "./gsap";
+import { loadMotion, type Motion, whenIdle } from "./gsap";
 import { isPageLoading, whenPageReady } from "./pageReady";
 
 /**
@@ -203,7 +203,13 @@ export function useScrollReveal<T extends HTMLElement>({
        * recolocan a mitad del gesto. `autoSplit` lo corregiria solo, pero se ahorra el
        * doble trabajo esperando.
        */
-      void Promise.all([loadMotion(), document.fonts?.ready ?? Promise.resolve(), whenPageReady()]).then(
+      // Lo que nace bajo el pliegue no compite con el primer pintado: gsap llega al
+      // ralenti. Lo que ya se ve (el titular del hero) se parte sin esperar.
+      const belowFold = !blocks.some(alreadyInView);
+      const load = () =>
+        Promise.all([loadMotion(), document.fonts?.ready ?? Promise.resolve(), whenPageReady()]);
+
+      void (belowFold ? whenIdle().then(load) : load()).then(
         ([{ SplitText }]) => {
           if (cancelled) return;
 

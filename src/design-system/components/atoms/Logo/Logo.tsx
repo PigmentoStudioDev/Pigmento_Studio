@@ -17,9 +17,14 @@ import styles from "./Logo.module.scss";
 export interface LogoProps {
   /** Colapsa al isotipo. La cabecera lo activa al empezar el scroll. */
   compact?: boolean;
+  /**
+   * Solo una copia de la pagina lo pide: dos `preload` del mismo archivo son dos
+   * <link> y ninguna ventaja. Lo pide el preloader, que es lo primero que se pinta.
+   */
+  preload?: boolean;
 }
 
-export function Logo({ compact = false }: LogoProps) {
+export function Logo({ compact = false, preload = false }: LogoProps) {
   return (
     <span
       aria-hidden="true"
@@ -27,9 +32,8 @@ export function Logo({ compact = false }: LogoProps) {
     >
       {/* Import estatico: Next lee el tamano del archivo y reserva el hueco solo,
           sin que haya que repetir 400x75 aqui y que se quede mintiendo el dia que
-          cambie el logotipo. `priority` porque esta sobre la linea de flotacion en
-          todas las rutas — la cabecera la monta el layout raiz. */}
-      <Image src={wordmark} alt="" priority className={styles.wordmark} />
+          cambie el logotipo. */}
+      <Image src={wordmark} alt="" preload={preload} className={styles.wordmark} />
 
       {/* TODO(brand): isotipo real. La marca solo trae logotipo, asi que la forma
           compacta sigue siendo un placeholder. Va en currentColor, no en mapa de

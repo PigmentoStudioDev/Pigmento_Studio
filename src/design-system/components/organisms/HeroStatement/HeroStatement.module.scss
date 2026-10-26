@@ -78,32 +78,8 @@
   flex: none;
 }
 
-// Todo el texto espera hasta que la tira aterriza. Sin JS no hay lineas partidas ni
-// estado de bloque, y el texto se lee entero.
-.root:not(:has([data-hero-band-landed])) :global(.pg-line) {
-  translate: 0 110%;
-}
-
-// Sin transicion mientras espera. El hook marca los bloques DESPUES de que ya se
-// pintaron visibles, y con la transicion puesta el pill y el CTA se animaban hacia
-// oculto al abrirse la cortina —se veian desvanecerse— para volver a entrar al
-// aterrizar la tira. Asi se esconden de golpe, y la transicion vuelve justo en el
-// cambio de estilo que los trae: el navegador anima con la del estado de llegada.
-.root:not(:has([data-hero-band-landed])) [data-reveal-mode='block'] {
-  opacity: 0;
-  translate: 0 brand.$reveal-distance;
-  transition: none;
-}
-
-// El hook ya no marca nada con esta preferencia, asi que estas reglas son la segunda
-// defensa: si alguien la activa con la pagina ya marcada, nada se queda escondido.
 @media (prefers-reduced-motion: reduce) {
   .cta [data-reveal-mode='block'] {
     transition: none;
-  }
-
-  .root:not(:has([data-hero-band-landed])) [data-reveal-mode='block'] {
-    opacity: 1;
-    translate: none;
   }
 }

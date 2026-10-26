@@ -30,18 +30,12 @@
 // 'IBM Plex Sans' escrito a mano se cuele y se pierda la tipografia sin error.
 @use '@carbon/react/scss/type';
 
-// Los nueve pesos de la familia, con nombre. Birken Nue los trae todos y un
-// `font-weight: 700` suelto no dice cual de los nueve es ni si existe: con el
-// nombre, pedir uno que no se haya declarado en next/font se ve al escribirlo.
-$weight-thin: 100;
-$weight-extralight: 200;
-$weight-light: 300;
+// Los pesos que el sitio usa, con nombre. Birken Nue trae nueve, pero next/font
+// precarga cada archivo declarado en todas las rutas: seis pesos sin uso eran ~115 KB
+// compitiendo con el LCP. Un peso nuevo se declara aqui Y en el layout, en el mismo diff.
 $weight-regular: 400;
 $weight-medium: 500;
 $weight-semibold: 600;
-$weight-bold: 700;
-$weight-extrabold: 800;
-$weight-heavy: 900;
 
 $-styles: (
   // La cima es FLUIDA, y es el unico sitio de la escala donde eso hace falta.

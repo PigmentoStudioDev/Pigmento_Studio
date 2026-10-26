@@ -36,6 +36,10 @@ const mediaRemotePattern = (): RemotePattern[] => {
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: mediaRemotePattern(),
+    // AVIF primero: el navegador que lo entiende se lo lleva y el resto cae a WebP.
+    // Cada formato se guarda aparte en la cache de Next, y el coste de almacenamiento
+    // es el precio de no servir JPEG a quien tiene AVIF.
+    formats: ["image/avif", "image/webp"],
   },
 
   sassOptions: {

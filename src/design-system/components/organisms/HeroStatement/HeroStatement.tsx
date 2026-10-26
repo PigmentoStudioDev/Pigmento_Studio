@@ -9,8 +9,8 @@ import styles from "./HeroStatement.module.scss";
 
 /**
  * Hero de declaracion: chip, titular, entradilla y CTA apilados al centro, y la tira de
- * fotos debajo. Todo el texto espera a que la tira aterrice; lo decide la hoja con
- * `:has()`, asi que el orden no depende de ningun temporizador.
+ * fotos debajo. El texto no espera a la tira: la tira es decoracion que llega despues,
+ * y si el titular dependiera de ella el LCP seria la coreografia, no el texto.
  *
  * Las props son las de HeroExpose a proposito: los dos heros compiten en la misma
  * pagina, y el que se quede tiene que poder leer los mismos campos del CMS.

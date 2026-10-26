@@ -23,13 +23,24 @@ export interface HeroBandProps {
  */
 const CARD_SIZES = "(max-width: 42rem) 180px, 270px";
 
+/**
+ * Las fotos que caben en el primer pliegue. Solo estas se precargan: el resto son
+ * copias y fotos que entran por la deriva, y pedirlas todas al cargar compite con el
+ * titular por la red.
+ */
+const PRELOADED_CARDS = 4;
+
 export function HeroBand({ items }: HeroBandProps) {
   const { rootRef, trackRef, sets } = useHeroBand<HTMLDivElement, HTMLDivElement>(items.length);
 
   if (items.length === 0) return null;
 
   const cards = Array.from({ length: sets }, (_, set) =>
-    items.map((item, index) => ({ key: `${set}-${index}`, src: item.src, first: set === 0 })),
+    items.map((item, index) => ({
+      key: `${set}-${index}`,
+      src: item.src,
+      preload: set === 0 && index < PRELOADED_CARDS,
+    })),
   ).flat();
 
   return (
@@ -44,7 +55,7 @@ export function HeroBand({ items }: HeroBandProps) {
               alt=""
               fill
               sizes={CARD_SIZES}
-              priority={card.first}
+              preload={card.preload}
               draggable={false}
             />
           </div>

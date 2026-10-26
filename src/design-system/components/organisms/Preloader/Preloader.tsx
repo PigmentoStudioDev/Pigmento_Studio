@@ -13,6 +13,10 @@ import styles from "./Preloader.module.scss";
  *
  * Se pinta en el HTML para estar desde la primera pintura; la hoja lo esconde salvo
  * que el script de pageReady haya marcado la pagina como `loading`.
+ *
+ * La pagina se marca lista en `animationstart` de la salida, y eso es un evento que
+ * el navegador dispara al TERMINAR el retardo de la animacion: por eso la salida no
+ * lleva retardo, que si no la pagina tarda en arrancar lo que dura el retardo.
  */
 type Phase = "entering" | "leaving" | "done";
 
@@ -53,7 +57,7 @@ export function Preloader() {
     >
       <span className={styles.mask}>
         <span className={styles.mark} onAnimationEnd={handleMarkEnd}>
-          <Logo />
+          <Logo preload />
         </span>
       </span>
     </div>

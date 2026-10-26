@@ -17,6 +17,8 @@ import { whenPageReady } from "./pageReady";
 export const HERO_BAND = "data-hero-band";
 export const HERO_BAND_LANDED = "data-hero-band-landed";
 export const HERO_BAND_CARD = "data-hero-band-card";
+/** Puesto mientras la tira esta fuera de cuadro: la hoja para la deriva. */
+export const HERO_BAND_AWAY = "data-hero-band-away";
 
 /** px/s, como el marquee. */
 const DRIFT_SPEED = 60;
@@ -225,6 +227,24 @@ export function useHeroBand<T extends HTMLElement, U extends HTMLElement>(count:
       root.removeAttribute(HERO_BAND_LANDED);
     };
   }, [geometry]);
+
+  // Una deriva que nadie ve no tiene por que gastar un fotograma por scroll: la hoja
+  // la para mientras la tira no esta en cuadro.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) root.removeAttribute(HERO_BAND_AWAY);
+      else root.setAttribute(HERO_BAND_AWAY, "");
+    });
+    observer.observe(root);
+
+    return () => {
+      observer.disconnect();
+      root.removeAttribute(HERO_BAND_AWAY);
+    };
+  }, []);
 
   return { rootRef, trackRef, sets };
 }
