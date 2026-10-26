@@ -41,6 +41,12 @@ export interface MarqueeQuote {
 }
 
 interface MarqueeBase {
+  /**
+   * La etiqueta que dice que es la tira: "Marcas con las que trabajamos". Sin ella,
+   * una fila de nombres grandes no se lee como clientes. Encima y a la izquierda, con
+   * su punto, como el eyebrow de la tira de bunch.
+   */
+  label?: string;
   direction?: MarqueeDirection;
   /** Segundos por vuelta. Cuanto MENOR, mas rapido. */
   speed?: number;
@@ -79,6 +85,7 @@ export type MarqueeProps = MarqueeBase &
 const MIN_COPIES = 2;
 
 export function Marquee({
+  label,
   direction = "left",
   speed,
   scrollSpeed,
@@ -131,6 +138,12 @@ export function Marquee({
 
   return (
     <div ref={rootRef} className={className} data-marquee-status="normal">
+      {label ? (
+        <p className={styles.label}>
+          <span className={styles.dot} aria-hidden="true" />
+          {label}
+        </p>
+      ) : null}
       <div ref={scrollRef} className={styles.track}>
         {collections.map((_, copy) => (
           <div

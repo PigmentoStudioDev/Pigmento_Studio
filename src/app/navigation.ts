@@ -27,8 +27,8 @@ export function getNavigation(t: Translate, gallery: ProjectPiece[]): SiteHeader
         label: t("estudio.label"),
         featured: true,
         items: [
-          { label: t("estudio.trabajo"), href: "/trabajo" },
-          { label: t("estudio.nosotros"), href: "/nosotros" },
+          { label: t("estudio.trabajo"), href: "/trabajo", icon: "work" },
+          { label: t("estudio.nosotros"), href: "/nosotros", icon: "studio" },
         ],
         secondary: [{ label: t("estudio.laboratorio"), tag: t("estudio.pronto") }],
       },
@@ -37,10 +37,10 @@ export function getNavigation(t: Translate, gallery: ProjectPiece[]): SiteHeader
         items: [
           // Primero por peso en la busqueda y por ser la disciplina de entrada del
           // estudio. No hay indice de servicios: cada disciplina es su propia pagina.
-          { label: t("servicios.branding"), href: "/servicios/branding" },
-          { label: t("servicios.motion"), href: "/servicios/motion" },
-          { label: t("servicios.marketing"), href: "/servicios/marketing" },
-          { label: t("servicios.web"), href: "/servicios/web-development" },
+          { label: t("servicios.branding"), href: "/servicios/branding", icon: "branding" },
+          { label: t("servicios.motion"), href: "/servicios/motion", icon: "motion" },
+          { label: t("servicios.marketing"), href: "/servicios/marketing", icon: "marketing" },
+          { label: t("servicios.web"), href: "/servicios/web-development", icon: "web" },
         ],
         // Al pie de esta columna. El nombre accesible dice la red Y que abre fuera:
         // el enlace lleva target="_blank", y un destino que cambia de pestana sin

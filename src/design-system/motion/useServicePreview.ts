@@ -1,149 +1,92 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 import { REDUCED_MOTION } from "./breakpoints";
-import { loadMotion } from "./gsap";
-import { BRAND_EASE, duration, FOLLOW_EASE } from "./tokens";
+import { duration } from "./tokens";
 
 /**
- * La vista previa que acompana al puntero por una lista de servicios.
+ * La vista previa de un servicio: sus piezas pasan una detras de otra mientras se mira.
  *
- * Es el efecto de la referencia tal cual, con gsap: la caja sigue la altura del
- * puntero con un `quickTo` que llega con retraso, y cada fila que se pisa apila una
- * capa nueva que entra en cortina — el marco baja desde arriba mientras la imagen
- * sube desde abajo, y el cruce de los dos es lo que se lee como un barrido.
+ * Puerto del ImageSequence de apta.agency (su fuente, recuperada de su source map).
+ * En reposo se ve la primera pieza; al entrar el puntero empieza a pasar las demas a
+ * paso fijo y en bucle, y al salir vuelve a la primera. En un telefono no hay puntero
+ * que entre, asi que el original cambia de disparador: pasa las piezas mientras la
+ * tarjeta cruza la franja central de la pantalla. Aqui igual.
  *
- * Las capas se crean a mano dentro de la caja y no con React, igual que alli: son
- * decoracion efimera, una por cada fila pisada, y React no pinta nada dentro de esa
- * caja, asi que no hay nada que reconciliar. Al salir de la lista se vacia.
+ * Dos cambios de casa y ninguno toca el gesto. El paso es el `base` de la escala y no
+ * los 0.7s del original: fuera de la escala, el gate de motion no lo dejaria pasar. Y
+ * con reduced-motion no pasa nada, ni con el puntero: una imagen que cambia sola cada
+ * medio segundo es exactamente lo que esa preferencia pide evitar.
  *
- * Tres cambios de casa y ninguno toca el gesto: gsap entra por su unica puerta, la Y
- * se mide contra la raiz y no contra la pagina —la seccion no empieza arriba del
- * documento—, y sin puntero que pase por encima o con reduced-motion no hay vista
- * previa. Es decoracion: las filas se leen y navegan igual sin ella.
+ * Devuelve el indice de la pieza a la vista; quien pinta decide como se muestra.
  */
+const PHONE = "(max-width: 809.98px)";
 
-/** Las capas que se conservan. Por encima de este numero la mas vieja sale del DOM. */
-const MAX_LAYERS = 20;
+/** La franja central del original: un cuarto de la altura de la ventana. */
+const CENTER_ZONE = 0.25;
 
-const CAN_HOVER = "(hover: hover)";
-
-export const SERVICE_PREVIEW_ON = "data-preview-on";
-
-export function useServicePreview<T extends HTMLElement>() {
-  const rootRef = useRef<T>(null);
+export function useServicePreview<T extends HTMLElement>(frames: number) {
+  const ref = useRef<T>(null);
+  const [active, setActive] = useState(false);
+  const [frame, setFrame] = useState(0);
 
   useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
+    const root = ref.current;
+    if (!root || frames <= 1) return;
+    if (window.matchMedia(REDUCED_MOTION).matches) return;
 
-    const list = root.querySelector<HTMLElement>("[data-preview-list]");
-    const container = root.querySelector<HTMLElement>("[data-preview-container]");
-    const rows = [...root.querySelectorAll<HTMLElement>("[data-preview-row]")];
-    // Las imagenes van precargadas en la hoja, como en la referencia: la capa pide la
-    // que el navegador ya eligio y descargo, y la cortina no arranca sobre un hueco.
-    const sources = [...root.querySelectorAll<HTMLImageElement>("[data-preview-media] img")];
-    if (!list || !container || rows.length === 0) return;
+    const toggle = (next: boolean) => startTransition(() => setActive(next));
 
-    let cancelled = false;
-    let cleanup = () => {};
+    if (!window.matchMedia(PHONE).matches) {
+      const enter = () => toggle(true);
+      const leave = () => toggle(false);
 
-    void loadMotion().then(({ gsap }) => {
-      if (cancelled) return;
+      root.addEventListener("mouseenter", enter);
+      root.addEventListener("mouseleave", leave);
 
-      const enabled = () => window.matchMedia(CAN_HOVER).matches && !window.matchMedia(REDUCED_MOTION).matches;
-
-      gsap.set(container, { yPercent: -50 });
-
-      // El seguimiento llega tarde y frena largo: el paso entero de la escala, con la
-      // curva de seguir, porque se reapunta en cada movimiento del puntero.
-      const yTo = gsap.quickTo(container, "y", {
-        duration: duration("base"),
-        ease: FOLLOW_EASE,
-      });
-
-      const clear = () => {
-        container.removeAttribute(SERVICE_PREVIEW_ON);
-        [...container.children].forEach((child) => {
-          gsap.killTweensOf([child, child.firstElementChild]);
-          child.remove();
-        });
+      return () => {
+        root.removeEventListener("mouseenter", enter);
+        root.removeEventListener("mouseleave", leave);
       };
+    }
 
-      const onListEnter = () => {
-        if (enabled()) container.setAttribute(SERVICE_PREVIEW_ON, "");
-      };
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const box = root.getBoundingClientRect();
+      const center = box.top + box.height / 2;
+      const half = (window.innerHeight * CENTER_ZONE) / 2;
+      const middle = window.innerHeight / 2;
 
-      // La vista previa se queda DENTRO del bloque. Sin esto, con el puntero en la
-      // ultima fila la caja sobresalia por abajo y la seccion siguiente la cortaba por
-      // la mitad: la de al lado es una banda de foto a sangre, que crea su propio
-      // contexto de apilado y pinta por encima. Subir un z-index la dejaria entera
-      // pero flotando sobre una foto que no es la suya, que es peor.
-      //
-      // `yPercent: -50` ya la centro en el puntero, asi que `y` es su centro y los
-      // topes son media caja por arriba y por abajo. Con una caja mas alta que el
-      // bloque —ventanas muy bajas, donde `24vw` puede pasarse— los dos topes se
-      // cruzan: ahi se queda centrada, que es lo unico que cabe.
-      const dentroDelBloque = (y: number) => {
-        const media = container.offsetHeight / 2;
-        const alto = root.offsetHeight;
-        if (media * 2 >= alto) return alto / 2;
-        return Math.min(Math.max(y, media), alto - media);
-      };
+      toggle(center >= middle - half && center <= middle + half);
+    };
+    const request = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
 
-      const onListMove = (event: MouseEvent) => {
-        if (enabled()) yTo(dentroDelBloque(event.clientY - root.getBoundingClientRect().top));
-      };
-
-      const createMedia = (index: number) => {
-        const source = sources[index];
-        if (!enabled() || !source) return;
-
-        const layer = document.createElement("div");
-        const image = document.createElement("img");
-
-        image.src = source.currentSrc || source.src;
-        image.alt = "";
-        layer.appendChild(image);
-        container.appendChild(layer);
-
-        // La cortina arranca y aterriza lenta y cruza rapida por el medio: es la
-        // forma de la curva de marca, asi que no pide una propia.
-        gsap.to([layer, image], {
-          y: 0,
-          duration: duration("base"),
-          ease: BRAND_EASE,
-        });
-
-        if (container.children.length > MAX_LAYERS) container.children[0]?.remove();
-      };
-
-      const rowListeners = rows.map((row, index) => {
-        const listener = () => createMedia(index);
-        row.addEventListener("mouseenter", listener);
-        return () => row.removeEventListener("mouseenter", listener);
-      });
-
-      list.addEventListener("mouseenter", onListEnter);
-      list.addEventListener("mouseleave", clear);
-      list.addEventListener("mousemove", onListMove);
-
-      cleanup = () => {
-        rowListeners.forEach((remove) => remove());
-        list.removeEventListener("mouseenter", onListEnter);
-        list.removeEventListener("mouseleave", clear);
-        list.removeEventListener("mousemove", onListMove);
-        clear();
-        gsap.killTweensOf(container);
-        gsap.set(container, { clearProps: "transform" });
-      };
-    });
+    check();
+    window.addEventListener("scroll", request, { passive: true });
+    window.addEventListener("resize", request);
 
     return () => {
-      cancelled = true;
-      cleanup();
+      window.removeEventListener("scroll", request);
+      window.removeEventListener("resize", request);
+      cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [frames]);
 
-  return rootRef;
+  useEffect(() => {
+    if (!active) {
+      startTransition(() => setFrame(0));
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      startTransition(() => setFrame((previous) => (previous + 1) % frames));
+    }, duration("base") * 1000);
+
+    return () => window.clearInterval(timer);
+  }, [active, frames]);
+
+  return { ref, frame };
 }

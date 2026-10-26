@@ -89,22 +89,27 @@
       "position": "{current} of {total}",
       "cards": {
         "direct": {
+          "tag": "Direct contact",
           "title": "You talk to who does the work",
           "text": "No account managers in between: whoever designs your brand is who answers your emails."
         },
         "tested": {
+          "tag": "Validation",
           "title": "Tested before it launches",
           "text": "Every decision is validated with the people who will use it, not in a boardroom."
         },
         "sameTable": {
+          "tag": "One team",
           "title": "Design and code, one team",
           "text": "What you approve on screen is what goes live, with nothing lost between teams."
         },
         "criteria": {
+          "tag": "Durability",
           "title": "Built to last",
           "text": "Decisions that keep working once this year's trend has passed."
         },
         "measured": {
+          "tag": "Measurement",
           "title": "Results in plain sight",
           "text": "Speed, conversions and reach measured from day one, with numbers you can check."
         }
@@ -130,29 +135,31 @@
       "drag": "Drag"
     },
     "services": {
-      "title": "Services",
-      "titleHighlight": "Services",
-      "label": "Offer",
-      "intro": "Four disciplines that work together: hire one or the whole project.",
-      "cta": "See service",
+      "label": "Services",
+      "title": "Four disciplines that work together.",
       "items": {
         "branding": {
           "name": "Branding",
-          "scope": "Identity, naming and visual system"
+          "title": "An identity that holds up",
+          "text": "Name, logo and visual system built to work the same on a label as on a screen."
         },
         "web": {
           "name": "Web development",
-          "scope": "Sites, e-commerce and performance"
+          "title": "Sites that load and convert",
+          "text": "Designed and built by the same team, fast from day one and easy to edit afterwards."
         },
         "motion": {
           "name": "Motion",
-          "scope": "Brand animation, video and interface"
+          "title": "The brand in motion",
+          "text": "Brand animation, video and interface, so the identity is still recognisable when it moves."
         },
         "marketing": {
           "name": "Marketing",
-          "scope": "Campaigns, content and paid media"
+          "title": "Media with the brand inside",
+          "text": "Campaigns, content and paid media on the same visual system, measured from launch."
         }
-      }
+      },
+      "intro": "A brand never lives in a single piece. That is why identity, site, motion and media come from the same team, with the same judgment."
     },
     "band": {
       "title": "Design with judgement, made as a team."
@@ -382,6 +389,10 @@
       "next": "Next case",
       "slider": "Cases. Use the arrow keys to browse",
       "drag": "Drag"
+    },
+    "clients": {
+      "title": "Brands",
+      "description": "Brands we work with."
     }
   },
   "pending": {

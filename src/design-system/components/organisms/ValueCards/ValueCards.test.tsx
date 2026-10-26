@@ -10,9 +10,9 @@ const PROPS: ValueCardsProps = {
   label: "Criterio",
   intro: "Cinco decisiones que no se negocian por proyecto.",
   cards: [
-    { title: "Sin intermediarios", text: "Quien diseña contesta.", position: "1 de 3" },
-    { title: "Probado con gente real", text: "Se valida con quien lo usa.", position: "2 de 3" },
-    { title: "Criterio antes que tendencia", text: "Marcas que se sostienen.", position: "3 de 3" },
+    { tag: "Trato directo", title: "Sin intermediarios", text: "Quien diseña contesta.", drawing: "direct", position: "1 de 3" },
+    { tag: "Validación", title: "Probado con gente real", text: "Se valida con quien lo usa.", drawing: "tested", position: "2 de 3" },
+    { tag: "Durabilidad", title: "Criterio antes que tendencia", text: "Marcas que se sostienen.", drawing: "lasting", position: "3 de 3" },
   ],
   labels: { carousel: "carrusel", previous: "Anterior", next: "Siguiente", picker: "Elegir valor", drag: "Arrastra" },
   titleId: "valores",
@@ -47,9 +47,9 @@ describe("ValueCards", () => {
   it("cada valor se anuncia UNA vez, aunque la corona pinte copias para cerrar la vuelta", () => {
     const { container } = render(<ValueCards {...PROPS} />);
 
-    expect(container.querySelectorAll("article")).toHaveLength(PROPS.cards.length * RADIAL_COPIES);
+    expect(container.querySelectorAll("[data-clone]")).toHaveLength(PROPS.cards.length * (RADIAL_COPIES - 1));
     expect(screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)).toEqual(
-      PROPS.cards.map((card) => card.title),
+      PROPS.cards.map((card) => card.tag),
     );
     expect(screen.getByRole("group", { name: "2 de 3" })).toBeInTheDocument();
   });

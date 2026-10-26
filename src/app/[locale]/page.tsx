@@ -10,6 +10,7 @@ import { ImageBand } from "@/design-system/components/organisms/ImageBand/ImageB
 import { Services } from "@/design-system/components/organisms/Services/Services";
 import { Testimonials } from "@/design-system/components/organisms/Testimonials/Testimonials";
 import { ValueCards } from "@/design-system/components/organisms/ValueCards/ValueCards";
+import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { WorkRows } from "@/design-system/components/organisms/WorkRows/WorkRows";
 import { HeroStatement } from "@/design-system/components/organisms/HeroStatement/HeroStatement";
 import { BAND_IMAGE_FILENAME } from "../band";
@@ -106,9 +107,9 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <HeroStatement {...getHero(tHero, `#${CTA_TITLE_ID}`)} />
       </Section>
 
-      {/* La tira de logos de plataformas (Twitter, Apple, ChatGPT...) salio: eran marcas
-          ajenas puestas de relleno, y sugeria clientes que el estudio no tiene. Vuelve
-          cuando haya logos de clientes reales. */}
+      {/* La tira de clientes va aqui, debajo del hero, como en bunch, peak y mammut, y
+          vuelve con LOGOS de clientes reales. Los de plataformas (Twitter, Apple...)
+          tenian la forma correcta y el contenido falso; los nombres en texto, al reves. */}
 
       {/* La frase que dice a que se dedica el estudio. Va aqui, entre la tira de logos
           y los servicios: primero que hacemos, y el trabajo dos
@@ -137,12 +138,12 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           reserva ahora para lo unico que lo necesita de verdad: ser FONDO de unas
           tarjetas blancas. */}
       <Section
-        width="strip"
+        width="wide"
         spacing="loose"
         spacingEnd="default"
         labelledBy={SERVICES_TITLE_ID}
       >
-        <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} highlightFamily="tangerine" />
+        <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} />
       </Section>
 
       {/* El respiro, y la unica seccion de la pagina sin nada que leer. Entrega a las
@@ -190,6 +191,27 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <ValueCards {...getValues(tValues)} titleId={VALUES_TITLE_ID} highlightFamily="pink" />
       </Section>
 
+      {/* La tira de logos vuelve debajo de los valores, a sangre y oscura en los dos
+          modos (decision de Karen, 2026-10-26). Los logos llegan en blanco, listos para
+          ese fondo. */}
+      <Section width="full" spacing="none">
+        <Marquee
+          kind="logos"
+          direction="left"
+          theme={{ light: "dark", dark: "dark" }}
+          items={[
+            { src: "/logos/twitter.svg", alt: "Twitter", width: 100, height: 81 },
+            { src: "/logos/behance.svg", alt: "Behance", width: 201, height: 38 },
+            { src: "/logos/medium.svg", alt: "Medium", width: 200, height: 32 },
+            { src: "/logos/eventbrite.svg", alt: "Eventbrite", width: 200, height: 37 },
+            { src: "/logos/android.svg", alt: "Android", width: 200, height: 44 },
+            { src: "/logos/bluesky.svg", alt: "Bluesky", width: 126, height: 111 },
+            { src: "/logos/chatgpt.svg", alt: "ChatGPT", width: 100, height: 100 },
+            { src: "/logos/apple.svg", alt: "Apple", width: 74, height: 91 },
+          ]}
+        />
+      </Section>
+
       {/* LA COMPARATIVA SALIO DE LA HOME. Era una <table> de ocho criterios contra
           "agencia grande" y "freelance": en una propuesta comercial eso se lee como
           criterio, y en una home se lee como un informe. La pagina ya arrastraba el
@@ -214,10 +236,12 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       {/* La ultima llamada, pegada al pie. La placa se despega de la pagina con el rol
           invertido: oscura sobre claro y clara sobre oscuro — lo que la hace placa es
           el contraste, no un color fijo. */}
+{/* La strip entera negra en los dos modos (decision de Karen, 2026-10-26); la
+          placa de dentro no se toca. */}
       <Section
         width="strip"
         spacing="loose"
-        spacingStart="none"
+        theme={{ light: "dark", dark: "dark" }}
         labelledBy={CTA_TITLE_ID}
       >
         <FinalCta {...getFinalCta(tCta, locale)} titleId={CTA_TITLE_ID} onSubmit={sendContact} />

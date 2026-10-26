@@ -2,25 +2,23 @@
 
 @use '../../../styles/a11y';
 @use '../../../styles/brand' as brand;
-@use '../../../styles/candy';
-@use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/breakpoint';
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
-/// La tarjeta. Mide lo que pide su texto mas largo a cuerpo de lectura, no una
-/// proporcion de foto: aqui no hay imagen que encuadrar.
-$card-inline-size: 22rem;
-$card-block-size: 28rem;
-$card-inline-size-compact: 18rem;
-$card-block-size-compact: 26rem;
+/// La tarjeta. El alto es el de la tarjeta de la casa a ese ancho —cabecera, el
+/// dibujo a 1.2 y dos lineas de titulo con tres de texto—, no una proporcion propia.
+$card-inline-size: 26rem;
+$card-block-size: 36rem;
+$card-inline-size-compact: 20rem;
+$card-block-size-compact: 33rem;
 
 // El angulo entre tarjetas y el pivote de la corona, en alto de tarjeta por debajo
 // de su borde superior. En estrecho se abre el radio y se cierra el angulo: con el de
 // escritorio, la vecina quedaba fuera de pantalla y la corona se leia como una sola
 // tarjeta. El hook lee los dos de aqui para convertir el arrastre en grados.
 .root {
-  --pg-radial-angle: 18deg;
+  --pg-radial-angle: 20deg;
   --pg-radial-radius: 375%;
 
   @include breakpoint.breakpoint-down('md') {
@@ -95,75 +93,14 @@ $card-block-size-compact: 26rem;
   transform: rotate(calc(var(--pg-radial-position, 0) * var(--pg-radial-angle)));
 }
 
-.card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-sizing: border-box;
+// El marco recorta la tarjeta con el radio de placa y esquina de squircle: a este
+// tamano el radio de tarjeta se leia como una caja. `corner-shape` es mejora
+// progresiva; sin ella queda el radio de placa, que ya es un escalon de la escala.
+.frame {
   block-size: 100%;
-  padding: spacing.$spacing-06;
-  border-radius: brand.$radius-card;
-}
-
-// EL GRADIENTE, una familia por posicion.
-//
-// Estuvo apagado: cinco tarjetas de colores girando delante del manifiesto se leian
-// como el bloque mas fuerte de la pagina. Ese argumento ya no vale — el bloque no va
-// delante del manifiesto desde hace dos reordenaciones, y el problema de la pagina
-// paso a ser el contrario: trece pantallas de gris en las que no pasa nada.
-//
-// Una clase por familia y no un `style` en el TSX: la FORMA del candy —tres paradas,
-// 150deg, la media al 52%— vive en un solo sitio (`_candy.scss`) justo para que no la
-// reescriba cada componente con otro angulo. El TSX elige el NOMBRE, con `candyAt`.
-//
-// Sin filete: sobre un fondo de color el `border-subtle` del tema se ve como una
-// linea sucia, y el gradiente ya separa la tarjeta de la pagina. El primer plano lo
-// trae `candy.surface` con su fondo — un gris neutro sobre color se ve sucio igual, y
-// por eso van juntos y no re-tematizan.
-.familyPeriwinkle {
-  @include candy.surface('periwinkle');
-}
-
-.familyTangerine {
-  @include candy.surface('tangerine');
-}
-
-.familyCyan {
-  @include candy.surface('cyan');
-}
-
-.familyPink {
-  @include candy.surface('pink');
-}
-
-.familyLime {
-  @include candy.surface('lime');
-}
-
-.familyAmber {
-  @include candy.surface('amber');
-}
-
-.index {
-  @include brandtype.style('label');
-}
-
-.body {
-  display: flex;
-  flex-direction: column;
-  gap: spacing.$spacing-04;
-}
-
-.cardTitle {
-  @include brandtype.style('lead');
-
-  margin: 0;
-}
-
-.text {
-  @include brandtype.style('body');
-
-  margin: 0;
+  overflow: clip;
+  border-radius: brand.$radius-plate;
+  corner-shape: squircle;
 }
 
 .status {

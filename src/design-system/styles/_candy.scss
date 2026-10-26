@@ -88,3 +88,8 @@
 @function light($family) {
   @return map.get(-tones($family), light);
 }
+
+/// La tinta de una familia, suelta: el texto que va SOBRE su parada clara.
+@function text($family) {
+  @return map.get(-tones($family), text);
+}
