@@ -6,7 +6,6 @@ import { routing } from "@/i18n/routing";
 import { Section } from "@/design-system/components/layout/Section/Section";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
-import { FeaturedCases } from "@/design-system/components/organisms/FeaturedCases/FeaturedCases";
 import { ImageBand } from "@/design-system/components/organisms/ImageBand/ImageBand";
 import { Services } from "@/design-system/components/organisms/Services/Services";
 import { Testimonials } from "@/design-system/components/organisms/Testimonials/Testimonials";
@@ -14,11 +13,10 @@ import { ValueCards } from "@/design-system/components/organisms/ValueCards/Valu
 import { WorkRows } from "@/design-system/components/organisms/WorkRows/WorkRows";
 import { HeroStatement } from "@/design-system/components/organisms/HeroStatement/HeroStatement";
 import { BAND_IMAGE_FILENAME } from "../band";
-import { FEATURED_CASE_PIECES, FEATURED_CASES_MAX, getFeaturedCases } from "../featuredCases";
 import { getHero } from "../hero";
 import { getFinalCta } from "../cta";
 import { sendContact } from "../contact-action";
-import { getFeaturedCases as readFeaturedCases, getFeaturedPieces, getWorkProjects } from "@/cms/projects";
+import { getFeaturedPieces, getWorkProjects } from "@/cms/projects";
 import { getSiteImage } from "@/cms/media";
 import { getManifesto } from "../manifesto";
 import { getTestimonials } from "../testimonials";
@@ -57,7 +55,6 @@ import { alternatesFor } from "../seo";
 const VALUES_TITLE_ID = "valores";
 const WORK_TITLE_ID = "trabajo";
 const SERVICES_TITLE_ID = "servicios";
-const CASE_TITLE_ID = "caso";
 const CTA_TITLE_ID = "contacto";
 
 // Titulo y descripcion los hereda del layout; lo propio de la home es su canonical y
@@ -86,18 +83,16 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
   // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
   // Consultas independientes: en serie sumarian sus tiempos al primer byte.
-  const [pieces, projects, bandImage, featuredCases] = await Promise.all([
+  const [pieces, projects, bandImage] = await Promise.all([
     getFeaturedPieces(locale),
     getWorkProjects(locale),
     getSiteImage(BAND_IMAGE_FILENAME, locale),
-    readFeaturedCases(locale, FEATURED_CASE_PIECES, FEATURED_CASES_MAX),
   ]);
   const tHero = await getTranslations("home.hero");
   const tValues = await getTranslations("home.values");
   const tWork = await getTranslations("home.work");
   const tServices = await getTranslations("home.services");
   const tBand = await getTranslations("home.band");
-  const tFeaturedCase = await getTranslations("home.featuredCase");
   const tTestimonials = await getTranslations("home.testimonials");
   const tCta = await getTranslations("home.cta");
   const testimonials = getTestimonials(tTestimonials);
@@ -207,32 +202,10 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           Lo que ocupaba su sitio en el argumento lo hacen ya dos bloques que SI son
           web: los casos con sus piezas y las resenas firmadas. */}
 
-      {/* Y el trabajo que lo sostiene, cerrando el capitulo.
-
-          La pagina enseña el trabajo una vez, en el primer tercio, y despues
-          argumenta durante seis secciones sin una sola imagen. Aqui vuelve, y vuelve
-          justo detras de las dos secciones donde el estudio mas afirma: la comparativa
-          dice en que se diferencia, la cita lo confirma, y esto lo demuestra.
-
-          Detras de las resenas y no delante: el gris de esa seccion es el fondo de sus
-          tarjetas, y el caso vuelve al tono del sitio, asi que el cambio de superficie
-          es ademas lo que dice que acabo de hablar el cliente y empieza el trabajo.
-
-          **No es un segundo strip.** Arriba pasan dieciocho portadas sin detenerse en
-          ninguna; aqui se para en cada una y se ven sus piezas, con el texto que el
-          propio CMS tiene escrito del proyecto. Dos formatos distintos del mismo
-          material, que es lo que hace que el trabajo pueda volver sin repetirse.
-
-          Ningun caso con galeria y texto no se pinta: con las portadas solas seria el
-          strip otra vez. */}
-      {featuredCases.length > 0 ? (
-        <Section width="strip" spacing="default" spacingStart="none" labelledBy={CASE_TITLE_ID}>
-          <FeaturedCases
-            {...getFeaturedCases(tFeaturedCase, tWork, featuredCases)}
-            titleId={CASE_TITLE_ID}
-          />
-        </Section>
-      ) : null}
+      {/* LOS CASOS DESTACADOS SALIERON DE LA HOME (decision de Karen, 2026-10-26). No se
+          borro nada: `FeaturedCases`, su copia y `getFeaturedCases` siguen enteros, con
+          sus tests. Volver a ponerlos es importar el organismo, pedir los casos al CMS
+          en el Promise.all de arriba y montarlo aqui con `spacingStart="none"`. */}
 
       {/* El equipo se fue a /nosotros y las preguntas, a las paginas de servicio con su
           FAQPage en JSON-LD (reunion con Pigmento, 2026-10-22). Las de la home no se
@@ -244,7 +217,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       <Section
         width="strip"
         spacing="loose"
-        spacingStart={featuredCases.length > 0 ? undefined : "none"}
+        spacingStart="none"
         labelledBy={CTA_TITLE_ID}
       >
         <FinalCta {...getFinalCta(tCta, locale)} titleId={CTA_TITLE_ID} onSubmit={sendContact} />
