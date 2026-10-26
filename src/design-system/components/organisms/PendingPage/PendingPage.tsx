@@ -23,7 +23,7 @@ import { Subheading } from "../../atoms/Subheading/Subheading";
  * eso vive en `app/pending.ts` junto al texto: el componente no puede declarar
  * metadata, y separarlos deja la mitad de la decision sin su motivo al lado.
  *
- * Lleva `<main>` propio porque el layout no pone ninguno, igual que `not-found.tsx`.
+ * Lleva `<main id="main">` propio porque el layout no pone ninguno, igual que `not-found.tsx`.
  *
  * Server component y props planas: cuando una de estas rutas se escriba de verdad, lo
  * unico que hay que hacer es borrar su llamada a este componente.
@@ -40,7 +40,7 @@ export interface PendingPageProps {
 
 export function PendingPage({ title, intro, actionLabel, actionHref }: PendingPageProps) {
   return (
-    <main className="pg-status">
+    <main id="main" className="pg-status">
       {/* level 1 y cuerpo pequeno, como en not-found: es el titulo del documento, pero
           una pagina de estado no es un hero. Es justo el caso para el que el titular
           separa el nivel del tamano. */}

@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { PendingPageProps } from "@/design-system/components/organisms/PendingPage/PendingPage";
 import { routing } from "@/i18n/routing";
+import { alternatesFor } from "./seo";
 
 /**
  * Las rutas que la pagina ya enlaza y todavia no estan escritas.
@@ -56,6 +57,8 @@ function localeValido(locale: string) {
   setRequestLocale(locale);
 }
 
+const PENDING_PATHS: Record<PendingKey, string> = { work: "/trabajo", contact: "/contacto" };
+
 export async function pendingMetadata(
   { locale }: { locale: string },
   key: PendingKey,
@@ -64,7 +67,7 @@ export async function pendingMetadata(
 
   const t = await getTranslations({ locale, namespace: `pending.${key}` });
 
-  return { title: t("title"), robots: SIN_INDEXAR };
+  return { title: t("title"), alternates: alternatesFor(PENDING_PATHS[key], locale), robots: SIN_INDEXAR };
 }
 
 export async function pendingProps(

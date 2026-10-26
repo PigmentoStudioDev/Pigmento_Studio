@@ -12,6 +12,7 @@ import { routing } from "@/i18n/routing";
 import { BAND_IMAGE_FILENAME } from "@/app/band";
 import { getFigures } from "@/app/figures";
 import { PLACEHOLDER_VIDEO } from "@/app/service-page";
+import { alternatesFor } from "@/app/seo";
 import { getTeam } from "@/app/team";
 
 const TEAM_TITLE_ID = "equipo";
@@ -25,7 +26,12 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/nosotros
   if (!hasLocale(routing.locales, locale)) return {};
   const t = await getTranslations({ locale, namespace: "about" });
 
-  return { title: t("title"), description: t("description"), robots: { index: false, follow: true } };
+  return {
+    title: t("title"),
+    description: t("description"),
+    alternates: alternatesFor("/nosotros", locale),
+    robots: { index: false, follow: true },
+  };
 }
 
 /**
@@ -48,7 +54,7 @@ export default async function Nosotros({ params }: PageProps<"/[locale]/nosotros
   const team = getTeam(tTeam, members);
 
   return (
-    <main>
+    <main id="main">
       {poster ? (
         <Section width="full" spacing="none" theme={{ light: "dark", dark: "dark" }}>
           <HeroVideo title={t("title")} videoSrc={PLACEHOLDER_VIDEO} videoPoster={poster.src} />

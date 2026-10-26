@@ -31,7 +31,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <main className="pg-status">
+    <main id="main" className="pg-status">
       <Heading level={1} size="lead">
         {copy.title}
       </Heading>

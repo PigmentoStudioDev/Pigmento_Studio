@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload';
+import { revalidateAfterChange, revalidateAfterDelete } from './revalidate';
 
 /**
  * El portfolio. Hasta ahora eran catorce PNG sueltos con sus medidas escritas a
@@ -26,6 +27,11 @@ export const Projects: CollectionConfig = {
   },
 
   versions: { drafts: true },
+
+  hooks: {
+    afterChange: [revalidateAfterChange()],
+    afterDelete: [revalidateAfterDelete()],
+  },
 
   fields: [
     { name: 'title', type: 'text', required: true, localized: true },

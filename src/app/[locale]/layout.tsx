@@ -18,6 +18,9 @@ import { getLegalLinks } from "@/cms/legal";
 import { getFeaturedPieces } from "@/cms/projects";
 import { getNavigation } from "../navigation";
 import { getTopBar } from "../topbar";
+import { JsonLd } from "../json-ld";
+import { siteJsonLd } from "../seo";
+import { SITE_URL } from "../site-url";
 import { IBM_Plex_Mono, IBM_Plex_Serif } from "next/font/google";
 import localFont from "next/font/local";
 import "@/design-system/styles/index.scss";
@@ -26,26 +29,18 @@ import "@/design-system/styles/index.scss";
 // src/design-system/styles/_carbon-config.scss. Si cambias un nombre, cambialo alli.
 
 /**
- * La sans de Pigmento. Se declaran los NUEVE pesos, y no cuesta lo que parece:
- * next/font emite un @font-face por peso, y el navegador solo descarga los que
- * algun texto renderizado usa de verdad. Declarar no es descargar — recortar la
- * lista solo quitaria opciones al diseno sin ahorrar un byte a quien visita.
- *
- * Los 167kb del repo si son reales, pero son del deploy, no de la carga.
+ * La sans de Pigmento: solo los pesos que la escala usa. next/font precarga en el
+ * <head> de TODAS las rutas cada archivo que se declare aqui, asi que declarar si es
+ * descargar: los nueve pesos eran 167 KB delante del LCP y seis no los pintaba nadie.
+ * Un peso nuevo se declara aqui y en `_type.scss`, en el mismo diff.
  */
 const sans = localFont({
   variable: "--font-sans",
   display: "swap",
   src: [
-    { path: "../fonts/BirkenNue-Thin.woff2", weight: "100", style: "normal" },
-    { path: "../fonts/BirkenNue-ExtraLight.woff2", weight: "200", style: "normal" },
-    { path: "../fonts/BirkenNue-Light.woff2", weight: "300", style: "normal" },
     { path: "../fonts/BirkenNue-Regular.woff2", weight: "400", style: "normal" },
     { path: "../fonts/BirkenNue-Medium.woff2", weight: "500", style: "normal" },
     { path: "../fonts/BirkenNue-SemiBold.woff2", weight: "600", style: "normal" },
-    { path: "../fonts/BirkenNue-Bold.woff2", weight: "700", style: "normal" },
-    { path: "../fonts/BirkenNue-ExtraBold.woff2", weight: "800", style: "normal" },
-    { path: "../fonts/BirkenNue-Heavy.woff2", weight: "900", style: "normal" },
   ],
 });
 
@@ -65,10 +60,12 @@ const mono = IBM_Plex_Mono({
   weight: ["400", "500"],
 });
 
+// Sin precarga: ninguna pagina publica pinta serif en la primera pantalla.
 const serif = IBM_Plex_Serif({
   variable: "--font-serif",
   subsets: ["latin"],
   weight: ["400"],
+  preload: false,
 });
 
 // La descripcion sigue al idioma de la ruta; el nombre del estudio es marca y no se
@@ -83,11 +80,9 @@ export async function generateMetadata({
 
   return {
     // Sin metadataBase, las URLs relativas de Open Graph no resuelven y las tarjetas
-    // sociales salen sin imagen. En local apunta al dev server; en Vercel se define
-    // NEXT_PUBLIC_SITE_URL.
-    metadataBase: new URL(
-      process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-    ),
+    // sociales salen sin imagen. La imagen la pone `opengraph-image` por convencion.
+    metadataBase: new URL(SITE_URL),
+    openGraph: { type: "website", siteName: "Pigmento Studio", locale, url: SITE_URL },
     title: {
       default: "Pigmento Studio",
       template: "%s · Pigmento Studio",
@@ -129,6 +124,7 @@ export default async function RootLayout({
   const legals = await getLegalLinks(locale);
   const tFooter = await getTranslations("footer");
   const tTopBar = await getTranslations("topbar");
+  const tMeta = await getTranslations("metadata");
 
   return (
     <html
@@ -166,10 +162,16 @@ export default async function RootLayout({
         <Script id="pg-page-status" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: pageStatusScript() }} />{/* conformance-exempt: constante del DS sin datos de entrada */}
       </head>
       <body>
+        {/* Quien es el estudio, para buscadores y asistentes: una vez por pagina, con
+            @id estables que las paginas pueden referenciar. */}
+        <JsonLd data={siteJsonLd("Pigmento Studio", tMeta("description"))} />
         {/* Solo el proveedor de cliente, sin volcar los diccionarios enteros: lo
             que necesita el navegador son las cadenas de los componentes de
             cliente, y mandarle el resto es peso que nadie lee. */}
         <NextIntlClientProvider>
+          <a className="pg-skip" href="#main">
+            {t("skip")}
+          </a>
           {/* No pinta nada: cambia como se desplaza la pagina entera. Va antes que
               todo lo demas para que el scroll ya este suavizado cuando el primer
               bloque se registre a el. */}

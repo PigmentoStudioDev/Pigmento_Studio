@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload';
+import { revalidateAfterChange, revalidateAfterDelete } from './revalidate';
 
 /**
  * Los archivos del sitio. Payload guarda ancho y alto de cada uno, y de ahi los
@@ -23,6 +24,11 @@ export const Media: CollectionConfig = {
   },
 
   upload: true,
+
+  hooks: {
+    afterChange: [revalidateAfterChange()],
+    afterDelete: [revalidateAfterDelete()],
+  },
 
   fields: [
     {

@@ -19,6 +19,9 @@ const INSTAGRAM = "https://www.instagram.com/pigmento__studio";
 const BEHANCE = "https://www.behance.net/pigmentostudio1";
 const FACEBOOK = "https://www.facebook.com/pigmentostudiomx/";
 
+/** Los perfiles del estudio como `sameAs` del JSON-LD: una sola lista para el pie y los buscadores. */
+export const SOCIAL_PROFILES: readonly string[] = [INSTAGRAM, BEHANCE, FACEBOOK];
+
 /**
  * Los legales entran como DATO y no como constante, igual que el escaparate entra
  * en la navegacion: sus direcciones viven en el CMS y sus nombres se traducen ahi.
@@ -78,13 +81,6 @@ export function getFooter(t: Translate, legals: LegalLink[] = [], year = new Dat
       ],
     },
 
-    metaLabel: t("metaLabel"),
-    meta: [
-      { label: t("studio"), plain: true },
-      { label: t("work"), href: "/trabajo" },
-      { label: t("contact"), href: "/contacto" },
-    ],
-
     handle: {
       label: t("handle"),
       href: INSTAGRAM,
@@ -92,13 +88,14 @@ export function getFooter(t: Translate, legals: LegalLink[] = [], year = new Dat
       external: true,
     },
 
+    // Cada dato una sola vez: Instagram es la linea grande, y los legales y el mapa
+    // viven en el directorio. La fila de atajos que repetia nombre, Trabajo y los
+    // legales se fue por eso.
     linksLabel: t("linksLabel"),
     links: [
-      { label: t("instagram"), href: INSTAGRAM, name: t("instagramName"), external: true },
       { label: t("behance"), href: BEHANCE, name: t("behanceName"), external: true },
       { label: t("facebook"), href: FACEBOOK, name: t("facebookName"), external: true },
       { label: t("city"), plain: true },
-      ...legals.map((legal) => ({ label: legal.title, href: `/legales/${legal.slug}` })),
     ],
   };
 }

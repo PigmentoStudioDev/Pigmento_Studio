@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload';
+import { revalidateAfterChange, revalidateAfterDelete } from './revalidate';
 
 /**
  * Quien forma el estudio. Hasta ahora eran cinco marcadores escritos en el codigo y en
@@ -42,6 +43,11 @@ export const TeamMembers: CollectionConfig = {
   },
 
   versions: { drafts: true },
+
+  hooks: {
+    afterChange: [revalidateAfterChange()],
+    afterDelete: [revalidateAfterDelete()],
+  },
 
   fields: [
     // Sin localizar: un nombre no se traduce.

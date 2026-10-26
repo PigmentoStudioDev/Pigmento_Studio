@@ -29,22 +29,19 @@
       "title": "Ultimo caso publicado",
       "cta": "Ver el trabajo",
       "tag": "Destacado"
-    }
+    },
+    "skip": "Saltar al contenido"
   },
   "footer": {
     "studio": "Pigmento Studio®",
     "work": "Trabajo",
-    "contact": "Contacto",
     "handle": "@pigmento__studio",
-    "handleName": "Pigmento Studio en Instagram (abre en una pestaña nueva)",
-    "instagram": "Instagram",
-    "instagramName": "Pigmento Studio en Instagram (abre en una pestaña nueva)",
+    "handleName": "@pigmento__studio en Instagram (abre en una pestaña nueva)",
     "behance": "Behance",
     "behanceName": "Pigmento Studio en Behance (abre en una pestaña nueva)",
     "facebook": "Facebook",
     "facebookName": "Pigmento Studio en Facebook (abre en una pestaña nueva)",
     "city": "Ciudad de México",
-    "metaLabel": "Atajos del pie",
     "linksLabel": "Redes y ubicación",
     "tagline": "Estudio de diseño de marca y crecimiento en Ciudad de México. Branding, sitios, motion y marketing para marcas que tienen algo que decir.",
     "columnStudio": "Estudio",
@@ -327,45 +324,7 @@
       "title": "Lo que dicen",
       "titleHighlight": "dicen",
       "label": "Clientes",
-      "intro": "Clientes que ya pasaron por aqui, en sus palabras.",
-      "items": {
-        "first": {
-          "quote": "Llegamos con un logo y una carpeta de fotos sueltas. Salimos con una marca que el equipo de ventas sabe usar sin preguntarnos nada.",
-          "author": "Nombre Apellido",
-          "role": "Cargo",
-          "company": "Empresa"
-        },
-        "second": {
-          "quote": "Lo que mas valoro es que nos dijeron que no a dos ideas nuestras, y tenian razon en las dos.",
-          "author": "Nombre Apellido",
-          "role": "Cargo",
-          "company": "Empresa"
-        },
-        "third": {
-          "quote": "El sitio nuevo lleva seis meses y no hemos tenido que pedir un solo cambio de maquetacion.",
-          "author": "Nombre Apellido",
-          "role": "Cargo",
-          "company": "Empresa"
-        },
-        "fourth": {
-          "quote": "Entregaron en la fecha que dijeron en la primera reunion. No me habia pasado nunca con un proveedor de diseno.",
-          "author": "Nombre Apellido",
-          "role": "Cargo",
-          "company": "Empresa"
-        },
-        "fifth": {
-          "quote": "Volvimos con el segundo proyecto antes de terminar el primero.",
-          "author": "Nombre Apellido",
-          "role": "Cargo",
-          "company": "Empresa"
-        },
-        "sixth": {
-          "quote": "Entendieron el negocio en la primera llamada. El resto fue hablar de como, no de que.",
-          "author": "Nombre Apellido",
-          "role": "Cargo",
-          "company": "Empresa"
-        }
-      }
+      "intro": "Clientes que ya pasaron por aqui, en sus palabras."
     },
     "difference": {
       "title": "La diferencia",
@@ -482,7 +441,7 @@
     "title": "Página no encontrada",
     "description": "La ruta que buscas no existe o cambió de sitio.",
     "action": "Volver al inicio"
-    },
+  },
   "servicePages": {
     "common": {
       "processLabel": "El proceso",

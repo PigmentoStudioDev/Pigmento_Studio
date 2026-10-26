@@ -6,6 +6,7 @@ import { Section } from "@/design-system/components/layout/Section/Section";
 import { LegalDocument } from "@/design-system/components/organisms/LegalDocument/LegalDocument";
 import { getLegalBySlug, getLegalSlugs } from "@/cms/legal";
 import { routing } from "@/i18n/routing";
+import { alternatesFor } from "@/app/seo";
 
 /**
  * Un texto legal: aviso de privacidad, terminos, cookies.
@@ -46,6 +47,7 @@ export async function generateMetadata({
 
   return {
     title: doc.title,
+    alternates: alternatesFor(`/legales/${slug}`, locale),
     // El primer parrafo del intro, que es lo que el documento dice de si mismo.
     // Sin intro no se inventa una: mejor sin descripcion que con una generica.
     description: doc.intro[0],

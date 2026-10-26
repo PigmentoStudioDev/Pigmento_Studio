@@ -35,21 +35,51 @@ export interface Pausable {
  * al bucle despues de enganchar esto, y una copia dejaria fuera las nuevas.
  */
 export function pauseOnIntent(root: HTMLElement, animations: () => Pausable[]): () => void {
-  const pause = () => animations().forEach((animation) => animation.pause());
-  const resume = () => animations().forEach((animation) => animation.resume());
+  // Dos razones independientes para estar quieto: alguien se acerco, o la tira esta
+  // fuera de pantalla. Reanudar exige que NINGUNA siga vigente; si no, salir con el
+  // raton de una tira que ya no se ve la pondria a correr en vano.
+  let near = false;
+  let visible = true;
 
-  root.addEventListener("pointerenter", pause);
-  root.addEventListener("pointerleave", resume);
-  root.addEventListener("focusin", pause);
-  root.addEventListener("focusout", resume);
+  const apply = () => {
+    const stopped = near || !visible;
+    animations().forEach((animation) => (stopped ? animation.pause() : animation.resume()));
+  };
+  const enter = () => {
+    near = true;
+    apply();
+  };
+  const leave = () => {
+    near = false;
+    apply();
+  };
+
+  root.addEventListener("pointerenter", enter);
+  root.addEventListener("pointerleave", leave);
+  root.addEventListener("focusin", enter);
+  root.addEventListener("focusout", leave);
+
+  // Un bucle infinito fuera de pantalla gasta CPU en cada fotograma sin que nadie lo
+  // vea. Sin IntersectionObserver (entornos sin layout) se asume visible.
+  const observer =
+    typeof IntersectionObserver === "undefined"
+      ? null
+      : new IntersectionObserver((entries) => {
+          const last = entries[entries.length - 1];
+          if (!last || last.isIntersecting === visible) return;
+          visible = last.isIntersecting;
+          apply();
+        });
+  observer?.observe(root);
 
   return () => {
-    root.removeEventListener("pointerenter", pause);
-    root.removeEventListener("pointerleave", resume);
-    root.removeEventListener("focusin", pause);
-    root.removeEventListener("focusout", resume);
+    observer?.disconnect();
+    root.removeEventListener("pointerenter", enter);
+    root.removeEventListener("pointerleave", leave);
+    root.removeEventListener("focusin", enter);
+    root.removeEventListener("focusout", leave);
     // Sin esto, desmontar con el puntero encima deja el bucle pausado para siempre si
     // el consumidor reusa la animacion.
-    resume();
+    animations().forEach((animation) => animation.resume());
   };
 }

@@ -100,7 +100,8 @@
       "error",
       "global-error",
       "not-found",
-      "default"
+      "default",
+      "opengraph-image"
     ]
   },
   "exemptFiles": {

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -15,7 +16,6 @@ import { HeroStatement } from "@/design-system/components/organisms/HeroStatemen
 import { BAND_IMAGE_FILENAME } from "../band";
 import { FEATURED_CASE_PIECES, FEATURED_CASES_MAX, getFeaturedCases } from "../featuredCases";
 import { getHero } from "../hero";
-import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { getFinalCta } from "../cta";
 import { sendContact } from "../contact-action";
 import { getFeaturedCases as readFeaturedCases, getFeaturedPieces, getWorkProjects } from "@/cms/projects";
@@ -25,6 +25,7 @@ import { getTestimonials } from "../testimonials";
 import { getServices } from "../services";
 import { getValues } from "../values";
 import { getWork } from "../work";
+import { alternatesFor } from "../seo";
 
 /**
  * El hero va en la RUTA y no en `app/layout.tsx`: en el layout raiz saldria tambien
@@ -59,6 +60,14 @@ const SERVICES_TITLE_ID = "servicios";
 const CASE_TITLE_ID = "caso";
 const CTA_TITLE_ID = "contacto";
 
+// Titulo y descripcion los hereda del layout; lo propio de la home es su canonical y
+// la pareja de idiomas, que el layout no puede saber por ruta.
+export async function generateMetadata({ params }: PageProps<"/[locale]">): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+  return { alternates: alternatesFor("/", locale) };
+}
+
 export default async function Home({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
 
@@ -91,9 +100,10 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   const tFeaturedCase = await getTranslations("home.featuredCase");
   const tTestimonials = await getTranslations("home.testimonials");
   const tCta = await getTranslations("home.cta");
+  const testimonials = getTestimonials(tTestimonials);
 
   return (
-    <main>
+    <main id="main">
       {/* Solo el hero A en la pagina. El B (HeroExpose, la reticula con el titular al
           centro) sigue en el design system por si la comparativa vuelve: montarlo es
           volver a importarlo aqui. */}
@@ -101,28 +111,12 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <HeroStatement {...getHero(tHero, `#${CTA_TITLE_ID}`)} />
       </Section>
 
-      {/* Debajo del hero, y a sangre: una tira que se cortara contra un contenedor
-          dejaria de leerse como una cinta continua. Sin tema asignado: la tira sigue
-          al modo del sitio en los dos. */}
-      <Section width="full" spacing="none">
-        <Marquee
-          kind="logos"
-          direction="left"
-          items={[
-            { src: "/logos/twitter.svg", alt: "Twitter", width: 100, height: 81 },
-            { src: "/logos/behance.svg", alt: "Behance", width: 201, height: 38 },
-            { src: "/logos/medium.svg", alt: "Medium", width: 200, height: 32 },
-            { src: "/logos/eventbrite.svg", alt: "Eventbrite", width: 200, height: 37 },
-            { src: "/logos/android.svg", alt: "Android", width: 200, height: 44 },
-            { src: "/logos/bluesky.svg", alt: "Bluesky", width: 126, height: 111 },
-            { src: "/logos/chatgpt.svg", alt: "ChatGPT", width: 100, height: 100 },
-            { src: "/logos/apple.svg", alt: "Apple", width: 74, height: 91 },
-          ]}
-        />
-      </Section>
+      {/* La tira de logos de plataformas (Twitter, Apple, ChatGPT...) salio: eran marcas
+          ajenas puestas de relleno, y sugeria clientes que el estudio no tiene. Vuelve
+          cuando haya logos de clientes reales. */}
 
       {/* La frase que dice a que se dedica el estudio. Va aqui, entre la tira de logos
-          y los servicios: primero quien confia, luego que hacemos, y el trabajo dos
+          y los servicios: primero que hacemos, y el trabajo dos
           bloques mas abajo. Las cifras que colgaban de ella se fueron a /nosotros
           (reunion con Pigmento, 2026-10-22): son del estudio, no de la oferta. */}
       <Section spacing="loose" width="wide">
@@ -181,9 +175,11 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           Sin aire arriba, por lo mismo que la banda no lo lleva: las dos superficies
           se tocan y ese contacto ES la separacion. Sin citas no se pinta, asi que el
           hueco tampoco queda. */}
-      <Section width="full" spacing="loose" spacingStart="none">
-        <Testimonials {...getTestimonials(tTestimonials)} />
-      </Section>
+      {testimonials.testimonials.length > 0 ? (
+        <Section width="full" spacing="loose" spacingStart="none">
+          <Testimonials {...testimonials} />
+        </Section>
+      ) : null}
 
       {/* El proceso salio de aqui a las paginas de servicio (reunion con Pigmento,
           2026-10-22): cada disciplina tiene sus fases y su entregable, y uno general en
