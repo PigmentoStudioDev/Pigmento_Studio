@@ -5,15 +5,14 @@ import { TopBar } from "./TopBar";
 
 const PROPS = {
   messages: ["Nueva promo de branding", "Agenda abierta"],
-  href: "/contacto",
 };
 
 describe("TopBar", () => {
-  it("toda la barra es un enlace que nombra los mensajes una sola vez", () => {
+  it("es un aviso sin enlace que nombra los mensajes una sola vez", () => {
     render(<TopBar {...PROPS} />);
 
-    const link = screen.getByRole("link", { name: "Nueva promo de branding. Agenda abierta" });
-    expect(link).toHaveAttribute("href", PROPS.href);
+    expect(screen.getByRole("note", { name: "Nueva promo de branding. Agenda abierta" })).toBeInTheDocument();
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
   });
 
   it("el texto en movimiento no se anuncia", () => {

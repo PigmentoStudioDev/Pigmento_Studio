@@ -3,36 +3,28 @@ import type { TestimonialsProps } from "@/design-system/components/organisms/Tes
 /**
  * Lo que dicen los clientes.
  *
- * TODO(copy): **las seis citas son PLACEHOLDER y la atribucion tambien** — "Nombre
- * Apellido", igual que los placeholders del equipo en el CMS. Estan escritas con la
- * forma y el largo de una resena de verdad porque el bloque hay que poder VERLO antes
- * de tener las reales: un "texto pendiente" repetido seis veces no dice si la tira
- * funciona, dice que falta copy.
+ * Las citas se LEEN de `items.<clave>` en los diccionarios y hoy no hay ninguna: las
+ * seis de antes eran maqueta firmada "Nombre Apellido" y estaban en produccion, y una
+ * cita atribuida a alguien que no la dijo es una afirmacion falsa. Una clave que no
+ * existe no se pinta, asi que publicar una cita real es anadir su entrada en es y en
+ * en, sin tocar nada mas.
  *
- * Lo que NO llevan es firma real, y esa parte no se toca: una cita atribuida a una
- * persona que no la dijo es una afirmacion falsa sobre alguien de fuera del estudio.
- * Con "Nombre Apellido, Cargo, Empresa" a la vista, nadie las publica por error.
- * Pigmento las sustituye por citas reales con permiso de quien las firma.
- *
- * Son SEIS y no tres porque el bloque dejo de ser una rejilla y paso a ser una tira
- * que corre: con tres, la vuelta se nota y la misma cita vuelve a pasar cada pocos
- * segundos. Seis es lo que hace que parezca una lista y no un bucle.
- *
- * Sin citas publicadas la seccion no se pinta: el organismo devuelve null con la
- * lista vacia, asi que quitar este bloque del borrador es dejar el array a cero.
+ * Sin citas la seccion no se pinta: la ruta no monta el bloque con la lista vacia.
+ * Son seis como maximo porque la tira corre en bucle y con menos la misma cita vuelve
+ * a pasar cada pocos segundos.
  *
  * El bloque ya no tiene cabecera, asi que `title`, `label` e `intro` dejaron de
  * viajar. Las claves siguen en los dos diccionarios a proposito: la decision es de
  * composicion —las resenas se presentan solas debajo de la banda— y borrar la copia
  * obligaria a reescribirla en los dos idiomas el dia que vuelva a hacer falta.
  */
-type Translate = (key: string) => string;
+type Translate = ((key: string) => string) & { has: (key: string) => boolean };
 
 const KEYS = ["first", "second", "third", "fourth", "fifth", "sixth"] as const;
 
 export function getTestimonials(t: Translate): TestimonialsProps {
   return {
-    testimonials: KEYS.map((key) => ({
+    testimonials: KEYS.filter((key) => t.has(`items.${key}.quote`)).map((key) => ({
       quote: t(`items.${key}.quote`),
       author: t(`items.${key}.author`),
       role: t(`items.${key}.role`),

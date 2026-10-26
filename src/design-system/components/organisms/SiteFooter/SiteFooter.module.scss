@@ -89,8 +89,8 @@ $icon-inline-size: 0.74em;
   block-size: auto;
 }
 
-// Cuatro celdas no caben en un movil. Cae la ultima de cada fila y no la primera:
-// la de la izquierda es el nombre del estudio y la red principal.
+// Tres celdas pegadas a una linea grande no caben en un movil. Cae la ultima —la
+// ciudad— y no las redes, que son lo unico accionable de la fila.
 @include breakpoint.breakpoint-down('md') {
   // Por `li` y no por una clase de la lista: lo unico de lo que depende esta regla
   // es de que sea una lista, que es HTML, y no de como NavLinkList llame a sus

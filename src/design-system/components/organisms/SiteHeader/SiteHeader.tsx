@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { getServerThemeMode, getThemeMode, subscribeThemeMode } from "../../../theme/mode";
 import {
   readThemeAssignment,
@@ -150,6 +150,10 @@ export function SiteHeader({
 }: SiteHeaderProps) {
   const panelId = useId();
   const barRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  // Solo Escape y el boton devuelven el foco al boton: cerrar por scroll o por
+  // navegar no deben mover el foco de donde la persona lo tenga.
+  const restoreFocus = useRef(false);
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -168,11 +172,39 @@ export function SiteHeader({
     if (!open) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Escape") return;
+      restoreFocus.current = true;
+      setOpen(false);
     };
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
+  /**
+   * Foco y fondo del menu abierto.
+   *
+   * Al abrir, el foco entra al primer enlace: con el foco en el boton, el panel
+   * quedaba una tabulacion mas alla y quien usa teclado no sabia que habia aparecido.
+   * Mientras esta abierto, main y footer se vuelven inertes: el panel cubre la
+   * ventana con un fondo oscuro, y lo que se ve tapado no debe ser alcanzable con
+   * tabulador ni con lector de pantalla. Al cerrar por teclado o por el boton, el
+   * foco vuelve al boton que lo abrio.
+   */
+  useEffect(() => {
+    if (!open) {
+      if (restoreFocus.current) {
+        restoreFocus.current = false;
+        barRef.current?.querySelector<HTMLElement>("[aria-controls]")?.focus();
+      }
+      return;
+    }
+
+    const covered = document.querySelectorAll<HTMLElement>("main, footer");
+    covered.forEach((node) => node.setAttribute("inert", ""));
+    panelRef.current?.querySelector<HTMLElement>("a[href]")?.focus();
+
+    return () => covered.forEach((node) => node.removeAttribute("inert"));
   }, [open]);
 
   /**
@@ -328,7 +360,10 @@ export function SiteHeader({
         </div>
 
         <div ref={barRef} className={styles.bar}>
-          <NavToggle open={open} controls={panelId} label={toggleLabel} onToggle={() => setOpen(!open)} />
+          <NavToggle open={open} controls={panelId} label={toggleLabel} onToggle={() => {
+              restoreFocus.current = open;
+              setOpen(!open);
+            }} />
 
           <Link href={homeHref} aria-label={homeLabel} className={styles.home} onClick={close}>
             {/* Sin `compact`: la marca no cambia de forma al desplazarse. La barra si
@@ -364,7 +399,7 @@ export function SiteHeader({
             Con `hidden` no habria transicion que animar, y sin nada los enlaces
             invisibles seguirian recibiendo el foco: la tabulacion se perderia
             dentro de un panel que nadie ve. */}
-        <div id={panelId} inert={!open} className={styles.panel}>
+        <div ref={panelRef} id={panelId} inert={!open} className={styles.panel}>
           {/* Tres capas y ninguna sobra:
               .panel      colapsa de 0fr a 1fr y recorta
               .panelInner es el item del grid y va SIN padding
@@ -387,7 +422,9 @@ export function SiteHeader({
                       .filter(Boolean)
                       .join(" ")}
                   >
-                    <h2 className={styles.groupLabel}>{group.label}</h2>
+                    {/* <div> y no <h2>: el menu va ANTES del h1 en el documento, y un h2 ahi
+                        rompe el orden de encabezados de cada pagina. */}
+                    <div className={styles.groupLabel}>{group.label}</div>
                     <NavLinkList items={group.items} onNavigate={close} />
 
                     {group.secondary?.length ? (

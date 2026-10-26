@@ -3,6 +3,7 @@
 import type { CycledCandyFamily } from "../../../theme/candy";
 import Image from "next/image";
 import { useEffect, useState, type CSSProperties, type RefObject } from "react";
+import { Link } from "@/i18n/navigation";
 import { REDUCED_MOTION } from "../../../motion/breakpoints";
 import { cursorAttributes } from "../../../motion/cursor";
 import { scrollToY } from "../../../motion/useSmoothScroll";
@@ -31,7 +32,7 @@ export interface WorkPiece {
   /** Ya traducida: "Branding", "Desarrollo web". */
   discipline?: string;
   href: string;
-  image: { src: string; width: number; height: number };
+  image: { src: string; alt?: string; width: number; height: number };
 }
 
 export interface WorkRowsProps {
@@ -115,21 +116,23 @@ export function WorkRows({
                 >
                   {/* Sin arrastre en el enlace tampoco: arrastrar la pieza se lleva su URL, y en
                       una fila que se recorre es un gesto que se dispara sin querer. */}
-                  <a
+                  <Link
                     className={styles.card}
                     href={piece.href}
                     draggable={false}
                     {...cursorAttributes("scramble", cursorLabel)}
                   >
-                    {/* Decorativa: el nombre del enlace lo ponen los textos de abajo. */}
-                    <Image className={styles.image} src={piece.image.src} alt="" fill sizes={PIECE_SIZES} draggable={false} />
+                    {/* El alt describe la portada; el nombre del enlace sigue saliendo de
+                        los textos de abajo, que se suman a el. Sin alt en el CMS queda
+                        vacio y la imagen pasa a decorativa. */}
+                    <Image className={styles.image} src={piece.image.src} alt={piece.image.alt ?? ""} fill sizes={PIECE_SIZES} draggable={false} />
                     <span className={styles.caption}>
                       <span className={styles.client}>{piece.client}</span>
                       {/* Sin el espacio, el nombre del enlace sale "Cliente 01Branding". En
                           flex no se pinta. */}{" "}
                       {piece.discipline ? <span className={styles.discipline}>{piece.discipline}</span> : null}
                     </span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -232,26 +235,43 @@ function useRowsEdge(rootRef: RefObject<HTMLElement | null>) {
     if (!root) return;
     const rows = Array.from(root.querySelectorAll<HTMLElement>("[data-rows-row]"));
 
+    // Un objeto nuevo cuenta como cambio para React aunque lleve lo mismo, y el
+    // scroll dispara decenas de eventos por segundo: solo se actualiza si algun
+    // booleano cambio de verdad.
+    const apply = (start: boolean, end: boolean) =>
+      setEdge((previous) => (previous.start === start && previous.end === end ? previous : { start, end }));
+
     const update = () => {
       if (isMotion(root)) {
         const { start, end } = pinnedRange(root);
-        setEdge({ start: window.scrollY <= start + 1, end: window.scrollY >= end - 1 });
+        apply(window.scrollY <= start + 1, window.scrollY >= end - 1);
         return;
       }
-      setEdge({
-        start: rows.every((row) => row.scrollLeft <= 1),
-        end: rows.every((row) => row.scrollLeft + row.clientWidth >= row.scrollWidth - 1),
+      apply(
+        rows.every((row) => row.scrollLeft <= 1),
+        rows.every((row) => row.scrollLeft + row.clientWidth >= row.scrollWidth - 1),
+      );
+    };
+
+    // Los eventos de scroll y resize llegan varias veces por frame: se lee una vez.
+    let frame = 0;
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        update();
       });
     };
 
     update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    rows.forEach((row) => row.addEventListener("scroll", update, { passive: true }));
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    rows.forEach((row) => row.addEventListener("scroll", schedule, { passive: true }));
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-      rows.forEach((row) => row.removeEventListener("scroll", update));
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      rows.forEach((row) => row.removeEventListener("scroll", schedule));
     };
   }, [rootRef]);
 

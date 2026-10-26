@@ -2,6 +2,7 @@
 
 import type { CycledCandyFamily } from "../../../theme/candy";
 import { getImageProps } from "next/image";
+import { Link } from "@/i18n/navigation";
 import { cursorAttributes } from "../../../motion/cursor";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import { Heading } from "../../atoms/Heading/Heading";
@@ -83,7 +84,7 @@ export function Services({
         <ul className={styles.list} data-preview-list="">
           {services.map((service) => (
             <li key={service.href + service.name} className={styles.row} data-preview-row="">
-              <a className={styles.link} href={service.href} {...cursorAttributes("scramble", cta)}>
+              <Link className={styles.link} href={service.href} {...cursorAttributes("scramble", cta)}>
                 {/* El titular es el atomo, como en el resto del sistema; la caja solo
                     reparte el ancho de la fila. */}
                 <div className={styles.name}>
@@ -96,7 +97,7 @@ export function Services({
                 <span className={styles.cta} aria-hidden="true">
                   {cta}
                 </span>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

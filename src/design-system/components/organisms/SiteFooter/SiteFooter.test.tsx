@@ -14,12 +14,10 @@ const PROPS: SiteFooterProps = {
       { title: "Legal", links: [{ label: "Aviso de privacidad", href: "/legales/privacidad" }] },
     ],
   },
-  metaLabel: "Atajos",
-  meta: [{ label: "Pigmento Studio®", plain: true }, { label: "Trabajo", href: "/trabajo" }],
   handle: {
     label: "@pigmento__studio",
     href: "https://www.instagram.com/pigmento__studio",
-    name: "Pigmento Studio en Instagram (abre en una pestaña nueva)",
+    name: "@pigmento__studio en Instagram (abre en una pestaña nueva)",
     external: true,
   },
   linksLabel: "Redes",
@@ -65,6 +63,18 @@ describe("SiteFooter", () => {
 
     expect(handle).toHaveAttribute("target", "_blank");
     expect(handle).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  /**
+   * WCAG 2.5.3: quien dicta "pigmento guion bajo studio" activa el enlace por voz
+   * solo si el nombre accesible contiene el texto que se ve.
+   */
+  it("el nombre accesible del handle contiene su texto visible", () => {
+    render(<SiteFooter {...PROPS} />);
+
+    const handle = screen.getByRole("link", { name: PROPS.handle.name });
+
+    expect(handle.getAttribute("aria-label")).toContain(PROPS.handle.label);
   });
 
   it("no tiene violaciones de accesibilidad", async () => {

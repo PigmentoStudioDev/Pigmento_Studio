@@ -23,7 +23,7 @@ describe('toTeamMember', () => {
       role: 'Directora de arte',
       group: 'diseno',
       bio: 'Dirige la marca.',
-      photo: { src: '/p.jpg', width: 800, height: 1000 },
+      photo: { src: '/p.jpg', alt: '', width: 800, height: 1000 },
       links: [{ network: 'linkedin', url: 'https://linkedin.com/in/ana' }],
     });
   });

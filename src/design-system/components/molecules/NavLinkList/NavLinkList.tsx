@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useCharRoll } from "../../../motion/useCharRoll";
 import { Tag } from "../../atoms/Tag/Tag";
 import styles from "./NavLinkList.module.scss";

@@ -16,6 +16,8 @@ import type { Locale } from '@/i18n/routing';
 /** Una pieza del escaparate: exactamente lo que consumen NavBanner y Manifesto. */
 export interface ProjectPiece {
   src: string;
+  /** Lo que Media exige escribir: sin el, las portadas llegaban mudas al lector de pantalla. */
+  alt: string;
   width: number;
   height: number;
 }
@@ -32,7 +34,9 @@ export interface ProjectPiece {
 export function toPiece(media: Media | number | null | undefined): ProjectPiece | null {
   if (!media || typeof media === 'number') return null;
   if (!media.url || !media.width || !media.height) return null;
-  return { src: media.url, width: media.width, height: media.height };
+  // El `?? ''` cubre lo que el tipo no modela: `alt` es obligatorio, pero un documento
+  // anterior a esa regla puede traerlo vacio, y eso nunca debe tumbar la pagina.
+  return { src: media.url, alt: media.alt ?? '', width: media.width, height: media.height };
 }
 
 /**

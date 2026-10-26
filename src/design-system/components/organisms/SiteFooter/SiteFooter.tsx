@@ -13,9 +13,9 @@ import styles from "./SiteFooter.module.scss";
  * El directorio va primero en el documento y el nombre al final porque el nombre es el
  * cierre de la pagina: cualquier cosa despues de un cierre se lee como un apendice.
  *
- * Las dos filas son la MISMA lista de enlaces que el menu, en su tamano pequeno y en
+ * La fila es la MISMA lista de enlaces que el menu, en su tamano pequeno y en
  * horizontal: un pie y un menu son el mismo tipo de navegacion, y con dos
- * componentes distintos las dos dejan de moverse igual en cuanto alguien toque uno.
+ * componentes distintos dejan de moverse igual en cuanto alguien toque uno.
  *
  * Va montado por el layout y NO dentro de un Section, al contrario que los demas
  * organismos. Un <footer> dentro de <section> deja de ser el landmark contentinfo:
@@ -31,10 +31,6 @@ import styles from "./SiteFooter.module.scss";
 export interface SiteFooterProps {
   /** El mapa del sitio, la firma y la vuelta arriba. Encima de todo lo demas. */
   directory: FooterDirectoryProps;
-  /** Fila superior: nombre del estudio y atajos. */
-  meta: NavLinkItem[];
-  /** Nombre accesible de esa lista. */
-  metaLabel: string;
   /** La linea grande: la flecha y el destino al que apunta. */
   handle: NavLinkItem;
   /** Fila inferior: redes, contacto, sitio. */
@@ -45,8 +41,6 @@ export interface SiteFooterProps {
 
 export function SiteFooter({
   directory,
-  meta,
-  metaLabel,
   handle,
   links,
   linksLabel,
@@ -57,15 +51,6 @@ export function SiteFooter({
           sus columnas son listas de enlaces que ya parten su texto para rodarlo. */}
       <ScrollReveal by="block">
         <FooterDirectory {...directory} />
-      </ScrollReveal>
-
-      {/* Las dos filas llegan como CAJA y no partidas por lineas: son listas de
-          enlaces que ya parten su texto en caracteres para rodarlo, y dos
-          particiones sobre los mismos nodos se pelean. */}
-      <ScrollReveal by="block">
-        <div className={styles.row}>
-          <NavLinkList direction="row" size="small" label={metaLabel} items={meta} />
-        </div>
       </ScrollReveal>
 
       {/* La linea grande entra SIN gesto, a proposito. Es lo mas alto del pie y lo
@@ -90,6 +75,9 @@ export function SiteFooter({
         </a>
       </p>
 
+      {/* Llega como CAJA y no partida por lineas: es una lista de enlaces que ya parte
+          su texto en caracteres para rodarlo, y dos particiones sobre los mismos nodos
+          se pelean. */}
       <ScrollReveal by="block">
         <div className={`${styles.row} ${styles.bottom}`}>
           <NavLinkList direction="row" size="small" label={linksLabel} items={links} />

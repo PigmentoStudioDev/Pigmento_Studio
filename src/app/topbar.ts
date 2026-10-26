@@ -12,6 +12,5 @@ type Translate = (key: string) => string;
 export function getTopBar(t: Translate): TopBarProps {
   return {
     messages: [t("promo"), t("agency")],
-    href: "/contacto",
   };
 }

@@ -38,7 +38,9 @@
   outline: none;
 
   &::placeholder {
-    color: theme.$text-placeholder;
+    // text-helper y no text-placeholder: el segundo da ~3:1 sobre field-02 y WCAG pide
+    // 4.5:1 para el texto de un campo.
+    color: theme.$text-helper;
   }
 
   // El foco responde solo con el borde, como en Arc: un anillo por fuera haria que la

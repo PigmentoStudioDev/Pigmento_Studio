@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useCharRoll } from "../../../motion/useCharRoll";
 import { Icon, type IconName } from "../Icon/Icon";
 import styles from "./Button.module.scss";

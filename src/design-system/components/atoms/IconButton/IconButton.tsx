@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { CSSProperties } from "react";
 import { Icon, type IconName } from "../Icon/Icon";
 import styles from "./IconButton.module.scss";
@@ -103,16 +103,25 @@ export function IconButton(props: IconButtonProps) {
   );
 
   if (props.href !== undefined) {
-    const external = props.external ?? false;
+    // Fuera del sitio va un <a>: el Link con idioma antepone el prefijo a la ruta y
+    // prefetch no tiene sentido contra un dominio ajeno.
+    if (props.external) {
+      return (
+        <a
+          href={props.href}
+          aria-label={label}
+          onClick={props.onClick}
+          className={classes}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          {inner}
+        </a>
+      );
+    }
 
     return (
-      <Link
-        href={props.href}
-        aria-label={label}
-        onClick={props.onClick}
-        className={classes}
-        {...(external ? { target: "_blank", rel: "noreferrer noopener" } : {})}
-      >
+      <Link href={props.href} aria-label={label} onClick={props.onClick} className={classes}>
         {inner}
       </Link>
     );
