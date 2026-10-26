@@ -402,7 +402,9 @@ miran, `$ease-natural` para lo que acompana (el brillo del rodado), `$ease-exit`
 SALIDA, `$ease-click` y `$ease-focus` para la pulsacion y el anillo de los atomos, y
 `$ease-follow` para lo que persigue al puntero (cursor, vista previa): se reapunta en
 cada movimiento, y una curva que arranca lenta, reapuntada a cada frame, no llega nunca
-— el cursor se rompio asi. Nada fuera de esas seis: tambien los micro-gestos, donde un
+— el cursor se rompio asi. `$ease-reveal` para el revelado a pantalla completa (la
+cortina entre paginas): sale rapida y frena largo, porque la pagina nueva ya espera
+detras. Nada fuera de esas siete: tambien los micro-gestos, donde un
 hover usa el cuarto de la escala y no el registro productivo de Carbon. Dos curvas para
 el mismo rol son dos sensaciones distintas, y eso se nota aunque no se sepa nombrar.
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import type Lenis from "lenis";
 import { REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, whenIdle } from "./gsap";
 import { FINE_POINTER } from "./useCustomCursor";
@@ -28,7 +29,7 @@ import { FINE_POINTER } from "./useCustomCursor";
  * activo, un `window.scrollTo` nativo compite con su interpolacion y la pagina da un
  * tiron; sin Lenis (reduced-motion, antes de cargar) el nativo es lo correcto.
  */
-let active: { scrollTo: (target: number) => void } | undefined;
+let active: Pick<Lenis, "scrollTo" | "start" | "stop" | "resize"> | undefined;
 
 export function scrollToY(y: number): void {
   if (active) {
@@ -37,6 +38,36 @@ export function scrollToY(y: number): void {
   }
 
   window.scrollTo({ top: y, behavior: "smooth" });
+}
+
+/**
+ * Para la cortina entre paginas. Con Lenis parado el scroll de la rueda no llega a la
+ * pagina que se va, y sin esto la nueva arrancaria con la interpolacion vieja.
+ */
+export function pauseSmoothScroll(): void {
+  active?.stop();
+}
+
+/**
+ * Relanza tras la cortina. `resize` antes de `start`: la pagina nueva puede tener otra
+ * altura, y Lenis calcula el limite del scroll una vez por medicion.
+ */
+export function resumeSmoothScroll(): void {
+  active?.resize();
+  active?.start();
+}
+
+/**
+ * Lleva la pagina arriba sin interpolar. Con Lenis parado, el `force` hace que el
+ * desplazamiento se aplique igual; sin el, la llamada se ignoraria mientras esta parado.
+ */
+export function scrollToTop(): void {
+  if (active) {
+    active.scrollTo(0, { immediate: true, force: true });
+    return;
+  }
+
+  window.scrollTo(0, 0);
 }
 
 export function useSmoothScroll() {

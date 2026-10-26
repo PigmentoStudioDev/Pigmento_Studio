@@ -35,6 +35,9 @@ export const FOLLOW_EASE = "pg-follow";
  */
 export const EXIT_EASE = "pg-exit";
 
+/** La curva del revelado a pantalla completa, publicada como `--pg-ease-reveal`. */
+export const REVEAL_EASE = "pg-reveal";
+
 /** Sin curva: el progreso lo dicta el scroll o una velocidad constante, no un gesto. */
 export const EASE_LINEAR = "none";
 
@@ -90,4 +93,9 @@ export function followEasePoints(): string | null {
 /** La curva de salida tal como la publica la hoja. */
 export function exitEasePoints(): string | null {
   return bezierPoints(readToken("--pg-ease-exit"));
+}
+
+/** La curva del revelado tal como la publica la hoja. */
+export function revealEasePoints(): string | null {
+  return bezierPoints(readToken("--pg-ease-reveal"));
 }

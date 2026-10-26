@@ -5,6 +5,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProgressiveBlur } from "@/design-system/components/atoms/ProgressiveBlur/ProgressiveBlur";
 import { CustomCursor } from "@/design-system/components/layout/CustomCursor/CustomCursor";
+import { PageTransition } from "@/design-system/components/layout/PageTransition/PageTransition";
 import { SmoothScroll } from "@/design-system/components/layout/SmoothScroll/SmoothScroll";
 import { SiteFooter } from "@/design-system/components/organisms/SiteFooter/SiteFooter";
 import { SiteHeader } from "@/design-system/components/organisms/SiteHeader/SiteHeader";
@@ -180,6 +181,9 @@ export default async function RootLayout({
           {/* El cursor del sitio. Cambia de forma por el atributo `data-cursor` de lo
               que tiene debajo, asi que ningun bloque tiene que montarlo ni conocerlo. */}
           <CustomCursor />
+          {/* La cortina entre paginas. Se monta una vez aqui para que sobreviva a cada
+              navegacion: montarla dentro de una ruta la destruiria con la pagina que tapa. */}
+          <PageTransition />
           {/* Antes que la cabecera: difumina lo que pasa por DEBAJO de la barra
               conforme se acerca al borde, para que la barra pueda ir sin fondo
               propio sobre un hero de video. Detras de ella tambien por z-index
