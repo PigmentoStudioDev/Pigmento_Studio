@@ -1,0 +1,99 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-08;
+}
+
+// Vuelve al listado: va arriba, antes del titular, para que quien llega desde el strip
+// sepa de donde viene sin buscarlo al final de la galeria.
+.back {
+  @include brandtype.style('label');
+
+  align-self: flex-start;
+  color: theme.$text-secondary;
+  text-decoration: none;
+}
+
+.back:hover {
+  color: theme.$text-primary;
+}
+
+.back:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+  max-inline-size: 60ch;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: spacing.$spacing-05 spacing.$spacing-07;
+  margin: 0;
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-02;
+}
+
+.metaTerm {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.metaValue {
+  @include brandtype.style('body');
+
+  margin: 0;
+  color: theme.$text-primary;
+}
+
+.summary {
+  @include brandtype.style('lead');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.cover,
+.galleryItem {
+  margin: 0;
+}
+
+// Toda pieza de imagen lleva el mismo radio: la portada y la galeria son el mismo rol.
+.image {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: brand.$radius-piece;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: spacing.$spacing-06;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include breakpoint.breakpoint('md') {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

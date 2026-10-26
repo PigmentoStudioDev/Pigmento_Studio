@@ -5,6 +5,8 @@ import { getWork } from './work';
 const t = (key: string) => key;
 
 const project = (n: number): WorkProject => ({
+  slug: `proyecto-${n}`,
+  title: `Proyecto ${n}`,
   client: `Cliente real ${n}`,
   discipline: n % 2 ? 'motion' : undefined,
   image: { src: `/p${n}.jpg`, alt: '', width: 100, height: 100 + n },
