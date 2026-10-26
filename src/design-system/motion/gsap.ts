@@ -32,6 +32,8 @@ import {
   exitEasePoints,
   FOLLOW_EASE,
   followEasePoints,
+  REVEAL_EASE,
+  revealEasePoints,
 } from "./tokens";
 
 /**
@@ -66,6 +68,9 @@ export function loadMotion(): Promise<Motion> {
 
     const exit = exitEasePoints();
     if (exit) customEase.CustomEase.create(EXIT_EASE, exit);
+
+    const reveal = revealEasePoints();
+    if (reveal) customEase.CustomEase.create(REVEAL_EASE, reveal);
 
     /**
      * La recalculada de PAGINA cuando llega la fuente buena, aqui y no en cada hook:

@@ -110,6 +110,10 @@ $text-on-control-ink: colors.$white;
 /// cluster que $surface-cover y por el mismo motivo es fijo.
 $surface-cover-raised: colors.$gray-20;
 
+/// El fondo de la cortina oscura por debajo de su gradiente. Fijo en los dos modos,
+/// como el control al que imita: lo que aparece antes de que el gradiente pinte.
+$surface-curtain-dark: colors.$gray-100;
+
 // Radios. Carbon v11 no define ninguno — su lenguaje visual es de esquina recta —
 // asi que esta es la unica fuente de verdad.
 //
@@ -236,6 +240,11 @@ $header-overlay-blur: 0.625rem;
 /// un enlace valido con el menu abierto. Debajo del preloader (200).
 $z-topbar: 110;
 
+/// La cortina entre paginas: tapa la cabecera (100), la barra de promos y el enlace de
+/// salto (110), y queda debajo del cursor. Va por encima de 110 y no igualada: con el
+/// mismo numero, el orden lo decidiria el DOM y la cortina podria salir debajo.
+$z-page-transition: 115;
+
 /// El cursor propio, por encima de todo el chrome: un cursor que pasa por DEBAJO de la
 /// cabecera desaparece justo encima del menu, que es donde mas se usa.
 $z-cursor: 300;
@@ -303,6 +312,10 @@ $image-band-scrim-stop: 58%;
 /// se queda en una franja de grises medios. Y de paso ayuda al titular: cuanto mas
 /// contrastada la foto, mas marcada la zona oscura del pie donde se apoya el texto.
 $image-band-grayscale: 1;
+
+/// Cuanto crece la marca bajo el puntero. Solo la marca: es un enlace sin caja ni
+/// fondo, y sin un gesto propio no se lee como pulsable.
+$brand-hover-scale: 1.04;
 $image-band-contrast: 1.4;
 
 /// El sangrado de una caja que RECORTA texto, en em.
@@ -469,6 +482,12 @@ $ease-focus: cubic-bezier(0.32, 0.72, 0, 1);
 /// La salida ademas es mas CORTA que la entrada, y eso no necesita token nuevo: la
 /// escala es de ratio, asi que lo que abre en `base` cierra en `half`.
 $ease-exit: cubic-bezier(0.3, 0, 1, 1);
+
+/// El REVELADO de una superficie a pantalla completa que se retira (la cortina entre
+/// paginas). Sale a toda velocidad y frena largo: la pagina nueva ya esta pintada
+/// detras, y la de marca, que arranca lenta, la dejaba esperando tras la cortina. Es
+/// la misma forma que la del foco, pero el rol es otro y puede afinarse aparte.
+$ease-reveal: cubic-bezier(0.32, 0.72, 0, 1);
 
 /// Lo que PERSIGUE al puntero: el cursor, la vista previa que lo acompana. Se reapunta
 /// en cada movimiento, y cada reapunte arranca un tramo nuevo desde donde va; con una

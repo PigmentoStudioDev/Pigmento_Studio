@@ -1,0 +1,37 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/candy';
+
+// Fijo y por encima de todo el chrome salvo el cursor. Sin pointer-events no hay foco
+// que atrapar ni clic que robar mientras la cortina sube.
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: brand.$z-page-transition;
+  overflow: clip;
+  pointer-events: none;
+}
+
+// Fuera de pantalla por debajo del borde: el mismo punto de partida que en el original.
+// Los paneles se mueven con gsap (yPercent), no con una transicion de CSS.
+.lightPanel,
+.darkPanel {
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  height: 100%;
+}
+
+// El claro es el fondo de la marca, igual en los dos modos: una cortina que se re-tematiza
+// deja de ser la misma pieza en cada pagina.
+.lightPanel {
+  background-color: brand.$surface-cover;
+}
+
+// El oscuro es el control primario de la marca, con su misma forma de gradiente. El color
+// de base va por debajo del gradiente por si el navegador no lo pinta.
+.darkPanel {
+  background-color: brand.$surface-curtain-dark;
+  @include candy.control;
+}
