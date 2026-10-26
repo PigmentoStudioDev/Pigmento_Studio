@@ -40,6 +40,7 @@ export function getFooter(t: Translate, legals: LegalLink[] = [], year = new Dat
      */
     directory: {
       brand: t("studio"),
+      homeHref: "/",
       tagline: t("tagline"),
       copyright: `© ${year} Pigmento Studio. ${t("rights")}`,
       backToTop: t("backToTop"),

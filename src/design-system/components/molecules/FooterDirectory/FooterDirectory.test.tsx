@@ -6,6 +6,7 @@ import styles from "./FooterDirectory.module.scss";
 
 const PROPS: FooterDirectoryProps = {
   brand: "Pigmento Studio®",
+  homeHref: "/",
   tagline: "Estudio de diseño de marca y crecimiento en Ciudad de México.",
   copyright: "© 2026 Pigmento Studio. Todos los derechos reservados.",
   backToTop: "Volver arriba",
@@ -94,5 +95,10 @@ describe("FooterDirectory", () => {
     const { container } = render(<FooterDirectory {...PROPS} />);
 
     expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("la firma lleva a la home", () => {
+    render(<FooterDirectory {...PROPS} />);
+    expect(screen.getByRole("link", { name: PROPS.brand })).toHaveAttribute("href", "/");
   });
 });

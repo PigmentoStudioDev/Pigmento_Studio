@@ -220,6 +220,15 @@ $hidden-scale: 0.95;
   padding-inline: spacing.$spacing-03;
   color: inherit;
   text-decoration: none;
+  cursor: pointer;
+  transition: scale brand.$duration-quarter brand.$ease-exit;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home:hover {
+    scale: brand.$brand-hover-scale;
+    transition: scale brand.$duration-half brand.$ease-default;
+  }
 }
 
 .home:focus-visible {
@@ -425,6 +434,12 @@ $hidden-scale: 0.95;
 @media (prefers-reduced-motion: reduce) {
   .root {
     animation: none;
+  }
+
+  .home,
+  .home:hover {
+    transition: none;
+    scale: none;
   }
 
   .backdrop,

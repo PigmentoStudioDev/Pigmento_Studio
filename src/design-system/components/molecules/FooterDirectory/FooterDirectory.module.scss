@@ -96,6 +96,24 @@ $brand-min-inline-size: 16rem;
   color: theme.$text-secondary;
 }
 
+// La firma lleva a la home, como el logo de la cabecera. Mismo gesto que la vuelta
+// arriba pero al reves: esta parte de primario y cede a secundario bajo el puntero.
+.home {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color brand.$duration-tint brand.$ease-tint;
+}
+
+.home:hover {
+  color: theme.$text-secondary;
+}
+
+.home:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+}
+
 .top {
   @include brandtype.style('label');
 
@@ -114,6 +132,7 @@ $brand-min-inline-size: 16rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .home,
   .top {
     transition: none;
   }

@@ -6,6 +6,7 @@ import { SiteFooter, type SiteFooterProps } from "./SiteFooter";
 const PROPS: SiteFooterProps = {
   directory: {
     brand: "Pigmento Studio®",
+    homeHref: "/",
     tagline: "Estudio de diseño de marca y crecimiento en Ciudad de México.",
     copyright: "© 2026 Pigmento Studio. Todos los derechos reservados.",
     backToTop: "Volver arriba",
