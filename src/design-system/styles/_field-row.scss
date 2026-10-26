@@ -1,0 +1,93 @@
+// La fila de un formulario, como estilo de la marca.
+//
+// Es la banda con la que abre cada bloque del sitio —filete encima, la etiqueta en la
+// columna izquierda, el contenido en la derecha al cuerpo de la entradilla— repetida
+// por campo. Vive aqui porque la pintan tres piezas (el campo de texto, el telefono y
+// los temas del formulario) y una fila que se escriba tres veces se separa a la
+// primera edicion: primero el filete, luego el aire.
+
+@use './type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// La rejilla y el filete. `$head` es el selector de la columna izquierda: todo lo
+/// demas cae en la derecha, en filas propias bajo lo escrito.
+///
+/// El foco y el error pintan el FILETE y no una caja, porque aqui no hay caja: es el
+/// unico borde que la fila tiene. Va acompanado de la etiqueta, que sube a primario
+/// (lo pone cada pieza), para que el cambio no dependa de una linea de un pixel. Sin
+/// anillo alrededor de la fila: el contrato de foco tiene un solo anillo, y rodear
+/// una fila entera cada vez que se escribe en ella seria una caja que aparece.
+@mixin root($head) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: spacing.$spacing-05;
+  min-inline-size: 0;
+  padding-block: spacing.$spacing-06;
+  border-block-start: 1px solid theme.$border-subtle;
+  text-align: start;
+
+  > * {
+    grid-column: 2;
+    min-inline-size: 0;
+  }
+
+  > #{$head} {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  &:focus-within {
+    border-block-start-color: theme.$focus;
+  }
+
+  &[data-invalid='true'] {
+    border-block-start-color: theme.$support-error;
+  }
+
+  // En movil las dos columnas se apilan, como la banda: a media pantalla lo escrito
+  // saldria a cuatro palabras por linea.
+  @include breakpoint.breakpoint-down('md') {
+    grid-template-columns: minmax(0, 1fr);
+
+    > *,
+    > #{$head} {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    > #{$head} {
+      margin-block-end: spacing.$spacing-03;
+    }
+  }
+}
+
+/// La columna izquierda: numero y etiqueta en la voz de metadato del sitio.
+@mixin head {
+  @include brandtype.style('label');
+
+  display: flex;
+  gap: spacing.$spacing-03;
+  align-items: baseline;
+  color: theme.$text-secondary;
+}
+
+/// Lo escrito: sin caja, al cuerpo de la entradilla, para que el formulario se lea
+/// como la continuacion del parrafo que tiene encima.
+@mixin control {
+  @include brandtype.style('lead');
+
+  inline-size: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: theme.$text-primary;
+  outline: none;
+
+  &::placeholder {
+    // text-helper y no text-placeholder: el segundo no llega a 4.5:1.
+    color: theme.$text-helper;
+  }
+}

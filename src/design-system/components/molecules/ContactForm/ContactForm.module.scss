@@ -4,83 +4,73 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/field-row';
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
-// La tarjeta es una capa sobre la placa: `layer-01` dentro de la zona que la placa ya
-// invirtio, asi que en los dos modos se despega un escalon de lo que tiene detras.
+// Sin tarjeta: los campos van directos sobre la superficie que los acoge. Una capa
+// con borde dentro de la placa era caja dentro de caja, cuatro radios anidados, y la
+// unica pieza del sitio que se leia como un widget pegado encima.
 // `overflow: clip` porque al cambiar de cara la altura se interpola y el contenido
 // nuevo, mas alto o mas bajo, no puede asomar mientras tanto.
 .card {
   container: contact-form / inline-size;
   overflow: clip;
   inline-size: 100%;
-  border: 1px solid theme.$border-subtle;
-  border-radius: brand.$radius-card;
-  background-color: theme.$layer-01;
   color: theme.$text-primary;
   text-align: start;
 }
 
-.face {
-  padding: spacing.$spacing-07;
-}
-
 // Una sola columna que no crece con su contenido: sin `minmax(0, 1fr)` el track toma
-// el ancho minimo del boton y empuja la tarjeta fuera de la placa en movil.
+// el ancho minimo del boton y empuja el formulario fuera de la placa en movil. Sin
+// gap: cada fila trae su aire y su filete.
 .form {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: spacing.$spacing-06;
-}
-
-.row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: spacing.$spacing-05;
 }
 
 .topicField {
-  display: grid;
+  @include field-row.root('.topicHead');
 }
 
-.topicLabel {
-  @include brandtype.style('label');
-
-  margin-block-end: spacing.$spacing-03;
-  color: theme.$text-secondary;
+.topicHead {
+  @include field-row.head;
 }
 
-// El resaltado se posiciona contra este contenedor, asi que el contenedor es su
-// marco y quien aisla la pila: el resaltado pasa por DEBAJO de cada etiqueta.
+.topicMarker {
+  font-variant-numeric: tabular-nums;
+}
+
+.topicField:focus-within .topicHead {
+  color: theme.$text-primary;
+}
+
 .topics {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  justify-items: start;
   gap: spacing.$spacing-03;
 }
 
+// Cada respuesta al cuerpo de lo escrito, con su casilla delante. La casilla es
+// cuadrada y no un circulo de radio: es la marca de lista de la fila, y se rellena
+// entera al elegirla en vez de pintar un punto dentro.
 .topic {
-  @include brandtype.style('control-s');
+  @include brandtype.style('lead');
 
-  block-size: brand.$chip-block-size;
-  padding-inline: spacing.$spacing-05;
-  border: 1px solid theme.$border-strong;
-  border-radius: brand.$radius-chip;
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-04;
+  padding: 0;
+  border: 0;
   background: none;
   color: theme.$text-secondary;
+  text-align: start;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 
   &[aria-checked='true'] {
-    border-color: transparent;
-    color: theme.$text-inverse;
-  }
-
-  &[data-filled='true'] {
-    background-color: theme.$background-inverse;
+    color: theme.$text-primary;
   }
 
   &:focus-visible {
@@ -93,26 +83,21 @@
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .topic:not([aria-checked='true'], :disabled):hover {
-    border-color: theme.$text-primary;
-    color: theme.$text-primary;
-  }
+.box {
+  flex: none;
+  inline-size: spacing.$spacing-05;
+  block-size: spacing.$spacing-05;
+  border: 1px solid currentcolor;
 }
 
-.highlight {
-  position: absolute;
-  z-index: -1;
-  inset-block-start: 0;
-  inset-inline-start: 0;
-  // Llegan como numeros sin unidad: un literal en px dentro del TSX es justo lo que
-  // el contrato de estilos en linea prohibe.
-  inline-size: calc(var(--w) * 1px);
-  block-size: calc(var(--h) * 1px);
-  translate: calc(var(--x) * 1px) calc(var(--y) * 1px);
-  border-radius: brand.$radius-chip;
-  background-color: theme.$background-inverse;
-  pointer-events: none;
+.topic[aria-checked='true'] .box {
+  background-color: currentcolor;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .topic:not([aria-checked='true'], :disabled):hover {
+    color: theme.$text-primary;
+  }
 }
 
 // Mismo truco de filas que el error de un campo: la fila existe siempre y abre su
@@ -145,6 +130,8 @@
 .footer {
   isolation: isolate;
   display: grid;
+  padding-block-start: spacing.$spacing-06;
+  border-block-start: 1px solid theme.$border-subtle;
 }
 
 // Acciones a la derecha: es la ultima lectura de la fila y el sitio donde se busca.
@@ -195,14 +182,6 @@
 
 // Por debajo de esto dos campos en fila dejan un correo cortado a la mitad.
 @container contact-form (max-width: 32rem) {
-  .row {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .face {
-    padding: spacing.$spacing-05;
-  }
-
   .submitRow > * {
     inline-size: 100%;
   }
@@ -226,21 +205,21 @@
 
   // Solo despues del primer cambio de cara: al cargar la pagina no hay cara de la que
   // venir, y un formulario que aparece desenfocandose se lee como un fallo de carga.
-  .card[data-morphed='true'] .face {
+  .card[data-morphed='true'] > * {
     animation: face-enter brand.$duration-base brand.$ease-default both;
   }
 
-  .highlight {
-    transition:
-      translate brand.$duration-half brand.$ease-default,
-      inline-size brand.$duration-half brand.$ease-default,
-      block-size brand.$duration-half brand.$ease-default;
+  .topicField {
+    transition: border-color brand.$duration-tint brand.$ease-tint;
   }
 
+  .topicHead,
   .topic {
-    transition:
-      color brand.$duration-tint brand.$ease-tint,
-      border-color brand.$duration-tint brand.$ease-tint;
+    transition: color brand.$duration-tint brand.$ease-tint;
+  }
+
+  .box {
+    transition: background-color brand.$duration-tint brand.$ease-tint;
   }
 
   .failure {

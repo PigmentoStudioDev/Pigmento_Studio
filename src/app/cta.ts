@@ -34,6 +34,7 @@ export function getFinalCta(t: Translate, locale: string): Omit<FinalCtaProps, "
   return {
     label: t("label"),
     title: t("title"),
+    intro: t("intro"),
     titleHighlight: t("titleHighlight"),
     form: {
       locale,

@@ -4,68 +4,49 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
-@use '../../../styles/type' as brandtype;
+@use '../../../styles/field-row';
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
-// Sin gap entre filas: una fila de error cerrada pagaria el gap igual, porque un track
-// de grid no baja de cero. Cada fila lleva su propio aire por dentro.
+// La fila de la marca: filete, etiqueta a la izquierda y lo escrito a la derecha. Sin
+// gap entre filas de la columna derecha: una fila de error cerrada pagaria el gap
+// igual, porque un track de grid no baja de cero. Cada fila lleva su aire por dentro.
 .root {
-  display: grid;
-  min-inline-size: 0;
-  text-align: start;
+  @include field-row.root('.head');
+}
+
+.head {
+  @include field-row.head;
+}
+
+.marker {
+  font-variant-numeric: tabular-nums;
 }
 
 .label {
-  @include brandtype.style('label');
-
-  margin-block-end: spacing.$spacing-03;
-  color: theme.$text-secondary;
+  color: inherit;
 }
 
-// `field-02` y no `field-01`: el campo vive sobre la tarjeta del formulario, que ya
-// es una capa, y el de la capa 01 se confundiria con ella.
-.control {
-  inline-size: 100%;
-  min-block-size: brand.$control-block-m;
-  padding-block: spacing.$spacing-04;
-  padding-inline: spacing.$spacing-05;
-  border: 1px solid theme.$border-strong;
-  border-radius: brand.$radius-05;
-  background-color: theme.$field-02;
+// La etiqueta sube a primario mientras su fila esta activa: es la que dice donde se
+// esta escribiendo, ahora que no hay caja que se encienda.
+.root:focus-within .head {
   color: theme.$text-primary;
-  font: inherit;
-  outline: none;
+}
 
-  &::placeholder {
-    // text-helper y no text-placeholder: el segundo da ~3:1 sobre field-02 y WCAG pide
-    // 4.5:1 para el texto de un campo.
-    color: theme.$text-helper;
-  }
-
-  // El foco responde solo con el borde, como en Arc: un anillo por fuera haria que la
-  // caja pareciera crecer, y aqui el campo no cambia de tamano nunca.
-  &:focus-visible {
-    border-color: theme.$focus;
-  }
-
-  &[aria-invalid='true'] {
-    border-color: theme.$support-error;
-  }
+.control {
+  @include field-row.control;
 
   &[readonly] {
     color: theme.$text-secondary;
   }
 }
 
+// Crece con lo escrito en vez de abrir una barra de scroll dentro de la fila: la
+// altura inicial es de tres lineas, para que se lea como sitio donde contar algo.
 textarea.control {
-  resize: vertical;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .control:hover:not(:focus-visible, [aria-invalid='true'], [readonly]) {
-    border-color: theme.$text-primary;
-  }
+  min-block-size: 3lh;
+  resize: none;
+  field-sizing: content;
 }
 
 .hint {
@@ -97,8 +78,12 @@ textarea.control {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .control {
+  .root {
     transition: border-color brand.$duration-tint brand.$ease-tint;
+  }
+
+  .head {
+    transition: color brand.$duration-tint brand.$ease-tint;
   }
 
   .message {
