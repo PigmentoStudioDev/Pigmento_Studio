@@ -2,10 +2,12 @@
 
 import type { CSSProperties } from "react";
 import { cursorAttributes } from "../../../motion/cursor";
-import { candyAt, type CycledCandyFamily } from "../../../theme/candy";
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { useAutoRotate } from "../../../motion/useAutoRotate";
 import { RADIAL_COPIES, useRadialSlider } from "../../../motion/useRadialSlider";
 import { IconButton } from "../../atoms/IconButton/IconButton";
+import type { LineDrawingName } from "../../atoms/LineDrawing/drawings";
+import { FeatureCard } from "../../molecules/FeatureCard/FeatureCard";
 import { ControlBar } from "../../molecules/ControlBar/ControlBar";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
@@ -40,12 +42,18 @@ import styles from "./ValueCards.module.scss";
  * llegue a los limites de la franja. Con el cristal de la cabecera, que es la otra
  * pildora flotante del sitio.
  *
- * Props serializables: titulo, texto y su sitio en la vuelta. El color no viaja en las
- * props porque ya no hay color que elegir — la tarjeta es una capa del tema.
+ * Las tarjetas son las de la casa (`FeatureCard`) en negro: la misma anatomia que
+ * servicios —etiqueta, dibujo, lo que dice— para que la pagina hable un solo idioma
+ * de tarjeta. Eran gradientes candy, una familia por posicion.
+ *
+ * Props serializables: etiqueta, titulo, texto, dibujo y su sitio en la vuelta.
  */
 export interface ValueCard {
+  /** La etiqueta corta del chip: "Trato directo". */
+  tag: string;
   title: string;
   text: string;
+  drawing: LineDrawingName;
   /** Ya traducida: "1 de 5". Nombra la tarjeta como grupo dentro del carrusel. */
   position: string;
 }
@@ -85,26 +93,6 @@ const COPIES = Array.from({ length: RADIAL_COPIES }, (_, copy) => copy);
 
 /** La copia que se anuncia. Es la del medio: las demas rodean a la activa. */
 const ANNOUNCED_COPY = Math.floor(RADIAL_COPIES / 2);
-
-/**
- * La clase que pinta cada familia del candy.
- *
- * El mapa existe porque la FORMA del gradiente —tres paradas, 150deg, la media al
- * 52%— vive en `_candy.scss` y solo se puede invocar desde Sass; aqui viaja el
- * nombre. Explicito y no un nombre construido a mano: una clase
- * interpolada no la ve el gate que comprueba que toda clase del TSX exista en la
- * hoja, y el dia que se renombre una familia la tarjeta saldria transparente sin que
- * nada falle. Y al estar tipado contra el ciclo, anadir una familia al ciclo sin su
- * clase es un error de compilacion.
- */
-const FAMILY_CLASS: Record<CycledCandyFamily, string> = {
-  periwinkle: styles.familyPeriwinkle,
-  tangerine: styles.familyTangerine,
-  cyan: styles.familyCyan,
-  pink: styles.familyPink,
-  lime: styles.familyLime,
-  amber: styles.familyAmber,
-};
 
 export function ValueCards({
   title,
@@ -193,20 +181,19 @@ export function ValueCards({
                           ? { role: "group", "aria-label": card.position }
                           : { "aria-hidden": true, inert: true })}
                       >
-                        {/* La familia sale de la POSICION y no de una prop: el ciclo
-                            alterna calidos y frios para que dos tarjetas vecinas no
-                            caigan en la misma temperatura, y eso es una decision del
-                            sistema, no del contenido. Quitar un valor del CMS
-                            recoloca el resto solo. */}
-                        <article className={`${styles.card} ${FAMILY_CLASS[candyAt(index)]}`}>
-                          <span className={styles.index} aria-hidden="true">
-                            {String(index + 1).padStart(2, "0")}
-                          </span>
-                          <div className={styles.body}>
-                            <h3 className={styles.cardTitle}>{card.title}</h3>
-                            <p className={styles.text}>{card.text}</p>
-                          </div>
-                        </article>
+                        {/* Solo la copia anunciada lleva papel vivo: las demas son
+                            inertes, nadie las toca, y cada papel es un contexto WebGL. */}
+                        <div className={styles.frame}>
+                        <FeatureCard
+                          tone="dark"
+                          label={card.tag}
+                          index={index + 1}
+                          title={card.title}
+                          text={card.text}
+                          drawing={card.drawing}
+                          paper={announced}
+                        />
+                        </div>
                       </div>
                     );
                   }),

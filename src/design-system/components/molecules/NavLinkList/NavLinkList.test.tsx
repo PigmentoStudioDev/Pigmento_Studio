@@ -22,6 +22,14 @@ describe("NavLinkList", () => {
     expect(within(screen.getByRole("list", { name: "Secciones" })).getAllByRole("listitem")).toHaveLength(3);
   });
 
+  // El dibujo acompana a la etiqueta: si contara, "Trabajo" pasaria a nombrarse dos veces.
+  it("el dibujo delante del enlace es decoracion y no cambia su nombre", () => {
+    render(<NavLinkList items={[{ label: "Trabajo", href: "/trabajo", icon: "work" }]} />);
+    const link = screen.getByRole("link", { name: "Trabajo" });
+
+    expect(link.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+  });
+
   it("las entradas con destino son enlaces navegables", () => {
     render(<NavLinkList items={ITEMS} />);
 

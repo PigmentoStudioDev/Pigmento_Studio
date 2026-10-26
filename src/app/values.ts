@@ -1,3 +1,4 @@
+import type { LineDrawingName } from "@/design-system/components/atoms/LineDrawing/drawings";
 import type { ValueCardsProps } from "@/design-system/components/organisms/ValueCards/ValueCards";
 
 /**
@@ -12,6 +13,14 @@ type Translate = (key: string, values?: Record<string, string | number>) => stri
 
 const KEYS = ["direct", "tested", "sameTable", "criteria", "measured"] as const;
 
+const DRAWINGS: Record<(typeof KEYS)[number], LineDrawingName> = {
+  direct: "direct",
+  tested: "tested",
+  sameTable: "sameTable",
+  criteria: "lasting",
+  measured: "measured",
+};
+
 export function getValues(t: Translate): ValueCardsProps {
   return {
     title: t("title"),
@@ -19,8 +28,10 @@ export function getValues(t: Translate): ValueCardsProps {
     label: t("label"),
     intro: t("intro"),
     cards: KEYS.map((key, index) => ({
+      tag: t(`cards.${key}.tag`),
       title: t(`cards.${key}.title`),
       text: t(`cards.${key}.text`),
+      drawing: DRAWINGS[key],
       position: t("position", { current: index + 1, total: KEYS.length }),
     })),
     labels: {

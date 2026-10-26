@@ -57,6 +57,21 @@
   text-decoration: none;
 }
 
+// El dibujo y la etiqueta van juntos a un lado; el distintivo, si hay, al otro.
+.lead {
+  display: flex;
+  gap: spacing.$spacing-04;
+  align-items: center;
+}
+
+// En reposo el dibujo se queda un tono por debajo del texto: acompana, no compite.
+.icon {
+  inline-size: spacing.$spacing-07;
+  block-size: spacing.$spacing-07;
+  color: theme.$text-secondary;
+  transition: color brand.$duration-quarter brand.$ease-exit;
+}
+
 .link:focus-visible {
   outline: 2px solid theme.$focus;
   outline-offset: -2px;
@@ -119,3 +134,18 @@
   }
 }
 
+// El dibujo no se traza aqui: en una lista que se recorre con el puntero, seis
+// dibujos rehaciendose seguidos son ruido. Solo sube al tono del texto.
+@media (hover: hover) and (pointer: fine) {
+  .link:not(.isDisabled):hover .icon {
+    color: theme.$text-primary;
+    transition: color brand.$duration-quarter brand.$ease-default;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon,
+  .link:not(.isDisabled):hover .icon {
+    transition: none;
+  }
+}

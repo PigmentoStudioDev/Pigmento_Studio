@@ -104,6 +104,12 @@ export interface PaperOptions {
   reducedMotion: boolean;
   /** El reloj de gsap: el mismo que mueve Lenis, asi el papel y el scroll pintan en el mismo frame. */
   ticker: Ticker;
+  /**
+   * Donde se escucha el puntero, si no es el padre del contenedor: una cara que se
+   * descubre al hover va `inert` y nunca recibe eventos, y quien los recibe es la
+   * tarjeta que la contiene.
+   */
+  host?: HTMLElement;
 }
 
 /**
@@ -111,12 +117,12 @@ export interface PaperOptions {
  * escuchan en el padre del contenedor, la seccion cuyo contenido va encima. null si
  * no hay WebGL2: el grano CSS ya esta puesto. La funcion devuelta lo para y deja el CSS.
  */
-export function startPaper(container: HTMLElement, canvas: HTMLCanvasElement, { reducedMotion, ticker }: PaperOptions): (() => void) | null {
+export function startPaper(container: HTMLElement, canvas: HTMLCanvasElement, { reducedMotion, ticker, host: listenOn }: PaperOptions): (() => void) | null {
   const gpu = createGpu(canvas);
   if (!gpu) return null;
   const { gl, sim, paper, triangle } = gpu;
   const root = document.documentElement;
-  const host = container.parentElement ?? container;
+  const host = listenOn ?? container.parentElement ?? container;
 
   let size = { width: 0, height: 0, simWidth: 0, simHeight: 0, dpr: 1 };
   let trail: [Target, Target] | null = null;

@@ -1,0 +1,225 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// Medidas del Showcase de locomotive (main.css): el bloque fijado mide tres
+// ventanas, la frase 17.5rem, y el fijado solo existe en pantalla apaisada.
+$pass-length: 300vh;
+$description-measure: 17.5rem;
+$portrait: '(max-aspect-ratio: 5/4)';
+
+.root {
+  // Las dos tintas de la frase: el JS las cita por nombre en el degradado.
+  --pg-fade-base: #{theme.$text-disabled};
+  --pg-fade-ink: #{theme.$text-primary};
+}
+
+.pass {
+  block-size: $pass-length;
+
+  @media #{$portrait} {
+    block-size: auto;
+    padding-block-start: spacing.$spacing-12;
+  }
+}
+
+.passInner {
+  position: sticky;
+  inset-block-start: 0;
+  display: flex;
+  align-items: flex-end;
+  inline-size: 100%;
+  block-size: 100dvh;
+  overflow: hidden;
+
+  @media #{$portrait} {
+    position: relative;
+    align-items: flex-start;
+    block-size: auto;
+    padding-block-start: spacing.$spacing-05;
+  }
+}
+
+.description {
+  @include brandtype.style('body');
+
+  max-inline-size: $description-measure;
+  margin: 0 0 spacing.$spacing-07 50vw;
+  color: theme.$text-primary;
+
+  @media #{$portrait} {
+    margin-inline-start: spacing.$spacing-05;
+  }
+}
+
+// Cada linea es un texto recortado por su degradado: el borde entre las dos tintas
+// es lo que avanza con el scroll.
+.description [data-fade-line] {
+  background-clip: text;
+  color: transparent;
+}
+
+// La palabra recorre lo que le sobra de ancho: a progreso 1, su borde derecho llega
+// al de la ventana.
+.title {
+  @include brandtype.style('display-pass');
+
+  inline-size: max-content;
+  margin: 0;
+  padding-inline: spacing.$spacing-05 spacing.$spacing-07;
+  white-space: nowrap;
+  transform: translate3d(calc(-1 * var(--pg-pass-progress, 0) * (100% - 100vw)), 0, 0);
+
+  @media #{$portrait} {
+    @include brandtype.style('display-pass-narrow');
+
+    transform: none;
+  }
+}
+
+.listWrap {
+  margin-block-start: spacing.$spacing-07;
+  padding-inline: spacing.$spacing-05;
+}
+
+.list {
+  position: relative;
+
+  @include breakpoint.breakpoint('lg') {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: spacing.$spacing-07;
+  }
+}
+
+.items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include breakpoint.breakpoint('lg') {
+    grid-column: 2 / -1;
+  }
+}
+
+// Los filetes: el de arriba de la lista y uno encima de cada fila. Crecen desde la
+// derecha al entrar en cuadro, como en el original.
+.list::before,
+.row::before {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 100%;
+  border-block-start: 1px solid theme.$border-strong;
+  content: '';
+  transform-origin: top right;
+}
+
+.row {
+  @include brandtype.style('body');
+
+  position: relative;
+  display: grid;
+  grid-template-columns: 4fr 2fr 1fr;
+  align-items: center;
+  padding-block: spacing.$spacing-04;
+  color: theme.$text-primary;
+  text-decoration: none;
+  clip-path: inset(0);
+
+  @include breakpoint.breakpoint-down('md') {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+.row:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: -2px;
+}
+
+// El subrayado de la fila, de izquierda a derecha al entrar y al reves al salir.
+.row::after {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  inline-size: 100%;
+  border-block-end: 1px solid currentColor;
+  content: '';
+  transform: scale3d(0, 1, 1);
+  transform-origin: top right;
+  transition: transform brand.$duration-quarter brand.$ease-exit;
+}
+
+.row:hover::after {
+  transform: scale3d(1, 1, 1);
+  transform-origin: top left;
+  transition: transform brand.$duration-quarter brand.$ease-default;
+}
+
+.discipline {
+  color: theme.$text-secondary;
+
+  @include breakpoint.breakpoint-down('md') {
+    display: none;
+  }
+}
+
+.anchor {
+  text-align: end;
+}
+
+// Armado y sin haber entrado: filetes a cero y textos debajo de su recorte. Sin JS o
+// con reduced-motion nunca se arma y la lista se ve dibujada.
+.list[data-armed]:not([data-inview])::before,
+.list[data-armed]:not([data-inview]) .row::before {
+  transform: scale3d(0, 1, 1);
+}
+
+.list[data-armed]:not([data-inview]) .name,
+.list[data-armed]:not([data-inview]) .discipline,
+.list[data-armed]:not([data-inview]) .anchor {
+  opacity: 0;
+  transform: translate3d(0, 100%, 0);
+}
+
+.list[data-armed]::before,
+.list[data-armed] .row::before {
+  transition: transform brand.$duration-base brand.$ease-default;
+}
+
+.list[data-armed] .row::before {
+  transition-delay: min(calc((var(--index) + 1) * #{brand.$stagger-slice}), #{brand.$stagger-cap});
+}
+
+.name,
+.discipline,
+.anchor {
+  display: block;
+}
+
+.list[data-armed] .name,
+.list[data-armed] .discipline,
+.list[data-armed] .anchor {
+  transition:
+    transform brand.$duration-base brand.$ease-default,
+    opacity brand.$duration-base brand.$ease-default;
+  transition-delay: calc(
+    min(calc((var(--index) + 1) * #{brand.$stagger-slice}), #{brand.$stagger-cap}) + #{brand.$duration-quarter}
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row::after,
+  .row:hover::after,
+  .list[data-armed]::before,
+  .list[data-armed] .row::before,
+  .list[data-armed] .name,
+  .list[data-armed] .discipline,
+  .list[data-armed] .anchor {
+    transition: none;
+  }
+}

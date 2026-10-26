@@ -1,0 +1,22 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+.root {
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+// El trazo no escala con la caja: a 2rem o a 15rem es la misma linea de 1px, y por
+// eso el mismo dibujo sirve en una tarjeta y junto a un enlace.
+.root path {
+  stroke: currentcolor;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}

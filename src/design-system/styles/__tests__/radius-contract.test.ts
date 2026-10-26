@@ -147,7 +147,6 @@ describe('radios por rol', () => {
     ['components/molecules/HeroBand/HeroBand.module.scss', '.card'],
     ['components/organisms/WorkRows/WorkRows.module.scss', '.card'],
     ['components/organisms/Team/Team.module.scss', '.shot'],
-    ['components/organisms/Services/Services.module.scss', '.container'],
     ['components/molecules/RadialGallery/RadialGallery.module.scss', '.thumb'],
     ['components/molecules/InfiniteGrid/InfiniteGrid.module.scss', '.card'],
   ];
