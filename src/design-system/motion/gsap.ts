@@ -25,7 +25,14 @@ export interface Motion {
 /** El contexto de consultas de medios de gsap, para tipar la limpieza. */
 export type MatchMedia = ReturnType<Motion["gsap"]["matchMedia"]>;
 
-import { BRAND_EASE, brandEasePoints, FOLLOW_EASE, followEasePoints } from "./tokens";
+import {
+  BRAND_EASE,
+  brandEasePoints,
+  EXIT_EASE,
+  exitEasePoints,
+  FOLLOW_EASE,
+  followEasePoints,
+} from "./tokens";
 
 /**
  * Una sola carga para toda la vida de la pagina, y una sola promesa mientras esta
@@ -56,6 +63,9 @@ export function loadMotion(): Promise<Motion> {
 
     const follow = followEasePoints();
     if (follow) customEase.CustomEase.create(FOLLOW_EASE, follow);
+
+    const exit = exitEasePoints();
+    if (exit) customEase.CustomEase.create(EXIT_EASE, exit);
 
     /**
      * La recalculada de PAGINA cuando llega la fuente buena, aqui y no en cada hook:
@@ -101,6 +111,25 @@ export function loadMotion(): Promise<Motion> {
   })();
 
   return pending;
+}
+
+/**
+ * Espera a que el navegador este libre, con respaldo por temporizador para los que no
+ * tienen `requestIdleCallback` (Safari). Para lo que esta bajo el pliegue: nadie lo
+ * ve llegar, y no debe competir con el primer pintado.
+ */
+const IDLE_TIMEOUT_MS = 1500;
+const IDLE_FALLBACK_MS = 200;
+
+export function whenIdle(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(() => resolve(), { timeout: IDLE_TIMEOUT_MS });
+      return;
+    }
+
+    setTimeout(resolve, IDLE_FALLBACK_MS);
+  });
 }
 
 /**

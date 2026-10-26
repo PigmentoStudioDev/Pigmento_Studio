@@ -26,6 +26,9 @@ export interface InfiniteGridProps {
 /** Espeja `$grid-tile-inline-size`: 312px fijos bajo 1200px, 26vw por encima. */
 const TILE_SIZES = "(max-width: 1199px) 312px, 26vw";
 
+/** Las celdas que caen en el primer pliegue en escritorio; el resto entra por scroll. */
+const PRELOADED_TILES = 4;
+
 export function InfiniteGrid({ items, clearing = "none" }: InfiniteGridProps) {
   const { rootRef, fieldRef, columns, rows } = useInfiniteGrid<HTMLDivElement, HTMLDivElement>();
 
@@ -40,13 +43,14 @@ export function InfiniteGrid({ items, clearing = "none" }: InfiniteGridProps) {
           itemIndexAt(Math.floor(cell / columns), cell % columns, total),
         );
 
-  // Una precarga por archivo, no por copia: si no compiten con el titular.
+  // Una precarga por archivo y solo lo que se ve al abrir: el resto competiria con el
+  // titular por el ancho de banda.
   const seen = new Set<string>();
-  const priority = cells.map((index) => {
+  const preload = cells.map((index, cell) => {
     const { src } = items[index];
     if (seen.has(src)) return false;
     seen.add(src);
-    return true;
+    return cell < PRELOADED_TILES;
   });
 
   const className = [styles.root, clearing === "center" ? styles.clearingCenter : undefined]
@@ -66,7 +70,7 @@ export function InfiniteGrid({ items, clearing = "none" }: InfiniteGridProps) {
                 alt=""
                 fill
                 sizes={TILE_SIZES}
-                priority={priority[cell]}
+                preload={preload[cell]}
                 draggable={false}
               />
             </div>

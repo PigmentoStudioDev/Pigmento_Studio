@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 import { REDUCED_MOTION } from "./breakpoints";
-import { loadMotion } from "./gsap";
+import { loadMotion, whenIdle } from "./gsap";
+import { FINE_POINTER } from "./useCustomCursor";
 
 /**
  * El scroll suavizado de la pagina.
@@ -42,6 +43,11 @@ export function useSmoothScroll() {
   useEffect(() => {
     if (window.matchMedia(REDUCED_MOTION).matches) return;
 
+    // Con dedo, el movil ya trae su inercia y suavizar encima la vuelve pastosa: Lenis
+    // solo entra con puntero fino. Y tras el idle, porque la pagina no necesita la
+    // interpolacion para pintarse, solo para cuando alguien empieza a desplazarla.
+    if (!window.matchMedia(FINE_POINTER).matches) return;
+
     let cancelled = false;
     let stop: (() => void) | undefined;
 
@@ -58,8 +64,9 @@ export function useSmoothScroll() {
      * fotograma. `lagSmoothing(0)` apaga la correccion de saltos de gsap, que en un
      * scroll suavizado se pelea con la interpolacion de Lenis.
      */
-    void Promise.all([import("lenis"), loadMotion()]).then(
-      ([{ default: Lenis }, { gsap, ScrollTrigger }]) => {
+    void whenIdle()
+      .then(() => Promise.all([import("lenis"), loadMotion()]))
+      .then(([{ default: Lenis }, { gsap, ScrollTrigger }]) => {
         if (cancelled) return;
 
         const lenis = new Lenis({ anchors: true });
@@ -81,8 +88,7 @@ export function useSmoothScroll() {
           if (active === lenis) active = undefined;
           lenis.destroy();
         };
-      },
-    );
+      });
 
     return () => {
       cancelled = true;

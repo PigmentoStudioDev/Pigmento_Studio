@@ -11,7 +11,7 @@ import {
   readCursorTarget,
   rotationFromDelta,
 } from "./cursor";
-import { loadMotion, loadScrambleText } from "./gsap";
+import { loadMotion, loadScrambleText, whenIdle } from "./gsap";
 import { BRAND_EASE, duration, FOLLOW_EASE } from "./tokens";
 import { whenPageReady } from "./pageReady";
 
@@ -32,7 +32,7 @@ import { whenPageReady } from "./pageReady";
  * caso no se instala nada y queda el cursor del sistema.
  */
 
-const FINE_POINTER = "(hover: hover) and (pointer: fine)";
+export const FINE_POINTER = "(hover: hover) and (pointer: fine)";
 
 /** Lo que marca la raiz del documento mientras el cursor propio esta a la vista. */
 export const CUSTOM_CURSOR_ATTRIBUTE = "data-custom-cursor";
@@ -90,6 +90,7 @@ export function useCustomCursor<T extends HTMLElement>() {
     window.addEventListener("wheel", remember, { passive: true });
 
     void whenPageReady()
+      .then(() => whenIdle())
       .then(() => Promise.all([loadMotion(), loadScrambleText()]))
       .then(([{ gsap }]) => {
         if (cancelled) return;
@@ -123,6 +124,10 @@ export function useCustomCursor<T extends HTMLElement>() {
         let interactive = false;
         let zone: ThemeZone | null = null;
         let activeElement: Element | null = null;
+        // Donde se hizo la ultima lectura del puntero. Sin movimiento no hay nada nuevo
+        // que preguntarle al DOM: un scroll o una rueda no cambian la posicion.
+        let probedX = Number.NaN;
+        let probedY = Number.NaN;
 
         const setZone = (next: ThemeZone) => {
           if (next === zone) return;
@@ -133,6 +138,8 @@ export function useCustomCursor<T extends HTMLElement>() {
 
         const update = () => {
           frame = 0;
+          probedX = mouseX;
+          probedY = mouseY;
           const under = document.elementFromPoint(mouseX, mouseY);
 
           const themed = under?.closest(THEMED_SELECTOR);
@@ -186,6 +193,10 @@ export function useCustomCursor<T extends HTMLElement>() {
           followerX(mouseX);
           followerY(mouseY);
 
+          // Mismo sitio: la rueda o un scroll llegan aqui con las coordenadas de siempre.
+          // Repetir elementFromPoint y las cajas en cada uno seria trabajo por nada.
+          const moved = mouseX !== probedX || mouseY !== probedY;
+
           const dx = mouseX - lastX;
           const dy = mouseY - lastY;
           if (Math.abs(dx) > ROTATION_THRESHOLD_PX || Math.abs(dy) > ROTATION_THRESHOLD_PX) {
@@ -194,11 +205,7 @@ export function useCustomCursor<T extends HTMLElement>() {
           lastX = mouseX;
           lastY = mouseY;
 
-          schedule();
-        };
-
-        const onScroll = () => {
-          if (visible) schedule();
+          if (moved) schedule();
         };
 
         // El aprieto del disco mientras se arrastra. Va en la raiz y lo pinta la hoja:
@@ -225,7 +232,6 @@ export function useCustomCursor<T extends HTMLElement>() {
         window.addEventListener("pointerdown", onPress);
         window.addEventListener("pointerup", onRelease);
         window.addEventListener("pointercancel", onRelease);
-        window.addEventListener("scroll", onScroll, { passive: true });
         html.addEventListener("mouseleave", onLeave);
 
         // Si el puntero ya se movio mientras cargaba, no hay que esperar otro gesto.
@@ -241,7 +247,6 @@ export function useCustomCursor<T extends HTMLElement>() {
           window.removeEventListener("pointerdown", onPress);
           window.removeEventListener("pointerup", onRelease);
           window.removeEventListener("pointercancel", onRelease);
-          window.removeEventListener("scroll", onScroll);
           html.removeEventListener("mouseleave", onLeave);
           cancelAnimationFrame(frame);
           gsap.killTweensOf([pointer, follower, ...texts]);

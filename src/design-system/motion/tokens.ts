@@ -29,6 +29,12 @@ export const BRAND_EASE = "pg-default";
  */
 export const FOLLOW_EASE = "pg-follow";
 
+/**
+ * La curva de salida, registrada igual. Es la que tiene el gesto que se va: arranca
+ * sin freno y acaba en seco, y la publica la hoja como `--pg-ease-exit`.
+ */
+export const EXIT_EASE = "pg-exit";
+
 /** Sin curva: el progreso lo dicta el scroll o una velocidad constante, no un gesto. */
 export const EASE_LINEAR = "none";
 
@@ -79,4 +85,9 @@ export function brandEasePoints(): string | null {
 /** La curva de seguir tal como la publica la hoja. */
 export function followEasePoints(): string | null {
   return bezierPoints(readToken("--pg-ease-follow"));
+}
+
+/** La curva de salida tal como la publica la hoja. */
+export function exitEasePoints(): string | null {
+  return bezierPoints(readToken("--pg-ease-exit"));
 }

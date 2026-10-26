@@ -26,7 +26,8 @@ export interface ImageBackdropProps {
   height: number;
   /**
    * La portada es lo primero que se ve. Sin esto, Next la carga en diferido y el
-   * hero entra en blanco.
+   * hero entra en blanco. Se llama `priority` porque lo llaman asi los organismos;
+   * por dentro es `preload` de next/image, que es lo que `priority` ya no hace.
    */
   priority?: boolean;
   parallax?: ParallaxOptions;
@@ -55,7 +56,7 @@ export function ImageBackdrop({
           alt={alt}
           width={width}
           height={height}
-          priority={priority}
+          preload={priority}
         />
       </div>
     </div>

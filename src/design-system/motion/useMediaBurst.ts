@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type Motion } from "./gsap";
-import { BRAND_EASE, duration } from "./tokens";
+import { BRAND_EASE, duration, EXIT_EASE } from "./tokens";
 
 /**
  * Un chorro de piezas que brota de una palabra mientras el puntero la senala.
@@ -158,7 +158,7 @@ export function useMediaBurst<T extends HTMLElement>({
           autoAlpha: 0,
           delay: hold,
           duration: leave,
-          ease: BRAND_EASE,
+          ease: EXIT_EASE,
         });
       };
 

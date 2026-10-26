@@ -37,6 +37,14 @@
   animation: pg-band-drift var(--pg-band-loop, 0s) linear infinite;
 }
 
+// Se para cuando la tira sale de cuadro y cuando alguien se acerca, igual que los
+// marquees (pauseOnIntent). Reanudar sigue donde iba: el carril no vuelve a su origen.
+.root[data-hero-band-away] .track,
+.root:hover .track,
+.root:focus-within .track {
+  animation-play-state: paused;
+}
+
 .card {
   position: relative;
   flex: none;

@@ -64,13 +64,13 @@ $-mark-scale: 1.75;
 }
 
 .panel[data-preloader='entering'] .mark {
-  animation: pg-preloader-rise brand.$duration-base brand.$ease-default backwards;
-  animation-delay: brand.$duration-half;
+  animation: pg-preloader-rise brand.$duration-half brand.$ease-default backwards;
 }
 
+// Entrada y salida suman 0.6s con la escala de marca: el preloader no retiene la
+// primera pantalla mas que eso.
 .panel[data-preloader='leaving'] {
-  animation: pg-preloader-leave brand.$duration-base brand.$ease-default both;
-  animation-delay: brand.$duration-onehalf;
+  animation: pg-preloader-leave brand.$duration-half brand.$ease-default both;
 }
 
 // Al salir, al logo lo corta el borde del panel, no su mascara.
@@ -79,8 +79,7 @@ $-mark-scale: 1.75;
 }
 
 .panel[data-preloader='leaving'] .mark {
-  animation: pg-preloader-lift brand.$duration-base brand.$ease-default both;
-  animation-delay: brand.$duration-onehalf;
+  animation: pg-preloader-lift brand.$duration-half brand.$ease-default both;
 }
 
 // El script no marca loading con esta preferencia, asi que el panel nunca se pinta;
