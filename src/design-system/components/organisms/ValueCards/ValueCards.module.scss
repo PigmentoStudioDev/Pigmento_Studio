@@ -6,24 +6,27 @@
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
-/// La tarjeta. El alto es el de la tarjeta de la casa a ese ancho —cabecera, el
-/// dibujo a 1.2 y dos lineas de titulo con tres de texto—, no una proporcion propia.
+/// La tarjeta. El alto es el de la tarjeta de la casa a ese ancho —la baldosa, dos
+/// lineas de titulo y tres de texto—, no una proporcion propia: mas alta, el
+/// gradiente sobraba por debajo del texto.
 $card-inline-size: 26rem;
-$card-block-size: 36rem;
+$card-block-size: 22rem;
 $card-inline-size-compact: 20rem;
-$card-block-size-compact: 33rem;
+$card-block-size-compact: 25rem;
 
 // El angulo entre tarjetas y el pivote de la corona, en alto de tarjeta por debajo
 // de su borde superior. En estrecho se abre el radio y se cierra el angulo: con el de
 // escritorio, la vecina quedaba fuera de pantalla y la corona se leia como una sola
 // tarjeta. El hook lee los dos de aqui para convertir el arrastre en grados.
+// El radio va en alto de tarjeta: al bajar el alto se sube en proporcion, para que
+// el pivote siga donde estaba y la separacion entre vecinas no cambie.
 .root {
   --pg-radial-angle: 20deg;
-  --pg-radial-radius: 375%;
+  --pg-radial-radius: 600%;
 
   @include breakpoint.breakpoint-down('md') {
     --pg-radial-angle: 9deg;
-    --pg-radial-radius: 475%;
+    --pg-radial-radius: 625%;
   }
 }
 
@@ -36,6 +39,18 @@ $card-block-size-compact: 33rem;
 .header {
   margin-block-end: spacing.$spacing-09;
   padding-inline: spacing.$spacing-06;
+}
+
+.people {
+  display: flex;
+  justify-content: center;
+  margin-block-end: spacing.$spacing-06;
+}
+
+.cta {
+  display: flex;
+  justify-content: center;
+  margin-block-start: spacing.$spacing-07;
 }
 
 // Recorta en los dos ejes: las vecinas lejanas caen por debajo del borde y asoman

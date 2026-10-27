@@ -9,11 +9,12 @@
   overflow: visible;
 }
 
-// El trazo no escala con la caja: a 2rem o a 15rem es la misma linea de 1px, y por
-// eso el mismo dibujo sirve en una tarjeta y junto a un enlace.
+// El trazo no escala con la caja: a 2rem o a 15rem es la misma linea, y por eso el
+// mismo dibujo sirve en una tarjeta y junto a un enlace. 1.5, el grosor de `Icon`: a
+// 1px era la linea mas fina de la pagina y se leia como otro sistema.
 .root path {
   stroke: currentcolor;
-  stroke-width: 1;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;

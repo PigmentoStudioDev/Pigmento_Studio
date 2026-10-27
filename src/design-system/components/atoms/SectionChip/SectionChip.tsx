@@ -17,11 +17,17 @@ import styles from "./SectionChip.module.scss";
  */
 export interface SectionChipProps {
   children: string;
+  /**
+   * La capa sobre la que se apoya. Por defecto la pagina; `raised` cuando va encima
+   * de una superficie que ya es `layer-01`, donde la pastilla del mismo color se
+   * borraba y quedaba solo el punto.
+   */
+  surface?: "page" | "raised";
 }
 
-export function SectionChip({ children }: SectionChipProps) {
+export function SectionChip({ children, surface = "page" }: SectionChipProps) {
   return (
-    <span className={styles.root}>
+    <span className={[styles.root, surface === "raised" ? styles.raised : undefined].filter(Boolean).join(" ")}>
       <span aria-hidden="true" className={styles.dot} />
       {children}
     </span>

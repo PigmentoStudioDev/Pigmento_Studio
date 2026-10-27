@@ -1,0 +1,56 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// El solape: cada cara se mete bajo la anterior un cuarto de su ancho.
+.root {
+  display: flex;
+  align-items: center;
+}
+
+// Las caras miden lo que el chip de seccion y toman su radio: un circulo exacto de
+// ese alto, y la pastilla de la cuenta queda del mismo cuerpo que ellas. El anillo es
+// el fondo de la pagina, para que el solape se lea como recorte y no como borde.
+.face {
+  position: relative;
+  z-index: var(--pg-face-depth);
+  display: block;
+  inline-size: brand.$chip-block-size;
+  block-size: brand.$chip-block-size;
+  margin-inline-start: calc(#{spacing.$spacing-03} * -1);
+  overflow: hidden;
+  border: 2px solid theme.$background;
+  border-radius: brand.$radius-chip;
+  background-color: theme.$layer-01;
+}
+
+.face:first-child {
+  margin-inline-start: 0;
+}
+
+.photo {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.count {
+  @include brandtype.style('label');
+
+  display: inline-flex;
+  align-items: center;
+  block-size: brand.$chip-block-size;
+  margin-inline-start: calc(#{spacing.$spacing-03} * -1);
+  padding-inline: spacing.$spacing-04 spacing.$spacing-03;
+  box-sizing: border-box;
+  border-radius: brand.$radius-chip;
+  background-color: theme.$layer-02;
+  color: theme.$text-secondary;
+}

@@ -4,25 +4,28 @@ import { describe, expect, it } from "vitest";
 import { FeatureCard } from "./FeatureCard";
 
 describe("FeatureCard", () => {
-  // La cara de encima repite el contenido: si contara, cada tarjeta se oiria dos veces.
-  it("la etiqueta es el unico encabezado y el contenido se anuncia una vez", () => {
-    render(<FeatureCard label="Branding" index={1} title="Una identidad" text="Nombre y sistema." drawing="branding" />);
+  it("el nombre es el encabezado y el texto lo acompana, en las dos pieles", () => {
+    render(
+      <>
+        <FeatureCard label="Branding" text="Nombre y sistema." shape="seal" />
+        <FeatureCard label="Hablas con quien lo hace" text="Sin intermediarios." shape="pair" family="pink" />
+      </>,
+    );
 
-    expect(screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual(["Branding"]);
-    const copies = screen.getAllByText("Una identidad");
-    expect(copies).toHaveLength(2);
-    expect(copies.filter((copy) => copy.closest("[aria-hidden='true']") === null)).toHaveLength(1);
+    expect(screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)).toEqual([
+      "Branding",
+      "Hablas con quien lo hace",
+    ]);
+    expect(screen.getByText("Sin intermediarios.")).toBeInTheDocument();
   });
 
-  it("la pieza puede ser una cifra, y el numero de orden no se anuncia", () => {
-    render(<FeatureCard label="Proyectos entregados" index={3} figure="120" text="Desde 2018." />);
-
-    expect(screen.getAllByText("120")[0]).toBeVisible();
-    screen.getAllByText("[03]").forEach((index) => expect(index).toHaveAttribute("aria-hidden", "true"));
-  });
-
-  it("no tiene violaciones de accesibilidad", async () => {
-    const { container } = render(<FeatureCard label="Motion" index={2} text="Animacion." drawing="motion" />);
+  it("no tiene violaciones de accesibilidad en ninguna de las dos pieles", async () => {
+    const { container } = render(
+      <>
+        <FeatureCard label="Motion" text="Animacion." shape="sphere" />
+        <FeatureCard label="Se prueba" text="Con la gente." shape="seal" family="lime" />
+      </>,
+    );
 
     expect(await axe(container)).toHaveNoViolations();
   });
