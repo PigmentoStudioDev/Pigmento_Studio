@@ -15,6 +15,7 @@ import { pageStatusScript } from "@/design-system/motion/pageReady";
 import { themeModeScript } from "@/design-system/theme/mode";
 import { routing } from "@/i18n/routing";
 import { getFooter } from "../footer";
+import { TRANSITION_PIGMENTS } from "../pigment";
 import { getLegalLinks } from "@/cms/legal";
 import { getFeaturedPieces } from "@/cms/projects";
 import { getNavigation } from "../navigation";
@@ -183,7 +184,7 @@ export default async function RootLayout({
           <CustomCursor />
           {/* La cortina entre paginas. Se monta una vez aqui para que sobreviva a cada
               navegacion: montarla dentro de una ruta la destruiria con la pagina que tapa. */}
-          <PageTransition />
+          <PageTransition pigments={TRANSITION_PIGMENTS} />
           {/* Antes que la cabecera: difumina lo que pasa por DEBAJO de la barra
               conforme se acerca al borde, para que la barra pueda ir sin fondo
               propio sobre un hero de video. Detras de ella tambien por z-index

@@ -25,6 +25,10 @@ $chevron-color: map.get(map.get(brand.$candy-families, 'lime'), saturated);
 // Fija y sin caja propia: las capas se posicionan contra la ventana. Lleva la zona de
 // tema que pone el hook, asi que los tokens de abajo cambian con lo que hay debajo.
 .root {
+  // Fuera de la captura de la pagina: en la transicion entre paginas el chrome se queda
+  // quieto encima mientras la pagina se encoge y vuela debajo.
+  view-transition-name: site-cursor;
+
   position: fixed;
   inset: 0;
   z-index: brand.$z-cursor;

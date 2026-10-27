@@ -30,6 +30,10 @@ $hidden-scale: 0.95;
 }
 
 .root {
+  // Fuera de la captura de la pagina: en la transicion entre paginas el chrome se queda
+  // quieto encima mientras la pagina se encoge y vuela debajo.
+  view-transition-name: site-header;
+
   position: fixed;
   // Debajo de la barra de promos cuando existe; sin ella el offset es cero.
   inset-block-start: var(--pg-topbar-offset);
