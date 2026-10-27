@@ -15,7 +15,7 @@
 
 // Fuera de pantalla por debajo del borde: el mismo punto de partida que en el original.
 // Los paneles se mueven con gsap (yPercent), no con una transicion de CSS.
-.lightPanel,
+.coverPanel,
 .darkPanel {
   position: absolute;
   top: 100%;
@@ -23,11 +23,29 @@
   height: 100%;
 }
 
-// El claro es el fondo de la marca, igual en los dos modos: una cortina que se re-tematiza
-// deja de ser la misma pieza en cada pagina.
-.lightPanel {
+// El panel que cubre: el fondo de la marca, igual en los dos modos —una cortina que se
+// re-tematiza deja de ser la misma pieza en cada pagina—, o el pigmento del destino
+// cuando la ruta lleva uno. El hook pone la familia en `data-family` antes de subirlo.
+.coverPanel {
   background-color: brand.$surface-cover;
 }
+
+.coverPanel[data-family='pink'] {
+  @include candy.surface('pink');
+}
+
+.coverPanel[data-family='periwinkle'] {
+  @include candy.surface('periwinkle');
+}
+
+.coverPanel[data-family='tangerine'] {
+  @include candy.surface('tangerine');
+}
+
+.coverPanel[data-family='lime'] {
+  @include candy.surface('lime');
+}
+
 
 // El oscuro es el control primario de la marca, con su misma forma de gradiente. El color
 // de base va por debajo del gradiente por si el navegador no lo pinta.

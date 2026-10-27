@@ -8,6 +8,8 @@
  * ruta tampoco, porque la pagina no se va a ninguna parte.
  */
 
+import type { CycledCandyFamily } from "../theme/candy";
+
 /** Lo que de un clic lee la regla. Un MouseEvent lo cumple sin adaptarlo. */
 export interface ClickLike {
   readonly button: number;
@@ -64,4 +66,21 @@ export function transitionTarget(
   if (url.pathname === current.pathname && url.search === current.search) return null;
 
   return url;
+}
+
+/** Una ruta y el pigmento de la cortina que lleva a ella. */
+export interface PageTransitionPigment {
+  path: string;
+  family: CycledCandyFamily;
+}
+
+/**
+ * El pigmento del destino, o null si la ruta no tiene (va la cortina neutra). Mira la
+ * ruta sin el prefijo de idioma y acepta sus subrutas: `/en/servicios/motion` y
+ * `/servicios/motion/algo` son motion.
+ */
+export function pigmentFor(pathname: string, pigments: readonly PageTransitionPigment[]): CycledCandyFamily | null {
+  const path = pathname.replace(/^\/en(?=\/|$)/, "") || "/";
+  const match = pigments.find((pigment) => path === pigment.path || path.startsWith(`${pigment.path}/`));
+  return match?.family ?? null;
 }

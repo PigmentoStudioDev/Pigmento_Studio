@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { transitionTarget, type ClickLike, type LinkLike } from "./pageTransition";
+import { pigmentFor, transitionTarget, type ClickLike, type LinkLike } from "./pageTransition";
 
 const CURRENT = new URL("https://pigmento.test/servicios?x=1");
 
@@ -64,5 +64,19 @@ describe("transitionTarget", () => {
 
   it("acepta target _self de forma explicita", () => {
     expect(transitionTarget(PLAIN_CLICK, link({ href: "/trabajo", target: "_self" }), CURRENT)).not.toBeNull();
+  });
+});
+
+describe("pigmentFor", () => {
+  const PIGMENTS = [{ path: "/servicios/motion", family: "periwinkle" as const }];
+
+  // La cortina dice adonde vas: en ingles y en una subruta sigue siendo motion, y una
+  // ruta que solo empieza igual no lo es.
+  it("da la familia del destino en los dos idiomas y en sus subrutas, y null fuera", () => {
+    expect(pigmentFor("/servicios/motion", PIGMENTS)).toBe("periwinkle");
+    expect(pigmentFor("/en/servicios/motion", PIGMENTS)).toBe("periwinkle");
+    expect(pigmentFor("/servicios/motion/caso", PIGMENTS)).toBe("periwinkle");
+    expect(pigmentFor("/servicios/motionx", PIGMENTS)).toBeNull();
+    expect(pigmentFor("/trabajo", PIGMENTS)).toBeNull();
   });
 });
