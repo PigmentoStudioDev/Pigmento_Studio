@@ -726,6 +726,14 @@
     "client": "Cliente",
     "discipline": "Disciplina",
     "year": "Año",
-    "gallery": "Galería"
+    "gallery": "Galería",
+    "overline": "Caso de estudio",
+    "sector": "Sector",
+    "location": "Ciudad",
+    "results": "Resultados",
+    "credits": "Créditos",
+    "awards": "Reconocimientos",
+    "live": "Ver el sitio",
+    "next": "Siguiente proyecto"
   }
 }

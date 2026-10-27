@@ -1,0 +1,59 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: spacing.$spacing-09;
+
+  @include breakpoint.breakpoint('lg') {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-06;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Rol y persona en la misma fila, separados por filete: la lista de creditos de las
+// referencias, que se lee como una ficha y no como un parrafo.
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: spacing.$spacing-05;
+  padding-block: spacing.$spacing-04;
+  border-block-start: 1px solid theme.$border-subtle;
+}
+
+.role {
+  @include brandtype.style('label');
+
+  color: theme.$text-secondary;
+}
+
+.name {
+  @include brandtype.style('body');
+
+  margin: 0;
+  color: theme.$text-primary;
+  text-align: end;
+}
+
+.live {
+  margin-block-start: spacing.$spacing-05;
+}

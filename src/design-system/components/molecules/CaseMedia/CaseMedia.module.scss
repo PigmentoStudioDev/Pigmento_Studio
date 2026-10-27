@@ -1,0 +1,154 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+/// La altura de la tira: la de una pieza 16:9 a seis decimas de la ventana, que es lo
+/// que miden las referencias. Todas las de la tira la comparten y cada una pone su ancho.
+$strip-block-size: clamp(16rem, 34vw, 32rem);
+
+// Doce columnas y un medianil uniforme: las composiciones se escriben como tramos de
+// columnas, asi que todas alinean entre si aunque cambien de forma.
+.root {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: spacing.$spacing-05;
+  align-items: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+}
+
+// En movil todo es una columna: media pantalla de telefono no deja leer una pieza.
+.item {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  margin: 0;
+  border-radius: brand.$radius-piece;
+  background-color: theme.$layer-01;
+}
+
+.image {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.frameWide {
+  aspect-ratio: 16 / 9;
+}
+
+.frameClassic {
+  aspect-ratio: 4 / 3;
+}
+
+.framePortrait {
+  aspect-ratio: 4 / 5;
+}
+
+.frameSquare {
+  aspect-ratio: 1 / 1;
+}
+
+.layoutWide > .item {
+  grid-column: 1 / -1;
+}
+
+.layoutInset {
+  @include breakpoint.breakpoint('md') {
+    > .item {
+      grid-column: 2 / span 10;
+    }
+  }
+}
+
+// La horizontal en cinco columnas y la vertical en seis, con una de aire: la proporcion
+// de las referencias (39 % y 47 % de la ventana). Alineadas por abajo para que el aire
+// quede arriba de la pequena y la pareja se lea como una composicion y no como una fila.
+.layoutOffset,
+.layoutOffsetMirror {
+  align-items: end;
+}
+
+.layoutOffset {
+  @include breakpoint.breakpoint('md') {
+    > .item:first-child {
+      grid-column: 1 / span 5;
+    }
+
+    > .item:last-child {
+      grid-column: 7 / span 6;
+    }
+  }
+}
+
+// El espejo cambia los lados sin cambiar el orden de lectura: la horizontal sigue
+// primero en el marcado.
+.layoutOffsetMirror {
+  @include breakpoint.breakpoint('md') {
+    > .item:first-child {
+      grid-column: 8 / span 5;
+      grid-row: 1;
+    }
+
+    > .item:last-child {
+      grid-column: 1 / span 6;
+      grid-row: 1;
+    }
+  }
+}
+
+.layoutPair {
+  @include breakpoint.breakpoint('md') {
+    > .item {
+      grid-column: span 6;
+    }
+  }
+}
+
+.layoutSingle {
+  @include breakpoint.breakpoint('md') {
+    > .item {
+      grid-column: 4 / span 6;
+    }
+  }
+}
+
+// A sangre y con el margen de la pagina por dentro: la primera pieza alinea con el resto
+// del caso y la ultima se corta en el borde, que es lo que dice que hay mas.
+.strip {
+  display: flex;
+  gap: spacing.$spacing-05;
+  overflow-x: auto;
+  margin: 0;
+  padding: 0 spacing.$spacing-05;
+  scroll-padding-inline: spacing.$spacing-05;
+  list-style: none;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.strip:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+}
+
+// La altura manda y el marco pone el ancho: una vertical sale estrecha y una
+// horizontal ancha, todas en la misma linea de horizonte.
+.stripItem {
+  flex: none;
+  block-size: $strip-block-size;
+  scroll-snap-align: start;
+}

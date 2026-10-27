@@ -1,0 +1,145 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/candy';
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// El aire de arriba descuenta la cabecera fija y la tira de avisos, como el hero de la
+// home: sin el, el rotulo y la vuelta al trabajo quedaban debajo de la barra.
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-07;
+  padding-block-start: calc(brand.$header-block-size + var(--pg-topbar-offset) + spacing.$spacing-07);
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: spacing.$spacing-05 spacing.$spacing-07;
+}
+
+.back,
+.overline,
+.discipline,
+.term {
+  @include brandtype.style('label');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.back {
+  text-decoration: none;
+}
+
+.back:hover {
+  color: theme.$text-primary;
+}
+
+.back:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+}
+
+.overline {
+  color: theme.$text-primary;
+}
+
+.disciplines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: spacing.$spacing-05;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.discipline {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-03;
+}
+
+// La muestra del servicio: el mismo cuadro que en el menu y el pie.
+.swatch {
+  flex: none;
+  inline-size: spacing.$spacing-04;
+  block-size: spacing.$spacing-04;
+  border-radius: brand.$radius-02;
+}
+
+.swatchPink {
+  background-image: candy.gradient('pink');
+}
+
+.swatchPeriwinkle {
+  background-image: candy.gradient('periwinkle');
+}
+
+.swatchTangerine {
+  background-image: candy.gradient('tangerine');
+}
+
+.swatchLime {
+  background-image: candy.gradient('lime');
+}
+
+// La ficha a la izquierda y la frase a la derecha, sobre un filete: la fila de datos
+// de las referencias, que separa el nombre de la imagen.
+.lede {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: spacing.$spacing-07;
+  padding-block-start: spacing.$spacing-05;
+  border-block-start: 1px solid theme.$border-subtle;
+
+  @include breakpoint.breakpoint('lg') {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: spacing.$spacing-05 spacing.$spacing-08;
+  margin: 0;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-03;
+}
+
+.value {
+  @include brandtype.style('body');
+
+  margin: 0;
+  color: theme.$text-primary;
+}
+
+.tagline {
+  @include brandtype.style('lead');
+
+  margin: 0;
+  color: theme.$text-primary;
+}
+
+.cover {
+  margin: 0;
+}
+
+.image {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: brand.$radius-piece;
+}
