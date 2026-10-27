@@ -2,12 +2,14 @@
 
 import type { CSSProperties } from "react";
 import { cursorAttributes } from "../../../motion/cursor";
-import type { CycledCandyFamily } from "../../../theme/candy";
-import { useAutoRotate } from "../../../motion/useAutoRotate";
+import { candyAt, type CycledCandyFamily } from "../../../theme/candy";
 import { RADIAL_COPIES, useRadialSlider } from "../../../motion/useRadialSlider";
+import { useAutoRotate } from "../../../motion/useAutoRotate";
+import { Button } from "../../atoms/Button/Button";
 import { IconButton } from "../../atoms/IconButton/IconButton";
-import type { LineDrawingName } from "../../atoms/LineDrawing/drawings";
+import type { HalftoneShapeName } from "../../../motion/halftone/shapes";
 import { FeatureCard } from "../../molecules/FeatureCard/FeatureCard";
+import { PeopleStack, type PeopleStackProps } from "../../molecules/PeopleStack/PeopleStack";
 import { ControlBar } from "../../molecules/ControlBar/ControlBar";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
@@ -35,25 +37,25 @@ import styles from "./ValueCards.module.scss";
  * convierte en rotacion con la curva de la marca. Con reduced-motion la hoja pinta
  * una fila con scroll nativo y esconde los controles, que ya no tendrian que girar.
  *
- * Gira sola hasta que la persona la toca. Mientras gira sola la region viva calla:
- * anunciar cada vuelta interrumpiria al lector de pantalla cada pocos segundos.
+ * Gira sola (decision de Karen, 2026-10-26, que revierte la de no girar): avanza una
+ * tarjeta por pulso, se para con el puntero encima o el foco dentro, y en cuanto
+ * alguien la mueve a mano deja de girar — el ritmo pasa a ser de quien la mueve.
  *
  * Los controles flotan en una pastilla sobre el borde de abajo, para que la corona
  * llegue a los limites de la franja. Con el cristal de la cabecera, que es la otra
  * pildora flotante del sitio.
  *
- * Las tarjetas son las de la casa (`FeatureCard`) en negro: la misma anatomia que
- * servicios —etiqueta, dibujo, lo que dice— para que la pagina hable un solo idioma
- * de tarjeta. Eran gradientes candy, una familia por posicion.
+ * Las tarjetas son las de la casa (`FeatureCard`) en su piel de pigmento: la misma
+ * anatomia que servicios, en candy, con el titulo y su texto. Recorren el pigmento
+ * entero: los valores son del estudio, no de un servicio. Sin el texto la tarjeta
+ * era una superficie de color con una frase, y no valia lo que ocupaba.
  *
- * Props serializables: etiqueta, titulo, texto, dibujo y su sitio en la vuelta.
+ * Props serializables: titulo, texto, solido y su sitio en la vuelta.
  */
 export interface ValueCard {
-  /** La etiqueta corta del chip: "Trato directo". */
-  tag: string;
   title: string;
   text: string;
-  drawing: LineDrawingName;
+  shape: HalftoneShapeName;
   /** Ya traducida: "1 de 5". Nombra la tarjeta como grupo dentro del carrusel. */
   position: string;
 }
@@ -74,8 +76,6 @@ export interface ValueCardsProps {
   title: string;
   /** El trozo del titular que se resalta con el scroll. */
   titleHighlight?: string;
-  /** La etiqueta corta del bloque, en la voz de metadato: "Criterio". */
-  label: string;
   /** El parrafo que presenta la corona. Sin el, las tarjetas giran sin contexto. */
   intro: string;
   cards: ValueCard[];
@@ -87,6 +87,13 @@ export interface ValueCardsProps {
    * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
    */
   highlightFamily?: CycledCandyFamily;
+  /**
+   * La entrada a la pagina del equipo (decision de Karen, 2026-10-26): las caras sobre
+   * el titular y el boton bajo la entradilla. Los valores dicen como se trabaja, y las
+   * caras dicen con quien.
+   */
+  people?: PeopleStackProps;
+  cta?: { label: string; href: string };
 }
 
 const COPIES = Array.from({ length: RADIAL_COPIES }, (_, copy) => copy);
@@ -97,16 +104,19 @@ const ANNOUNCED_COPY = Math.floor(RADIAL_COPIES / 2);
 export function ValueCards({
   title,
   titleHighlight,
-  label,
   intro,
   cards,
   labels,
   titleId,
   highlightFamily,
+  people,
+  cta,
 }: ValueCardsProps) {
   const count = cards.length;
   const { trackRef, step, active, dragDegrees, dragging, go, goTo, handlers, onTransitionEnd } =
-    useRadialSlider<HTMLDivElement>(count);
+    // Abre en la del medio (decision de Karen, 2026-10-26): con vecinas a los dos
+    // lados la corona se lee como corona desde el primer pintado.
+    useRadialSlider<HTMLDivElement>(count, Math.floor(count / 2));
   const {
     ref: rotateRef,
     rotating,
@@ -139,14 +149,29 @@ export function ValueCards({
           justo encima lo empeoraba. Que el titular exista para quien escucha la
           pagina no basta si no existe para quien la mira. */}
       <div className={styles.header}>
+        {people ? (
+          <ScrollReveal by="block">
+            <div className={styles.people}>
+              <PeopleStack {...people} />
+            </div>
+          </ScrollReveal>
+        ) : null}
         <StripHeader
           title={title}
           titleHighlight={titleHighlight}
-          label={label}
           intro={intro}
           titleId={titleId}
           align="center" highlightFamily={highlightFamily}
         />
+        {cta ? (
+          <ScrollReveal by="block">
+            <div className={styles.cta}>
+              <Button href={cta.href} emphasis="primary" icon="arrow">
+                {cta.label}
+              </Button>
+            </div>
+          </ScrollReveal>
+        ) : null}
       </div>
 
       {/* La corona entra como el resto de la pagina. Entera y no tarjeta a tarjeta:
@@ -169,7 +194,11 @@ export function ValueCards({
                 {COPIES.map((copy) =>
                   cards.map((card, index) => {
                     const announced = copy === ANNOUNCED_COPY;
-                    const slideStyle = { "--pg-radial-position": (copy - ANNOUNCED_COPY) * count + index } as CSSProperties;
+                    // El indice de reveal por tarjeta: los solidos crecen en cascada al entrar.
+                    const slideStyle = {
+                      "--pg-radial-position": (copy - ANNOUNCED_COPY) * count + index,
+                      "--pg-reveal-index": index,
+                    } as CSSProperties;
 
                     return (
                       <div
@@ -181,18 +210,13 @@ export function ValueCards({
                           ? { role: "group", "aria-label": card.position }
                           : { "aria-hidden": true, inert: true })}
                       >
-                        {/* Solo la copia anunciada lleva papel vivo: las demas son
-                            inertes, nadie las toca, y cada papel es un contexto WebGL. */}
                         <div className={styles.frame}>
-                        <FeatureCard
-                          tone="dark"
-                          label={card.tag}
-                          index={index + 1}
-                          title={card.title}
-                          text={card.text}
-                          drawing={card.drawing}
-                          paper={announced}
-                        />
+                          <FeatureCard
+                            family={candyAt(index)}
+                            label={card.title}
+                            text={card.text}
+                            shape={card.shape}
+                          />
                         </div>
                       </div>
                     );

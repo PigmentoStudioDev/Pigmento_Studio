@@ -124,9 +124,10 @@ const IDLE: Gesture = {
   moved: false,
 };
 
-export function useRadialSlider<T extends HTMLElement>(count: number) {
+/** `initial`: la tarjeta que abre al centro. */
+export function useRadialSlider<T extends HTMLElement>(count: number, initial = 0) {
   const trackRef = useRef<T>(null);
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(initial);
   const [dragDegrees, setDragDegrees] = useState(0);
   const [dragging, setDragging] = useState(false);
 

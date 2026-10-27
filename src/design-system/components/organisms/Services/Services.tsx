@@ -1,18 +1,22 @@
-import type { LineDrawingName } from "../../atoms/LineDrawing/drawings";
+import type { HalftoneShapeName } from "../../../motion/halftone/shapes";
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import { FeatureCard } from "../../molecules/FeatureCard/FeatureCard";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
 import styles from "./Services.module.scss";
 
 /**
- * Las cuatro disciplinas en cuatro tarjetas de la casa: la etiqueta y su numero, el
- * dibujo y lo que hace. La cabecera es la de todas las secciones de la home.
+ * Las cuatro disciplinas en cuatro tarjetas de la casa: su solido en una baldosa del
+ * color del servicio, el nombre y lo que hace. La forma distingue y el color nombra.
+ * La cabecera es la de todas las secciones de la home.
  */
 export interface ServiceItem {
-  key: LineDrawingName;
+  key: string;
   name: string;
-  title: string;
   text: string;
+  shape: HalftoneShapeName;
+  /** El color del servicio. */
+  family: CycledCandyFamily;
 }
 
 export interface ServicesProps {
@@ -32,14 +36,13 @@ export function Services({ label, title, intro, services, titleId }: ServicesPro
 
       <ScrollReveal by="block" inner>
         <ol className={styles.list}>
-          {services.map((service, i) => (
+          {services.map((service) => (
             <li key={service.key} className={styles.item}>
               <FeatureCard
                 label={service.name}
-                index={i + 1}
-                title={service.title}
                 text={service.text}
-                drawing={service.key}
+                shape={service.shape}
+                accent={service.family}
               />
             </li>
           ))}

@@ -1,0 +1,11 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+// Cuadrado: el lienzo del solido lo es, y el canvas se escala sin deformarlo.
+.root {
+  display: block;
+  aspect-ratio: 1;
+  color: currentcolor;
+}

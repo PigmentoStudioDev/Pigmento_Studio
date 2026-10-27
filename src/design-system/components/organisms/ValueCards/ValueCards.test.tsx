@@ -7,12 +7,11 @@ import { ValueCards, type ValueCardsProps } from "./ValueCards";
 
 const PROPS: ValueCardsProps = {
   title: "Cómo trabajamos",
-  label: "Criterio",
   intro: "Cinco decisiones que no se negocian por proyecto.",
   cards: [
-    { tag: "Trato directo", title: "Sin intermediarios", text: "Quien diseña contesta.", drawing: "direct", position: "1 de 3" },
-    { tag: "Validación", title: "Probado con gente real", text: "Se valida con quien lo usa.", drawing: "tested", position: "2 de 3" },
-    { tag: "Durabilidad", title: "Criterio antes que tendencia", text: "Marcas que se sostienen.", drawing: "lasting", position: "3 de 3" },
+    { title: "Sin intermediarios", text: "Quien diseña contesta.", shape: "pair", position: "1 de 3" },
+    { title: "Probado con gente real", text: "Antes de lanzarse.", shape: "sphere", position: "2 de 3" },
+    { title: "Criterio antes que tendencia", text: "Para durar.", shape: "seal", position: "3 de 3" },
   ],
   labels: { carousel: "carrusel", previous: "Anterior", next: "Siguiente", picker: "Elegir valor", drag: "Arrastra" },
   titleId: "valores",
@@ -32,8 +31,22 @@ describe("ValueCards", () => {
     render(<ValueCards {...PROPS} />);
 
     expect(screen.getByRole("heading", { level: 2, name: PROPS.title })).toHaveAttribute("id", "valores");
-    expect(screen.getByText(PROPS.label)).toBeInTheDocument();
     expect(screen.getByText(PROPS.intro)).toBeInTheDocument();
+  });
+
+  it("con la entrada al equipo, el boton lleva a la pagina de nosotros", () => {
+    render(
+      <ValueCards
+        {...PROPS}
+        people={{ faces: [{ src: "/a.jpg", width: 400, height: 400 }], count: "+3" }}
+        cta={{ label: "Conoce al equipo", href: "/nosotros" }}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: /Conoce al equipo/ })).toHaveAttribute(
+      "href",
+      expect.stringContaining("/nosotros"),
+    );
   });
 
   it("el carrusel se anuncia como tal y lo nombra el titular", () => {
@@ -49,7 +62,7 @@ describe("ValueCards", () => {
 
     expect(container.querySelectorAll("[data-clone]")).toHaveLength(PROPS.cards.length * (RADIAL_COPIES - 1));
     expect(screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)).toEqual(
-      PROPS.cards.map((card) => card.tag),
+      PROPS.cards.map((card) => card.title),
     );
     expect(screen.getByRole("group", { name: "2 de 3" })).toBeInTheDocument();
   });
@@ -72,18 +85,17 @@ describe("ValueCards", () => {
     clones.forEach((clone) => expect(clone).toHaveAttribute("inert"));
   });
 
-  it("las flechas mueven la tarjeta activa y dan la vuelta por los extremos", async () => {
+  it("abre en la tarjeta del medio, y las flechas la mueven y dan la vuelta por los extremos", async () => {
     const user = userEvent.setup();
     render(<ValueCards {...PROPS} />);
 
-    expect(currentDot()).toHaveAccessibleName("Sin intermediarios");
-
-    await user.click(screen.getByRole("button", { name: "Siguiente" }));
     expect(currentDot()).toHaveAccessibleName("Probado con gente real");
 
-    await user.click(screen.getByRole("button", { name: "Anterior" }));
-    await user.click(screen.getByRole("button", { name: "Anterior" }));
+    await user.click(screen.getByRole("button", { name: "Siguiente" }));
     expect(currentDot()).toHaveAccessibleName("Criterio antes que tendencia");
+
+    await user.click(screen.getByRole("button", { name: "Siguiente" }));
+    expect(currentDot()).toHaveAccessibleName("Sin intermediarios");
   });
 
   it("un punto lleva a su tarjeta y la region viva la nombra", async () => {
@@ -96,20 +108,16 @@ describe("ValueCards", () => {
     expect(screen.getByText("3 de 3: Criterio antes que tendencia")).toHaveAttribute("aria-live", "polite");
   });
 
-  /**
-   * Mientras gira sola, la region viva calla: anunciar cada vuelta interrumpiria al
-   * lector de pantalla cada pocos segundos. Vuelve a hablar cuando la mueve la persona.
-   */
   it("la region viva calla mientras gira sola y habla cuando la mueve la persona", async () => {
     document.documentElement.style.setProperty("--pg-duration-double", "1.2s");
     const user = userEvent.setup();
     render(<ValueCards {...PROPS} />);
 
-    expect(screen.getByText("1 de 3: Sin intermediarios")).toHaveAttribute("aria-live", "off");
+    expect(screen.getByText("2 de 3: Probado con gente real")).toHaveAttribute("aria-live", "off");
 
     await user.click(screen.getByRole("button", { name: "Siguiente" }));
 
-    expect(screen.getByText("2 de 3: Probado con gente real")).toHaveAttribute("aria-live", "polite");
+    expect(screen.getByText("3 de 3: Criterio antes que tendencia")).toHaveAttribute("aria-live", "polite");
     document.documentElement.style.removeProperty("--pg-duration-double");
   });
 
