@@ -32,8 +32,11 @@ import styles from "./StripHeader.module.scss";
  */
 export interface StripHeaderProps {
   title: string;
-  /** La etiqueta corta de la columna izquierda, en la voz de metadato del sitio. */
-  label: string;
+  /**
+   * La etiqueta corta de la columna izquierda, en la voz de metadato del sitio.
+   * Opcional: centrada sobre un titular que ya nombra el bloque, sobraba.
+   */
+  label?: string;
   /**
    * El parrafo que presenta el bloque. Opcional: un bloque cuyo titular ya dice lo que
    * hay debajo no necesita una segunda frase que lo repita.
@@ -50,6 +53,12 @@ export interface StripHeaderProps {
   /** De que familia candy es ese resalte. Sin valor, el azul del tema. */
   highlightFamily?: CycledCandyFamily;
   /**
+   * El resalte se rellena con el scroll. Sin la bandera llega ya puesto: un estudio
+   * tiene UN momento atado al scroll por pagina, y con todos los titulares rellenandose
+   * igual ninguno destacaba. Lo pide la llamada final.
+   */
+  highlightOnScroll?: boolean;
+  /**
    * Como se reparte. `split` —el de siempre— deja el titular a la izquierda y la
    * entradilla en la columna derecha; `center` apila los tres al medio, para los
    * bloques que debajo son simetricos.
@@ -64,30 +73,28 @@ export function StripHeader({
   titleId,
   titleHighlight,
   highlightFamily,
+  highlightOnScroll = false,
   align = "split",
 }: StripHeaderProps) {
   const centered = align === "center";
+  const heading = (
+    <ScrollReveal>
+      <Heading level={2} size="heading" id={titleId} highlight={titleHighlight} highlightFamily={highlightFamily}>
+        {title}
+      </Heading>
+    </ScrollReveal>
+  );
 
   return (
     <div className={centered ? styles.centered : undefined}>
-      <ScrollHighlight>
-        <ScrollReveal>
-          <Heading
-            level={2}
-            size="heading"
-            id={titleId}
-            highlight={titleHighlight}
-            highlightFamily={highlightFamily}
-          >
-            {title}
-          </Heading>
-        </ScrollReveal>
-      </ScrollHighlight>
+      {highlightOnScroll ? <ScrollHighlight>{heading}</ScrollHighlight> : <div className={styles.settled}>{heading}</div>}
 
       <div className={styles.band}>
-        <ScrollReveal by="words">
-          <p className={styles.label}>{label}</p>
-        </ScrollReveal>
+        {label ? (
+          <ScrollReveal by="words">
+            <p className={styles.label}>{label}</p>
+          </ScrollReveal>
+        ) : null}
 
         {intro ? (
           <ScrollReveal>

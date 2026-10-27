@@ -4,235 +4,87 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
-@use '../../../styles/grain' as grain;
+@use '../../../styles/candy';
 @use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
-$dashed: 1px dashed theme.$border-subtle;
-// La columna de la referencia mide 360 de ancho por 300 de dibujo: la proporcion se
-// queda y el alto sale del ancho, no de un numero fijo.
-$media-ratio: 1.2;
-// El dibujo ocupa algo menos de la mitad de la tarjeta, como alli (167 de 360).
-$drawing-measure: 46%;
-$plus-size: spacing.$spacing-04;
-$grid-cell: spacing.$spacing-10;
-
-// El gesto solo existe con puntero fino; en tactil no hay hover que lo dispare.
-$active: '(hover: hover) and (pointer: fine)';
-
+// La anatomia de la referencia: aire de 32 (24 en estrecho), la baldosa, y el texto
+// debajo. Ni filetes, ni chip, ni indice: el nombre ya nombra.
 .root {
-  position: relative;
-  overflow: hidden;
-  block-size: 100%;
-  border-radius: brand.$radius-card;
-  background-color: theme.$layer-01;
-  color: theme.$text-primary;
-  text-align: start;
-}
-
-// Negra: el fondo de la zona y su grano, como la placa de contacto, y no la capa
-// (que en oscuro es un gris y no se leeria como negro).
-.toneDark {
-  background-color: theme.$background;
-
-  @include grain.surface;
-}
-
-// La negra YA es el `background` de su zona: se hereda tal cual. Re-declararlo como
-// `theme.$background` es un ciclo de la variable contra si misma, que la invalida — el
-// papel caia a su color de respaldo, el claro, y la tarjeta se volvia gris al hover.
-.toneDark .overlay {
-  --cds-background: inherit;
-
-  background-color: theme.$background;
-}
-
-.face {
   display: flex;
   flex-direction: column;
   block-size: 100%;
+  padding: spacing.$spacing-07;
+  box-sizing: border-box;
+  border-radius: brand.$radius-card;
+  text-align: start;
+
+  @include breakpoint.breakpoint-down('md') {
+    padding: spacing.$spacing-06;
+  }
 }
 
-// La cara de encima, del mismo color que la tarjeta y con su grano y su papel vivo.
-// Sube desde abajo y se recorta con la tarjeta. `isolation` porque el papel se cuelga
-// de aqui con z-index -1 y sin contexto propio se iria detras de la tarjeta.
-//
-// El papel pinta el `background` de su zona, y la tarjeta clara es `layer-01`: sin
-// re-declararlo aqui, el hover la pasaba al gris de la pagina.
-.overlay {
-  --cds-background: #{theme.$layer-01};
+.surface {
+  --pg-tile-background: #{theme.$layer-02};
 
-  position: absolute;
-  isolation: isolate;
-  inset: 0;
   background-color: theme.$layer-01;
   color: theme.$text-primary;
-  clip-path: inset(100% 0 0 0);
-  transition: clip-path brand.$duration-half brand.$ease-exit;
-  pointer-events: none;
-
-  @include grain.surface;
 }
 
-.head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: spacing.$spacing-05;
-  border-block-end: $dashed;
+// Pigmento: el candy pone fondo y tinta juntos, y no re-tematiza. La baldosa va en la
+// parada clara de la familia: una capa por encima del gradiente, como la de la
+// superficie va una capa por encima de la tarjeta.
+.familyPeriwinkle {
+  --pg-tile-background: #{candy.light('periwinkle')};
+
+  @include candy.surface('periwinkle');
+}
+
+.familyTangerine {
+  --pg-tile-background: #{candy.light('tangerine')};
+
+  @include candy.surface('tangerine');
+}
+
+.familyPink {
+  --pg-tile-background: #{candy.light('pink')};
+
+  @include candy.surface('pink');
+}
+
+.familyLime {
+  --pg-tile-background: #{candy.light('lime')};
+
+  @include candy.surface('lime');
+}
+
+// La baldosa, con el radio de un control pequeno. El solido toma la tinta de la
+// tarjeta: el gris del tema en superficie, el casi negro de la familia en candy.
+.tile {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: spacing.$spacing-10;
+  block-size: spacing.$spacing-10;
+  padding: spacing.$spacing-03;
+  box-sizing: border-box;
+  border-radius: brand.$radius-05;
+  background-color: var(--pg-tile-background);
+}
+
+// Sin medida el canvas toma sus 300px por defecto y se sale de la baldosa.
+.tileShape {
+  inline-size: 100%;
 }
 
 .name {
-  margin: 0;
+  @include brandtype.style('lead');
+
+  margin: spacing.$spacing-06 0 0;
 }
 
-.index {
-  color: theme.$text-disabled;
-}
-
-// `container-type` porque la cifra se mide contra la caja (`figure` va en cqi).
-.media {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  aspect-ratio: $media-ratio;
-  border-block-end: $dashed;
-  container-type: inline-size;
-}
-
-.drawing {
-  inline-size: $drawing-measure;
-  color: theme.$border-strong;
-}
-
-.figure {
-  @include brandtype.style('figure');
-
-  position: relative;
-  z-index: 1;
-  margin: 0;
-}
-
-// Las cruces de las esquinas y la reticula solo existen en la cara de encima.
-.plus {
-  position: absolute;
-  display: none;
-  inline-size: $plus-size;
-  aspect-ratio: 1;
-  color: theme.$text-secondary;
-}
-
-.plus::before,
-.plus::after {
-  position: absolute;
-  background-color: currentcolor;
-  content: '';
-}
-
-.plus::before {
-  inset-block: 0;
-  inset-inline-start: 50%;
-  inline-size: 1px;
-}
-
-.plus::after {
-  inset-inline: 0;
-  inset-block-start: 50%;
-  block-size: 1px;
-}
-
-.topLeft {
-  inset-block-start: spacing.$spacing-05;
-  inset-inline-start: spacing.$spacing-05;
-}
-
-.topRight {
-  inset-block-start: spacing.$spacing-05;
-  inset-inline-end: spacing.$spacing-05;
-}
-
-.bottomLeft {
-  inset-block-end: spacing.$spacing-05;
-  inset-inline-start: spacing.$spacing-05;
-}
-
-.bottomRight {
-  inset-block-end: spacing.$spacing-05;
-  inset-inline-end: spacing.$spacing-05;
-}
-
-.overlay .plus {
-  display: block;
-}
-
-.overlay .media::after {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(to right, theme.$border-subtle 1px, transparent 1px),
-    linear-gradient(to bottom, theme.$border-subtle 1px, transparent 1px);
-  background-position: center;
-  background-size: $grid-cell $grid-cell;
-  pointer-events: none;
-  content: '';
-}
-
-.overlay .drawing {
-  position: relative;
-  z-index: 1;
-  color: theme.$text-primary;
-}
-
-.content {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: spacing.$spacing-05;
-  padding: spacing.$spacing-05;
-}
-
-@keyframes draw {
-  from {
-    stroke-dashoffset: 1;
-  }
-
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@media #{$active} {
-  // Lo que llega se mira: la ida lleva la curva de marca y un paso mas que la vuelta,
-  // que se escribe en la regla base.
-  .root:hover .overlay {
-    clip-path: inset(0);
-    transition: clip-path brand.$duration-base brand.$ease-default;
-  }
-
-  // Cada trazo empieza un cuarto de la escala despues del anterior: el dibujo se lee
-  // en el orden de la lista de drawings, no todo a la vez.
-  .root:hover .overlay .drawing path {
-    animation: draw brand.$duration-base brand.$ease-reveal both;
-    animation-delay: calc(#{brand.$duration-quarter} * var(--i));
-  }
-}
-
-// Sin hover que lo active, el dibujo ya esta en tinta.
-@media (hover: none) {
-  .drawing {
-    color: theme.$text-primary;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .overlay,
-  .root:hover .overlay {
-    transition: none;
-  }
-
-  .root:hover .overlay .drawing path {
-    animation: none;
-  }
+.text {
+  margin-block-start: spacing.$spacing-04;
 }

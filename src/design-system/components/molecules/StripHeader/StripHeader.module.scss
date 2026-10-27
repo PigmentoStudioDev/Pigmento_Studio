@@ -72,3 +72,11 @@ $centered-measure: 60ch;
 .centered {
   text-align: center;
 }
+
+// El resalte ya depositado: el mismo numero que publicaria el scroll, al final de su
+// recorrido. Sin caja propia, para no meter un nivel en la maqueta del titular.
+.settled {
+  --pg-highlight-progress: 1;
+
+  display: contents;
+}
