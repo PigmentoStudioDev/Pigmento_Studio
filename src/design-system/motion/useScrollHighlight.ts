@@ -26,9 +26,11 @@ export interface ScrollHighlightOptions {
   scrollEnd?: string;
 }
 
+// Lleno cuando el texto llega al centro de la ventana, no cuando ya se esta yendo: con
+// `bottom 20%` el resalte terminaba de rellenarse despues de haberse leido.
 const DEFAULTS = {
-  scrollStart: "top 85%",
-  scrollEnd: "bottom 20%",
+  scrollStart: "top 90%",
+  scrollEnd: "center 55%",
   scrub: 0.35,
 } as const;
 

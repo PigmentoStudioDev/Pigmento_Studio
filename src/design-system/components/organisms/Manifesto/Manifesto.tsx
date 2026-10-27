@@ -1,5 +1,6 @@
 "use client";
 
+import type { CycledCandyFamily } from "../../../theme/candy";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { Fragment } from "react";
@@ -34,6 +35,8 @@ export interface ManifestoSegment {
   text: string;
   /** Con destino, el trozo es una palabra caliente: enlaza y escupe piezas. */
   href?: string;
+  /** El color de la palabra caliente: el de su servicio. Sin el, el resalte neutro. */
+  family?: CycledCandyFamily;
 }
 
 export interface ManifestoPiece {
@@ -53,27 +56,16 @@ export interface ManifestoProps {
 }
 
 /**
- * El color de cada palabra caliente, en el orden del ciclo candy.
- *
- * Por POSICION entre las calientes y no por lo que diga la palabra: "branding" no es
- * periwinkle, es la primera. Un mapa por contenido obligaria a tocar codigo cada vez
- * que Pigmento reescriba la frase, y el ciclo ya alterna calidos y frios para que dos
- * palabras seguidas no caigan en la misma temperatura.
- *
- * Cada clase se nombra entera y no se construye: el gate de modulos busca la forma
- * literal en el TSX, en las dos direcciones, y un nombre interpolado dejaria estas
- * cuatro marcadas como CSS muerto.
+ * El color de cada palabra caliente es el de su servicio: la palabra nombra la
+ * disciplina y el color tambien. Cada clase se nombra entera: el gate de modulos busca
+ * la forma literal en el TSX, en las dos direcciones.
  */
-const WORD_FAMILY = [styles.wordPeriwinkle, styles.wordTangerine, styles.wordCyan, styles.wordPink];
-
-/**
- * Cuantas palabras calientes van ANTES de esta. El indice del segmento no sirve: los
- * trozos de texto plano van entre medias y contarlos repartiria dos familias
- * salteadas de las cuatro.
- */
-function hotIndex(segments: ManifestoSegment[], index: number): number {
-  return segments.slice(0, index).filter((segment) => segment.href).length % WORD_FAMILY.length;
-}
+const WORD_FAMILY: Record<CycledCandyFamily, string> = {
+  pink: styles.wordPink,
+  periwinkle: styles.wordPeriwinkle,
+  tangerine: styles.wordTangerine,
+  lime: styles.wordLime,
+};
 
 export function Manifesto({ eyebrow, segments, pieces }: ManifestoProps) {
   const { rootRef, start, stop } = useMediaBurst<HTMLDivElement>();
@@ -111,7 +103,7 @@ export function Manifesto({ eyebrow, segments, pieces }: ManifestoProps) {
                       fuera del area de clic. El subrayado se queda — un resaltado es
                       color, y un enlace en medio de un parrafo no puede distinguirse
                       solo por color. */}
-                  <mark className={`${styles.mark} ${WORD_FAMILY[hotIndex(segments, index)]}`}>
+                  <mark className={segment.family ? `${styles.mark} ${WORD_FAMILY[segment.family]}` : styles.mark}>
                     {segment.text}
                   </mark>
                 </Link>

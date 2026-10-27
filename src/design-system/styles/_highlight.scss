@@ -6,6 +6,7 @@
 // antepasado que no se parte.
 
 @use './brand' as brand;
+@use './candy';
 @use '@carbon/react/scss/theme';
 
 /// Va en el <mark>. El relleno sale de un NUMERO heredado y no de un estilo puesto en
@@ -21,7 +22,9 @@
 /// Por defecto, el resaltado del tema. Las familias candy entran por aqui —
 /// `candy.light('pink')`— y es lo que permite tener un color por palabra sin que cada
 /// bloque se escriba su propio relleno.
-@mixin mark($fill: theme.$highlight) {
+// Sin familia, un escalon de capa y no `$highlight`: ese es el azul palido de Carbon,
+// placeholder, y en una pagina cuyo color lo ponen los servicios se leia como un error.
+@mixin mark($fill: theme.$layer-accent-01) {
   background-image: linear-gradient($fill, $fill);
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -51,4 +54,15 @@
 /// manifiesto: la banda seguia anclada a la caja de la linea con el ajuste escrito.
 @mixin fill($color) {
   background-image: linear-gradient($color, $color);
+}
+
+/// El resalte en el gradiente de una familia: la marca es pigmento depositado, no un
+/// subrayador plano (decision de Karen, 2026-10-26). Con la tinta de la familia,
+/// porque el texto del tema en modo oscuro es claro sobre claro.
+///
+/// Se reinicia en cada linea de la marca partida, y es a proposito: cada trozo se lee
+/// como un trazo de pigmento con su propia luz.
+@mixin pigment($family) {
+  background-image: candy.gradient($family);
+  @include candy.ink($family);
 }

@@ -1,5 +1,6 @@
 import type { SiteFooterProps } from "@/design-system/components/organisms/SiteFooter/SiteFooter";
 import type { LegalLink } from "@/cms/legal";
+import { SERVICE_FAMILY } from "./pigment";
 
 /**
  * El contenido del pie. Vive en app/ y no en el design system por lo mismo que la
@@ -50,17 +51,15 @@ export function getFooter(t: Translate, legals: LegalLink[] = [], year = new Dat
           links: [
             { label: t("work"), href: "/trabajo" },
             { label: t("about"), href: "/nosotros" },
-            // Sin href: anunciada y todavia no navegable, como en el menu.
-            { label: t("lab") },
           ],
         },
         {
           title: t("columnServices"),
           links: [
-            { label: t("branding"), href: "/servicios/branding" },
-            { label: t("motion"), href: "/servicios/motion" },
-            { label: t("marketing"), href: "/servicios/marketing" },
-            { label: t("web"), href: "/servicios/web-development" },
+            { label: t("branding"), href: "/servicios/branding", family: SERVICE_FAMILY.branding },
+            { label: t("motion"), href: "/servicios/motion", family: SERVICE_FAMILY.motion },
+            { label: t("marketing"), href: "/servicios/marketing", family: SERVICE_FAMILY.marketing },
+            { label: t("web"), href: "/servicios/web-development", family: SERVICE_FAMILY.web },
           ],
         },
         /**

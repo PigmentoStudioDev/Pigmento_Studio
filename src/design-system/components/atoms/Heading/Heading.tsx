@@ -99,10 +99,8 @@ const SIZE_FOR_LEVEL: Record<HeadingLevel, HeadingSize> = {
 const FAMILY_CLASS: Record<CycledCandyFamily, string> = {
   periwinkle: styles.markPeriwinkle,
   tangerine: styles.markTangerine,
-  cyan: styles.markCyan,
   pink: styles.markPink,
   lime: styles.markLime,
-  amber: styles.markAmber,
 };
 
 function withHighlight(

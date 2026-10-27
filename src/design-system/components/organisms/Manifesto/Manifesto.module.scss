@@ -43,6 +43,9 @@ $underline-offset: 0.1em;
 // del texto.
 .root {
   position: relative;
+  // Contexto propio para que las piezas puedan ir por DEBAJO de la frase sin caerse
+  // detras de la pagina.
+  isolation: isolate;
   overflow-x: clip;
   display: flex;
   flex-direction: column;
@@ -106,24 +109,28 @@ $underline-offset: 0.1em;
   background-position: left 0 bottom $mark-baseline-offset;
 }
 
+.wordPink {
+  @include highlight.pigment('pink');
+}
+
 .wordPeriwinkle {
-  @include highlight.fill(candy.light('periwinkle'));
+  @include highlight.pigment('periwinkle');
 }
 
 .wordTangerine {
-  @include highlight.fill(candy.light('tangerine'));
+  @include highlight.pigment('tangerine');
 }
 
-.wordCyan {
-  @include highlight.fill(candy.light('cyan'));
+.wordLime {
+  @include highlight.pigment('lime');
 }
 
-.wordPink {
-  @include highlight.fill(candy.light('pink'));
-}
-
+// Detras de la frase. El `z-index` de `.sentence` no bastaba: el reveal por lineas
+// le crea a la frase contextos de apilado por dentro, y las piezas, que van despues
+// en el DOM, se pintaban encima de las palabras justo mientras se leian.
 .pieces {
   position: absolute;
+  z-index: -1;
   inset: 0;
   // Decoracion: ni ocupa sitio en el flujo ni intercepta un clic de lo que hay
   // debajo, que aqui son los propios enlaces que la disparan.

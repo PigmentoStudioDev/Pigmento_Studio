@@ -4,6 +4,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/candy';
 @use '../../../styles/grain' as grain;
 @use '@carbon/react/scss/breakpoint';
 @use '@carbon/react/scss/spacing';
@@ -36,6 +37,24 @@ $panel-inline-margin: spacing.$spacing-06;
   // El grano tambien aqui: es una superficie de fondo plano como las demas, y sin el
   // seria la unica caja lisa de la pagina.
   @include grain.surface;
+}
+
+// En la pagina de un servicio la placa toma su gradiente, fondo y tinta juntos. Va
+// despues de `.panel` para ganarle el `background-image` del grano.
+.familyPink {
+  @include candy.surface('pink');
+}
+
+.familyPeriwinkle {
+  @include candy.surface('periwinkle');
+}
+
+.familyTangerine {
+  @include candy.surface('tangerine');
+}
+
+.familyLime {
+  @include candy.surface('lime');
 }
 
 // Por debajo de `lg` el aire lateral de escritorio se come media columna.

@@ -1,6 +1,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/candy';
 @use '../../../styles/roll' as roll;
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
@@ -62,6 +63,30 @@
   display: flex;
   gap: spacing.$spacing-04;
   align-items: center;
+}
+
+// La muestra del servicio: el mismo gradiente que su baldosa, del cuerpo de la letra.
+.swatch {
+  flex: none;
+  inline-size: spacing.$spacing-04;
+  block-size: spacing.$spacing-04;
+  border-radius: brand.$radius-02;
+}
+
+.swatchPink {
+  background-image: candy.gradient('pink');
+}
+
+.swatchPeriwinkle {
+  background-image: candy.gradient('periwinkle');
+}
+
+.swatchTangerine {
+  background-image: candy.gradient('tangerine');
+}
+
+.swatchLime {
+  background-image: candy.gradient('lime');
 }
 
 // En reposo el dibujo se queda un tono por debajo del texto: acompana, no compite.
