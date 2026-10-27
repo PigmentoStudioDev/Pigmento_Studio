@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { useCharRoll } from "../../../motion/useCharRoll";
 import { LineDrawing } from "../../atoms/LineDrawing/LineDrawing";
 import type { LineDrawingName } from "../../atoms/LineDrawing/drawings";
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { Tag } from "../../atoms/Tag/Tag";
 import styles from "./NavLinkList.module.scss";
 
@@ -52,7 +53,17 @@ export interface NavLinkItem {
    * el tono del texto.
    */
   icon?: LineDrawingName;
+  /** Una muestra del color del servicio delante de la etiqueta. Con `icon`, manda el icono. */
+  family?: CycledCandyFamily;
 }
+
+/** Una clase por familia, explicita: el gate cruza el TSX con la hoja. */
+const SWATCH_FAMILY: Record<CycledCandyFamily, string> = {
+  pink: styles.swatchPink,
+  periwinkle: styles.swatchPeriwinkle,
+  tangerine: styles.swatchTangerine,
+  lime: styles.swatchLime,
+};
 
 export interface NavLinkListProps {
   items: NavLinkItem[];
@@ -87,7 +98,11 @@ function NavLink({ item, onNavigate }: { item: NavLinkItem; onNavigate?: () => v
   // necesite una asercion. Sin destino no rueda, asi que tampoco se parte.
   const href = item.href;
   const textRef = useCharRoll<HTMLSpanElement>(item.label, href !== undefined);
-  const icon = item.icon ? <LineDrawing name={item.icon} className={styles.icon} /> : null;
+  const icon = item.icon ? (
+    <LineDrawing name={item.icon} className={styles.icon} />
+  ) : item.family ? (
+    <span className={`${styles.swatch} ${SWATCH_FAMILY[item.family]}`} aria-hidden="true" />
+  ) : null;
 
   // Texto y punto: ni enlace, ni promesa de enlace. Va antes que la rama de
   // deshabilitado porque las dos se reconocen por no tener destino y solo esta

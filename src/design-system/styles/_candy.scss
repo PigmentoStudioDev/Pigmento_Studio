@@ -41,6 +41,11 @@
   );
 }
 
+/// El gradiente de UNA familia, suelto: para quien lo pinta en otra capa (el resalte).
+@function gradient($family) {
+  @return -base(-tones($family));
+}
+
 /// Fondo y texto de UNA familia. Van juntos a proposito: un fondo candy con el texto
 /// del tema en modo oscuro es claro sobre claro.
 ///

@@ -8,9 +8,7 @@
     "estudio": {
       "label": "Studio",
       "trabajo": "Work",
-      "nosotros": "About",
-      "laboratorio": "Lab",
-      "pronto": "Soon"
+      "nosotros": "About"
     },
     "servicios": {
       "label": "Services",
@@ -48,7 +46,6 @@
     "columnServices": "Services",
     "columnLegal": "Legal",
     "about": "About",
-    "lab": "Lab",
     "branding": "Branding and design",
     "motion": "Motion",
     "marketing": "Marketing",
@@ -79,7 +76,6 @@
     "values": {
       "title": "How we do it",
       "titleHighlight": "do it",
-      "label": "How we work",
       "intro": "Five decisions that do not change from project to project. They are in the order you will notice them: who you talk to, how calls get made, how it gets built and how it gets measured.",
       "carousel": "carousel",
       "previous": "Previous value",
@@ -87,29 +83,28 @@
       "picker": "Choose a value",
       "drag": "Drag",
       "position": "{current} of {total}",
+      "people": {
+        "count": "+{count}"
+      },
+      "cta": "Meet the team",
       "cards": {
         "direct": {
-          "tag": "Direct contact",
           "title": "You talk to who does the work",
           "text": "No account managers in between: whoever designs your brand is who answers your emails."
         },
         "tested": {
-          "tag": "Validation",
           "title": "Tested before it launches",
           "text": "Every decision is validated with the people who will use it, not in a boardroom."
         },
         "sameTable": {
-          "tag": "One team",
           "title": "Design and code, one team",
           "text": "What you approve on screen is what goes live, with nothing lost between teams."
         },
         "criteria": {
-          "tag": "Durability",
           "title": "Built to last",
           "text": "Decisions that keep working once this year's trend has passed."
         },
         "measured": {
-          "tag": "Measurement",
           "title": "Results in plain sight",
           "text": "Speed, conversions and reach measured from day one, with numbers you can check."
         }
@@ -334,7 +329,45 @@
       "title": "What they say",
       "titleHighlight": "they say",
       "label": "Clients",
-      "intro": "Clients who have been through this, in their own words."
+      "intro": "Clients who have been through this, in their own words.",
+      "items": {
+        "first": {
+          "quote": "We came in with a logo and a folder of loose photos. We left with a brand the sales team can use without asking us anything.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        },
+        "second": {
+          "quote": "What I value most is that they said no to two of our ideas, and they were right about both.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        },
+        "third": {
+          "quote": "The new site has been live six months and we have not had to ask for a single layout change.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        },
+        "fourth": {
+          "quote": "They delivered on the date they gave us in the first meeting. That had never happened to me with a design vendor.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        },
+        "fifth": {
+          "quote": "We came back with the second project before the first one was finished.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        },
+        "sixth": {
+          "quote": "They understood the business on the first call. Everything after that was about how, not what.",
+          "author": "Name Surname",
+          "role": "Role",
+          "company": "Company"
+        }
+      }
     },
     "difference": {
       "title": "The difference",

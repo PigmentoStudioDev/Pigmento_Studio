@@ -1,3 +1,4 @@
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { Button } from "../../atoms/Button/Button";
 import { Heading } from "../../atoms/Heading/Heading";
 import { SectionChip } from "../../atoms/SectionChip/SectionChip";
@@ -19,6 +20,8 @@ export interface HeroStatementProps {
   title: string;
   /** El trozo del titular que se resalta con el scroll. */
   titleHighlight?: string;
+  /** La familia del pigmento del resalte. */
+  highlightFamily?: CycledCandyFamily;
   eyebrow?: string;
   subtitle?: string;
   ctaLabel?: string;
@@ -29,6 +32,7 @@ export interface HeroStatementProps {
 export function HeroStatement({
   title,
   titleHighlight,
+  highlightFamily,
   eyebrow,
   subtitle,
   ctaLabel,
@@ -47,7 +51,7 @@ export function HeroStatement({
         <div className={styles.title}>
           <ScrollHighlight>
             <ScrollReveal by="lines">
-              <Heading level={1} size="heading" highlight={titleHighlight}>
+              <Heading level={1} size="heading" highlight={titleHighlight} highlightFamily={highlightFamily}>
                 {title}
               </Heading>
             </ScrollReveal>

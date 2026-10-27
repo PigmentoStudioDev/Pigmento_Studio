@@ -1,5 +1,6 @@
 "use client";
 
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { Button } from "../../atoms/Button/Button";
 import { Icon } from "../../atoms/Icon/Icon";
@@ -54,7 +55,17 @@ export interface ContactFormCopy {
 export interface ContactTopic {
   value: string;
   label: string;
+  /** El color del servicio, en la casilla. Sin el ("Otro"), la casilla de linea. */
+  family?: CycledCandyFamily;
 }
+
+/** Una clase por familia, explicita: el gate cruza el TSX con la hoja. */
+const BOX_FAMILY: Record<CycledCandyFamily, string> = {
+  pink: styles.boxPink,
+  periwinkle: styles.boxPeriwinkle,
+  tangerine: styles.boxTangerine,
+  lime: styles.boxLime,
+};
 
 export interface ContactFormProps {
   copy: ContactFormCopy;
@@ -343,7 +354,7 @@ function TopicPicker({
               className={styles.topic}
               onClick={() => onChange(topic.value)}
             >
-              <span className={styles.box} aria-hidden="true" />
+              <span className={topic.family ? `${styles.box} ${BOX_FAMILY[topic.family]}` : styles.box} aria-hidden="true" />
               {topic.label}
             </button>
           );

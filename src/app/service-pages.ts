@@ -24,6 +24,14 @@ import type { ProcessProps } from "@/design-system/components/organisms/Process/
 export const SERVICE_KEYS = ["branding", "motion", "marketing", "web"] as const;
 export type ServiceKey = (typeof SERVICE_KEYS)[number];
 
+/** Las rutas de las cuatro paginas, que no siempre coinciden con la clave (web-development). */
+export const SERVICE_PATHS: Record<ServiceKey, string> = {
+  branding: "/servicios/branding",
+  motion: "/servicios/motion",
+  marketing: "/servicios/marketing",
+  web: "/servicios/web-development",
+};
+
 const PHASES: Record<ServiceKey, readonly string[]> = {
   branding: ["diagnosis", "strategy", "identity", "rollout"],
   motion: ["script", "storyboard", "animation", "delivery"],

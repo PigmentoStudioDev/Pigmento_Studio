@@ -60,10 +60,8 @@ export interface FiguresProps {
 const VALUE_FAMILY: Record<CycledCandyFamily, string> = {
   periwinkle: styles.valuePeriwinkle,
   tangerine: styles.valueTangerine,
-  cyan: styles.valueCyan,
   pink: styles.valuePink,
   lime: styles.valueLime,
-  amber: styles.valueAmber,
 };
 
 export function Figures({ title, titleHighlight, label, intro, figures, titleId }: FiguresProps) {

@@ -19,6 +19,7 @@ import { getFinalCta } from "../cta";
 import { sendContact } from "../contact-action";
 import { getFeaturedPieces, getWorkProjects } from "@/cms/projects";
 import { getSiteImage } from "@/cms/media";
+import { getTeamMembers } from "@/cms/team";
 import { getManifesto } from "../manifesto";
 import { getTestimonials } from "../testimonials";
 import { getServices } from "../services";
@@ -84,10 +85,11 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
   // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
   // Consultas independientes: en serie sumarian sus tiempos al primer byte.
-  const [pieces, projects, bandImage] = await Promise.all([
+  const [pieces, projects, bandImage, members] = await Promise.all([
     getFeaturedPieces(locale),
     getWorkProjects(locale),
     getSiteImage(BAND_IMAGE_FILENAME, locale),
+    getTeamMembers(locale),
   ]);
   const tHero = await getTranslations("home.hero");
   const tValues = await getTranslations("home.values");
@@ -104,7 +106,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           centro) sigue en el design system por si la comparativa vuelve: montarlo es
           volver a importarlo aqui. */}
       <Section width="full" spacing="none">
-        <HeroStatement {...getHero(tHero, `#${CTA_TITLE_ID}`)} />
+        <HeroStatement {...getHero(tHero, `#${CTA_TITLE_ID}`)} highlightFamily="pink" />
       </Section>
 
       {/* La tira de clientes va aqui, debajo del hero, como en bunch, peak y mammut, y
@@ -188,7 +190,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           propio hueco en el arco y con los dos paddings la pagina se partia ahi
           (decision de Karen, 2026-10-26). */}
       <Section width="full" spacing="loose" spacingEnd="none" labelledBy={VALUES_TITLE_ID}>
-        <ValueCards {...getValues(tValues)} titleId={VALUES_TITLE_ID} highlightFamily="pink" />
+        <ValueCards {...getValues(tValues, members)} titleId={VALUES_TITLE_ID} highlightFamily="pink" />
       </Section>
 
       {/* La tira de logos vuelve debajo de los valores, a sangre y oscura en los dos
@@ -244,7 +246,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         theme={{ light: "dark", dark: "dark" }}
         labelledBy={CTA_TITLE_ID}
       >
-        <FinalCta {...getFinalCta(tCta, locale)} titleId={CTA_TITLE_ID} onSubmit={sendContact} />
+        <FinalCta {...getFinalCta(tCta, locale)} titleId={CTA_TITLE_ID} highlightFamily="tangerine" onSubmit={sendContact} />
       </Section>
 
     </main>

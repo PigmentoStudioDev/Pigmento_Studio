@@ -67,7 +67,7 @@ export default async function Nosotros({ params }: PageProps<"/[locale]/nosotros
 
       {team ? (
         <Section width="strip" spacing="default" spacingEnd="loose" labelledBy={TEAM_TITLE_ID}>
-          <Team {...team} titleId={TEAM_TITLE_ID} highlightFamily="amber" />
+          <Team {...team} titleId={TEAM_TITLE_ID} highlightFamily="lime" />
         </Section>
       ) : null}
     </main>

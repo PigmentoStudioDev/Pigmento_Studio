@@ -12,16 +12,22 @@
 
 @use './brand';
 
+/// Lo interactivo va en la tinta de la casa, no en azul. Mismos tokens en los dos
+/// deltas, cada uno con su tinta.
+@function -interactive($ink) {
+  @return (
+    interactive: $ink,
+    border-interactive: $ink,
+    icon-interactive: $ink,
+    link-primary: $ink,
+    link-primary-hover: $ink,
+    link-secondary: $ink,
+    focus: $ink,
+  );
+}
+
 /// Delta para los temas oscuros (g90, g100).
-$overrides-dark: (
-  link-primary: brand.$accent-40,
-  link-primary-hover: brand.$accent-40,
-  focus: brand.$accent-40,
-);
+$overrides-dark: -interactive(brand.$ink-interactive-dark);
 
 /// Delta para los temas claros (white, g10).
-///
-/// TODO(brand): vacio a proposito. El acento actual (blue-40) no llega a 4.5:1
-/// sobre fondo claro, asi que heredarlo seria romper WCAG AA en silencio. Se
-/// rellena cuando exista la paleta real de Pigmento.
-$overrides-light: ();
+$overrides-light: -interactive(brand.$ink-interactive-light);

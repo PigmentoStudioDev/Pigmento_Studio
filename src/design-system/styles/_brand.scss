@@ -100,6 +100,13 @@ $candy-angle: 150deg;
 $control-ink-light: colors.$gray-80;
 $control-ink-mid: colors.$gray-90;
 $control-ink-dark: colors.$gray-100;
+
+/// La tinta de lo interactivo: enlaces, foco, contornos de control (decision de Karen,
+/// 2026-10-26). El carbon de la casa en claro y su par claro en oscuro, en lugar de los
+/// azules de Carbon, que eran placeholder y competian con el pigmento de los servicios:
+/// el color del sitio lo ponen los servicios, no los controles.
+$ink-interactive-light: $control-ink-dark;
+$ink-interactive-dark: colors.$gray-10;
 $control-ink-mid-stop: 52%;
 
 /// El primer plano de esa placa. Lo mide el gate contra las TRES paradas, no solo
@@ -465,6 +472,11 @@ $duration-double: 1.2s;
 
 /// Los gestos que se MIRAN: arranca decidida y frena largo.
 $ease-default: cubic-bezier(0.625, 0.05, 0, 1);
+
+/// El cambio de pagina: simetrica, lenta en los dos extremos. Es la de la referencia
+/// de transiciones, calcada como sus tiempos: con la de la marca la placa salia
+/// disparada y no se leia el gesto.
+$ease-page: cubic-bezier(0.69, 0, 0.31, 1);
 
 /// El clic. Casi simetrica y corta: no hay gesto que leer sino una confirmacion.
 $ease-click: cubic-bezier(0.4, 0, 0.2, 1);

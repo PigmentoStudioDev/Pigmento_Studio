@@ -80,7 +80,7 @@ $figure-min-inline-size: 15rem;
 // por encima de 4.5:1 sobre el fondo, y a este cuerpo llena la celda entera.
 //
 // Cada `styles.<clase>` se nombra entera en el TSX: el gate de modulos busca la forma
-// literal en las dos direcciones, y un nombre interpolado dejaria estas seis marcadas
+// literal en las dos direcciones, y un nombre interpolado dejaria estas cuatro marcadas
 // como CSS muerto.
 .valuePeriwinkle {
   @include candy.ink('periwinkle');
@@ -90,20 +90,12 @@ $figure-min-inline-size: 15rem;
   @include candy.ink('tangerine');
 }
 
-.valueCyan {
-  @include candy.ink('cyan');
-}
-
 .valuePink {
   @include candy.ink('pink');
 }
 
 .valueLime {
   @include candy.ink('lime');
-}
-
-.valueAmber {
-  @include candy.ink('amber');
 }
 
 .label {
