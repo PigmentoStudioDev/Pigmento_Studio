@@ -6,6 +6,7 @@
 // algo fuera de preview/, va en este archivo.
 
 @use './brand' as brand;
+@use './candy';
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/type';
 @use '@carbon/react/scss/theme';
@@ -249,5 +250,133 @@ body {
     translate: none;
     outline: 2px solid theme.$focus;
     outline-offset: 2px;
+  }
+}
+
+// Una pagina puede prescindir del pie (decision de Karen, 2026-10-26: el indice del
+// trabajo). El pie es chrome del layout y el layout no sabe que ruta pinta; la pagina
+// lo pide con un atributo en su <main> y la regla lo resuelve sin JS. Mismo mecanismo
+// que `--pg-topbar-offset` de arriba.
+body:has(> main[data-footer='off']) > footer {
+  display: none;
+}
+
+// La transicion entre paginas, con View Transitions nativas (decision de Karen,
+// 2026-10-26). La coreografia es la de la referencia de transiciones: la pagina que se
+// va se encoge a una placa, redondea sus esquinas y sale volando hacia arriba; la que
+// llega sube como placa y crece hasta la ventana, todo con la curva de la marca. Lo que se mira es la PAGINA,
+// no una cortina que la tapa.
+//
+// Debajo de las dos, el pigmento del destino: hacia la pagina de un servicio, su
+// gradiente; hacia el resto, el fondo de la marca. El hook pone la familia en
+// `data-page-transition` del <html> mientras dura, y la fase en `data-page-stage`.
+//
+// Escala y desplazamiento van en `scale` y `translate`, propiedades sueltas, para que
+// cada fase sea su propia animacion con su duracion de la escala y su retardo en
+// multiplos de un paso. Global y no en un modulo: los pseudo-elementos cuelgan del
+// <html>, y un modulo exige una clase local en el selector.
+$page-transition-scale: 0.6;
+$page-transition-travel: 175vh;
+
+:root[data-page-transition]::view-transition {
+  background-color: brand.$surface-cover;
+}
+
+@each $family in ('pink', 'periwinkle', 'tangerine', 'lime') {
+  :root[data-page-transition='#{$family}']::view-transition {
+    background-image: candy.gradient($family);
+  }
+}
+
+// La foto nueva es la pagina en vivo, y la ruta se monta DESPUES del clic, mientras la
+// vieja se encoge: hasta que llega, lo que hay debajo es la pagina vieja, que no debe
+// asomar dentro de la placa que sube. `visibility` y no `display`, para que la nueva
+// se maqueje y sus ScrollTrigger midan bien.
+:root[data-page-stage='pending'] body > main,
+:root[data-page-stage='pending'] body > footer {
+  visibility: hidden;
+}
+
+:root[data-page-transition]::view-transition-group(root) {
+  animation: none;
+}
+
+:root[data-page-transition]::view-transition-old(root),
+:root[data-page-transition]::view-transition-new(root) {
+  mix-blend-mode: normal;
+}
+
+// Los tiempos y la curva son los de la referencia, calcados (decision de Karen,
+// 2026-10-26: igual que la referencia): cada fase dura cinco cuartos y la siguiente
+// entra un cuarto antes de que acabe la anterior. Las dos placas vuelan a la vez.
+$page-transition-phase: calc(#{brand.$duration-quarter} * 5);
+
+// Sale: se encoge a placa y, un cuarto antes de terminar, vuela hacia arriba.
+:root[data-page-transition]::view-transition-old(root) {
+  animation:
+    pg-page-shrink $page-transition-phase brand.$ease-page both,
+    pg-page-fly-out $page-transition-phase brand.$ease-page brand.$duration-base both;
+}
+
+// Llega: sube como placa junto a la otra y crece hasta la ventana un cuarto antes de
+// quedarse quieta.
+:root[data-page-transition]::view-transition-new(root) {
+  animation:
+    pg-page-fly-in $page-transition-phase brand.$ease-page brand.$duration-base both,
+    pg-page-grow $page-transition-phase brand.$ease-page brand.$duration-double both;
+}
+
+@keyframes pg-page-shrink {
+  from {
+    scale: 1;
+    clip-path: inset(0 round 0);
+  }
+
+  to {
+    scale: $page-transition-scale;
+    clip-path: inset(0 round #{brand.$radius-plate});
+  }
+}
+
+@keyframes pg-page-fly-out {
+  from {
+    translate: 0 0;
+  }
+
+  to {
+    translate: 0 calc(#{$page-transition-travel} * -1);
+  }
+}
+
+@keyframes pg-page-fly-in {
+  from {
+    translate: 0 $page-transition-travel;
+    scale: $page-transition-scale;
+    clip-path: inset(0 round #{brand.$radius-plate});
+  }
+
+  to {
+    translate: 0 0;
+    scale: $page-transition-scale;
+    clip-path: inset(0 round #{brand.$radius-plate});
+  }
+}
+
+@keyframes pg-page-grow {
+  from {
+    scale: $page-transition-scale;
+    clip-path: inset(0 round #{brand.$radius-plate});
+  }
+
+  to {
+    scale: 1;
+    clip-path: inset(0 round 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-page-transition]::view-transition-old(root),
+  :root[data-page-transition]::view-transition-new(root) {
+    animation: none;
   }
 }

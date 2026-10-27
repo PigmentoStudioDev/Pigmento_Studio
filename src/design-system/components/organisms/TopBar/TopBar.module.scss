@@ -20,6 +20,10 @@
 // toda ella, para lo que es — un mensaje de paso. Con una capa sigue separada del
 // contenido, pero por nivel y por su linea, no por contraste maximo.
 .root {
+  // Fuera de la captura de la pagina: en la transicion entre paginas el chrome se queda
+  // quieto encima mientras la pagina se encoge y vuela debajo.
+  view-transition-name: site-topbar;
+
   position: fixed;
   inset-block-start: 0;
   inset-inline: 0;
