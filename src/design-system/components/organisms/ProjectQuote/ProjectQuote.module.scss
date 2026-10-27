@@ -1,0 +1,47 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-07;
+  margin: 0;
+}
+
+.quote {
+  margin: 0;
+}
+
+.text {
+  @include brandtype.style('heading');
+
+  // En ch del propio titular: medido en la figura, que va al cuerpo base, salia estrecha.
+  max-inline-size: 22ch;
+  margin: 0;
+  color: theme.$text-primary;
+}
+
+.caption {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-03;
+}
+
+.author {
+  @include brandtype.style('body');
+
+  font-style: normal;
+  color: theme.$text-primary;
+}
+
+.role {
+  @include brandtype.style('label');
+
+  color: theme.$text-secondary;
+}

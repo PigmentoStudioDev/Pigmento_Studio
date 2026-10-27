@@ -1,0 +1,74 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// El texto a la izquierda y la miniatura en un tercio a la derecha, sobre un filete.
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: spacing.$spacing-06;
+  align-items: end;
+  padding-block-start: spacing.$spacing-05;
+  border-block-start: 1px solid theme.$border-subtle;
+  color: theme.$text-primary;
+  text-decoration: none;
+
+  @include breakpoint.breakpoint('md') {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+.root:focus-visible {
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-04;
+}
+
+.overline,
+.meta {
+  @include brandtype.style('label');
+
+  color: theme.$text-secondary;
+}
+
+.title {
+  @include brandtype.style('title');
+}
+
+.frame {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border-radius: brand.$radius-piece;
+}
+
+// Al pasar la miniatura se acerca un poco: dice que toda la fila es el enlace.
+.image {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  transition: scale brand.$duration-base brand.$ease-default;
+}
+
+.root:hover .image {
+  scale: 1.03;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image {
+    transition: none;
+  }
+}

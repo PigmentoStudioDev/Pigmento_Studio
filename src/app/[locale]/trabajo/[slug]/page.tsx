@@ -3,10 +3,19 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Section } from "@/design-system/components/layout/Section/Section";
-import { ProjectDetail } from "@/design-system/components/organisms/ProjectDetail/ProjectDetail";
-import { getProjectBySlug, getProjectSlugs } from "@/cms/projects";
+import { CaseGallery, CaseStrip } from "@/design-system/components/molecules/CaseMedia/CaseMedia";
+import { Figures } from "@/design-system/components/organisms/Figures/Figures";
+import { ProjectChapter } from "@/design-system/components/organisms/ProjectChapter/ProjectChapter";
+import { ProjectCredits } from "@/design-system/components/organisms/ProjectCredits/ProjectCredits";
+import { ProjectHero } from "@/design-system/components/organisms/ProjectHero/ProjectHero";
+import { ProjectNext } from "@/design-system/components/organisms/ProjectNext/ProjectNext";
+import { ProjectQuote } from "@/design-system/components/organisms/ProjectQuote/ProjectQuote";
+import { getProjectBySlug, getProjectSlugs, getWorkProjects } from "@/cms/projects";
 import { routing } from "@/i18n/routing";
 import { alternatesFor } from "@/app/seo";
+import { SERVICE_FAMILY } from "@/app/pigment";
+import { buildProjectCase, nextProject } from "@/app/project-case";
+import { mockCaseExtras } from "@/app/project-case.mock";
 
 /**
  * Un caso del portfolio en profundidad. Son contenido real del CMS, no borradores, asi
@@ -57,28 +66,96 @@ export default async function ProjectPage({ params }: PageProps<"/[locale]/traba
   const t = await getTranslations("project");
   // Las disciplinas ya estan traducidas para el strip de la home; no se duplican.
   const tWork = await getTranslations("home.work");
+  const projectCase = buildProjectCase(project.gallery, mockCaseExtras(locale));
+  const next = nextProject(await getWorkProjects(locale), slug);
+
+  const facts = [
+    { term: t("client"), value: project.client },
+    ...(project.year !== undefined ? [{ term: t("year"), value: String(project.year) }] : []),
+    ...(projectCase.sector ? [{ term: t("sector"), value: projectCase.sector }] : []),
+    ...(projectCase.location ? [{ term: t("location"), value: projectCase.location }] : []),
+  ];
+  const disciplines = project.discipline
+    ? [{ label: tWork(`disciplines.${project.discipline}`), family: SERVICE_FAMILY[project.discipline] }]
+    : [];
+  const hasCredits = projectCase.credits.length > 0 || projectCase.awards.length > 0 || projectCase.liveUrl;
 
   return (
     <main id="main">
-      <Section width="wide" labelledBy="proyecto">
-        <ProjectDetail
+      <Section width="wide" spacingStart="none" labelledBy="proyecto">
+        <ProjectHero
           titleId="proyecto"
           title={project.title}
-          client={project.client}
-          disciplineLabel={project.discipline ? tWork(`disciplines.${project.discipline}`) : undefined}
-          year={project.year}
-          summary={project.summary}
+          overline={t("overline")}
+          disciplines={disciplines}
+          facts={facts}
+          tagline={projectCase.tagline ?? project.summary}
           cover={project.cover}
-          gallery={project.gallery}
-          labels={{
-            back: t("back"),
-            client: t("client"),
-            discipline: t("discipline"),
-            year: t("year"),
-            gallery: t("gallery"),
-          }}
+          back={{ label: t("back"), href: "/trabajo" }}
         />
       </Section>
+
+      {projectCase.chapters.map((chapter, index) => (
+        <Section key={chapter.key} id={chapter.key} width="wide" labelledBy={`capitulo-${chapter.key}`}>
+          <ProjectChapter
+            titleId={`capitulo-${chapter.key}`}
+            index={String(index + 1).padStart(2, "0")}
+            title={chapter.title}
+            paragraphs={chapter.paragraphs}
+            points={chapter.points}
+            media={chapter.media}
+          />
+        </Section>
+      ))}
+
+      {projectCase.results.length > 0 ? (
+        <Section width="wide" labelledBy="resultados">
+          <Figures titleId="resultados" title={t("results")} figures={projectCase.results} />
+        </Section>
+      ) : null}
+
+      {projectCase.quote ? (
+        <Section width="wide">
+          <ProjectQuote {...projectCase.quote} />
+        </Section>
+      ) : null}
+
+      {projectCase.gallery.length > 0 ? (
+        <Section width="wide">
+          <CaseGallery groups={projectCase.gallery} label={t("gallery")} />
+        </Section>
+      ) : null}
+
+      {projectCase.strip.length > 0 ? (
+        <Section width="full" spacingStart="none">
+          <CaseStrip pieces={projectCase.strip} label={t("gallery")} />
+        </Section>
+      ) : null}
+
+      {hasCredits ? (
+        <Section width="wide" labelledBy="creditos">
+          <ProjectCredits
+            titleId="creditos"
+            title={t("credits")}
+            credits={projectCase.credits}
+            awardsTitle={t("awards")}
+            awards={projectCase.awards}
+            {...(projectCase.liveUrl ? { live: { label: t("live"), href: projectCase.liveUrl } } : {})}
+          />
+        </Section>
+      ) : null}
+
+      {next ? (
+        <Section width="wide">
+          <ProjectNext
+            overline={t("next")}
+            title={next.title}
+            meta={next.discipline ? tWork(`disciplines.${next.discipline}`) : undefined}
+            href={`/trabajo/${next.slug}`}
+            image={next.image}
+          />
+        </Section>
+      ) : null}
     </main>
   );
 }

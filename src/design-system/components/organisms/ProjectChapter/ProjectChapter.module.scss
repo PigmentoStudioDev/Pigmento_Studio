@@ -1,0 +1,90 @@
+// PRIMERO y sin excepcion: cada .module.scss es su propia unidad de compilacion,
+// asi que sin este partial este archivo carga Carbon sin configurar y emite el
+// literal 'IBM Plex Sans' que next/font no registra.
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// Doce columnas: el titulo en cuatro y el texto en siete, con una de aire en medio.
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: spacing.$spacing-07;
+  padding-block-start: spacing.$spacing-05;
+  border-block-start: 1px solid theme.$border-subtle;
+
+  @include breakpoint.breakpoint('lg') {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-04;
+
+  @include breakpoint.breakpoint('lg') {
+    grid-column: 1 / span 4;
+  }
+}
+
+.index {
+  @include brandtype.style('label');
+
+  color: theme.$text-secondary;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-08;
+
+  @include breakpoint.breakpoint('lg') {
+    grid-column: 6 / span 7;
+  }
+}
+
+.paragraph {
+  @include brandtype.style('body');
+
+  margin: 0;
+  color: theme.$text-primary;
+}
+
+.paragraph + .paragraph {
+  margin-block-start: spacing.$spacing-05;
+}
+
+.points {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.point {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-04;
+  padding-block: spacing.$spacing-06;
+  border-block-start: 1px solid theme.$border-subtle;
+}
+
+.pointText {
+  @include brandtype.style('body');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.media {
+  margin-block-start: spacing.$spacing-05;
+
+  @include breakpoint.breakpoint('lg') {
+    grid-column: 1 / -1;
+  }
+}
