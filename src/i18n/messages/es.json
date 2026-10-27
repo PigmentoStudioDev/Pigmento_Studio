@@ -8,9 +8,7 @@
     "estudio": {
       "label": "Estudio",
       "trabajo": "Trabajo",
-      "nosotros": "Nosotros",
-      "laboratorio": "Laboratorio",
-      "pronto": "Pronto"
+      "nosotros": "Nosotros"
     },
     "servicios": {
       "label": "Servicios",
@@ -48,7 +46,6 @@
     "columnServices": "Servicios",
     "columnLegal": "Legal",
     "about": "Nosotros",
-    "lab": "Laboratorio",
     "branding": "Branding y diseño",
     "motion": "Motion",
     "marketing": "Marketing",
@@ -79,7 +76,6 @@
     "values": {
       "title": "Cómo lo hacemos",
       "titleHighlight": "hacemos",
-      "label": "Criterio",
       "intro": "Cinco decisiones que no se negocian por proyecto. Estan en el orden en que las vas a notar: con quien hablas, como se decide, como se construye y como se mide.",
       "carousel": "carrusel",
       "previous": "Valor anterior",
@@ -87,29 +83,28 @@
       "picker": "Elegir valor",
       "drag": "Arrastra",
       "position": "{current} de {total}",
+      "people": {
+        "count": "+{count}"
+      },
+      "cta": "Conoce al equipo",
       "cards": {
         "direct": {
-          "tag": "Trato directo",
           "title": "Hablas con quien lo hace",
           "text": "Sin ejecutivos de cuenta de por medio: quien diseña tu marca es quien contesta tus correos."
         },
         "tested": {
-          "tag": "Validación",
           "title": "Se prueba antes de lanzarse",
           "text": "Cada decisión se valida con la gente que la va a usar, no en una sala de juntas."
         },
         "sameTable": {
-          "tag": "Un solo equipo",
           "title": "Diseño y código, un solo equipo",
           "text": "Lo que apruebas en pantalla es lo que se publica, sin nada perdido entre equipos."
         },
         "criteria": {
-          "tag": "Durabilidad",
           "title": "Pensado para durar",
           "text": "Decisiones que siguen funcionando cuando pase la moda de este año."
         },
         "measured": {
-          "tag": "Medición",
           "title": "Resultados a la vista",
           "text": "Velocidad, conversiones y alcance medidos desde el primer día, con números que puedes revisar."
         }
@@ -334,7 +329,45 @@
       "title": "Lo que dicen",
       "titleHighlight": "dicen",
       "label": "Clientes",
-      "intro": "Clientes que ya pasaron por aqui, en sus palabras."
+      "intro": "Clientes que ya pasaron por aqui, en sus palabras.",
+      "items": {
+        "first": {
+          "quote": "Llegamos con un logo y una carpeta de fotos sueltas. Salimos con una marca que el equipo de ventas sabe usar sin preguntarnos nada.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        },
+        "second": {
+          "quote": "Lo que mas valoro es que nos dijeron que no a dos ideas nuestras, y tenian razon en las dos.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        },
+        "third": {
+          "quote": "El sitio nuevo lleva seis meses y no hemos tenido que pedir un solo cambio de maquetacion.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        },
+        "fourth": {
+          "quote": "Entregaron en la fecha que dijeron en la primera reunion. No me habia pasado nunca con un proveedor de diseno.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        },
+        "fifth": {
+          "quote": "Volvimos con el segundo proyecto antes de terminar el primero.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        },
+        "sixth": {
+          "quote": "Entendieron el negocio en la primera llamada. El resto fue hablar de como, no de que.",
+          "author": "Nombre Apellido",
+          "role": "Cargo",
+          "company": "Empresa"
+        }
+      }
     },
     "difference": {
       "title": "La diferencia",

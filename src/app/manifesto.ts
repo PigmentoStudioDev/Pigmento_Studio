@@ -1,5 +1,6 @@
 import type { ManifestoProps } from "@/design-system/components/organisms/Manifesto/Manifesto";
 import type { ProjectPiece } from "@/cms/projects";
+import { SERVICE_FAMILY } from "./pigment";
 
 /**
  * El contenido del manifiesto. Vive en app/ y no en el design system por lo mismo que
@@ -18,13 +19,13 @@ export function getManifesto(t: Translate, pieces: ProjectPiece[]): ManifestoPro
     eyebrow: t("eyebrow"),
     segments: [
       { text: t("open") },
-      { text: t("branding"), href: "/servicios/branding" },
+      { text: t("branding"), href: "/servicios/branding", family: SERVICE_FAMILY.branding },
       { text: t("afterBranding") },
-      { text: t("sites"), href: "/servicios/web-development" },
+      { text: t("sites"), href: "/servicios/web-development", family: SERVICE_FAMILY.web },
       { text: t("afterSites") },
-      { text: t("motion"), href: "/servicios/motion" },
+      { text: t("motion"), href: "/servicios/motion", family: SERVICE_FAMILY.motion },
       { text: t("afterMotion") },
-      { text: t("marketing"), href: "/servicios/marketing" },
+      { text: t("marketing"), href: "/servicios/marketing", family: SERVICE_FAMILY.marketing },
       { text: t("close") },
     ],
     pieces,

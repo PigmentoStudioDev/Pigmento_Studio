@@ -1,3 +1,4 @@
+import { SERVICE_FAMILY } from "./pigment";
 import type { FinalCtaProps } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import type { ContactErrorCode } from "@/design-system/components/molecules/ContactForm/validate";
 
@@ -38,7 +39,11 @@ export function getFinalCta(t: Translate, locale: string): Omit<FinalCtaProps, "
     titleHighlight: t("titleHighlight"),
     form: {
       locale,
-      topics: TOPICS.map((value) => ({ value, label: f(`topics.${value}`) })),
+      topics: TOPICS.map((value) => ({
+        value,
+        label: f(`topics.${value}`),
+        ...(value === "other" ? {} : { family: SERVICE_FAMILY[value] }),
+      })),
       copy: {
         formLabel: f("formLabel"),
         name: f("name"),

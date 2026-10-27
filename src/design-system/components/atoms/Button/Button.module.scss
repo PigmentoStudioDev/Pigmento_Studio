@@ -172,15 +172,15 @@
 
 .emphasisSecondary .bg {
   background-color: transparent;
-  border: 1px solid component.get('button-tertiary');
+  border: 1px solid theme.$interactive;
 }
 
 .emphasisSecondary .inner {
-  color: component.get('button-tertiary');
+  color: theme.$interactive;
 }
 
 .emphasisSecondary:hover:not(:disabled) .bg {
-  background-color: component.get('button-tertiary');
+  background-color: theme.$interactive;
 }
 
 .emphasisSecondary:hover:not(:disabled) .inner {

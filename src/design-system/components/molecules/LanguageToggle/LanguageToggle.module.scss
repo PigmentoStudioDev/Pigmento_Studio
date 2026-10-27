@@ -2,7 +2,6 @@
 
 @use '../../../styles/brand' as brand;
 @use '../../../styles/type' as brandtype;
-@use '../../../styles/component-tokens' as component;
 @use '@carbon/react/scss/theme';
 
 // La misma caja que los botones de icono de su fila. Aqui el contenido es texto y
@@ -16,10 +15,10 @@
   inline-size: brand.$control-block-m;
   block-size: brand.$control-block-m;
   padding: 0;
-  border: 1px solid component.get('button-tertiary');
+  border: 1px solid theme.$interactive;
   border-radius: brand.$radius-control-square;
   background-color: transparent;
-  color: component.get('button-tertiary');
+  color: theme.$interactive;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition:
@@ -28,7 +27,7 @@
 }
 
 .root:hover {
-  background-color: component.get('button-tertiary');
+  background-color: theme.$interactive;
   color: theme.$text-inverse;
 }
 

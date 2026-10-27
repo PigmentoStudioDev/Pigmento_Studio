@@ -14,10 +14,11 @@ import { routing } from "@/i18n/routing";
 import { BAND_IMAGE_FILENAME } from "./band";
 import { sendContact } from "./contact-action";
 import { getFinalCta } from "./cta";
+import { SERVICE_FAMILY } from "./pigment";
 import { faqJsonLd } from "./faq";
 import { FEATURED_CASE_PIECES, FEATURED_CASES_MAX, getFeaturedCases } from "./featuredCases";
 import { alternatesFor } from "./seo";
-import { getServiceFaq, getServiceProcess, type ServiceKey } from "./service-pages";
+import { getServiceFaq, getServiceProcess, SERVICE_PATHS, type ServiceKey } from "./service-pages";
 
 /**
  * TODO(contenido): placeholder CC0 de MDN enlazado desde su servidor, y el poster es la
@@ -31,13 +32,6 @@ const CASE_TITLE_ID = "casos";
 const FAQ_TITLE_ID = "faq";
 const CTA_TITLE_ID = "contacto";
 
-/** Las rutas de las cuatro paginas, que no siempre coinciden con la clave (web-development). */
-const SERVICE_PATHS: Record<ServiceKey, string> = {
-  branding: "/servicios/branding",
-  motion: "/servicios/motion",
-  marketing: "/servicios/marketing",
-  web: "/servicios/web-development",
-};
 
 /**
  * Sin indexar mientras el copy sea borrador: cuatro paginas con texto sin aprobar en los
@@ -87,7 +81,7 @@ export async function ServicePage({ locale, service }: { locale: string; service
       ) : null}
 
       <Section width="strip" spacing="loose" labelledBy={PROCESS_TITLE_ID}>
-        <Process {...getServiceProcess(t, service)} titleId={PROCESS_TITLE_ID} highlightFamily="cyan" />
+        <Process {...getServiceProcess(t, service)} titleId={PROCESS_TITLE_ID} highlightFamily={SERVICE_FAMILY[service]} />
       </Section>
 
       {/* Solo los casos de esta disciplina. Sin ninguno, el bloque no se pinta: un
@@ -99,7 +93,7 @@ export async function ServicePage({ locale, service }: { locale: string; service
       ) : null}
 
       <Section width="strip" spacing="loose" labelledBy={FAQ_TITLE_ID}>
-        <Faq {...faq} titleId={FAQ_TITLE_ID} highlightFamily="periwinkle" />
+        <Faq {...faq} titleId={FAQ_TITLE_ID} highlightFamily={SERVICE_FAMILY[service]} />
       </Section>
 
       <Section width="strip" spacing="loose" labelledBy={CTA_TITLE_ID}>
@@ -108,6 +102,7 @@ export async function ServicePage({ locale, service }: { locale: string; service
           title={t(`${service}.cta.title`)}
           titleHighlight={t(`${service}.cta.titleHighlight`)}
           titleId={CTA_TITLE_ID}
+          family={SERVICE_FAMILY[service]}
           onSubmit={sendContact}
         />
       </Section>

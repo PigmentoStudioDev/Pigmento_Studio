@@ -315,8 +315,15 @@ gris del tema.
   `@include candy.surface($family)`, que pone fondo Y texto juntos.
 - **No re-tematiza.** Es igual en claro y en oscuro, por lo mismo que las bandas de
   ruta: fondo fijo, primer plano fijo.
-- **Se reparte por posicion**, con `candyAt(index)` de `theme/candy.ts`, que alterna
-  calidos y frios. En las props viaja el NOMBRE de la familia.
+- **El pigmento son cuatro familias, una por servicio** (decision de Karen,
+  2026-10-26): branding `pink`, motion `periwinkle`, web `lime`, marketing
+  `tangerine` (`app/pigment.ts`). Cada color nombra una disciplina y juntos son la
+  marca: la baldosa de un servicio, los resaltes y el formulario de su pagina llevan
+  su color; lo que habla del estudio entero —los valores, la home— recorre los
+  cuatro con `candyAt`. Cian, ambar y orquidea quedan fuera del sitio. La forma
+  distingue y el color nombra. En las props viaja el NOMBRE de la familia.
+- **El resalte es gradiente** (`highlight.pigment`), con la tinta de su familia. Se
+  reinicia en cada linea de la marca partida, a proposito: cada trozo es un trazo.
 - **Orquidea no entra en el ciclo.** Su esquina saturada no llega a 4.5:1 con ningun
   texto — ni el negro —, asi que solo admite texto grande.
 - **Nunca como fondo de seccion** ni debajo de texto corrido largo: siete familias a

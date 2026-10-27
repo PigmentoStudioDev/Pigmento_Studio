@@ -1,3 +1,4 @@
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { themeAttributes, type ThemeAssignment } from "../../../theme/zone";
 import { ContactForm, type ContactFormProps } from "../../molecules/ContactForm/ContactForm";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
@@ -50,21 +51,54 @@ export interface FinalCtaProps {
   titleId?: string;
   form: Pick<ContactFormProps, "copy" | "locale" | "topics">;
   onSubmit?: ContactFormProps["onSubmit"];
+  /**
+   * La placa en el gradiente de un servicio, en su pagina: el formulario lleva el color
+   * de lo que se va a pedir. Sin ella, la placa invertida con su papel.
+   */
+  family?: CycledCandyFamily;
+  /** La familia del resalte cuando la placa no lleva `family` (que ya la pone). */
+  highlightFamily?: CycledCandyFamily;
 }
 
 /** Destaca en los dos modos: oscura sobre la pagina clara, clara sobre la oscura. */
 const PANEL_THEME: ThemeAssignment = { light: "dark", dark: "light" };
 
-export function FinalCta({ label, title, intro, titleHighlight, titleId, form, onSubmit }: FinalCtaProps) {
+/**
+ * Sobre candy, la placa es clara en los dos modos: el candy no re-tematiza, y los
+ * campos tienen que leerse sobre el con los tokens del tema claro.
+ */
+const PIGMENT_THEME: ThemeAssignment = { light: "light", dark: "light" };
+
+/** Una clase por familia, explicita: el gate cruza el TSX con la hoja. */
+const FAMILY_CLASS: Record<CycledCandyFamily, string> = {
+  pink: styles.familyPink,
+  periwinkle: styles.familyPeriwinkle,
+  tangerine: styles.familyTangerine,
+  lime: styles.familyLime,
+};
+
+export function FinalCta({ label, title, intro, titleHighlight, titleId, form, onSubmit, family, highlightFamily }: FinalCtaProps) {
   return (
     // La placa publica su asignacion y la hoja global la aplica bajo el modo del
     // documento. Es el mismo contrato que usa la cabecera para adoptar el tema de lo
     // que tiene debajo, asi que al pasar por delante de esta placa se adapta sola.
-    <div className={styles.panel} {...themeAttributes(PANEL_THEME)}>
+    <div
+      className={family ? `${styles.panel} ${FAMILY_CLASS[family]}` : styles.panel}
+      {...themeAttributes(family ? PIGMENT_THEME : PANEL_THEME)}
+    >
       {/* El fondo de la placa es papel vivo: la estela sigue al puntero y un clic fuera
-          de los campos deja un anillo. Es lo unico de la placa que cruza al navegador. */}
-      <PaperSurface />
-      <StripHeader title={title} titleHighlight={titleHighlight} titleId={titleId} label={label} intro={intro} />
+          de los campos deja un anillo. Es lo unico de la placa que cruza al navegador.
+          Sobre candy no va: el papel pinta el fondo de su zona y taparia el gradiente. */}
+      {family ? null : <PaperSurface />}
+      <StripHeader
+        title={title}
+        titleHighlight={titleHighlight}
+        titleId={titleId}
+        label={label}
+        intro={intro}
+        highlightFamily={family ?? highlightFamily}
+        highlightOnScroll
+      />
 
       {/* El formulario llega como CAJA: partirlo por lineas desmontaria los campos. Ocupa
           las dos columnas porque cada fila repite por dentro la banda de la cabecera:

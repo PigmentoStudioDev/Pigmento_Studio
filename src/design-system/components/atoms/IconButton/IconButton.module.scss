@@ -1,6 +1,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/candy';
 @use '../../../styles/component-tokens' as component;
 @use '@carbon/react/scss/theme';
 
@@ -129,31 +130,37 @@
 // Reposo: placa vacia con su contorno. La cortina que sube es el relleno, y por eso
 // el color de hover vive en la lonja y no en la placa.
 .emphasisSecondary .bg {
-  border: 1px solid component.get('button-tertiary');
+  border: 1px solid theme.$interactive;
 }
 
 .emphasisSecondary .slice {
-  background-color: component.get('button-tertiary');
+  background-color: theme.$interactive;
 }
 
 .emphasisSecondary .faceDefault {
-  color: component.get('button-tertiary');
+  color: theme.$interactive;
 }
 
 .emphasisSecondary .faceHover {
   color: theme.$text-inverse;
 }
 
+// La placa del Button primario, la misma: el azul de catalogo de `button-primary` era
+// el unico control primario del sitio que no era carbon. El barrido del hover es la
+// misma placa con mas luz, como el hover del Button.
 .emphasisPrimary .bg {
-  background-color: component.get('button-primary');
+  @include candy.control;
 }
 
 .emphasisPrimary .slice {
-  background-color: component.get('button-primary-hover');
+  @include candy.control;
+
+  filter: brightness(1.35);
 }
 
+// Fijo en los dos modos, como la placa que tiene debajo.
 .emphasisPrimary .face {
-  color: theme.$text-on-color;
+  color: brand.$text-on-control-ink;
 }
 
 .root:disabled {

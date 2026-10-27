@@ -4,6 +4,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/candy';
 @use '../../../styles/field-row';
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
@@ -92,6 +93,34 @@
 
 .topic[aria-checked='true'] .box {
   background-color: currentcolor;
+}
+
+// Cada servicio con su color: la casilla es una muestra del gradiente, la misma que su
+// baldosa. Elegida, el anillo de la tinta la cierra; la casilla no se rellena de tinta
+// porque taparia el color que la nombra.
+.boxPink {
+  border-color: transparent;
+  background-image: candy.gradient('pink');
+}
+
+.boxPeriwinkle {
+  border-color: transparent;
+  background-image: candy.gradient('periwinkle');
+}
+
+.boxTangerine {
+  border-color: transparent;
+  background-image: candy.gradient('tangerine');
+}
+
+.boxLime {
+  border-color: transparent;
+  background-image: candy.gradient('lime');
+}
+
+.topic[aria-checked='true'] .box:is(.boxPink, .boxPeriwinkle, .boxTangerine, .boxLime) {
+  outline: 2px solid currentcolor;
+  outline-offset: 2px;
 }
 
 @media (hover: hover) and (pointer: fine) {
