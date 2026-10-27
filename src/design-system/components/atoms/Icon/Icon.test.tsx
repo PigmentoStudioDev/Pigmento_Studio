@@ -10,13 +10,13 @@ const STROKED: IconName[] = [
   "sun",
   "moon",
   "chevron",
-  "sound",
-  "mute",
   "check",
   "dash",
   "arrow-up-right",
   "globe",
   "close",
+  "pause",
+  "play",
 ];
 const NAMES: IconName[] = [...FILLED, ...STROKED];
 

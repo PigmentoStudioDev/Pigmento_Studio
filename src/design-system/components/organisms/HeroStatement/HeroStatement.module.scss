@@ -79,8 +79,10 @@
 }
 
 // Todo el texto espera hasta que la tira aterriza. Sin JS no hay lineas partidas ni
-// estado de bloque, y el texto se lee entero.
-.root:not(:has([data-hero-band-landed])) :global(.pg-line) {
+// estado de bloque, y el texto se lee entero. Solo si HAY tira: sin piezas en el CMS
+// la banda no pinta nada, nadie va a marcar el aterrizaje y el titular se quedaba
+// escondido detras de su mascara para siempre.
+.root:has(.band > *):not(:has([data-hero-band-landed])) :global(.pg-line) {
   translate: 0 110%;
 }
 
@@ -89,7 +91,7 @@
 // oculto al abrirse la cortina —se veian desvanecerse— para volver a entrar al
 // aterrizar la tira. Asi se esconden de golpe, y la transicion vuelve justo en el
 // cambio de estilo que los trae: el navegador anima con la del estado de llegada.
-.root:not(:has([data-hero-band-landed])) [data-reveal-mode='block'] {
+.root:has(.band > *):not(:has([data-hero-band-landed])) [data-reveal-mode='block'] {
   opacity: 0;
   translate: 0 brand.$reveal-distance;
   transition: none;
@@ -102,7 +104,7 @@
     transition: none;
   }
 
-  .root:not(:has([data-hero-band-landed])) [data-reveal-mode='block'] {
+  .root:has(.band > *):not(:has([data-hero-band-landed])) [data-reveal-mode='block'] {
     opacity: 1;
     translate: none;
   }

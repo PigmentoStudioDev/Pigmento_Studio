@@ -1,5 +1,12 @@
-import { afterEach, describe, expect, it } from "vitest";
-import { PAGE_STATUS, PRELOADER_SEEN_KEY, markPageReady, pageStatusScript, whenPageReady } from "./pageReady";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  PAGE_STATUS,
+  PRELOADER_FAILSAFE_MS,
+  PRELOADER_SEEN_KEY,
+  markPageReady,
+  pageStatusScript,
+  whenPageReady,
+} from "./pageReady";
 
 const html = () => document.documentElement;
 
@@ -42,5 +49,22 @@ describe("pageReady", () => {
     sessionStorage.setItem(PRELOADER_SEEN_KEY, "1");
     run();
     expect(html()).not.toHaveAttribute(PAGE_STATUS);
+  });
+
+  // El bug: si React no llegaba a montar el preloader, la pagina se quedaba tapada y
+  // los reveals en pausa para siempre. El script se suelta solo y la promesa lo ve.
+  it("sin React, el script inline suelta la pagina y la promesa se entera", async () => {
+    vi.useFakeTimers();
+    try {
+      new Function(pageStatusScript())();
+      const waiting = whenPageReady();
+
+      vi.advanceTimersByTime(PRELOADER_FAILSAFE_MS);
+      await waiting;
+
+      expect(html()).toHaveAttribute(PAGE_STATUS, "ready");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

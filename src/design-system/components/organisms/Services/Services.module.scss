@@ -71,9 +71,15 @@ $preview-size: 24vw;
   visibility: hidden;
 }
 
-.link:hover .cta,
 .link:focus-visible .cta {
   visibility: visible;
+}
+
+// El hover solo con puntero fino: en tactil se queda pegado tras el toque.
+@media (hover: hover) and (pointer: fine) {
+  .link:hover .cta {
+    visibility: visible;
+  }
 }
 
 // Con el cursor propio, la pista la dice el cursor: repetida en la fila serian dos

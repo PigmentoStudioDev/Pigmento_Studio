@@ -5,7 +5,6 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProgressiveBlur } from "@/design-system/components/atoms/ProgressiveBlur/ProgressiveBlur";
 import { CustomCursor } from "@/design-system/components/layout/CustomCursor/CustomCursor";
-import { InterfaceSound } from "@/design-system/components/layout/InterfaceSound/InterfaceSound";
 import { SmoothScroll } from "@/design-system/components/layout/SmoothScroll/SmoothScroll";
 import { SiteFooter } from "@/design-system/components/organisms/SiteFooter/SiteFooter";
 import { SiteHeader } from "@/design-system/components/organisms/SiteHeader/SiteHeader";
@@ -166,10 +165,6 @@ export default async function RootLayout({
               bloque se registre a el. */}
           <Preloader />
           <SmoothScroll />
-          {/* Tampoco pinta nada: enlaza los sonidos de la interfaz con los atributos
-              que ya viajan en el HTML. Con el sonido apagado —que es como arranca— no
-              carga ni un byte de la libreria. */}
-          <InterfaceSound />
           {/* El cursor del sitio. Cambia de forma por el atributo `data-cursor` de lo
               que tiene debajo, asi que ningun bloque tiene que montarlo ni conocerlo. */}
           <CustomCursor />
@@ -181,9 +176,16 @@ export default async function RootLayout({
           {/* Encima de la cabecera y fija: promos y avisos del estudio. La cabecera y
               el hero bajan lo que ella mide por --pg-topbar-offset, que vale cero si
               esta linea se quita. */}
+          {/* Lo primero que alcanza el tabulador: sin el, quien navega con teclado
+              recorre la barra de promos y la cabecera entera en cada pagina antes de
+              llegar al contenido (WCAG 2.4.1). Apunta a un envoltorio del layout y no
+              al <main> de cada pagina para no depender de que todas lo lleven. */}
+          <a href="#contenido" className="pg-skip-link">
+            {t("skipToContent")}
+          </a>
           <TopBar {...getTopBar(tTopBar)} />
           <SiteHeader {...getNavigation(t, pieces)} />
-          {children}
+          <div id="contenido">{children}</div>
           {/* Chrome de pagina, como la cabecera: va aqui y no envuelto en un
               Section. Un <footer> dentro de <section> deja de ser el landmark
               contentinfo — la regla de HTML es que solo lo es cuando no esta

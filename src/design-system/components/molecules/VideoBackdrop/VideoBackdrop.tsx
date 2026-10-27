@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import { DEFAULT_BACKDROP_PARALLAX } from "../../../motion/backdrop";
 import { useParallax, type ParallaxOptions } from "../../../motion/useParallax";
+import { REDUCED_MOTION } from "../../../motion/breakpoints";
+import { getMotionPaused, subscribeMotionPaused } from "../../../motion/motionPause";
 import styles from "./VideoBackdrop.module.scss";
 
 /**
@@ -47,12 +49,23 @@ export function VideoBackdrop({ src, poster, parallax }: VideoBackdropProps) {
     // donde no existe, y el resultado no coincidiria con el del cliente. Y un
     // bucle de fondo corriendo es justo lo que reduced-motion pide evitar, asi que
     // con esa preferencia el video se queda en su poster.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia(REDUCED_MOTION).matches) return;
 
-    // play() devuelve una promesa que se RECHAZA si el navegador bloquea la
-    // reproduccion. Sin capturarla es un unhandled rejection en la consola de cada
-    // visitante; y no hay nada que hacer al respecto — el poster ya es el plan B.
-    void video.play().catch(() => {});
+    // El conmutador de movimiento (WCAG 2.2.2) para el video y lo reanuda donde iba:
+    // es un bucle de mas de cinco segundos junto al titular.
+    const sync = () => {
+      if (getMotionPaused()) {
+        video.pause();
+        return;
+      }
+      // play() devuelve una promesa que se RECHAZA si el navegador bloquea la
+      // reproduccion. Sin capturarla es un unhandled rejection en la consola de cada
+      // visitante; y no hay nada que hacer al respecto — el poster ya es el plan B.
+      void video.play().catch(() => {});
+    };
+
+    sync();
+    return subscribeMotionPaused(sync);
   }, [src]);
 
   return (

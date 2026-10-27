@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type FocusEvent } from "react";
 import { REDUCED_MOTION } from "./breakpoints";
+import { getMotionPaused, getServerMotionPaused, subscribeMotionPaused } from "./motionPause";
 import { duration } from "./tokens";
 
 /**
@@ -36,6 +37,8 @@ export function useAutoRotate<T extends HTMLElement>(advance: () => void, enable
   const [pageVisible, setPageVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
   const hasBeat = useSyncExternalStore(subscribeNever, readHasBeat, serverHasBeat);
+  // El conmutador global de movimiento (WCAG 2.2.2): parado ahi, parado aqui.
+  const motionPaused = useSyncExternalStore(subscribeMotionPaused, getMotionPaused, getServerMotionPaused);
 
   // En una ref: el intervalo llama siempre al avance de este render sin reiniciarse
   // cada vez que el padre crea una funcion nueva.
@@ -72,7 +75,7 @@ export function useAutoRotate<T extends HTMLElement>(advance: () => void, enable
 
   // Sin el token no hay ritmo que seguir: un intervalo de cero giraria sin parar.
   const rotating = hasBeat && enabled && !stopped && !reducedMotion;
-  const running = rotating && !hovered && !focused && onScreen && pageVisible;
+  const running = rotating && !motionPaused && !hovered && !focused && onScreen && pageVisible;
 
   useEffect(() => {
     if (!running) return;

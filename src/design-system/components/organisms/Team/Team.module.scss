@@ -116,9 +116,13 @@ $shot-max-block-size: 70svh;
     border-color brand.$duration-quarter brand.$ease-default;
 }
 
-.chip:hover {
-  border-color: theme.$border-strong;
-  color: theme.$text-primary;
+// Solo con puntero que de verdad pasa por encima: en tactil :hover se queda
+// pegado despues del toque y el control parece activo.
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover {
+    border-color: theme.$border-strong;
+    color: theme.$text-primary;
+  }
 }
 
 .chip[aria-pressed='true'] {

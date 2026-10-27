@@ -28,12 +28,12 @@ export type IconName =
   | "arrow"
   | "arrow-up-right"
   | "chevron"
-  | "sound"
-  | "mute"
   | "check"
   | "dash"
   | "globe"
-  | "close";
+  | "close"
+  | "pause"
+  | "play";
 
 /**
  * Un icono es una LISTA de trazados: los de marca no son una sola figura. El de
@@ -132,16 +132,15 @@ const ICONS: Record<IconName, IconDefinition> = {
     paths: ["M5 9L12 16L19 9"],
   },
 
-  /** El altavoz con su onda: el sonido de interfaz encendido. */
-  sound: {
+  /** El movimiento del sitio en marcha (pulsar lo para) y parado (pulsar lo reanuda). */
+  pause: {
     stroke: true,
-    paths: ["M4 9.5H7L11.5 6V18L7 14.5H4V9.5Z", "M15 9.5C16.3 11 16.3 13 15 14.5"],
+    paths: ["M9 6V18", "M15 6V18"],
   },
 
-  /** El mismo altavoz, callado. La cruz y no una onda tachada: se lee a 16px. */
-  mute: {
+  play: {
     stroke: true,
-    paths: ["M4 9.5H7L11.5 6V18L7 14.5H4V9.5Z", "M15 10L19 14", "M19 10L15 14"],
+    paths: ["M8 5.5V18.5L18.5 12L8 5.5Z"],
   },
 
   /**

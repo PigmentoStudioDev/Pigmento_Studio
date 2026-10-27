@@ -1,7 +1,8 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { Icon } from "../../atoms/Icon/Icon";
-import { getThemeMode, setThemeMode } from "../../../theme/mode";
+import { getServerThemeMode, getThemeMode, setThemeMode, subscribeThemeMode } from "../../../theme/mode";
 import styles from "./ThemeToggle.module.scss";
 
 /**
@@ -30,10 +31,15 @@ export interface ThemeToggleProps {
 export function ThemeToggle({ label }: ThemeToggleProps) {
   // El modo se lee en el momento del clic y no en el render: fuera del manejador no
   // hace falta saberlo, y pedirlo en el render seria pedir que el servidor lo sepa.
-  const toggle = () => setThemeMode(getThemeMode() === "dark" ? "light" : "dark");
+  const mode = useSyncExternalStore(subscribeThemeMode, getThemeMode, getServerThemeMode);
+  const toggle = () => setThemeMode(mode === "dark" ? "light" : "dark");
 
+  // Patron de interruptor: el nombre dice QUE es ("modo oscuro") y aria-pressed si
+  // esta puesto. Sin el estado, un lector de pantalla oia el mismo boton en los dos
+  // modos y no habia forma de saber cual estaba activo. El nombre sigue fijo, que es
+  // lo que evita el desajuste entre servidor y cliente.
   return (
-    <button type="button" aria-label={label} onClick={toggle} className={styles.root}>
+    <button type="button" aria-label={label} aria-pressed={mode === "dark"} onClick={toggle} className={styles.root}>
       <span aria-hidden="true" className={styles.track}>
         <span className={styles.face}>
           <Icon name="sun" />

@@ -17,13 +17,22 @@ import styles from "./Logo.module.scss";
 export interface LogoProps {
   /** Colapsa al isotipo. La cabecera lo activa al empezar el scroll. */
   compact?: boolean;
+  /**
+   * Por debajo de md se queda en la marca compacta, y ademas encoge: `compact` solo
+   * funde el logotipo, que sigue ocupando su ancho. En la cabecera movil el logotipo
+   * completo no cabia junto al menu y la llamada a la accion (434px de contenido
+   * para 294 libres a 390px de ancho).
+   */
+  compactBelowMd?: boolean;
 }
 
-export function Logo({ compact = false }: LogoProps) {
+export function Logo({ compact = false, compactBelowMd = false }: LogoProps) {
   return (
     <span
       aria-hidden="true"
-      className={[styles.root, compact ? styles.isCompact : styles.isFull].join(" ")}
+      className={[styles.root, compact ? styles.isCompact : styles.isFull, compactBelowMd ? styles.isResponsive : undefined]
+        .filter(Boolean)
+        .join(" ")}
     >
       {/* Import estatico: Next lee el tamano del archivo y reserva el hueco solo,
           sin que haya que repetir 400x75 aqui y que se quede mintiendo el dia que

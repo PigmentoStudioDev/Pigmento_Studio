@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
+import { MOTION_PREFERENCE } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
+import { whenPageReady } from "./pageReady";
+import { ENTRY_START, onRevealed } from "./useScrollReveal";
 import { BRAND_EASE, duration as scaleDuration, stagger } from "./tokens";
 
 /**
@@ -74,7 +76,7 @@ export function pasoDe(el: HTMLElement): number {
 
 export function useNumberRoll<T extends HTMLElement>({
   value,
-  scrollStart = "top 85%",
+  scrollStart = ENTRY_START,
   duration,
 }: NumberRollOptions) {
   const ref = useRef<T>(null);
@@ -101,10 +103,14 @@ export function useNumberRoll<T extends HTMLElement>({
 
       mm = gsap.matchMedia();
 
-      mm.add({ ...MOTION_BREAKPOINTS, isReduced: REDUCED_MOTION }, (context) => {
+      mm.add(MOTION_PREFERENCE, (context) => {
         // Decorativo puro: la cifra ya esta escrita en el HTML del servidor, asi que
         // con esta preferencia no se toca nada y se lee igual.
         if (context.conditions?.isReduced) return;
+
+        // Lo que dejo una pasada anterior se tira antes de montar: sin esto, cada vez
+        // que gsap rehace el efecto la cifra se monta encima de la anterior.
+        pista.replaceChildren();
 
         const paso = pasoDe(plano);
         const rodillos: { rodillo: HTMLElement; destino: number }[] = [];
@@ -193,12 +199,33 @@ export function useNumberRoll<T extends HTMLElement>({
           trigger: root,
           start: scrollStart,
           once: true,
-          onEnter: () => tl.play(),
+          onEnter: () => {
+            /**
+             * La cifra rueda CON su tarjeta, no con un trigger propio. Medidos aparte,
+             * el rodado arrancaba al 85% de la ventana y la tarjeta entraba al 25%
+             * visible: la mitad del giro pasaba con la tarjeta todavia en opacidad 0.
+             * Y en primera pantalla rodaba debajo del preloader. Espera a la pagina,
+             * despues al reveal que la contiene, y arranca con el retardo de esa
+             * tarjeta dentro de su fila.
+             */
+            void whenPageReady().then(() => {
+              if (cancelled) return;
+              stopWaiting = onRevealed(root, (delay) => {
+                start = gsap.delayedCall(delay, () => tl.play());
+              });
+            });
+          },
         });
+
+        let stopWaiting: (() => void) | undefined;
+        let start: ReturnType<typeof gsap.delayedCall> | undefined;
 
         return () => {
           trigger.kill();
+          stopWaiting?.();
+          start?.kill();
           tl.kill();
+          soltar();
         };
       });
     });

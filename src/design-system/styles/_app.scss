@@ -6,6 +6,8 @@
 // algo fuera de preview/, va en este archivo.
 
 @use './brand' as brand;
+@use './a11y';
+@use '@carbon/react/scss/theme';
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/type';
 
@@ -63,6 +65,29 @@
 
 :root:has([data-topbar]) {
   --pg-topbar-offset: #{brand.$topbar-block-size};
+}
+
+// Lo que pinta el navegador y no la hoja —barras de scroll, el fondo del rebote al
+// pasarse del borde, los controles nativos— sigue en claro aunque la pagina este en
+// oscuro si nadie lo declara. Va por zona, la misma clase de Carbon que pone el tema:
+// en la raiz sigue al modo, y una seccion oscura dentro de una pagina clara tambien
+// recibe sus controles en oscuro.
+.cds--white,
+.cds--g10 {
+  color-scheme: light;
+}
+
+.cds--g90,
+.cds--g100 {
+  color-scheme: dark;
+}
+
+// Un ancla o un foco que salta al bloque lo deja debajo de la cabecera fija si nadie
+// reserva su alto: el titulo del destino queda tapado (WCAG 2.4.11, tecnica C43).
+// Lenis lee esta misma propiedad al resolver un ancla, asi que el scroll suavizado y
+// el nativo paran en el mismo sitio.
+:root {
+  scroll-padding-block-start: calc(var(--pg-topbar-offset) + #{brand.$header-block-size} + #{spacing.$spacing-05});
 }
 
 body {
@@ -227,3 +252,28 @@ body {
 .pg-status p {
   margin: 0;
 }
+
+// El salto al contenido: fuera de la vista hasta que el tabulador llega a el, y
+// entonces una pastilla arriba a la izquierda, por encima del chrome fijo.
+.pg-skip-link {
+  @include a11y.visually-hidden;
+}
+
+.pg-skip-link:focus-visible {
+  position: fixed;
+  z-index: brand.$z-skip-link;
+  inset-block-start: spacing.$spacing-03;
+  inset-inline-start: spacing.$spacing-03;
+  inline-size: auto;
+  block-size: auto;
+  padding: spacing.$spacing-03 spacing.$spacing-05;
+  overflow: visible;
+  clip-path: none;
+  border-radius: brand.$radius-full;
+  outline: 2px solid theme.$focus;
+  outline-offset: 2px;
+  background-color: theme.$background;
+  color: theme.$text-primary;
+  white-space: nowrap;
+}
+

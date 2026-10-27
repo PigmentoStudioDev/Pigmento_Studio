@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
+import { MOTION_PREFERENCE } from "./breakpoints";
+import { ENTRY_START } from "./useScrollReveal";
 import { loadMotion, type MatchMedia } from "./gsap";
 import { EASE_LINEAR } from "./tokens";
 
@@ -27,7 +28,8 @@ export interface ScrollHighlightOptions {
 }
 
 const DEFAULTS = {
-  scrollStart: "top 85%",
+  // La linea de entrada de los reveals: el relleno arranca cuando entra su texto.
+  scrollStart: ENTRY_START,
   scrollEnd: "bottom 20%",
   scrub: 0.35,
 } as const;
@@ -67,7 +69,7 @@ export function useScrollHighlight<T extends HTMLElement>({
 
       mm = gsap.matchMedia();
 
-      mm.add({ ...MOTION_BREAKPOINTS, isReduced: REDUCED_MOTION }, (context) => {
+      mm.add(MOTION_PREFERENCE, (context) => {
         // Con la preferencia puesta no se toca nada: la hoja ya deja la marca
         // rellena en su @media.
         if (context.conditions?.isReduced) return;

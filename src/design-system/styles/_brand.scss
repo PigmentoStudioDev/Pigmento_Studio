@@ -236,6 +236,10 @@ $header-overlay-blur: 0.625rem;
 /// un enlace valido con el menu abierto. Debajo del preloader (200).
 $z-topbar: 110;
 
+/// El salto al contenido, al recibir el foco: por encima de la barra y la cabecera,
+/// que es justo lo que se salta. Debajo del preloader, que mientras corre tapa todo.
+$z-skip-link: 150;
+
 /// El cursor propio, por encima de todo el chrome: un cursor que pasa por DEBAJO de la
 /// cabecera desaparece justo encima del menu, que es donde mas se usa.
 $z-cursor: 300;

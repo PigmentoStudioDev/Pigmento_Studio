@@ -1,6 +1,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/a11y' as a11y;
 @use '../../../styles/component-tokens' as component;
 @use '@carbon/react/scss/theme';
 
@@ -22,11 +23,17 @@
   transition:
     background-color brand.$duration-quarter brand.$ease-default,
     color brand.$duration-quarter brand.$ease-default;
+
+  @include a11y.touch-target;
 }
 
-.root:hover {
-  background-color: component.get('button-tertiary');
-  color: theme.$text-inverse;
+// Solo con puntero que de verdad pasa por encima: en tactil :hover se queda
+// pegado despues del toque y el control parece activo.
+@media (hover: hover) and (pointer: fine) {
+  .root:hover {
+    background-color: component.get('button-tertiary');
+    color: theme.$text-inverse;
+  }
 }
 
 .root:focus-visible {

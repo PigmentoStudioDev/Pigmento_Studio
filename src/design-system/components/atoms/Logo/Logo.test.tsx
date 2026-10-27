@@ -46,6 +46,16 @@ describe("Logo", () => {
     expect(full).not.toBe(compact);
   });
 
+  // El bug: en la cabecera movil el logotipo no cabia; la variante que encoge tiene
+  // que poner una clase que exista de verdad en la hoja.
+  it("compactBelowMd pone su clase, declarada en la hoja", () => {
+    const root = render(<Logo compactBelowMd />).container.firstElementChild;
+    const extra = [...(root?.classList ?? [])].filter((cls) => !render(<Logo />).container.firstElementChild?.classList.contains(cls));
+
+    expect(extra).toHaveLength(1);
+    expect(declared.has(extra[0] ?? "")).toBe(true);
+  });
+
   it.each([{ label: "completo", compact: false }, { label: "compacto", compact: true }])(
     "$label usa clases que existen en Logo.module.scss",
     ({ compact }) => {

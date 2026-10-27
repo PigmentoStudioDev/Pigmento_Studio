@@ -55,8 +55,14 @@
    * una clase paralela que pueda quedar desincronizada del atributo que anuncia
    * el lector de pantalla.
    */
-  &:hover,
   &[aria-current='true'] {
     color: theme.$text-primary;
+  }
+
+  // El hover solo con puntero fino: en tactil se queda pegado tras el toque.
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: theme.$text-primary;
+    }
   }
 }

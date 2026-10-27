@@ -76,7 +76,9 @@ export function LegalToc({ title, label, items }: LegalTocProps) {
   }, [items]);
 
   return (
-    <nav className={styles.toc} aria-label={label}>
+    // Rueda por dentro cuando es mas alto que la ventana: sin `data-lenis-prevent`,
+    // Lenis se queda la rueda y mueve la pagina en vez de la lista.
+    <nav className={styles.toc} aria-label={label} data-lenis-prevent>
       <details open>
         <summary className={styles.tocTitle}>{title}</summary>
 

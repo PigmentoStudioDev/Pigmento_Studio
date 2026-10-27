@@ -32,6 +32,44 @@ import { BRAND_EASE, brandEasePoints, FOLLOW_EASE, followEasePoints } from "./to
  * en vuelo: dos componentes que monten a la vez piden lo mismo y el segundo espera
  * al primero en vez de disparar una segunda descarga y un segundo registro.
  */
+/**
+ * ScrollTrigger solo se recalcula solo al cambiar el tamano de la VENTANA. Lo que
+ * cambia el alto de la pagina sin tocar la ventana —una pregunta del Faq que se abre,
+ * una ficha del equipo, una imagen que llega tarde, el alto que la seccion de trabajos
+ * se pone a si misma— deja cada trigger de debajo midiendo una posicion que ya no
+ * existe: el relleno del titular arranca tarde por exactamente lo que crecio el panel.
+ *
+ * Un solo observador para la pagina entera, aqui y no en cada componente que cambia
+ * de alto: el fallo es de todos los triggers a la vez y ningun componente sabe cuales
+ * tiene debajo. Con espera, porque una transicion de alto dispara un cambio por frame
+ * y lo que importa es donde se queda.
+ */
+export const PAGE_HEIGHT_SETTLE_MS = 200;
+
+export function watchPageHeight(onChange: () => void): () => void {
+  if (typeof ResizeObserver === "undefined" || typeof document === "undefined") return () => {};
+
+  let height = document.body.scrollHeight;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  const observer = new ResizeObserver(() => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      const next = document.body.scrollHeight;
+      if (next === height) return;
+      height = next;
+      onChange();
+    }, PAGE_HEIGHT_SETTLE_MS);
+  });
+
+  observer.observe(document.body);
+
+  return () => {
+    clearTimeout(timer);
+    observer.disconnect();
+  };
+}
+
 let loaded: Motion | null = null;
 let pending: Promise<Motion> | null = null;
 
@@ -90,6 +128,7 @@ export function loadMotion(): Promise<Motion> {
     if (typeof document !== "undefined" && document.fonts) {
       void document.fonts.ready.then(() => scrollTrigger.ScrollTrigger.refresh(true));
     }
+
 
     loaded = {
       gsap: core.gsap,

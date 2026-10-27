@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { getServerThemeMode, getThemeMode, subscribeThemeMode } from "../../../theme/mode";
 import {
   readThemeAssignment,
@@ -19,7 +20,7 @@ import { NavBanner, type NavBannerProps } from "../../molecules/NavBanner/NavBan
 import { NavLinkList, type NavLinkItem } from "../../molecules/NavLinkList/NavLinkList";
 import { NavToggle } from "../../molecules/NavToggle/NavToggle";
 import { LanguageToggle } from "../../molecules/LanguageToggle/LanguageToggle";
-import { SoundToggle } from "../../molecules/SoundToggle/SoundToggle";
+import { MotionToggle } from "../../molecules/MotionToggle/MotionToggle";
 import { ThemeToggle } from "../../molecules/ThemeToggle/ThemeToggle";
 import styles from "./SiteHeader.module.scss";
 
@@ -68,8 +69,8 @@ export interface SiteHeaderGroup {
   themeToggle?: SiteHeaderThemeToggle;
   /** Conmutador de idioma, al lado del de tema. */
   languageToggle?: SiteHeaderThemeToggle;
-  /** Interruptor del sonido de la interfaz, en la misma fila. */
-  soundToggle?: SiteHeaderThemeToggle;
+  /** El que para todos los bucles (WCAG 2.2.2), en la misma fila. */
+  motionToggle?: SiteHeaderThemeToggle;
 }
 
 export interface SiteHeaderThemeToggle {
@@ -156,13 +157,16 @@ export function SiteHeader({
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [assignment, setAssignment] = useState<ThemeAssignment | undefined>(undefined);
+  // El tema leido va ATADO a la ruta en que se leyo: al navegar, el de la pagina
+  // anterior deja de valer solo, sin un setState de limpieza en el efecto.
+  const [reading, setReading] = useState<{ path: string | null; assignment?: ThemeAssignment }>({ path: null });
 
   // El modo se lee del store y no de un estado propio: lo cambia tambien el
   // sistema operativo y el conmutador, que estan en otras ramas del arbol. La
   // cabecera adopta la ASIGNACION de la seccion que tiene debajo, y la asignacion
   // solo se convierte en una zona una vez que se sabe el modo: una seccion puede
   // pedir oscuro en claro y dejar que el oscuro siga al sitio.
+  const pathname = usePathname();
   const mode = useSyncExternalStore(subscribeThemeMode, getThemeMode, getServerThemeMode);
 
   // Escape cierra. Va en el documento y no en el panel porque el foco puede estar
@@ -171,12 +175,17 @@ export function SiteHeader({
     if (!open) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      // El foco vuelve al boton que abrio el panel. Sin esto, si estaba en un enlace
+      // del panel cae al <body> cuando el panel pasa a inert, y quien navega con
+      // teclado pierde su sitio en la pagina.
+      barRef.current?.querySelector<HTMLElement>(`[aria-controls="${panelId}"]`)?.focus();
     };
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open]);
+  }, [open, panelId]);
 
   /**
    * Desplazarse cierra el panel.
@@ -252,6 +261,10 @@ export function SiteHeader({
    * aqui la deteccion la hace el navegador con un IntersectionObserver cuya zona
    * sensible es la franja de la barra.
    */
+  //
+  // Se rehace en cada cambio de ruta: la cabecera vive en el layout y no se desmonta al
+  // navegar, asi que con una sola pasada al montar seguia observando las secciones de
+  // la pagina anterior —ya fuera del documento— y se quedaba con su tema.
   useEffect(() => {
     const sections = document.querySelectorAll<HTMLElement>(THEMED_SELECTOR);
     if (sections.length === 0) return;
@@ -276,7 +289,7 @@ export function SiteHeader({
           else under.delete(entry.target);
         });
         const [current] = under;
-        setAssignment(current ? readThemeAssignment(current) : undefined);
+        setReading({ path: pathname, assignment: current ? readThemeAssignment(current) : undefined });
       },
       // Franja de un pixel justo bajo la barra: la seccion que la cruza es la que
       // tiene debajo. Con un umbral normal ganaria la seccion mas visible, que en
@@ -285,7 +298,9 @@ export function SiteHeader({
     );
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [pathname]);
+
+  const assignment = reading.path === pathname ? reading.assignment : undefined;
 
   const close = () => setOpen(false);
 
@@ -314,6 +329,10 @@ export function SiteHeader({
           mismo render — no existe un frame en el que la barra se vaya llevandoselo. */}
       <nav
         aria-label={label}
+        // La barra que se retira al bajar vuelve en cuanto entra el foco: con
+        // Shift+Tab desde la pagina, el foco caia en controles fuera de la pantalla
+        // (WCAG 2.4.11).
+        onFocus={() => setHidden(false)}
         className={[styles.nav, hidden ? styles.isHidden : undefined]
           .filter(Boolean)
           .join(" ")}
@@ -338,7 +357,7 @@ export function SiteHeader({
                 se compacta — eso lo sigue haciendo `scrolled` — pero el logotipo se
                 queda como esta. El atomo conserva su forma compacta para quien la
                 necesite; lo que se retira es que la dispare el scroll. */}
-            <Logo />
+            <Logo compactBelowMd />
           </Link>
 
           {actions?.length ? (
@@ -407,7 +426,7 @@ export function SiteHeader({
                     {group.socials?.length ||
                     group.themeToggle ||
                     group.languageToggle ||
-                    group.soundToggle ? (
+                    group.motionToggle ? (
                       <div className={styles.utilities}>
                         {group.socials?.length ? (
                           // <ul> y no una fila de enlaces sueltos: son una
@@ -433,8 +452,8 @@ export function SiteHeader({
                           <ThemeToggle label={group.themeToggle.label} />
                         ) : null}
 
-                        {group.soundToggle ? (
-                          <SoundToggle label={group.soundToggle.label} />
+                        {group.motionToggle ? (
+                          <MotionToggle label={group.motionToggle.label} />
                         ) : null}
 
                         {group.languageToggle ? (

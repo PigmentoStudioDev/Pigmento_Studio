@@ -1,6 +1,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/a11y' as a11y;
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
@@ -30,10 +31,17 @@
   transition:
     background-color brand.$duration-quarter brand.$ease-default,
     gap brand.$duration-half brand.$ease-default;
+  position: relative;
+
+  @include a11y.touch-target;
 }
 
-.root:hover {
-  background-color: theme.$layer-hover-01;
+// Solo con puntero que de verdad pasa por encima: en tactil :hover se queda
+// pegado despues del toque y el control parece activo.
+@media (hover: hover) and (pointer: fine) {
+  .root:hover {
+    background-color: theme.$layer-hover-01;
+  }
 }
 
 // El foco es de Carbon: mismo grosor y mismo token que cualquier control suyo, o

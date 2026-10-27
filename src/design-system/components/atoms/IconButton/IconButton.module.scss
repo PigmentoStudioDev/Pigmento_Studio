@@ -1,6 +1,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/a11y' as a11y;
 @use '../../../styles/component-tokens' as component;
 @use '@carbon/react/scss/theme';
 
@@ -27,6 +28,8 @@
   // El clic comprime el control ENTERO, no solo la placa: aqui no hay etiqueta que
   // deba quedarse quieta, asi que el gesto puede ser el del control completo.
   transition: scale brand.$duration-quarter brand.$ease-click;
+
+  @include a11y.touch-target;
 }
 
 .root:active:not(:disabled) {
@@ -52,8 +55,11 @@
     scale brand.$duration-half brand.$ease-default;
 }
 
+// Transparente y no `none`: el anillo de verdad es un box-shadow, y en alto contraste
+// (forced-colors) el navegador borra las sombras. Un contorno transparente lo pinta
+// con el color del sistema, y es lo unico que queda a la vista ahi.
 .root:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
 }
 
 .root:focus-visible::after {

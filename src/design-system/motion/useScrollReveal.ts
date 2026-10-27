@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { REDUCED_MOTION } from "./breakpoints";
 import { loadMotion, type Motion } from "./gsap";
 import { isPageLoading, whenPageReady } from "./pageReady";
+import { toSeconds } from "./tokens";
 
 /**
  * El gesto de entrada por scroll: lo que hay debajo del pliegue llega cuando le toca.
@@ -72,16 +73,75 @@ const INDEX_PROPERTY = "--pg-reveal-index";
 const MODE_ATTRIBUTE = "data-reveal-mode";
 
 /**
- * Cuanto tiene que asomar el bloque para contar como visible. Un cuarto y no el
- * primer pixel: con el umbral en cero, un bloque alto empieza a entrar cuando solo se
- * ve su borde superior y la coreografia se gasta fuera de cuadro.
+ * La linea de entrada: un bloque entra cuando su borde de ARRIBA cruza el 85% de la
+ * ventana, mida lo que mida. Es la misma linea que usan los efectos atados al scroll
+ * (`top 85%` en el resaltado), asi que los dos motores arrancan a la vez.
  *
- * Se calcula contra la caja, asi que en un bloque mas alto que la ventana nunca
- * llegaria a cumplirse: por eso el observador lleva tambien un margen negativo
- * abajo, que es la otra forma de preguntar lo mismo — "ya ha entrado un poco".
+ * Antes era un ratio —el 25% de la caja a la vista—, y eso hacia que la linea
+ * dependiera del alto: medido en la home, un titular entraba al 86% y sus tarjetas
+ * de 528px al 74%, con un hueco en blanco entre los dos. Y un bloque mas alto que
+ * ~3.6 ventanas no llegaba nunca y se quedaba escondido.
  */
-const VISIBLE_RATIO = 0.25;
-const VISIBLE_MARGIN = "0px 0px -10% 0px";
+export const ENTRY_LINE_PERCENT = 85;
+export const ENTRY_START = `top ${ENTRY_LINE_PERCENT}%`;
+const ENTRY_MARGIN = `0px 0px -${100 - ENTRY_LINE_PERCENT}% 0px`;
+
+/**
+ * Parte los hermanos en filas visuales, en el orden del DOM: una pieza sigue en la
+ * fila si su borde de arriba queda por encima de la mitad de la primera de la fila.
+ * Media altura y no igualdad exacta, porque en una rejilla con alturas distintas los
+ * bordes de una misma fila no siempre coinciden al pixel.
+ */
+export function groupByRow(blocks: HTMLElement[]): HTMLElement[][] {
+  const rows: HTMLElement[][] = [];
+  let limit = Number.NEGATIVE_INFINITY;
+
+  blocks.forEach((block) => {
+    const box = block.getBoundingClientRect();
+    const current = rows[rows.length - 1];
+
+    if (current && box.top < limit) {
+      current.push(block);
+      return;
+    }
+
+    rows.push([block]);
+    limit = box.top + box.height / 2;
+  });
+
+  return rows;
+}
+
+/**
+ * Para lo que tiene que moverse JUNTO a la entrada de su bloque (la cifra que rueda
+ * dentro de su tarjeta): llama cuando el reveal que lo contiene pasa a `revealed`,
+ * con el retardo que esa pieza tiene dentro de su grupo, en segundos. Sin reveal
+ * alrededor llama enseguida. Devuelve como dejar de esperar.
+ */
+export function onRevealed(element: Element, callback: (delay: number) => void): () => void {
+  const host = element.closest<HTMLElement>(`[${STATE_ATTRIBUTE}]`);
+  const delayOf = (node: HTMLElement) =>
+    toSeconds(getComputedStyle(node).transitionDelay.split(",")[0] ?? "");
+
+  if (!host) {
+    callback(0);
+    return () => {};
+  }
+
+  if (host.getAttribute(STATE_ATTRIBUTE) === "revealed") {
+    callback(delayOf(host));
+    return () => {};
+  }
+
+  const observer = new MutationObserver(() => {
+    if (host.getAttribute(STATE_ATTRIBUTE) !== "revealed") return;
+    observer.disconnect();
+    callback(delayOf(host));
+  });
+  observer.observe(host, { attributes: true, attributeFilter: [STATE_ATTRIBUTE] });
+
+  return () => observer.disconnect();
+}
 
 /**
  * Lo que YA se esta mirando no entra: se queda donde esta.
@@ -125,35 +185,45 @@ export function useScrollReveal<T extends HTMLElement>({
     if (blocks.length === 0) return;
 
     let splits: ReturnType<Motion["SplitText"]["create"]>[] = [];
-    let observer: IntersectionObserver | undefined;
+    let observers: IntersectionObserver[] = [];
     let cancelled = false;
 
     const watch = () => {
       /**
-       * En modo caja el grupo entra JUNTO y escalonado, no pieza a pieza segun cada
-       * una asoma: son hermanos de la misma rejilla o de la misma fila, y si cada uno
-       * esperase su turno de scroll, una rejilla ancha entraria por columnas — que no
-       * es un gesto, es un fallo de sincronia. Dispara la primera y las demas la
-       * siguen con su retardo.
+       * En modo caja entra JUNTA cada FILA y escalonada, no pieza a pieza segun cada
+       * una asoma: si cada hermano de una fila esperase su turno, una rejilla ancha
+       * entraria por columnas — que no es un gesto, es un fallo de sincronia. Dispara
+       * la primera de la fila y las demas la siguen con su retardo.
+       *
+       * Por fila y no la lista entera: una lista vertical es una fila por pieza, y
+       * tratada como un solo grupo entraba toda cuando asomaba la primera. Medido en
+       * la home, la quinta fase del proceso terminaba de entrar al 169% de la ventana,
+       * fuera de cuadro; cuando se llegaba a ella ya estaba quieta.
        *
        * Partiendo por lineas es al reves: cada bloque de texto se vigila a si mismo,
        * porque leer es secuencial y cada parrafo entra cuando llega.
        */
-      const targets =
-        by === "block"
-          ? new Map<HTMLElement, HTMLElement[]>([[blocks[0], blocks]])
-          : new Map(blocks.map((block) => [block, [block]]));
+      const groups = by === "block" ? groupByRow(blocks) : blocks.map((block) => [block]);
+      const targets = new Map(groups.map((group) => [group[0], group]));
 
-      blocks.forEach((block, index) => {
-        if (by !== "block") return;
-
-        block.setAttribute(MODE_ATTRIBUTE, "block");
-        block.style.setProperty(INDEX_PROPERTY, String(index));
-      });
+      if (by === "block") {
+        groups.forEach((row) =>
+          row.forEach((block, index) => {
+            block.setAttribute(MODE_ATTRIBUTE, "block");
+            block.style.setProperty(INDEX_PROPERTY, String(index));
+          }),
+        );
+      }
 
       // Sin observador —un entorno que no lo trae— todo se da por revelado: el
       // contenido visible importa mas que el gesto.
       const observable = typeof IntersectionObserver !== "undefined";
+
+      const lastLine =
+        document.documentElement.scrollHeight - window.innerHeight * (1 - ENTRY_LINE_PERCENT / 100);
+      const reachesLine = new Map(
+        [...targets.keys()].map((watched) => [watched, watched.getBoundingClientRect().top + window.scrollY < lastLine]),
+      );
 
       const pending = [...targets].filter(([watched, revealed]) => {
         if (!observable || alreadyInView(watched)) {
@@ -167,24 +237,30 @@ export function useScrollReveal<T extends HTMLElement>({
 
       if (pending.length === 0) return;
 
-      observer = new IntersectionObserver(
-        (entries, self) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
+      const reveal: IntersectionObserverCallback = (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
 
-            targets
-              .get(entry.target as HTMLElement)
-              ?.forEach((block) => block.setAttribute(STATE_ATTRIBUTE, "revealed"));
+          targets
+            .get(entry.target as HTMLElement)
+            ?.forEach((block) => block.setAttribute(STATE_ATTRIBUTE, "revealed"));
 
-            // Una vez dentro, ya esta: un texto que se re-anima cada vez que se pasa
-            // por delante convierte el scroll en un parpadeo.
-            self.unobserve(entry.target);
-          });
-        },
-        { threshold: VISIBLE_RATIO, rootMargin: VISIBLE_MARGIN },
-      );
+          // Una vez dentro, ya esta: un texto que se re-anima cada vez que se pasa
+          // por delante convierte el scroll en un parpadeo.
+          observers.forEach((observer) => observer.unobserve(entry.target));
+        });
+      };
 
-      pending.forEach(([watched]) => observer?.observe(watched));
+      const atLine = new IntersectionObserver(reveal, { threshold: 0, rootMargin: ENTRY_MARGIN });
+      // Lo ultimo de la pagina: al tope del scroll, la fila final del pie queda por
+      // debajo de la linea y no la cruza nunca —medido en movil, se quedaba invisible—.
+      // Esas piezas entran en cuanto asoman. Se decide con la geometria ANTES de
+      // esconderlas: ya en idle llevan el desplazamiento de entrada y el observador
+      // mide la caja movida.
+      const atEdge = new IntersectionObserver(reveal, { threshold: 0 });
+      observers = [atLine, atEdge];
+
+      pending.forEach(([watched]) => (reachesLine.get(watched) ? atLine : atEdge).observe(watched));
     };
 
     if (by === "block") {
@@ -239,7 +315,7 @@ export function useScrollReveal<T extends HTMLElement>({
 
     return () => {
       cancelled = true;
-      observer?.disconnect();
+      observers.forEach((observer) => observer.disconnect());
       // revert() y no kill(): kill deja los <span> puestos y React no sabe que estan
       // ahi, asi que el siguiente montaje partiria texto ya partido.
       splits.forEach((instance) => instance.revert());

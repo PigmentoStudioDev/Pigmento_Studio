@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
+import { MOTION_PREFERENCE } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
 import { pauseOnIntent } from "./pauseOnIntent";
 import { EASE_LINEAR } from "./tokens";
@@ -123,7 +123,7 @@ export function useMarquee<T extends HTMLElement, U extends HTMLElement>({
       mm.add(
         // El juego ENTERO, aunque aqui solo se lean tres: lo que hace falta es que
         // algun ancho coincida siempre, o gsap no llama al callback. Ver breakpoints.ts.
-        { ...MOTION_BREAKPOINTS, isReduced: REDUCED_MOTION },
+        MOTION_PREFERENCE,
         (context) => {
           const { isReduced } = context.conditions ?? {};
 

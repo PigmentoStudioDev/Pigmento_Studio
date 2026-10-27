@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
+import { MOTION_PREFERENCE } from "./breakpoints";
+import { getMotionPaused } from "./motionPause";
 import { loadMotion, loadObserver, type MatchMedia } from "./gsap";
 
 /**
@@ -172,7 +173,7 @@ export function useInfiniteGrid<T extends HTMLElement, U extends HTMLElement>() 
 
       mm = gsap.matchMedia();
 
-      mm.add({ ...MOTION_BREAKPOINTS, isReduced: REDUCED_MOTION }, (context) => {
+      mm.add(MOTION_PREFERENCE, (context) => {
         if (context.conditions?.isReduced) return;
 
         let dragging = false;
@@ -182,7 +183,9 @@ export function useInfiniteGrid<T extends HTMLElement, U extends HTMLElement>() 
           const positionLerp = 1 - (1 - POSITION_LERP) ** frames;
           const scaleLerp = 1 - (1 - SCALE_LERP) ** frames;
 
-          if (!dragging) {
+          // La deriva sola se para con el conmutador de movimiento (WCAG 2.2.2); el
+          // arrastre sigue, porque ese movimiento lo pide la persona.
+          if (!dragging && !getMotionPaused()) {
             const seconds = deltaTime / 1000;
             pos.targetX += DRIFT_X * seconds;
             pos.targetY += DRIFT_Y * seconds;

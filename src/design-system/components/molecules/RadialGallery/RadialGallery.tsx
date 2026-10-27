@@ -6,11 +6,13 @@ import {
   useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
   type MouseEvent,
   type PointerEvent,
   type TransitionEvent,
 } from "react";
+import { getMotionPaused, getServerMotionPaused, subscribeMotionPaused } from "../../../motion/motionPause";
 import styles from "./RadialGallery.module.scss";
 
 /**
@@ -76,6 +78,10 @@ export function RadialGallery({ images, intervalMs = DEFAULT_INTERVAL_MS }: Radi
   const [lifted, setLifted] = useState(false);
   const [dragDegrees, setDragDegrees] = useState(0);
   const [dragging, setDragging] = useState(false);
+  // El avance solo se para con el conmutador de movimiento (WCAG 2.2.2). Sin
+  // eleccion guardada arranca parado si el sistema pide reduced-motion: con esa
+  // preferencia el CSS ya quitaba el giro, pero el paso seguia saltando solo.
+  const motionPaused = useSyncExternalStore(subscribeMotionPaused, getMotionPaused, getServerMotionPaused);
 
   const count = images.length;
   const enabled = count >= MIN_IMAGES;
@@ -93,7 +99,7 @@ export function RadialGallery({ images, intervalMs = DEFAULT_INTERVAL_MS }: Radi
 
   useEffect(() => {
     const root = rootRef.current;
-    if (!root || !enabled || dragging) return;
+    if (!root || !enabled || dragging || motionPaused) return;
 
     let timer: ReturnType<typeof setInterval> | undefined;
     let frame = 0;
@@ -150,7 +156,7 @@ export function RadialGallery({ images, intervalMs = DEFAULT_INTERVAL_MS }: Radi
       observer.disconnect();
       stop();
     };
-  }, [enabled, intervalMs, dragging]);
+  }, [enabled, intervalMs, dragging, motionPaused]);
 
   /**
    * El regreso al reposo no tiene duracion propia: termina cuando termina el giro.

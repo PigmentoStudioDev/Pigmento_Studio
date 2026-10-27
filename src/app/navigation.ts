@@ -53,7 +53,7 @@ export function getNavigation(t: Translate, gallery: ProjectPiece[]): SiteHeader
           { icon: "behance", href: "https://www.behance.net/pigmentostudio1", label: t("social.behance") },
         ],
         themeToggle: { label: t("themeToggle") },
-        soundToggle: { label: t("soundToggle") },
+        motionToggle: { label: t("motionToggle") },
         languageToggle: { label: t("languageToggle") },
       },
     ],

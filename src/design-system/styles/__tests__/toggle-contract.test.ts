@@ -15,15 +15,33 @@ import { describe, expect, it } from 'vitest';
 const MOLECULES = join(process.cwd(), 'src/design-system/components/molecules');
 const SASS: Options<'sync'> = { loadPaths: ['node_modules'], quietDeps: true };
 
-const TOGGLES = ['ThemeToggle', 'SoundToggle', 'LanguageToggle'] as const;
+const TOGGLES = ['ThemeToggle', 'LanguageToggle', 'MotionToggle'] as const;
 
-/** Las declaraciones de un selector de primer nivel, sin las de dentro de @media. */
-function declarations(name: string, selector: string, props: readonly string[]): Record<string, string> {
+/**
+ * El hover vive dentro de esta consulta: en tactil :hover se queda pegado tras el
+ * toque y el conmutador parecia activo.
+ */
+const FINE_POINTER = '(hover: hover) and (pointer: fine)';
+
+/**
+ * Las declaraciones de un selector de primer nivel o, con `media`, de dentro de esa
+ * consulta. Las de cualquier otra @media no cuentan.
+ */
+function declarations(
+  name: string,
+  selector: string,
+  props: readonly string[],
+  media?: string,
+): Record<string, string> {
   const css = compile(join(MOLECULES, name, `${name}.module.scss`), SASS).css;
   const found: Record<string, string> = {};
 
   postcss.parse(css).walkRules((rule) => {
-    if (rule.parent?.type !== 'root' || rule.selector !== selector) return;
+    const parent = rule.parent;
+    const inPlace = media
+      ? parent?.type === 'atrule' && (parent as postcss.AtRule).params === media
+      : parent?.type === 'root';
+    if (!inPlace || rule.selector !== selector) return;
     rule.walkDecls((decl) => {
       if (props.includes(decl.prop)) found[decl.prop] = decl.value;
     });
@@ -41,9 +59,9 @@ describe('contrato de conmutadores', () => {
   });
 
   it.each(TOGGLES)('%s invierte placa E icono al pasar por encima', (name) => {
-    const hover = declarations(name, '.root:hover', HOVER);
+    const hover = declarations(name, '.root:hover', HOVER, FINE_POINTER);
 
     expect(Object.keys(hover).sort()).toEqual([...HOVER].sort());
-    expect(hover).toEqual(declarations('ThemeToggle', '.root:hover', HOVER));
+    expect(hover).toEqual(declarations('ThemeToggle', '.root:hover', HOVER, FINE_POINTER));
   });
 });

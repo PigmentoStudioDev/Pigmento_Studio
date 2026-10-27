@@ -11,6 +11,9 @@
  * - `box-shadow` en Button e IconButton, cuyo anillo vive en un ::after que escala
  *   con el gesto del control.
  * - `focus-inverse` solo sobre superficies invertidas (la barra de promos).
+ * - `outline: 2px solid transparent` junto al box-shadow: en alto contraste
+ *   (forced-colors) el navegador borra las sombras y pinta ese contorno con el color
+ *   del sistema. Sin el, ahi no se veia ningun foco. No dibuja nada fuera de ese modo.
  *
  * El gate no deja que aparezca una quinta variante: otro grosor, otro color u otro
  * desplazamiento.
@@ -35,7 +38,8 @@ function sheets(dir: string): string[] {
 const RING = /var\(--cds-focus(-inverse)?[,)]/;
 
 const RULES: Record<string, (value: string) => boolean> = {
-  outline: (value) => value === 'none' || (value.startsWith('2px solid ') && RING.test(value)),
+  outline: (value) =>
+    value === 'none' || value === '2px solid transparent' || (value.startsWith('2px solid ') && RING.test(value)),
   'outline-offset': (value) => value === '2px' || value === '-2px',
   'box-shadow': (value) => value.startsWith('0 0 0 2px ') && RING.test(value),
 };

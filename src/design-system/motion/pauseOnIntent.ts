@@ -1,3 +1,5 @@
+import { getMotionPaused, subscribeMotionPaused } from "./motionPause";
+
 /**
  * El interruptor de un bucle infinito: se para cuando alguien se acerca a el.
  *
@@ -15,11 +17,14 @@
  * Se para y se REANUDA donde estaba, nunca se reinicia: una tira que vuelve a su
  * origen al quitar el raton se lee como un fallo de pintado.
  *
- * HACK: con el dedo no hay ni hover ni foco, asi que en tactil el bucle no se puede
- * parar. Cubrirlo entero pide un control visible —o un conmutador de movimiento en la
- * barra, junto a los de tema y sonido—, y eso es una pieza de interfaz que decide
- * Pigmento. Subirlo cuando una tira lleve texto que haya que LEER: hoy son logos y un
- * mensaje de paso que se repite, y el coste de no poder pararlos es bajo.
+ * Y para siempre que el conmutador global de movimiento (motionPause.ts) este en
+ * pausa: acercarse no basta para WCAG 2.2.2 —W3C no lo cuenta como mecanismo, y en
+ * tactil no existe—, y el conmutador es el control visible que el criterio pide.
+ *
+ * Las tres razones se llevan por separado y el bucle solo se reanuda cuando no queda
+ * ninguna. Con una sola señal, mover el foco entre dos hijos (focusout + focusin)
+ * reanudaba y paraba en un parpadeo, y sacar el puntero con el foco dentro lo
+ * arrancaba aunque el foco siguiera ahi.
  */
 
 /** Lo minimo que se le pide a un tween o una timeline. Estructural para no importar gsap: su unica puerta es `motion/gsap.ts`. */
@@ -35,21 +40,51 @@ export interface Pausable {
  * al bucle despues de enganchar esto, y una copia dejaria fuera las nuevas.
  */
 export function pauseOnIntent(root: HTMLElement, animations: () => Pausable[]): () => void {
-  const pause = () => animations().forEach((animation) => animation.pause());
-  const resume = () => animations().forEach((animation) => animation.resume());
+  let hovered = false;
+  let focused = false;
+  let paused = false;
 
-  root.addEventListener("pointerenter", pause);
-  root.addEventListener("pointerleave", resume);
-  root.addEventListener("focusin", pause);
-  root.addEventListener("focusout", resume);
+  const sync = () => {
+    const next = hovered || focused || getMotionPaused();
+    if (next === paused) return;
+    paused = next;
+    animations().forEach((animation) => (paused ? animation.pause() : animation.resume()));
+  };
+
+  const onEnter = () => {
+    hovered = true;
+    sync();
+  };
+  const onLeave = () => {
+    hovered = false;
+    sync();
+  };
+  const onFocusIn = () => {
+    focused = true;
+    sync();
+  };
+  // El foco que solo pasa de un hijo a otro no ha salido.
+  const onFocusOut = (event: FocusEvent) => {
+    if (event.relatedTarget instanceof Node && root.contains(event.relatedTarget)) return;
+    focused = false;
+    sync();
+  };
+
+  root.addEventListener("pointerenter", onEnter);
+  root.addEventListener("pointerleave", onLeave);
+  root.addEventListener("focusin", onFocusIn);
+  root.addEventListener("focusout", onFocusOut);
+  const unsubscribe = subscribeMotionPaused(sync);
+  sync();
 
   return () => {
-    root.removeEventListener("pointerenter", pause);
-    root.removeEventListener("pointerleave", resume);
-    root.removeEventListener("focusin", pause);
-    root.removeEventListener("focusout", resume);
+    root.removeEventListener("pointerenter", onEnter);
+    root.removeEventListener("pointerleave", onLeave);
+    root.removeEventListener("focusin", onFocusIn);
+    root.removeEventListener("focusout", onFocusOut);
+    unsubscribe();
     // Sin esto, desmontar con el puntero encima deja el bucle pausado para siempre si
     // el consumidor reusa la animacion.
-    resume();
+    if (paused) animations().forEach((animation) => animation.resume());
   };
 }

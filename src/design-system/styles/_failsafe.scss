@@ -1,0 +1,28 @@
+@use 'brand';
+
+// La salida de emergencia de lo que el CSS esconde antes de que el JS lo tome.
+//
+// Esconder en la hoja evita el fotograma en que la pieza se ve en su sitio final y
+// despues salta a su posicion de salida. El precio es que, si el JS no llega —un chunk
+// que falla, un error de hidratacion, una red lenta—, la pieza se queda escondida para
+// siempre. Esta animacion la muestra sola pasado un plazo mas largo que la salida de
+// emergencia del preloader (PRELOADER_FAILSAFE_MS en motion/pageReady.ts): en una carga
+// normal el JS ya cambio el selector y la regla que la lleva deja de aplicar.
+//
+// Va DENTRO de la misma regla que esconde: cuando el JS cambia el atributo, la regla
+// deja de casar y la animacion desaparece con ella.
+
+$delay: calc(#{brand.$duration-double} * 4);
+
+@mixin reveal-without-js {
+  animation: pg-js-failsafe 0s $delay forwards;
+
+  @at-root {
+    @keyframes pg-js-failsafe {
+      to {
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+  }
+}

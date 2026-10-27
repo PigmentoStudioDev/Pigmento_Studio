@@ -55,8 +55,11 @@
   transition: box-shadow brand.$duration-quarter brand.$ease-focus;
 }
 
+// Transparente y no `none`: el anillo de verdad es un box-shadow, y en alto contraste
+// (forced-colors) el navegador borra las sombras. Un contorno transparente lo pinta
+// con el color del sistema, y es lo unico que queda a la vista ahi.
 .root:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
 }
 
 .root:focus-visible::after {

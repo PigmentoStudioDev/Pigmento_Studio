@@ -90,7 +90,9 @@ export function useWorkRows<T extends HTMLElement>() {
           onRefresh: (self) => root.style.setProperty(PROGRESS_PROPERTY, String(self.progress)),
         });
 
-        ScrollTrigger.refresh();
+        // Diferida, como la de las fuentes en gsap.ts: la inmediata dentro de un efecto
+        // es la que revienta con "reading 'end'" si otro hook esta creando triggers.
+        ScrollTrigger.refresh(true);
 
         const onFocus = (event: FocusEvent) => {
           const piece = (event.target as Element).closest<HTMLElement>("[data-rows-piece]");

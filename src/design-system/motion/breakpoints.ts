@@ -32,6 +32,19 @@ export const MOTION_BREAKPOINTS = {
  */
 export const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 
+/**
+ * Para los efectos que solo dependen de la preferencia, no del ancho. Pasarles
+ * MOTION_BREAKPOINTS hace que gsap los desmonte y los rehaga en cada cruce de
+ * breakpoint —girar una tablet, redimensionar— sin que nada suyo haya cambiado: el
+ * marquee salta a otra posicion y un contador a medio montar sale duplicado. Las dos
+ * condiciones son complementarias, asi que siempre casa una y solo la preferencia
+ * dispara un rehacer.
+ */
+export const MOTION_PREFERENCE = {
+  isReduced: REDUCED_MOTION,
+  isMotion: "(prefers-reduced-motion: no-preference)",
+} as const;
+
 export type MotionConditions = Partial<
   Record<keyof typeof MOTION_BREAKPOINTS | "isReduced", boolean>
 >;

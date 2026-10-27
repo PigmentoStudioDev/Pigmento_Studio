@@ -104,8 +104,12 @@ $brand-min-inline-size: 16rem;
   transition: color brand.$duration-quarter brand.$ease-default;
 }
 
-.top:hover {
-  color: theme.$text-primary;
+// Solo con puntero que de verdad pasa por encima: en tactil :hover se queda
+// pegado despues del toque y el control parece activo.
+@media (hover: hover) and (pointer: fine) {
+  .top:hover {
+    color: theme.$text-primary;
+  }
 }
 
 .top:focus-visible {

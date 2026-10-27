@@ -3,9 +3,10 @@
     "label": "Main",
     "homeLabel": "Pigmento Studio, go to home",
     "toggleLabel": "Menu",
-    "themeToggle": "Switch between light and dark mode",
-    "soundToggle": "Turn interface sound on or off",
+    "themeToggle": "Dark mode",
+    "motionToggle": "Pause animations",
     "languageToggle": "Change language",
+    "skipToContent": "Skip to content",
     "estudio": {
       "label": "Studio",
       "trabajo": "Work",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
+import { MOTION_PREFERENCE } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
 import { pauseOnIntent, type Pausable } from "./pauseOnIntent";
 import { EASE_LINEAR } from "./tokens";
@@ -72,7 +72,7 @@ export function useTopBar<T extends HTMLElement>() {
 
       mm = gsap.matchMedia();
 
-      mm.add({ ...MOTION_BREAKPOINTS, isReduced: REDUCED_MOTION }, (context) => {
+      mm.add(MOTION_PREFERENCE, (context) => {
         if (context.conditions?.isReduced) return;
 
         const loops: Pausable[] = [];

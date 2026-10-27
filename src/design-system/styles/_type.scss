@@ -43,6 +43,12 @@ $weight-bold: 700;
 $weight-extrabold: 800;
 $weight-heavy: 900;
 
+// Los tres tamanos fluidos llevan un termino en rem dentro del clamp, no solo vw. Con
+// vw puro el texto no crece con el zoom del navegador (WCAG 1.4.4): al 200% en
+// escritorio el titular se quedaba igual o encogia hasta su suelo. Los extremos y el
+// ancho al que se llega al techo son los de antes; lo que cambia es que el suelo se
+// alcanza mas pronto (375px en display y heading, 640px en title), y entre medias la
+// letra queda algo mayor.
 $-styles: (
   // La cima es FLUIDA, y es el unico sitio de la escala donde eso hace falta.
   //
@@ -52,7 +58,7 @@ $-styles: (
   //
   // El clamp acota los dos extremos porque un vw suelto no tiene fondo ni techo: a
   // 320px de ancho el titular se volveria ilegible y a 3000 se comeria la pagina.
-  'display': (size: clamp(3.5rem, 10vw, 9.375rem), height: 0.9, tracking: -0.05em, weight: 400),
+  'display': (size: clamp(3.5rem, 1.54rem + 8.36vw, 9.375rem), height: 0.9, tracking: -0.05em, weight: 400),
 
   // La cima A SANGRE, y es la unica que no lleva clamp en toda la escala.
   //
@@ -85,13 +91,13 @@ $-styles: (
   // Fluidas las dos cimas y fijas las tallas de lectura, que es la linea correcta:
   // un cuerpo de texto que escala con la ventana cambia de medida de lectura en cada
   // pantalla, y la medida de lectura es lo unico que no deberia moverse.
-  'heading': (size: clamp(2rem, 5.6vw, 5.25rem), height: 1, tracking: -0.03em, weight: 400),
+  'heading': (size: clamp(2rem, 0.92rem + 4.62vw, 5.25rem), height: 1, tracking: -0.03em, weight: 400),
 
   // Una DECLARACION: frase de varias lineas, no rotulo. Entre la entradilla y
   // 'heading' quedaba x2.7 sin nada, y una frase de cuatro lineas a 84px no cabe en un
   // hero que ademas lleva una tira de fotos. Para a la vez que las otras dos cimas:
   // 3.25rem son 3.5vw a unos 1490px.
-  'title': (size: clamp(2rem, 3.5vw, 3.25rem), height: 1.15, tracking: -0.025em, weight: 400),
+  'title': (size: clamp(2rem, 1.06rem + 2.36vw, 3.25rem), height: 1.15, tracking: -0.025em, weight: 400),
 
   // La CIFRA: un numero que se lee de un vistazo dentro de una caja.
   //

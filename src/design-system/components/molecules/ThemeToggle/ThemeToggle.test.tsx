@@ -57,6 +57,17 @@ describe("ThemeToggle", () => {
     expect(button).toHaveAccessibleName(LABEL);
   });
 
+  // El bug: el boton no exponia en que modo estaba la pagina.
+  it("dice si el modo oscuro esta puesto", async () => {
+    render(<ThemeToggle label={LABEL} />);
+    const button = screen.getByRole("button", { name: LABEL });
+    expect(button).toHaveAttribute("aria-pressed", "false");
+
+    await userEvent.click(button);
+
+    expect(button).toHaveAttribute("aria-pressed", "true");
+  });
+
   it("conmuta el modo y lo guarda", async () => {
     render(<ThemeToggle label={LABEL} />);
     const button = screen.getByRole("button", { name: LABEL });

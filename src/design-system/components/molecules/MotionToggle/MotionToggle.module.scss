@@ -1,11 +1,13 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/a11y' as a11y;
 @use '../../../styles/component-tokens' as component;
 @use '@carbon/react/scss/theme';
 
 .root {
   display: flex;
+  position: relative;
   align-items: center;
   justify-content: center;
   inline-size: brand.$control-block-m;
@@ -19,16 +21,21 @@
   cursor: pointer;
   // En rem y no en em: vive en una fila de utilidades, no dentro de un texto.
   font-size: brand.$control-icon-size;
+  -webkit-tap-highlight-color: transparent;
   transition:
     background-color brand.$duration-quarter brand.$ease-default,
     color brand.$duration-quarter brand.$ease-default;
+
+  @include a11y.touch-target;
 }
 
 // Placa E icono a la vez: con solo la placa, en claro quedaba un icono oscuro sobre
-// un fondo oscuro.
-.root:hover {
-  background-color: component.get('button-tertiary');
-  color: theme.$text-inverse;
+// un fondo oscuro. Solo con puntero fino: en tactil se queda pegado tras el toque.
+@media (hover: hover) and (pointer: fine) {
+  .root:hover {
+    background-color: component.get('button-tertiary');
+    color: theme.$text-inverse;
+  }
 }
 
 .root:focus-visible {

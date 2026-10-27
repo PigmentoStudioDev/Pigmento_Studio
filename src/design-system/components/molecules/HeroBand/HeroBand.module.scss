@@ -1,6 +1,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '../../../styles/failsafe';
 @use '@carbon/react/scss/breakpoint';
 @use '@carbon/react/scss/spacing';
 
@@ -23,6 +24,7 @@
 // Oculta hasta que el hook la suelta: antes, las fotos estan en su punto de salida.
 .root:not([data-hero-band]) .track {
   visibility: hidden;
+  @include failsafe.reveal-without-js;
 }
 
 .track {
@@ -35,6 +37,12 @@
 // La deriva es velocidad, no un gesto: va sin curva.
 .root[data-hero-band] .track {
   animation: pg-band-drift var(--pg-band-loop, 0s) linear infinite;
+}
+
+// El conmutador de movimiento (motion/motionPause.ts): la deriva se queda donde va y
+// sigue desde ahi al reanudar. Es el control visible que pide WCAG 2.2.2.
+:root[data-motion-paused] .root[data-hero-band] .track {
+  animation-play-state: paused;
 }
 
 .card {
@@ -71,6 +79,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  // Sin gesto que esperar, nada que esconder: la tira se ve desde el primer pintado,
+  // llegue o no el JS.
+  .root:not([data-hero-band]) .track {
+    visibility: visible;
+  }
+
   .track,
   .root[data-hero-band] .track {
     translate: none;

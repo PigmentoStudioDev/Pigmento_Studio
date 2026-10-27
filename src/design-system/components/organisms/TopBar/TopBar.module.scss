@@ -45,9 +45,13 @@
 
 // El hover de SU capa, no el contextual: la barra se pinta con layer-02 y el
 // contextual valdria siempre -01.
-.root:hover {
-  background-color: theme.$layer-hover-02;
-  color: theme.$text-primary;
+// Solo con puntero que de verdad pasa por encima: en tactil :hover se queda
+// pegado despues del toque y el control parece activo.
+@media (hover: hover) and (pointer: fine) {
+  .root:hover {
+    background-color: theme.$layer-hover-02;
+    color: theme.$text-primary;
+  }
 }
 
 // Por dentro del borde: por fuera lo cortaria el overflow, y arriba no hay nada.

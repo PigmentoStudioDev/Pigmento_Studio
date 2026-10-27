@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MOTION_BREAKPOINTS, REDUCED_MOTION } from "./breakpoints";
+import { MOTION_PREFERENCE } from "./breakpoints";
 import { loadMotion, type MatchMedia } from "./gsap";
 import { EASE_LINEAR } from "./tokens";
 
@@ -65,7 +65,7 @@ export function useScrollTrace<T extends HTMLElement>({
 
       mm = gsap.matchMedia();
 
-      mm.add({ ...MOTION_BREAKPOINTS, isReduced: REDUCED_MOTION }, (context) => {
+      mm.add(MOTION_PREFERENCE, (context) => {
         // Con la preferencia puesta no se toca nada: la hoja ya deja la guia entera
         // en su @media. Un trazo a medias seria peor que ninguno — diria que la
         // lectura va por la mitad cuando no la esta midiendo nadie.

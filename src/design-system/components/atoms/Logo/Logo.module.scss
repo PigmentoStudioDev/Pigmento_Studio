@@ -1,6 +1,7 @@
 @use '../../../styles/carbon-config';
 
 @use '../../../styles/brand' as brand;
+@use '@carbon/react/scss/breakpoint';
 @use '@carbon/react/scss/spacing';
 
 // De aqui salen las dos formas: el logotipo al 100% y el isotipo cuadrado. La barra
@@ -55,6 +56,18 @@ $-size: spacing.$spacing-07;
 .isCompact .wordmark {
   opacity: 0;
   transform: translateY(calc(#{spacing.$spacing-03} * -1));
+}
+
+@include breakpoint.breakpoint-down('md') {
+  .isResponsive .wordmark {
+    display: none;
+  }
+
+  .isResponsive .mark {
+    position: static;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,3 +1,5 @@
+@use 'brand';
+
 // Ayudas de accesibilidad que no son de un componente concreto.
 //
 // Vive aqui y no copiada en cada hoja porque ya iba por dos copias identicas — y una
@@ -26,3 +28,22 @@
   white-space: nowrap;
   border: 0;
 }
+
+/// El area de pulsado sube al alto de control grande con el dedo, sin cambiar lo que
+/// se ve. Los controles de la cabecera miden el alto medio, y con puntero grueso eso
+/// queda bajo los 44px que pide la regla de objetivos tactiles; agrandarlos de
+/// verdad descuadraba la barra en movil. Una capa invisible por encima los amplia
+/// por igual en los cuatro lados.
+///
+/// El control necesita `position: relative` (o cualquier posicionado) y no puede
+/// usar ya su `::before`.
+@mixin touch-target($visible: brand.$control-block-m) {
+  @media (pointer: coarse) {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: calc((#{$visible} - #{brand.$control-block-l}) / 2);
+    }
+  }
+}
+

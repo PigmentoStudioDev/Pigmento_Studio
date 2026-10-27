@@ -198,6 +198,17 @@ describe("SiteHeader", () => {
     expect(screen.getByRole("button", { name: "Menu" })).toHaveAttribute("aria-expanded", "false");
   });
 
+  // El bug: con el foco en un enlace del panel, Escape lo dejaba caer al <body>.
+  it("Escape devuelve el foco al boton del menu", async () => {
+    render(<SiteHeader {...PROPS} />);
+    await openPanel();
+    screen.getByRole("link", { name: "Como trabajamos" }).focus();
+
+    await userEvent.keyboard("{Escape}");
+
+    expect(screen.getByRole("button", { name: "Menu" })).toHaveFocus();
+  });
+
   it("navegar por un enlace del panel lo cierra", async () => {
     render(<SiteHeader {...PROPS} />);
     await openPanel();
