@@ -114,7 +114,11 @@ describe.skipIf(!existsSync(BUILD))('alcance del budget de CSS', () => {
 
     const of = (page: string) => cssRefs(readFileSync(join(BUILD, page), 'utf8'));
 
-    const publicas = new Set([...of('es.html'), ...of('en.html')]);
+    // La medida es la visita mas pesada, que no siempre es la home: se compara
+    // contra la pagina que el gate nombra, no contra una fija.
+    const linea = cssLine(budgetsLimpio());
+    const pesada = linea.match(/mas pesada: (\S+)/)?.[1] ?? 'en.html';
+    const publicas = of(pesada);
     const soloDs = [...of('es/ds.html'), ...of('en/ds.html')].filter((ref) => !publicas.has(ref));
 
     // Si /ds no aportara nada propio no habria nada que excluir y el test
@@ -126,7 +130,7 @@ describe.skipIf(!existsSync(BUILD))('alcance del budget de CSS', () => {
         [...refs].reduce((n, ref) => n + statSync(join(ROOT, '.next', ref)).size, 0) / 1024,
       );
 
-    const reportado = Number(cssLine(budgetsLimpio()).match(/css: (\d+)kb raw/)?.[1]);
+    const reportado = Number(linea.match(/css: (\d+)kb raw/)?.[1]);
 
     // Dos caminos al rojo, los dos validos: si /ds vuelve a la medida y el techo
     // aguanta, `reportado` sale 161 y no 139; si ademas revienta el techo de gzip,
