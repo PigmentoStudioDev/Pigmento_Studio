@@ -20,6 +20,8 @@ export interface ProjectPiece {
   alt: string;
   width: number;
   height: number;
+  /** Un mp4 de la galeria del caso. Solo la pagina del caso sabe pintarlo. */
+  video?: true;
 }
 
 /**
@@ -36,7 +38,17 @@ export function toPiece(media: Media | number | null | undefined): ProjectPiece 
   if (!media.url || !media.width || !media.height) return null;
   // El `?? ''` cubre lo que el tipo no modela: `alt` es obligatorio, pero un documento
   // anterior a esa regla puede traerlo vacio, y eso nunca debe tumbar la pagina.
-  return { src: media.url, alt: media.alt ?? '', width: media.width, height: media.height };
+  const piece = { src: media.url, alt: media.alt ?? '', width: media.width, height: media.height };
+  return media.mimeType?.startsWith('video/') ? { ...piece, video: true } : piece;
+}
+
+/**
+ * Portadas, escaparate y carrusel pintan con `next/image`, que no reproduce un mp4: ahi
+ * un video se descarta en vez de salir como imagen rota.
+ */
+export function toImagePiece(media: Media | number | null | undefined): ProjectPiece | null {
+  const piece = toPiece(media);
+  return piece && !piece.video ? piece : null;
 }
 
 /**
@@ -67,7 +79,7 @@ export async function getFeaturedPieces(locale: Locale): Promise<ProjectPiece[]>
   const featured = await find(true);
   const { docs } = featured.docs.length > 0 ? featured : await find(false);
 
-  return docs.map((doc: Project) => toPiece(doc.cover)).filter((p): p is ProjectPiece => p !== null);
+  return docs.map((doc: Project) => toImagePiece(doc.cover)).filter((p): p is ProjectPiece => p !== null);
 }
 
 /** Cuantas piezas toma el respaldo: las que caben en la corona del menu sin repetirse. */
@@ -90,7 +102,7 @@ export interface WorkProject {
 
 /** Exportada por su test. Sin portada poblada no hay pieza que pintar. */
 export function toWorkProject(doc: Project): WorkProject | null {
-  const image = toPiece(doc.cover);
+  const image = toImagePiece(doc.cover);
   if (!image) return null;
 
   return {
@@ -148,7 +160,7 @@ export function toFeaturedCase(doc: Project, maxPieces: number): FeaturedCase | 
   if (!doc.summary) return null;
 
   const pieces = (doc.gallery ?? [])
-    .map((entry) => toPiece(entry.image))
+    .map((entry) => toImagePiece(entry.image))
     .filter((p): p is ProjectPiece => p !== null)
     .slice(0, maxPieces);
 
@@ -222,7 +234,7 @@ export interface ProjectDetail {
  * Las piezas de galeria sin poblar se descartan, no se pintan con medidas inventadas.
  */
 export function toProjectDetail(doc: Project): ProjectDetail | null {
-  const cover = toPiece(doc.cover);
+  const cover = toImagePiece(doc.cover);
   if (!cover) return null;
 
   const gallery = (doc.gallery ?? [])

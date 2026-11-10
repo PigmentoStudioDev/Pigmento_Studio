@@ -182,3 +182,22 @@ describe('toProjectDetail', () => {
     expect(detalle?.summary).toBeUndefined();
   });
 });
+
+/**
+ * Un mp4 en la galeria: la pagina del caso lo reproduce, pero portadas, escaparate y
+ * carrusel pintan con next/image, y alli un video saldria como imagen rota.
+ */
+describe('videos de la galeria', () => {
+  const clip = media({ url: '/a.mp4', alt: 'Animacion', width: 1080, height: 1920, mimeType: 'video/mp4' });
+  const photo = media({ url: '/b.webp', alt: 'Foto', width: 2000, height: 1500, mimeType: 'image/webp' });
+  const doc = project({ summary: 'Texto', cover: photo, gallery: [{ image: clip }, { image: photo }] });
+
+  it('llegan marcados a la pagina del caso', () => {
+    expect(toProjectDetail(doc)?.gallery.map((piece) => piece.video ?? false)).toEqual([true, false]);
+  });
+
+  it('no entran en el carrusel de casos ni como portada', () => {
+    expect(toFeaturedCase(doc, 4)?.pieces.map((piece) => piece.src)).toEqual(['/b.webp']);
+    expect(toWorkProject(project({ cover: clip }))).toBeNull();
+  });
+});
