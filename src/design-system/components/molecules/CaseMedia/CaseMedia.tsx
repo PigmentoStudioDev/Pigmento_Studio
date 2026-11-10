@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CaseVideo } from "./CaseVideo";
 import styles from "./CaseMedia.module.scss";
 
 /**
@@ -13,6 +14,8 @@ export interface CasePiece {
   alt: string;
   width: number;
   height: number;
+  /** Un mp4: se pinta como bucle mudo y no con `next/image`. */
+  video?: true;
 }
 
 /** 16:9, 4:3, 4:5 y 1:1: las cuatro proporciones que usan las referencias medidas. */
@@ -63,7 +66,11 @@ const SIZES: Record<CaseMediaLayout, string> = {
 function Piece({ piece, sizes, className }: { piece: CaseFramedPiece; sizes: string; className?: string }) {
   return (
     <li className={`${styles.item} ${FRAME[piece.frame]} ${className ?? ""}`}>
-      <Image className={styles.image} src={piece.src} alt={piece.alt} width={piece.width} height={piece.height} sizes={sizes} />
+      {piece.video ? (
+        <CaseVideo className={styles.image} src={piece.src} label={piece.alt} width={piece.width} height={piece.height} />
+      ) : (
+        <Image className={styles.image} src={piece.src} alt={piece.alt} width={piece.width} height={piece.height} sizes={sizes} />
+      )}
     </li>
   );
 }
