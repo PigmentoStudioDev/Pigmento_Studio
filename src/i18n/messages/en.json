@@ -131,6 +131,8 @@
       "viewGrid": "Grid view",
       "viewList": "List view",
       "viewSwitch": "View",
+      "filterAll": "All",
+      "filterLabel": "Filter by discipline",
       "drag": "Drag"
     },
     "services": {

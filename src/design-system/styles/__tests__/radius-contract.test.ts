@@ -124,7 +124,7 @@ describe('contrato de radios', () => {
   // aria-expanded — un control, aunque no sea el atomo Button. Team entra por sus
   // pastillas de area, que son conmutadores (aria-pressed); el resto de sus radios
   // son roles de la escala y el contrato de arriba los sigue vigilando.
-  const CONTROLS = /(Button|Tag|NavToggle|Team|ProjectGrid)\//;
+  const CONTROLS = /(Button|Tag|NavToggle|Team|ProjectGrid|WorkIndex)\//;
 
   it('la pildora solo la usan los controles', () => {
     const misuse = RADII.filter((r) => r.value === pill && !CONTROLS.test(r.rel));
