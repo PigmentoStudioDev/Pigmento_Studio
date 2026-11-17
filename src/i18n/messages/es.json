@@ -726,7 +726,14 @@
   },
   "about": {
     "title": "Nosotros",
-    "description": "Pigmento Studio, estudio de diseño de marca y crecimiento en Ciudad de México: quiénes somos y qué ha dejado el trabajo."
+    "description": "Pigmento Studio, estudio de diseño de marca y crecimiento en Ciudad de México: quiénes somos y qué ha dejado el trabajo.",
+    "subtitle": "Pigmento Studio",
+    "sections": {
+      "approach": "Cómo trabajamos",
+      "services": "Servicios",
+      "numbers": "Números",
+      "team": "Equipo"
+    }
   },
   "project": {
     "back": "Volver al trabajo",
