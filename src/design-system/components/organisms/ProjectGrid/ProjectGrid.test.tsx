@@ -13,8 +13,6 @@ const ITEMS: ProjectGridItem[] = ["Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis
 
 const PROPS = {
   rows: buildWorkGridRows(ITEMS),
-  title: "Trabajo",
-  titleId: "trabajo-titulo",
   labels: { viewCase: "Ver caso" },
 };
 
@@ -37,12 +35,6 @@ describe("ProjectGrid", () => {
     const { container } = render(<ProjectGrid {...PROPS} />);
 
     expect(container.querySelectorAll("[data-wide='true']")).toHaveLength(1);
-  });
-
-  it("el titular va oculto a la vista pero sigue en el arbol accesible", () => {
-    render(<ProjectGrid {...PROPS} />);
-
-    expect(screen.getByRole("heading", { level: 1, name: "Trabajo" })).toHaveAttribute("id", "trabajo-titulo");
   });
 
   it("no tiene violaciones de accesibilidad", async () => {
