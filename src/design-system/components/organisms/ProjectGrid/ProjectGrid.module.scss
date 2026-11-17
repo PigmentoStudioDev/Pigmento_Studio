@@ -14,7 +14,8 @@ $desktop: 75rem;
 // Lo que sube el nombre al pasar el cursor: la altura de la pildora mas su hueco.
 $cta-shift: spacing.$spacing-09;
 
-// Oscuro en los dos modos: la pieza se pinta sobre foto y la foto no re-tematiza.
+// El fondo sigue el modo global del sitio; solo el texto sobre la foto es fijo, porque
+// la foto no re-tematiza y lo que lo lee es el degradado de debajo.
 .root {
   background-color: theme.$background;
   // La cabecera es fija: el espacio de arriba la deja respirar sobre la primera fila.
