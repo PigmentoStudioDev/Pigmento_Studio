@@ -5,77 +5,94 @@
 @use '@carbon/react/scss/spacing';
 @use '@carbon/react/scss/theme';
 
+// Cortes de la referencia: en 1200 el titulo y las piezas dejan de caber en una fila.
+$desktop: 75rem;
 $tablet: 50.625rem;
 
-// Lado de la miniatura de la referencia (125 px).
+// Lado de la miniatura (125 px) y ancho de la fila (1120 px) de la referencia.
 $piece-size: 7.8125rem;
+$row-width: 70rem;
 
 .list {
-  display: flex;
-  flex-direction: column;
-  gap: spacing.$spacing-07;
-  max-inline-size: 70rem;
   margin: 0;
-  // El mismo espaciador de arriba que la cuadricula, y lo de abajo deja sitio a la barra.
+  // El espaciador de arriba es el de la cuadricula; lo de abajo deja sitio a la barra.
   padding-block: 18svh spacing.$spacing-12;
   padding-inline: spacing.$spacing-05;
   list-style: none;
 }
 
+// El filete de abajo de cada fila va de lado a lado de la pagina; la fila, centrada.
+.row {
+  border-block-end: 1px solid theme.$border-subtle;
+}
+
 .link {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: spacing.$spacing-03;
-  padding-block-start: spacing.$spacing-05;
+  display: block;
   color: theme.$text-primary;
   text-decoration: none;
 
   &:focus-visible {
     outline: 2px solid theme.$focus;
-    outline-offset: 4px;
+    outline-offset: -2px;
   }
 }
 
-// La linea crece desde el borde izquierdo: 1 % en reposo y entera en la fila activa.
+// El filete negro de arriba: 1 % fuera de cuadro en reposo, y recorre la fila entera al
+// pasar el cursor o con el foco.
 .line {
   position: absolute;
   inset-block-start: 0;
   inset-inline: 0;
+  z-index: 1;
   block-size: 1px;
   background-color: theme.$text-primary;
   scale: 0.01 1;
   transform-origin: left;
-  transition: scale brand.$duration-base brand.$ease-default;
+  translate: calc(spacing.$spacing-05 * -1) 0;
+  transition:
+    scale brand.$duration-base brand.$ease-default,
+    translate brand.$duration-base brand.$ease-default;
 }
 
-.row[data-active] .line {
+.link:hover .line,
+.link:focus-visible .line {
   scale: 1 1;
+  translate: 0 0;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: spacing.$spacing-07;
+  max-inline-size: $row-width;
+  margin-inline: auto;
+  padding-block: spacing.$spacing-06;
+
+  // Por debajo de 1200 el titulo pasa arriba y las piezas se reparten el ancho.
+  @media (max-width: #{$desktop - 0.0625rem}) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: spacing.$spacing-05;
+  }
 }
 
 .name {
   @include brandtype.style('body');
 
   font-weight: brandtype.$weight-medium;
-}
-
-// 0fr -> 1fr anima la altura sin medirla.
-.panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows brand.$duration-base brand.$ease-default;
-}
-
-.row[data-active] .panel {
-  grid-template-rows: 1fr;
+  text-transform: uppercase;
 }
 
 .pieces {
   display: flex;
+  flex: none;
   gap: spacing.$spacing-03;
-  min-block-size: 0;
-  overflow: hidden;
-  padding-block-start: spacing.$spacing-03;
+
+  @media (max-width: #{$desktop - 0.0625rem}) {
+    flex: 1;
+  }
 }
 
 .piece {
@@ -85,38 +102,36 @@ $piece-size: 7.8125rem;
   block-size: $piece-size;
   overflow: hidden;
   border-radius: brand.$radius-03;
+
+  @media (max-width: #{$desktop - 0.0625rem}) {
+    flex: 1 0 0;
+    inline-size: auto;
+    block-size: auto;
+    aspect-ratio: 1;
+  }
+
+  // En movil la referencia pinta tres piezas, no cuatro.
+  @media (max-width: #{$tablet - 0.0625rem}) {
+    &:nth-child(n + 4) {
+      display: none;
+    }
+  }
 }
 
 .image {
   object-fit: cover;
 }
 
-// Sin cursor o en pantalla estrecha no hay hover que active: todo desplegado, y las
-// piezas se reparten el ancho.
-@media (hover: none), (max-width: #{$tablet - 0.0625rem}) {
+// Sin cursor no hay con que dibujar el filete: queda entero.
+@media (hover: none) {
   .line {
     scale: 1 1;
-  }
-
-  .panel {
-    grid-template-rows: 1fr;
-  }
-
-  .pieces {
-    padding-block-end: spacing.$spacing-05;
-  }
-
-  .piece {
-    flex: 1 0 0;
-    inline-size: auto;
-    aspect-ratio: 1;
-    block-size: auto;
+    translate: 0 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .line,
-  .panel {
+  .line {
     transition: none;
   }
 }
