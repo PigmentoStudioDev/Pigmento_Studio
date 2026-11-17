@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { describe, expect, it } from "vitest";
-import { buildWorkGridRows } from "@/app/work-grid";
+import { buildWorkGridRows } from "./workGrid";
 import { ProjectGrid, type ProjectGridItem } from "./ProjectGrid";
 
 const IMAGE = { src: "/portfolio/01.png", alt: "Portada", width: 520, height: 700 };

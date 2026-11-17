@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { buildWorkGridRows } from "@/app/work-grid";
+import { buildWorkGridRows } from "../ProjectGrid/workGrid";
 import { ProjectGrid } from "../ProjectGrid/ProjectGrid";
 import { ProjectList } from "../ProjectList/ProjectList";
 import { WorkFilter, type WorkFilterOption } from "../WorkFilter/WorkFilter";

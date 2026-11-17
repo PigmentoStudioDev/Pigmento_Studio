@@ -85,6 +85,15 @@ export function brandEasePoints(): string | null {
   return bezierPoints(readToken("--pg-ease-default"));
 }
 
+/**
+ * La curva de marca como valor CSS, para la Web Animations API, que no pasa por gsap.
+ * Null si la hoja no la publica: quien llama decide el respaldo.
+ */
+export function brandEaseCss(): string | null {
+  const value = readToken("--pg-ease-default").trim();
+  return bezierPoints(value) ? value : null;
+}
+
 /** La curva de seguir tal como la publica la hoja. */
 export function followEasePoints(): string | null {
   return bezierPoints(readToken("--pg-ease-follow"));

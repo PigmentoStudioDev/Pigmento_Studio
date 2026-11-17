@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildWorkGridRows } from "./work-grid";
+import { buildWorkGridRows } from "./workGrid";
 
 const make = (count: number) => Array.from({ length: count }, (_, i) => i);
 
