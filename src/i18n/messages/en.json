@@ -726,7 +726,14 @@
   },
   "about": {
     "title": "About",
-    "description": "Pigmento Studio, a brand design and growth studio in Mexico City: who we are and what the work has left."
+    "description": "Pigmento Studio, a brand design and growth studio in Mexico City: who we are and what the work has left.",
+    "subtitle": "Pigmento Studio",
+    "sections": {
+      "approach": "How we work",
+      "services": "Services",
+      "numbers": "Numbers",
+      "team": "Team"
+    }
   },
   "project": {
     "back": "Back to work",

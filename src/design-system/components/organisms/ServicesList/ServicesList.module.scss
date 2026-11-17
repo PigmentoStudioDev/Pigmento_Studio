@@ -1,0 +1,122 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-block-start: 1px solid theme.$border-subtle;
+}
+
+.row {
+  border-block-end: 1px solid theme.$border-subtle;
+}
+
+.heading {
+  margin: 0;
+  font: inherit;
+}
+
+// El nombre arranca en la segunda columna de una rejilla de seis, como en la referencia.
+.trigger {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 5fr) auto;
+  align-items: center;
+  inline-size: 100%;
+  padding-block: spacing.$spacing-05;
+  border: 0;
+  background: transparent;
+  color: theme.$text-primary;
+  text-align: start;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid theme.$focus;
+    outline-offset: -2px;
+  }
+}
+
+.number,
+.name {
+  @include brandtype.style('about-block');
+}
+
+.number {
+  color: theme.$text-secondary;
+}
+
+// El `+` son dos trazos; al abrir el vertical se pliega y queda un `-`.
+.plus {
+  position: relative;
+  inline-size: spacing.$spacing-04;
+  block-size: spacing.$spacing-04;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 0;
+    inline-size: 100%;
+    block-size: 1px;
+    background-color: theme.$text-secondary;
+    transition: rotate brand.$duration-base brand.$ease-default;
+  }
+
+  &::after {
+    rotate: 90deg;
+  }
+}
+
+.row[data-open] .plus::after {
+  rotate: 0deg;
+}
+
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows brand.$duration-base brand.$ease-default;
+}
+
+.row[data-open] .panel {
+  grid-template-rows: 1fr;
+}
+
+.inner {
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+// Alineado con el nombre: la misma columna que el titulo de la fila.
+.text {
+  @include brandtype.style('about-body');
+
+  max-inline-size: 36rem;
+  margin: 0;
+  padding-block-end: spacing.$spacing-06;
+  padding-inline-start: calc(100% / 6);
+  color: theme.$text-secondary;
+}
+
+@include breakpoint.breakpoint-down('md') {
+  .trigger {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr) auto;
+  }
+
+  .text {
+    padding-inline-start: calc(100% / 4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .plus::before,
+  .plus::after {
+    transition: none;
+  }
+}

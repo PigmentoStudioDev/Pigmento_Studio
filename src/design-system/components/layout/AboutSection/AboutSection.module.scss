@@ -1,0 +1,8 @@
+@use '../../../styles/carbon-config';
+
+@use '@carbon/react/scss/spacing';
+
+.root {
+  padding-inline: spacing.$spacing-05;
+  padding-block-end: spacing.$spacing-12;
+}
