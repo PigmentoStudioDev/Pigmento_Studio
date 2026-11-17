@@ -1,0 +1,175 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/a11y';
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// Cortes de la referencia (810 y 1200), que no son los de Carbon: el ritmo del grid se
+// midio contra ellos y moverlos cambia que filas caben.
+$tablet: 50.625rem;
+$desktop: 75rem;
+
+// Lo que sube el nombre al pasar el cursor: la altura de la pildora mas su hueco.
+$cta-shift: spacing.$spacing-09;
+
+// Oscuro en los dos modos: la pieza se pinta sobre foto y la foto no re-tematiza.
+.root {
+  background-color: theme.$background;
+  // La cabecera es fija: el espacio de arriba la deja respirar sobre la primera fila.
+  padding-block-start: 15svh;
+}
+
+.hiddenTitle {
+  @include a11y.visually-hidden;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+  padding-inline: spacing.$spacing-05;
+  padding-block-end: spacing.$spacing-05;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: spacing.$spacing-05;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  // Escritorio: la fila fija la proporcion, no la imagen.
+  aspect-ratio: 2.38095;
+
+  @media (max-width: #{$desktop - 0.0625rem}) {
+    aspect-ratio: auto;
+    block-size: 21.25rem;
+  }
+
+  // Movil: una pieza por fila, apiladas.
+  @media (max-width: #{$tablet - 0.0625rem}) {
+    grid-template-columns: minmax(0, 1fr);
+    block-size: auto;
+  }
+
+  &[data-kind='hero'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  &[data-kind='even'][data-count='2'] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  &[data-kind='even'][data-count='1'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (max-width: #{$tablet - 0.0625rem}) {
+    &[data-kind] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}
+
+.item {
+  position: relative;
+  min-inline-size: 0;
+
+  &[data-wide] {
+    grid-column: span 2;
+  }
+
+  @media (max-width: #{$tablet - 0.0625rem}) {
+    aspect-ratio: 0.734694;
+
+    &[data-wide] {
+      grid-column: auto;
+    }
+  }
+}
+
+.link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: brand.$radius-piece;
+  background-color: theme.$layer-01;
+  color: brand.$text-on-control-ink;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid theme.$focus;
+    outline-offset: -2px;
+  }
+}
+
+.image {
+  object-fit: cover;
+}
+
+// El nombre y la pildora comparten caja: en reposo la pildora queda recortada bajo el
+// borde y el nombre al fondo; al pasar el cursor todo sube junto.
+.caption {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: spacing.$spacing-05;
+  padding-block: spacing.$spacing-07;
+  padding-inline: spacing.$spacing-07;
+  background-image: linear-gradient(transparent 40%, brand.$image-band-scrim);
+  text-align: center;
+  translate: 0 $cta-shift;
+  transition: translate brand.$duration-base brand.$ease-default;
+}
+
+.name {
+  @include brandtype.style('project-name');
+}
+
+.cta {
+  @include brandtype.style('label');
+
+  padding-block: spacing.$spacing-03;
+  padding-inline: spacing.$spacing-06;
+  border-radius: brand.$radius-full;
+  background-color: brand.$surface-header-overlay;
+  backdrop-filter: blur(1.875rem);
+  color: brand.$text-on-control-ink;
+  opacity: 0;
+  transition: opacity brand.$duration-base brand.$ease-default;
+}
+
+.link:hover .caption,
+.link:focus-visible .caption {
+  translate: 0 0;
+}
+
+.link:hover .cta,
+.link:focus-visible .cta {
+  opacity: 1;
+}
+
+// Sin cursor que pase por encima, la pildora va siempre visible y en flujo.
+@media (hover: none), (max-width: #{$desktop - 0.0625rem}) {
+  .caption {
+    translate: none;
+  }
+
+  .cta {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caption,
+  .cta {
+    transition: none;
+  }
+}
