@@ -14,42 +14,6 @@
   @include a11y.visually-hidden;
 }
 
-// Arriba del portafolio, bajo la cabecera fija: el espacio de arriba es el que antes
-// ponia cada vista.
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: spacing.$spacing-03;
-  padding-block: 15svh spacing.$spacing-05;
-  padding-inline: spacing.$spacing-05;
-}
-
-.filter {
-  @include brandtype.style('label');
-
-  padding-block: spacing.$spacing-03;
-  padding-inline: spacing.$spacing-05;
-  border: 1px solid theme.$border-subtle;
-  border-radius: brand.$radius-full;
-  background-color: transparent;
-  color: theme.$text-secondary;
-  cursor: pointer;
-  transition:
-    background-color brand.$duration-half brand.$ease-default,
-    color brand.$duration-half brand.$ease-default;
-
-  &[aria-pressed='true'] {
-    border-color: transparent;
-    background-color: theme.$layer-02;
-    color: theme.$text-primary;
-  }
-
-  &:focus-visible {
-    outline: 2px solid theme.$focus;
-    outline-offset: 2px;
-  }
-}
-
 // Fija abajo y centrada, como la de la referencia.
 .bar {
   position: fixed;
@@ -115,7 +79,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .filter,
   .button {
     transition: none;
   }

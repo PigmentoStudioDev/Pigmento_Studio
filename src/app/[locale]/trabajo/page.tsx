@@ -73,6 +73,7 @@ export default async function Trabajo({ params }: PageProps<"/[locale]/trabajo">
             viewSwitch: tWork("viewSwitch"),
             filterAll: tWork("filterAll"),
             filterLabel: tWork("filterLabel"),
+            filterResults: tWork("filterResults"),
           }}
         />
       </Section>

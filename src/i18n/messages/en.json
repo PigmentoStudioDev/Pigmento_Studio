@@ -133,6 +133,7 @@
       "viewSwitch": "View",
       "filterAll": "All",
       "filterLabel": "Filter by discipline",
+      "filterResults": "projects",
       "drag": "Drag"
     },
     "services": {
