@@ -131,6 +131,8 @@
       "viewGrid": "Ver en cuadrícula",
       "viewList": "Ver en lista",
       "viewSwitch": "Vista",
+      "filterAll": "Todos",
+      "filterLabel": "Filtrar por disciplina",
       "drag": "Arrastrar"
     },
     "services": {

@@ -17,8 +17,6 @@ $cta-shift: spacing.$spacing-09;
 // la foto no re-tematiza y lo que lo lee es el degradado de debajo.
 .root {
   background-color: theme.$background;
-  // La cabecera es fija: el espacio de arriba la deja respirar sobre la primera fila.
-  padding-block-start: 15svh;
 }
 
 .rows {

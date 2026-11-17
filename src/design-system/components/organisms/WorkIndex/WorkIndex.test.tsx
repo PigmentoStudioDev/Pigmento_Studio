@@ -4,18 +4,23 @@ import { describe, expect, it } from "vitest";
 import { WorkIndex, type WorkIndexItem } from "./WorkIndex";
 
 const IMAGE = { src: "/portfolio/01.png", alt: "Portada", width: 520, height: 700 };
-const ITEMS: WorkIndexItem[] = ["Uno", "Dos", "Tres", "Cuatro"].map((title) => ({
+const ITEMS: WorkIndexItem[] = ["Uno", "Dos", "Tres", "Cuatro"].map((title, index) => ({
   slug: title.toLowerCase(),
   title,
+  discipline: index < 2 ? "branding" : "web",
   image: IMAGE,
   gallery: [IMAGE, IMAGE],
 }));
 
 const PROPS = {
   items: ITEMS,
+  filters: [
+    { value: "branding", label: "Branding" },
+    { value: "web", label: "Web" },
+  ],
   title: "Trabajo",
   titleId: "trabajo-titulo",
-  labels: { viewCase: "Ver caso", viewGrid: "Ver en cuadricula", viewList: "Ver en lista", viewSwitch: "Vista" },
+  labels: { viewCase: "Ver caso", viewGrid: "Ver en cuadricula", viewList: "Ver en lista", viewSwitch: "Vista", filterAll: "Todos", filterLabel: "Filtrar" },
 };
 
 describe("WorkIndex", () => {
@@ -46,6 +51,35 @@ describe("WorkIndex", () => {
       expect(row.querySelectorAll("img")).toHaveLength(3);
     }
     expect(container.querySelectorAll("li")).toHaveLength(ITEMS.length);
+  });
+
+  it("arranca con Todos marcado y todos los proyectos", () => {
+    render(<WorkIndex {...PROPS} />);
+
+    expect(screen.getByRole("button", { name: "Todos" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getAllByRole("link")).toHaveLength(ITEMS.length);
+  });
+
+  it("filtrar deja solo la disciplina elegida, actualiza el contador y Todos lo deshace", () => {
+    render(<WorkIndex {...PROPS} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Web" }));
+
+    expect(screen.getAllByRole("link").map((link) => link.getAttribute("href"))).toEqual(["/trabajo/tres", "/trabajo/cuatro"]);
+    expect(screen.getByText("(2)")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Todos" })).toHaveAttribute("aria-pressed", "false");
+
+    fireEvent.click(screen.getByRole("button", { name: "Todos" }));
+    expect(screen.getAllByRole("link")).toHaveLength(ITEMS.length);
+  });
+
+  it("el filtro se conserva al cambiar de vista", () => {
+    render(<WorkIndex {...PROPS} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Branding" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ver en lista" }));
+
+    expect(screen.getAllByRole("link")).toHaveLength(2);
   });
 
   it("el titular de la pagina sigue ahi en las dos vistas", () => {

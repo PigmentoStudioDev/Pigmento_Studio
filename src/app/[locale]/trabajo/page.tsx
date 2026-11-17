@@ -20,6 +20,7 @@ import { getFinalCta } from "../../cta";
  */
 const TITLE_ID = "trabajo-titulo";
 const CTA_TITLE_ID = "contacto";
+const DISCIPLINES = ["branding", "web", "motion", "marketing"] as const;
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/trabajo">): Promise<Metadata> {
   const { locale } = await params;
@@ -46,7 +47,15 @@ export default async function Trabajo({ params }: PageProps<"/[locale]/trabajo">
     slug: project.slug,
     title: project.title,
     image: project.image,
+    ...(project.discipline ? { discipline: project.discipline } : {}),
     ...(project.gallery ? { gallery: project.gallery } : {}),
+  }));
+
+  // Solo las disciplinas con proyectos, en el orden fijo del CMS: un filtro que da cero
+  // resultados es un callejon sin salida.
+  const filters = DISCIPLINES.filter((key) => projects.some((project) => project.discipline === key)).map((key) => ({
+    value: key,
+    label: tWork(`disciplines.${key}`),
   }));
 
   return (
@@ -54,6 +63,7 @@ export default async function Trabajo({ params }: PageProps<"/[locale]/trabajo">
       <Section width="full" spacing="none" surface="solid" labelledBy={TITLE_ID}>
         <WorkIndex
           items={items}
+          filters={filters}
           title={t("trabajo")}
           titleId={TITLE_ID}
           labels={{
@@ -61,6 +71,8 @@ export default async function Trabajo({ params }: PageProps<"/[locale]/trabajo">
             viewGrid: tWork("viewGrid"),
             viewList: tWork("viewList"),
             viewSwitch: tWork("viewSwitch"),
+            filterAll: tWork("filterAll"),
+            filterLabel: tWork("filterLabel"),
           }}
         />
       </Section>

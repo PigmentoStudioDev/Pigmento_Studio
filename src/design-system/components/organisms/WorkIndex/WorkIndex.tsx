@@ -16,12 +16,21 @@ export type WorkView = "grid" | "list";
 export interface WorkIndexItem {
   slug: string;
   title: string;
+  /** Clave de la disciplina, la que casa con una opcion del filtro. */
+  discipline?: string;
   image: { src: string; alt: string; width: number; height: number };
   gallery?: { src: string; alt: string; width: number; height: number }[];
 }
 
+export interface WorkFilterOption {
+  value: string;
+  label: string;
+}
+
 export interface WorkIndexProps {
   items: WorkIndexItem[];
+  /** Las disciplinas con al menos un proyecto, ya traducidas. "Todos" lo pone el componente. */
+  filters: WorkFilterOption[];
   title: string;
   titleId: string;
   labels: {
@@ -29,6 +38,8 @@ export interface WorkIndexProps {
     viewGrid: string;
     viewList: string;
     viewSwitch: string;
+    filterAll: string;
+    filterLabel: string;
   };
 }
 
@@ -53,23 +64,43 @@ function ListIcon() {
   );
 }
 
-export function WorkIndex({ items, title, titleId, labels }: WorkIndexProps) {
+const ALL = "all";
+
+export function WorkIndex({ items, filters, title, titleId, labels }: WorkIndexProps) {
   const [view, setView] = useState<WorkView>("grid");
+  const [filter, setFilter] = useState(ALL);
+
+  const visible = filter === ALL ? items : items.filter((item) => item.discipline === filter);
+  const options: WorkFilterOption[] = [{ value: ALL, label: labels.filterAll }, ...filters];
 
   return (
     <div className={styles.root}>
       <h1 id={titleId} className={styles.hiddenTitle}>
         {title}
       </h1>
+      <div className={styles.filters} role="group" aria-label={labels.filterLabel}>
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            className={styles.filter}
+            aria-pressed={filter === option.value}
+            onClick={() => setFilter(option.value)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+      {/* La clave remonta la vista al filtrar: el gesto de entrada de las filas se rearma. */}
       {view === "grid" ? (
-        <ProjectGrid rows={buildWorkGridRows(items)} labels={{ viewCase: labels.viewCase }} />
+        <ProjectGrid key={filter} rows={buildWorkGridRows(visible)} labels={{ viewCase: labels.viewCase }} />
       ) : (
-        <ProjectList items={items} />
+        <ProjectList key={filter} items={visible} />
       )}
       <div className={styles.bar} role="group" aria-label={labels.viewSwitch}>
         <span className={styles.heading}>
           <span className={styles.title}>{title}</span>
-          <span className={styles.count}>({items.length})</span>
+          <span className={styles.count}>({visible.length})</span>
         </span>
         <span className={styles.buttons}>
           <button

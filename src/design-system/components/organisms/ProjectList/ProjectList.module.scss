@@ -15,8 +15,8 @@ $row-width: 70rem;
 
 .list {
   margin: 0;
-  // El espaciador de arriba es el de la cuadricula; lo de abajo deja sitio a la barra.
-  padding-block: 18svh spacing.$spacing-12;
+  // El espacio de arriba lo pone el filtro; lo de abajo deja sitio a la barra.
+  padding-block: spacing.$spacing-05 spacing.$spacing-12;
   padding-inline: spacing.$spacing-05;
   list-style: none;
 }
@@ -82,7 +82,6 @@ $row-width: 70rem;
   @include brandtype.style('body');
 
   font-weight: brandtype.$weight-medium;
-  text-transform: uppercase;
 }
 
 .pieces {
