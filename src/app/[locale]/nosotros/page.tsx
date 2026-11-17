@@ -67,7 +67,7 @@ export default async function Nosotros({ params }: PageProps<"/[locale]/nosotros
 
   return (
     <main id="main">
-      <Section width="full" spacing="none" surface="solid" labelledBy={INTRO_TITLE_ID}>
+      <Section width="wide" spacing="none" labelledBy={INTRO_TITLE_ID}>
         <AboutIntro
           title={t("title")}
           subtitle={t("subtitle")}
@@ -77,7 +77,7 @@ export default async function Nosotros({ params }: PageProps<"/[locale]/nosotros
         />
       </Section>
 
-      <Section width="full" spacing="none" surface="solid">
+      <Section width="wide" spacing="none">
         <AboutSection label={t("sections.approach")} labelId={APPROACH_ID}>
           <AboutApproach items={getApproach(tValues, projects)} />
         </AboutSection>

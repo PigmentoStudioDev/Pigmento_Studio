@@ -18,7 +18,7 @@
 }
 
 .label {
-  @include brandtype.style('about-label');
+  @include brandtype.style('label');
 
   margin: 0;
   color: theme.$text-primary;
