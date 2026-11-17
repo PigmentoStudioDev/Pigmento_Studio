@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import styles from "./AboutApproach.module.scss";
 
 /**
@@ -17,6 +18,7 @@ export interface AboutApproachProps {
 
 export function AboutApproach({ items }: AboutApproachProps) {
   return (
+    <ScrollReveal by="block" inner>
     <ol className={styles.list}>
       {items.map((item, index) => (
         <li key={item.title} className={styles.item}>
@@ -39,5 +41,6 @@ export function AboutApproach({ items }: AboutApproachProps) {
         </li>
       ))}
     </ol>
+    </ScrollReveal>
   );
 }

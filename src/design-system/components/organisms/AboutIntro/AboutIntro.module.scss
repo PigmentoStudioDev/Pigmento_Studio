@@ -11,11 +11,10 @@
   gap: spacing.$spacing-07;
   // El espacio de arriba deja respirar al titular bajo la cabecera fija.
   padding-block: 15svh spacing.$spacing-12;
-  padding-inline: spacing.$spacing-05;
 }
 
 .title {
-  @include brandtype.style('about-title');
+  @include brandtype.style('title');
 
   display: flex;
   flex-direction: column;
@@ -36,7 +35,7 @@
 }
 
 .text {
-  @include brandtype.style('about-body');
+  @include brandtype.style('body');
 
   grid-column: span 1;
   margin: 0;
