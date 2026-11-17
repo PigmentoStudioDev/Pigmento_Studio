@@ -5,11 +5,12 @@ import { notFound } from "next/navigation";
 import { getWorkProjects } from "@/cms/projects";
 import { alternatesFor } from "@/app/seo";
 import { Section } from "@/design-system/components/layout/Section/Section";
-import { DomeGrid, type DomeGridItem } from "@/design-system/components/organisms/DomeGrid/DomeGrid";
+import { ProjectGrid, type ProjectGridItem } from "@/design-system/components/organisms/ProjectGrid/ProjectGrid";
+import { buildWorkGridRows } from "@/app/work-grid";
 import { routing } from "@/i18n/routing";
 
 /**
- * Trabajo: el portafolio publicado en una cupula arrastrable. Indexable: es contenido
+ * Trabajo: el portafolio publicado en filas de tres columnas (ritmo de la referencia). Indexable: es contenido
  * real, no una pagina de cortesia.
  *
  * El titulo es el de la barra de navegacion, para que la pagina se nombre igual que el
@@ -37,31 +38,22 @@ export default async function Trabajo({ params }: PageProps<"/[locale]/trabajo">
     getWorkProjects(locale),
   ]);
 
-  // La disciplina llega como clave del CMS; el año y la disciplina forman la linea de
-  // la tarjeta, y una tarjeta sin ninguno de los dos no lleva linea.
-  const items: DomeGridItem[] = projects.map((project) => {
-    const meta = [project.discipline ? tWork(`disciplines.${project.discipline}`) : null, project.year ? String(project.year) : null]
-      .filter(Boolean)
-      .join(", ");
-
-    return {
-      slug: project.slug,
-      title: project.title,
-      ...(meta ? { meta } : {}),
-      image: project.image,
-    };
-  });
+  const items: ProjectGridItem[] = projects.map((project) => ({
+    slug: project.slug,
+    title: project.title,
+    image: project.image,
+  }));
 
   return (
     // Sin pie (decision de Karen, 2026-10-26): el indice del trabajo acaba en el
     // trabajo. El pie vive en el layout, asi que la pagina solo lo pide por atributo.
     <main id="main" data-footer="off">
       <Section width="full" spacing="none" surface="solid" theme={{ light: "dark", dark: "dark" }} labelledBy={TITLE_ID}>
-        <DomeGrid
-          items={items}
+        <ProjectGrid
+          rows={buildWorkGridRows(items)}
           title={t("trabajo")}
           titleId={TITLE_ID}
-          labels={{ stage: tWork("stage"), drag: tWork("drag") }}
+          labels={{ viewCase: tWork("viewCase") }}
         />
       </Section>
     </main>

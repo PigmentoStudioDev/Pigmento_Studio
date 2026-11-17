@@ -139,6 +139,11 @@ $-styles: (
   // que dice que eso es metadato antes de leerlo.
   'body': (size: 1.25rem, height: 1.5, tracking: -0.01em, weight: 400),
 
+  // El nombre de un proyecto DENTRO de su imagen en el indice de trabajo: mas grande que
+  // 'body' porque es lo unico que dice la pieza, y sin tracking porque sobre foto el
+  // aire entre letras se lee como ruido.
+  'project-name': (size: 1.875rem, height: 1, tracking: 0, weight: 500),
+
   // El metadato: chip de seccion, distintivo, contador.
   //
   // La familia es lo que hace el trabajo, no el tamano. Contra un cuerpo de 16 la
