@@ -28,7 +28,7 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 5fr) auto;
   align-items: center;
   inline-size: 100%;
-  padding-block: spacing.$spacing-05;
+  padding-block: spacing.$spacing-06;
   border: 0;
   background: transparent;
   color: theme.$text-primary;
@@ -43,7 +43,16 @@
 
 .number,
 .name {
-  @include brandtype.style('about-block');
+  @include brandtype.style('lead');
+}
+
+.name {
+  transition: translate brand.$duration-base brand.$ease-default;
+}
+
+.trigger:hover .name,
+.trigger:focus-visible .name {
+  translate: spacing.$spacing-03 0;
 }
 
 .number {
@@ -94,7 +103,7 @@
 
 // Alineado con el nombre: la misma columna que el titulo de la fila.
 .text {
-  @include brandtype.style('about-body');
+  @include brandtype.style('body');
 
   max-inline-size: 36rem;
   margin: 0;
@@ -114,6 +123,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .name,
   .panel,
   .plus::before,
   .plus::after {

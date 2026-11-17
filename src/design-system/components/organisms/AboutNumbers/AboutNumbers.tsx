@@ -1,4 +1,5 @@
 import { NumberRoll } from "../../molecules/NumberRoll/NumberRoll";
+import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import styles from "./AboutNumbers.module.scss";
 
 /**
@@ -17,6 +18,7 @@ export interface AboutNumbersProps {
 
 export function AboutNumbers({ figures }: AboutNumbersProps) {
   return (
+    <ScrollReveal by="block" inner>
     <ul className={styles.list}>
       {figures.map((figure) => (
         <li key={figure.label} className={styles.item}>
@@ -30,5 +32,6 @@ export function AboutNumbers({ figures }: AboutNumbersProps) {
         </li>
       ))}
     </ul>
+    </ScrollReveal>
   );
 }
