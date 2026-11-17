@@ -2,6 +2,7 @@ import type { CycledCandyFamily } from "../../../theme/candy";
 import { Heading } from "../../atoms/Heading/Heading";
 import { ScrollHighlight } from "../../layout/ScrollHighlight/ScrollHighlight";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
+import { SectionHead } from "../../layout/SectionHead/SectionHead";
 import styles from "./StripHeader.module.scss";
 
 /**
@@ -64,6 +65,11 @@ export interface StripHeaderProps {
    * bloques que debajo son simetricos.
    */
   align?: "split" | "center";
+  /**
+   * La cabecera de la pagina About: filete y el titulo como etiqueta, sin titular grande
+   * ni resalte. Mantiene el titulo en el DOM como h2 para el landmark.
+   */
+  quiet?: boolean;
 }
 
 export function StripHeader({
@@ -75,7 +81,23 @@ export function StripHeader({
   highlightFamily,
   highlightOnScroll = false,
   align = "split",
+  quiet = false,
 }: StripHeaderProps) {
+  if (quiet) {
+    return (
+      <div>
+        <SectionHead label={title} id={titleId} />
+        {intro ? (
+          <div className={styles.quietIntro}>
+            <ScrollReveal>
+              <p className={styles.intro}>{intro}</p>
+            </ScrollReveal>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
   const centered = align === "center";
   const heading = (
     <ScrollReveal>

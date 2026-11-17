@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { getWorkProjects } from "@/cms/projects";
 import { getTeamMembers } from "@/cms/team";
 import { AboutSection } from "@/design-system/components/layout/AboutSection/AboutSection";
 import { Section } from "@/design-system/components/layout/Section/Section";
 import { AboutIntro } from "@/design-system/components/organisms/AboutIntro/AboutIntro";
 import { AboutNumbers } from "@/design-system/components/organisms/AboutNumbers/AboutNumbers";
-import { Clients } from "@/design-system/components/organisms/Clients/Clients";
 import { Difference } from "@/design-system/components/organisms/Difference/Difference";
 import { Faq } from "@/design-system/components/organisms/Faq/Faq";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
@@ -18,7 +16,6 @@ import { Team } from "@/design-system/components/organisms/Team/Team";
 import { Testimonials } from "@/design-system/components/organisms/Testimonials/Testimonials";
 import { routing } from "@/i18n/routing";
 import { getServicesList } from "@/app/about";
-import { getClients } from "@/app/clients";
 import { sendContact } from "@/app/contact-action";
 import { getFinalCta } from "@/app/cta";
 import { getDifference } from "@/app/difference";
@@ -34,7 +31,6 @@ const PROCESS_TITLE_ID = "proceso";
 const DIFFERENCE_TITLE_ID = "diferencia";
 const SERVICES_ID = "servicios";
 const NUMBERS_ID = "numeros";
-const CLIENTS_TITLE_ID = "marcas";
 const TEAM_TITLE_ID = "equipo";
 const FAQ_TITLE_ID = "faq";
 const CTA_TITLE_ID = "contacto";
@@ -47,8 +43,8 @@ const CTA_TITLE_ID = "contacto";
  * Orden: apertura, como trabajamos (proceso), por que un estudio (diferencia), servicios,
  * numeros, marcas y testimonios, equipo, preguntas y contacto.
  *
- * Sigue fuera de la referencia, a proposito: Press (no hay blog). Los logos de Clients no
- * existen en el CMS, asi que las marcas salen como nombres.
+ * Sigue fuera de la referencia, a proposito: Press (no hay blog) y Clients (sin logos en el
+ * CMS, y su titular gigante no es de esta pagina).
  */
 export async function generateMetadata({ params }: PageProps<"/[locale]/nosotros">): Promise<Metadata> {
   const { locale } = await params;
@@ -69,7 +65,7 @@ export default async function Nosotros({ params }: PageProps<"/[locale]/nosotros
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
-  const [t, tValues, tServices, tFigures, tTeam, tProcess, tDifference, tClients, tTestimonials, tFaq, tCta, projects, members] =
+  const [t, tValues, tServices, tFigures, tTeam, tProcess, tDifference, tTestimonials, tFaq, tCta, members] =
     await Promise.all([
       getTranslations("about"),
       getTranslations("home.values"),
@@ -78,20 +74,17 @@ export default async function Nosotros({ params }: PageProps<"/[locale]/nosotros
       getTranslations("home.team"),
       getTranslations("home.process"),
       getTranslations("home.difference"),
-      getTranslations("home.clients"),
       getTranslations("home.testimonials"),
       getTranslations("home.faq"),
       getTranslations("home.cta"),
-      getWorkProjects(locale),
       getTeamMembers(locale),
     ]);
   const team = getTeam(tTeam, members);
-  const clients = getClients(tClients, tServices, projects);
   const testimonials = getTestimonials(tTestimonials);
 
   return (
     <main id="main">
-      <Section width="wide" spacing="none" labelledBy={INTRO_TITLE_ID}>
+      <Section width="strip" spacing="none" labelledBy={INTRO_TITLE_ID}>
         <AboutIntro
           title={t("title")}
           subtitle={t("subtitle")}
@@ -103,14 +96,14 @@ export default async function Nosotros({ params }: PageProps<"/[locale]/nosotros
       </Section>
 
       <Section width="strip" spacing="loose" labelledBy={PROCESS_TITLE_ID}>
-        <Process {...getProcess(tProcess)} titleId={PROCESS_TITLE_ID} highlightFamily="pink" />
+        <Process {...getProcess(tProcess)} titleId={PROCESS_TITLE_ID} quietHeader />
       </Section>
 
       <Section width="strip" spacing="loose" labelledBy={DIFFERENCE_TITLE_ID}>
-        <Difference {...getDifference(tDifference)} titleId={DIFFERENCE_TITLE_ID} highlightFamily="lime" />
+        <Difference {...getDifference(tDifference)} titleId={DIFFERENCE_TITLE_ID} quietHeader />
       </Section>
 
-      <Section width="wide" spacing="none">
+      <Section width="strip" spacing="none">
         <AboutSection label={t("sections.services")} labelId={SERVICES_ID}>
           <ServicesList items={getServicesList(tServices)} />
         </AboutSection>
@@ -120,12 +113,6 @@ export default async function Nosotros({ params }: PageProps<"/[locale]/nosotros
         </AboutSection>
       </Section>
 
-      {clients.clients.length > 0 ? (
-        <Section width="strip" spacing="loose" labelledBy={CLIENTS_TITLE_ID}>
-          <Clients {...clients} titleId={CLIENTS_TITLE_ID} />
-        </Section>
-      ) : null}
-
       {testimonials.testimonials.length > 0 ? (
         <Section width="full" spacing="loose" spacingStart="none">
           <Testimonials {...testimonials} />
@@ -134,12 +121,12 @@ export default async function Nosotros({ params }: PageProps<"/[locale]/nosotros
 
       {team ? (
         <Section width="strip" spacing="default" spacingEnd="loose" labelledBy={TEAM_TITLE_ID}>
-          <Team {...team} titleId={TEAM_TITLE_ID} highlightFamily="lime" />
+          <Team {...team} titleId={TEAM_TITLE_ID} quietHeader />
         </Section>
       ) : null}
 
       <Section width="strip" spacing="loose" labelledBy={FAQ_TITLE_ID}>
-        <Faq {...getFaq(tFaq)} titleId={FAQ_TITLE_ID} highlightFamily="tangerine" />
+        <Faq {...getFaq(tFaq)} titleId={FAQ_TITLE_ID} quietHeader />
       </Section>
 
       <Section width="strip" spacing="loose" theme={{ light: "dark", dark: "dark" }} labelledBy={CTA_TITLE_ID}>
