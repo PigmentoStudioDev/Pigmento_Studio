@@ -48,7 +48,7 @@ export default async function Trabajo({ params }: PageProps<"/[locale]/trabajo">
     // Sin pie (decision de Karen, 2026-10-26): el indice del trabajo acaba en el
     // trabajo. El pie vive en el layout, asi que la pagina solo lo pide por atributo.
     <main id="main" data-footer="off">
-      <Section width="full" spacing="none" surface="solid" theme={{ light: "dark", dark: "dark" }} labelledBy={TITLE_ID}>
+      <Section width="full" spacing="none" surface="solid" labelledBy={TITLE_ID}>
         <ProjectGrid
           rows={buildWorkGridRows(items)}
           title={t("trabajo")}
