@@ -1,0 +1,25 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+  padding-block-end: spacing.$spacing-09;
+}
+
+.line {
+  display: block;
+  block-size: 1px;
+  background-color: theme.$border-subtle;
+}
+
+.label {
+  @include brandtype.style('about-label');
+
+  margin: 0;
+  color: theme.$text-primary;
+}
