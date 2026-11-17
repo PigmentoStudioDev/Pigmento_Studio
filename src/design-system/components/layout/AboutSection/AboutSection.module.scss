@@ -3,5 +3,8 @@
 @use '@carbon/react/scss/spacing';
 
 .root {
+  // El mismo lateral que los organismos del resto de la pagina: el contenido de una
+  // tira a la siguiente arranca en la misma linea.
+  padding-inline: spacing.$spacing-06;
   padding-block-end: spacing.$spacing-12;
 }

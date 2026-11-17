@@ -65,6 +65,8 @@ export interface ProcessProps {
    * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
    */
   highlightFamily?: CycledCandyFamily;
+  /** Cabecera discreta (filete + etiqueta) en lugar del titular grande. */
+  quietHeader?: boolean;
 }
 
 /** Dos cifras: "01" y no "1". Es la misma voz que el indice de las tarjetas de valores. */
@@ -81,6 +83,7 @@ export function Process({
   phases,
   titleId,
   highlightFamily,
+  quietHeader,
 }: ProcessProps) {
   if (phases.length === 0) return null;
 
@@ -94,6 +97,7 @@ export function Process({
           intro={intro}
           titleId={titleId}
           highlightFamily={highlightFamily}
+          quiet={quietHeader}
         />
       </div>
 

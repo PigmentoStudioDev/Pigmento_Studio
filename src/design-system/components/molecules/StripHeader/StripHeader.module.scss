@@ -42,11 +42,21 @@ $centered-measure: 60ch;
   color: theme.$text-secondary;
 }
 
+// Cabecera `quiet`: el filete ya lo pone SectionHead, asi que la entradilla va sola en la
+// columna derecha, sin la banda (que traeria un segundo filete).
+.quietIntro {
+  padding-inline-start: 50%;
+}
+
 // En movil las dos columnas se apilan: a media pantalla, un parrafo en la columna
 // derecha sale a cuatro palabras por linea.
 @include breakpoint.breakpoint-down('md') {
   .band {
     grid-template-columns: 1fr;
+  }
+
+  .quietIntro {
+    padding-inline-start: 0;
   }
 }
 

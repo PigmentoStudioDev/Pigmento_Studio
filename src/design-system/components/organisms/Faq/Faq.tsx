@@ -59,6 +59,8 @@ export interface FaqProps {
    * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
    */
   highlightFamily?: CycledCandyFamily;
+  /** Cabecera discreta (filete + etiqueta) en lugar del titular grande. */
+  quietHeader?: boolean;
 }
 
 export function Faq({
@@ -70,6 +72,7 @@ export function Faq({
   multiple = false,
   titleId,
   highlightFamily,
+  quietHeader,
 }: FaqProps) {
   const [open, setOpen] = useState<number[]>([]);
   const triggersRef = useRef<(HTMLButtonElement | null)[]>([]);
@@ -115,6 +118,7 @@ export function Faq({
         intro={intro}
         titleId={titleId}
         highlightFamily={highlightFamily}
+          quiet={quietHeader}
       />
 
       {/* Las filas cuelgan de la raiz sin envoltorio: cada una trae su filete, asi
