@@ -7,7 +7,10 @@ import { alternatesFor } from "@/app/seo";
 import { Section } from "@/design-system/components/layout/Section/Section";
 import { ProjectGrid, type ProjectGridItem } from "@/design-system/components/organisms/ProjectGrid/ProjectGrid";
 import { buildWorkGridRows } from "@/app/work-grid";
+import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { routing } from "@/i18n/routing";
+import { sendContact } from "../../contact-action";
+import { getFinalCta } from "../../cta";
 
 /**
  * Trabajo: el portafolio publicado en filas de tres columnas (ritmo de la referencia). Indexable: es contenido
@@ -17,6 +20,7 @@ import { routing } from "@/i18n/routing";
  * enlace que la lleva.
  */
 const TITLE_ID = "trabajo-titulo";
+const CTA_TITLE_ID = "contacto";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/trabajo">): Promise<Metadata> {
   const { locale } = await params;
@@ -32,9 +36,10 @@ export default async function Trabajo({ params }: PageProps<"/[locale]/trabajo">
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
-  const [t, tWork, projects] = await Promise.all([
+  const [t, tWork, tCta, projects] = await Promise.all([
     getTranslations("nav.estudio"),
     getTranslations("home.work"),
+    getTranslations("home.cta"),
     getWorkProjects(locale),
   ]);
 
@@ -45,9 +50,7 @@ export default async function Trabajo({ params }: PageProps<"/[locale]/trabajo">
   }));
 
   return (
-    // Sin pie (decision de Karen, 2026-10-26): el indice del trabajo acaba en el
-    // trabajo. El pie vive en el layout, asi que la pagina solo lo pide por atributo.
-    <main id="main" data-footer="off">
+    <main id="main">
       <Section width="full" spacing="none" surface="solid" labelledBy={TITLE_ID}>
         <ProjectGrid
           rows={buildWorkGridRows(items)}
@@ -55,6 +58,12 @@ export default async function Trabajo({ params }: PageProps<"/[locale]/trabajo">
           titleId={TITLE_ID}
           labels={{ viewCase: tWork("viewCase") }}
         />
+      </Section>
+
+      {/* La misma strip negra en los dos modos que la de la home (decision de Karen,
+          2026-10-26); la placa de dentro no se toca. */}
+      <Section width="strip" spacing="loose" theme={{ light: "dark", dark: "dark" }} labelledBy={CTA_TITLE_ID}>
+        <FinalCta {...getFinalCta(tCta, locale)} titleId={CTA_TITLE_ID} highlightFamily="tangerine" onSubmit={sendContact} />
       </Section>
     </main>
   );
