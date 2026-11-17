@@ -38,17 +38,14 @@ describe("WorkIndex", () => {
     expect(screen.getByRole("link", { name: "Uno" })).toHaveAttribute("href", "/trabajo/uno");
   });
 
-  it("en la lista solo la fila con el cursor queda activa", () => {
-    render(<WorkIndex {...PROPS} />);
+  it("cada fila de la lista lleva la portada y las piezas de la galeria", () => {
+    const { container } = render(<WorkIndex {...PROPS} />);
     fireEvent.click(screen.getByRole("button", { name: "Ver en lista" }));
 
-    const rows = screen.getAllByRole("listitem");
-    expect(rows[0]).toHaveAttribute("data-active");
-
-    fireEvent.pointerEnter(screen.getByRole("link", { name: "Tres" }));
-
-    expect(rows[0]).not.toHaveAttribute("data-active");
-    expect(rows[2]).toHaveAttribute("data-active");
+    for (const row of screen.getAllByRole("listitem")) {
+      expect(row.querySelectorAll("img")).toHaveLength(3);
+    }
+    expect(container.querySelectorAll("li")).toHaveLength(ITEMS.length);
   });
 
   it("el titular de la pagina sigue ahi en las dos vistas", () => {
