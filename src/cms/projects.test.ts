@@ -58,6 +58,19 @@ describe('toWorkProject', () => {
     });
   });
 
+  /** La vista en lista pinta la portada y tres piezas mas; mas de tres sobran y un video no cuenta. */
+  it('lleva hasta tres piezas de la galeria, sin videos', () => {
+    const entry = (url: string, mimeType = 'image/jpeg') => ({ image: media({ url, width: 10, height: 10, mimeType }) });
+    const work = toWorkProject(
+      project({
+        cover,
+        gallery: [entry('/a.jpg'), entry('/v.mp4', 'video/mp4'), entry('/b.jpg'), entry('/c.jpg'), entry('/d.jpg')],
+      } as Partial<Project>),
+    );
+
+    expect(work?.gallery?.map((piece) => piece.src)).toEqual(['/a.jpg', '/b.jpg', '/c.jpg']);
+  });
+
   /** La pagina del caso enlaza con el slug y el titulo que el strip ya tiene a mano. */
   it('lleva slug, titulo, ano y resumen cuando el CMS los trae', () => {
     expect(toWorkProject(project({ cover, year: 2025, summary: 'Un reto.' }))).toMatchObject({

@@ -1,0 +1,122 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+$tablet: 50.625rem;
+
+// Lado de la miniatura de la referencia (125 px).
+$piece-size: 7.8125rem;
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-07;
+  max-inline-size: 70rem;
+  margin: 0;
+  // El mismo espaciador de arriba que la cuadricula, y lo de abajo deja sitio a la barra.
+  padding-block: 18svh spacing.$spacing-12;
+  padding-inline: spacing.$spacing-05;
+  list-style: none;
+}
+
+.link {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-03;
+  padding-block-start: spacing.$spacing-05;
+  color: theme.$text-primary;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid theme.$focus;
+    outline-offset: 4px;
+  }
+}
+
+// La linea crece desde el borde izquierdo: 1 % en reposo y entera en la fila activa.
+.line {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 1px;
+  background-color: theme.$text-primary;
+  scale: 0.01 1;
+  transform-origin: left;
+  transition: scale brand.$duration-base brand.$ease-default;
+}
+
+.row[data-active] .line {
+  scale: 1 1;
+}
+
+.name {
+  @include brandtype.style('body');
+
+  font-weight: brandtype.$weight-medium;
+}
+
+// 0fr -> 1fr anima la altura sin medirla.
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows brand.$duration-base brand.$ease-default;
+}
+
+.row[data-active] .panel {
+  grid-template-rows: 1fr;
+}
+
+.pieces {
+  display: flex;
+  gap: spacing.$spacing-03;
+  min-block-size: 0;
+  overflow: hidden;
+  padding-block-start: spacing.$spacing-03;
+}
+
+.piece {
+  position: relative;
+  flex: none;
+  inline-size: $piece-size;
+  block-size: $piece-size;
+  overflow: hidden;
+  border-radius: brand.$radius-03;
+}
+
+.image {
+  object-fit: cover;
+}
+
+// Sin cursor o en pantalla estrecha no hay hover que active: todo desplegado, y las
+// piezas se reparten el ancho.
+@media (hover: none), (max-width: #{$tablet - 0.0625rem}) {
+  .line {
+    scale: 1 1;
+  }
+
+  .panel {
+    grid-template-rows: 1fr;
+  }
+
+  .pieces {
+    padding-block-end: spacing.$spacing-05;
+  }
+
+  .piece {
+    flex: 1 0 0;
+    inline-size: auto;
+    aspect-ratio: 1;
+    block-size: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line,
+  .panel {
+    transition: none;
+  }
+}

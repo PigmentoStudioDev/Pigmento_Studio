@@ -1,0 +1,84 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/a11y';
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+.root {
+  background-color: theme.$background;
+}
+
+.hiddenTitle {
+  @include a11y.visually-hidden;
+}
+
+// Fija abajo y centrada, como la de la referencia.
+.bar {
+  position: fixed;
+  inset-block-end: spacing.$spacing-07;
+  inset-inline-start: 50%;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: spacing.$spacing-06;
+  padding-block: spacing.$spacing-04;
+  padding-inline: spacing.$spacing-05;
+  translate: -50% 0;
+  border-radius: brand.$radius-05;
+  background-color: brand.$surface-header-overlay;
+  backdrop-filter: blur(1.875rem);
+  color: brand.$text-on-control-ink;
+}
+
+.heading {
+  display: flex;
+  align-items: flex-start;
+  gap: spacing.$spacing-01;
+}
+
+.title {
+  @include brandtype.style('label');
+}
+
+.count {
+  font-size: 0.625rem;
+  line-height: 1.4;
+}
+
+.buttons {
+  display: flex;
+  gap: spacing.$spacing-02;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: spacing.$spacing-08;
+  block-size: spacing.$spacing-08;
+  padding: 0;
+  border: 0;
+  border-radius: brand.$radius-03;
+  background-color: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color brand.$duration-half brand.$ease-default;
+
+  &[aria-pressed='true'] {
+    background-color: theme.$layer-02;
+    color: theme.$text-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid theme.$focus;
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+}

@@ -5,8 +5,7 @@ import { notFound } from "next/navigation";
 import { getWorkProjects } from "@/cms/projects";
 import { alternatesFor } from "@/app/seo";
 import { Section } from "@/design-system/components/layout/Section/Section";
-import { ProjectGrid, type ProjectGridItem } from "@/design-system/components/organisms/ProjectGrid/ProjectGrid";
-import { buildWorkGridRows } from "@/app/work-grid";
+import { WorkIndex, type WorkIndexItem } from "@/design-system/components/organisms/WorkIndex/WorkIndex";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { routing } from "@/i18n/routing";
 import { sendContact } from "../../contact-action";
@@ -43,20 +42,26 @@ export default async function Trabajo({ params }: PageProps<"/[locale]/trabajo">
     getWorkProjects(locale),
   ]);
 
-  const items: ProjectGridItem[] = projects.map((project) => ({
+  const items: WorkIndexItem[] = projects.map((project) => ({
     slug: project.slug,
     title: project.title,
     image: project.image,
+    ...(project.gallery ? { gallery: project.gallery } : {}),
   }));
 
   return (
     <main id="main">
       <Section width="full" spacing="none" surface="solid" labelledBy={TITLE_ID}>
-        <ProjectGrid
-          rows={buildWorkGridRows(items)}
+        <WorkIndex
+          items={items}
           title={t("trabajo")}
           titleId={TITLE_ID}
-          labels={{ viewCase: tWork("viewCase") }}
+          labels={{
+            viewCase: tWork("viewCase"),
+            viewGrid: tWork("viewGrid"),
+            viewList: tWork("viewList"),
+            viewSwitch: tWork("viewSwitch"),
+          }}
         />
       </Section>
 

@@ -21,9 +21,6 @@ export interface ProjectGridItem {
 
 export interface ProjectGridProps {
   rows: WorkGridRow<ProjectGridItem>[];
-  /** El h1 de la pagina: oculto a la vista, leido por quien navega sin ver. */
-  title: string;
-  titleId: string;
   labels: {
     /** Texto de la pildora de cada pieza. */
     viewCase: string;
@@ -35,14 +32,11 @@ const SIZES = "(max-width: 809px) 100vw, 34vw";
 const WIDE_SIZES = "(max-width: 809px) 100vw, 67vw";
 const HERO_SIZES = "100vw";
 
-export function ProjectGrid({ rows, title, titleId, labels }: ProjectGridProps) {
+export function ProjectGrid({ rows, labels }: ProjectGridProps) {
   const rootRef = useScrollReveal<HTMLDivElement>({ by: "block" });
 
   return (
     <div className={styles.root}>
-      <h1 id={titleId} className={styles.hiddenTitle}>
-        {title}
-      </h1>
       <div ref={rootRef} className={styles.rows}>
         {rows.map((row, rowIndex) => (
           <ul

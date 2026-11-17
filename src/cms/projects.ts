@@ -98,12 +98,22 @@ export interface WorkProject {
   year?: number;
   summary?: string;
   image: ProjectPiece;
+  /** Hasta tres imagenes mas del caso, para la vista en lista. Los videos no entran. */
+  gallery?: ProjectPiece[];
 }
+
+/** La vista en lista muestra la portada y tres piezas mas. */
+const LIST_EXTRA_PIECES = 3;
 
 /** Exportada por su test. Sin portada poblada no hay pieza que pintar. */
 export function toWorkProject(doc: Project): WorkProject | null {
   const image = toImagePiece(doc.cover);
   if (!image) return null;
+
+  const gallery = (doc.gallery ?? [])
+    .map((entry) => toImagePiece(entry.image))
+    .filter((piece): piece is ProjectPiece => piece !== null)
+    .slice(0, LIST_EXTRA_PIECES);
 
   return {
     slug: doc.slug,
@@ -113,6 +123,7 @@ export function toWorkProject(doc: Project): WorkProject | null {
     ...(typeof doc.year === 'number' ? { year: doc.year } : {}),
     ...(doc.summary ? { summary: doc.summary } : {}),
     image,
+    ...(gallery.length > 0 ? { gallery } : {}),
   };
 }
 

@@ -1,6 +1,5 @@
 @use '../../../styles/carbon-config';
 
-@use '../../../styles/a11y';
 @use '../../../styles/brand' as brand;
 @use '../../../styles/type' as brandtype;
 @use '@carbon/react/scss/spacing';
@@ -20,10 +19,6 @@ $cta-shift: spacing.$spacing-09;
   background-color: theme.$background;
   // La cabecera es fija: el espacio de arriba la deja respirar sobre la primera fila.
   padding-block-start: 15svh;
-}
-
-.hiddenTitle {
-  @include a11y.visually-hidden;
 }
 
 .rows {
