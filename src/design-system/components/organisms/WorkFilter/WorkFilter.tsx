@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef } from "react";
 import { REDUCED_MOTION } from "../../../motion/breakpoints";
-import { brandEasePoints, duration } from "../../../motion/tokens";
+import { brandEaseCss, duration } from "../../../motion/tokens";
 import styles from "./WorkFilter.module.scss";
 
 /**
@@ -46,6 +46,30 @@ interface Snapshot {
 
 const FLIGHT_STEP = "base" as const;
 
+interface ChipProps {
+  option: WorkFilterOption;
+  inTray: boolean;
+  register: (value: string, element: HTMLButtonElement | null) => void;
+  onChoose: (value: string) => void;
+}
+
+// Componente y no una funcion de render: asi React ve el ref y el manejador como props
+// y no como lecturas de `ref.current` durante el render.
+function Chip({ option, inTray, register, onChoose }: ChipProps) {
+  return (
+    <button
+      ref={(element) => register(option.value, element)}
+      type="button"
+      className={styles.chip}
+      data-in-tray={inTray || undefined}
+      aria-pressed={inTray}
+      onClick={() => onChoose(option.value)}
+    >
+      {option.label}
+    </button>
+  );
+}
+
 export function WorkFilter({ options, value, onChange, count, labels }: WorkFilterProps) {
   const chipRefs = useRef(new Map<string, HTMLButtonElement>());
   const trayRef = useRef<HTMLDivElement>(null);
@@ -81,10 +105,9 @@ export function WorkFilter({ options, value, onChange, count, labels }: WorkFilt
     if (!snapshot || typeof Element.prototype.animate !== "function") return;
     if (window.matchMedia(REDUCED_MOTION).matches) return;
 
-    const points = brandEasePoints();
     const timing = {
       duration: duration(FLIGHT_STEP) * 1000,
-      easing: points ? `cubic-bezier(${points})` : "ease",
+      easing: brandEaseCss() ?? undefined,
     };
 
     for (const [key, element] of chipRefs.current) {
@@ -122,22 +145,10 @@ export function WorkFilter({ options, value, onChange, count, labels }: WorkFilt
   const selected = options.find((option) => option.value === value);
   const rest = options.filter((option) => option.value !== value);
 
-  const chip = (option: WorkFilterOption, inTray: boolean) => (
-    <button
-      key={option.value}
-      ref={(element) => {
-        if (element) chipRefs.current.set(option.value, element);
-        else chipRefs.current.delete(option.value);
-      }}
-      type="button"
-      className={styles.chip}
-      data-in-tray={inTray || undefined}
-      aria-pressed={inTray}
-      onClick={() => choose(option.value)}
-    >
-      {option.label}
-    </button>
-  );
+  function register(key: string, element: HTMLButtonElement | null) {
+    if (element) chipRefs.current.set(key, element);
+    else chipRefs.current.delete(key);
+  }
 
   return (
     <div className={styles.root} role="group" aria-label={labels.group}>
@@ -148,9 +159,11 @@ export function WorkFilter({ options, value, onChange, count, labels }: WorkFilt
           </span>
           <span className={styles.results}>{labels.results}</span>
         </span>
-        {selected ? chip(selected, true) : null}
+        {selected ? <Chip key={selected.value} option={selected} inTray register={register} onChoose={choose} /> : null}
       </div>
-      {rest.map((option) => chip(option, false))}
+      {rest.map((option) => (
+        <Chip key={option.value} option={option} inTray={false} register={register} onChoose={choose} />
+      ))}
     </div>
   );
 }

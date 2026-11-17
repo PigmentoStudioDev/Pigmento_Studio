@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { useScrollReveal } from "../../../motion/useScrollReveal";
-import type { WorkGridRow } from "@/app/work-grid";
+import type { WorkGridRow } from "./workGrid";
 import styles from "./ProjectGrid.module.scss";
 
 /**
