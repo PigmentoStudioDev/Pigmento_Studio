@@ -1,0 +1,82 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// Arriba del portafolio, bajo la cabecera fija: el espacio de arriba es el que antes
+// ponia cada vista.
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  // El conjunto a la derecha, como la referencia lo pone junto a la cabecera.
+  justify-content: flex-end;
+  gap: spacing.$spacing-04;
+  padding-block: 15svh spacing.$spacing-05;
+  padding-inline: spacing.$spacing-05;
+}
+
+// La bandeja, con el rol invertido —oscura sobre claro y clara sobre oscuro—: lo que la
+// hace bandeja es el contraste, no un color fijo.
+.tray {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing.$spacing-05;
+  block-size: 4.25rem;
+  padding-block: spacing.$spacing-02;
+  padding-inline: spacing.$spacing-06 spacing.$spacing-02;
+  overflow: hidden;
+  border-radius: brand.$radius-full;
+  background-color: theme.$text-primary;
+  color: theme.$background;
+}
+
+.readout {
+  display: inline-flex;
+  align-items: baseline;
+  gap: spacing.$spacing-02;
+  white-space: nowrap;
+}
+
+.count {
+  @include brandtype.style('body');
+
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+.results {
+  @include brandtype.style('body');
+
+  opacity: 0.6;
+}
+
+.chip {
+  @include brandtype.style('body');
+
+  display: inline-flex;
+  align-items: center;
+  block-size: 3.25rem;
+  padding-block: 0;
+  padding-inline: spacing.$spacing-06;
+  border: 0;
+  border-radius: brand.$radius-full;
+  background-color: theme.$layer-02;
+  color: theme.$text-primary;
+  white-space: nowrap;
+  cursor: pointer;
+
+  // Dentro de la bandeja el chip pierde su pastilla: la superficie es la de la bandeja.
+  &[data-in-tray] {
+    background-color: transparent;
+    color: inherit;
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 2px solid theme.$focus;
+    outline-offset: 2px;
+  }
+}

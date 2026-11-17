@@ -4,6 +4,7 @@ import { useState } from "react";
 import { buildWorkGridRows } from "@/app/work-grid";
 import { ProjectGrid } from "../ProjectGrid/ProjectGrid";
 import { ProjectList } from "../ProjectList/ProjectList";
+import { WorkFilter, type WorkFilterOption } from "../WorkFilter/WorkFilter";
 import styles from "./WorkIndex.module.scss";
 
 /**
@@ -22,11 +23,6 @@ export interface WorkIndexItem {
   gallery?: { src: string; alt: string; width: number; height: number }[];
 }
 
-export interface WorkFilterOption {
-  value: string;
-  label: string;
-}
-
 export interface WorkIndexProps {
   items: WorkIndexItem[];
   /** Las disciplinas con al menos un proyecto, ya traducidas. "Todos" lo pone el componente. */
@@ -40,6 +36,7 @@ export interface WorkIndexProps {
     viewSwitch: string;
     filterAll: string;
     filterLabel: string;
+    filterResults: string;
   };
 }
 
@@ -78,19 +75,13 @@ export function WorkIndex({ items, filters, title, titleId, labels }: WorkIndexP
       <h1 id={titleId} className={styles.hiddenTitle}>
         {title}
       </h1>
-      <div className={styles.filters} role="group" aria-label={labels.filterLabel}>
-        {options.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            className={styles.filter}
-            aria-pressed={filter === option.value}
-            onClick={() => setFilter(option.value)}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
+      <WorkFilter
+        options={options}
+        value={filter}
+        onChange={setFilter}
+        count={visible.length}
+        labels={{ group: labels.filterLabel, results: labels.filterResults }}
+      />
       {/* La clave remonta la vista al filtrar: el gesto de entrada de las filas se rearma. */}
       {view === "grid" ? (
         <ProjectGrid key={filter} rows={buildWorkGridRows(visible)} labels={{ viewCase: labels.viewCase }} />

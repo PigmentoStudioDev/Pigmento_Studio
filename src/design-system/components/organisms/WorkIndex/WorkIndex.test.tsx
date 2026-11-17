@@ -20,7 +20,7 @@ const PROPS = {
   ],
   title: "Trabajo",
   titleId: "trabajo-titulo",
-  labels: { viewCase: "Ver caso", viewGrid: "Ver en cuadricula", viewList: "Ver en lista", viewSwitch: "Vista", filterAll: "Todos", filterLabel: "Filtrar" },
+  labels: { viewCase: "Ver caso", viewGrid: "Ver en cuadricula", viewList: "Ver en lista", viewSwitch: "Vista", filterAll: "Todos", filterLabel: "Filtrar", filterResults: "proyectos" },
 };
 
 describe("WorkIndex", () => {
