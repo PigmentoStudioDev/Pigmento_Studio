@@ -52,6 +52,8 @@ export interface DifferenceProps {
    * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
    */
   highlightFamily?: CycledCandyFamily;
+  /** Cabecera discreta (filete + etiqueta) en lugar del titular grande. */
+  quietHeader?: boolean;
 }
 
 export function Difference({
@@ -67,6 +69,7 @@ export function Difference({
   scrollLabel,
   titleId,
   highlightFamily,
+  quietHeader,
 }: DifferenceProps) {
   if (rows.length === 0) return null;
 
@@ -80,6 +83,7 @@ export function Difference({
           intro={intro}
           titleId={titleId}
           highlightFamily={highlightFamily}
+          quiet={quietHeader}
         />
       </div>
 

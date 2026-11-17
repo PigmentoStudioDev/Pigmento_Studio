@@ -74,6 +74,8 @@ export interface TeamProps {
    * alterna calidos y frios para que dos strips seguidas no caigan en el mismo tono.
    */
   highlightFamily?: CycledCandyFamily;
+  /** Cabecera discreta (filete + etiqueta) en lugar del titular grande. */
+  quietHeader?: boolean;
 }
 
 type Filter = TeamGroup | "all";
@@ -105,6 +107,7 @@ export function Team({
   labels,
   titleId,
   highlightFamily,
+  quietHeader,
 }: TeamProps) {
   const [filter, setFilter] = useState<Filter>("all");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -171,6 +174,7 @@ export function Team({
         intro={intro}
         titleId={titleId}
         highlightFamily={highlightFamily}
+          quiet={quietHeader}
       />
 
       <ScrollReveal by="block">
