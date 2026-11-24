@@ -1,14 +1,14 @@
 import styles from "./AboutIntro.module.scss";
 
 /**
- * La apertura de About: el titular en dos tonos —la segunda linea en gris— y dos
- * columnas de parrafo bajo el, con las dos columnas de la derecha vacias.
+ * La apertura de About: el titular en dos tonos —la segunda linea en gris— y las
+ * columnas de parrafo bajo el, una por parrafo en la reticula de cuatro.
  */
 export interface AboutIntroProps {
   title: string;
   /** La segunda linea, en el tono secundario. */
   subtitle: string;
-  paragraphs: [string, string];
+  paragraphs: readonly string[];
   titleId?: string;
 }
 
