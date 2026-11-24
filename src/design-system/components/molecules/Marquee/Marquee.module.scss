@@ -108,6 +108,10 @@
   filter: invert(brand.$marquee-logo-invert);
 }
 
+.colorLogos .logo {
+  block-size: brand.$marquee-logo-color-block-size;
+}
+
 // Sin reduced-motion no hay nada que apagar aqui: el movimiento entero lo pone
 // GSAP, y el behavior no llega ni a crear el tween con esa preferencia. La tira se
 // queda como la deja este archivo, que es quieta.

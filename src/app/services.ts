@@ -1,4 +1,3 @@
-import type { HalftoneShapeName } from "@/design-system/motion/halftone/shapes";
 import type { ServicesProps } from "@/design-system/components/organisms/Services/Services";
 import { SERVICE_FAMILY } from "./pigment";
 
@@ -14,12 +13,6 @@ const SERVICES = ["branding", "web", "motion", "marketing"] as const;
 
 // El solido de cada servicio: el sello de una identidad, la pantalla de una web, la
 // esfera que gira y los escalones que suben.
-const SHAPES: Record<(typeof SERVICES)[number], HalftoneShapeName> = {
-  branding: "seal",
-  web: "slab",
-  motion: "sphere",
-  marketing: "steps",
-};
 
 export function getServices(t: Translate): ServicesProps {
   return {
@@ -30,7 +23,6 @@ export function getServices(t: Translate): ServicesProps {
       key,
       name: t(`items.${key}.name`),
       text: t(`items.${key}.text`),
-      shape: SHAPES[key],
       family: SERVICE_FAMILY[key],
     })),
   };

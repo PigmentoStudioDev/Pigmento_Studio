@@ -2,12 +2,11 @@
 
 import type { CSSProperties } from "react";
 import { cursorAttributes } from "../../../motion/cursor";
-import { candyAt, type CycledCandyFamily } from "../../../theme/candy";
+import type { CycledCandyFamily } from "../../../theme/candy";
 import { RADIAL_COPIES, useRadialSlider } from "../../../motion/useRadialSlider";
 import { useAutoRotate } from "../../../motion/useAutoRotate";
 import { Button } from "../../atoms/Button/Button";
 import { IconButton } from "../../atoms/IconButton/IconButton";
-import type { HalftoneShapeName } from "../../../motion/halftone/shapes";
 import { FeatureCard } from "../../molecules/FeatureCard/FeatureCard";
 import { PeopleStack, type PeopleStackProps } from "../../molecules/PeopleStack/PeopleStack";
 import { ControlBar } from "../../molecules/ControlBar/ControlBar";
@@ -50,12 +49,12 @@ import styles from "./ValueCards.module.scss";
  * entero: los valores son del estudio, no de un servicio. Sin el texto la tarjeta
  * era una superficie de color con una frase, y no valia lo que ocupaba.
  *
- * Props serializables: titulo, texto, solido y su sitio en la vuelta.
+ * Props serializables: titulo, texto y su sitio en la vuelta. Sin color ni solido: el
+ * color es de los servicios y aqui solo diria "otro servicio" (ronda 2 de Pigmento).
  */
 export interface ValueCard {
   title: string;
   text: string;
-  shape: HalftoneShapeName;
   /** Ya traducida: "1 de 5". Nombra la tarjeta como grupo dentro del carrusel. */
   position: string;
 }
@@ -212,10 +211,9 @@ export function ValueCards({
                       >
                         <div className={styles.frame}>
                           <FeatureCard
-                            family={candyAt(index)}
                             label={card.title}
                             text={card.text}
-                            shape={card.shape}
+                            step={String(index + 1).padStart(2, "0")}
                           />
                         </div>
                       </div>

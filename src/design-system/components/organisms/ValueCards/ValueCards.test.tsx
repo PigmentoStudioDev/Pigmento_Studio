@@ -9,9 +9,9 @@ const PROPS: ValueCardsProps = {
   title: "Cómo trabajamos",
   intro: "Cinco decisiones que no se negocian por proyecto.",
   cards: [
-    { title: "Sin intermediarios", text: "Quien diseña contesta.", shape: "pair", position: "1 de 3" },
-    { title: "Probado con gente real", text: "Antes de lanzarse.", shape: "sphere", position: "2 de 3" },
-    { title: "Criterio antes que tendencia", text: "Para durar.", shape: "seal", position: "3 de 3" },
+    { title: "Sin intermediarios", text: "Quien diseña contesta.", position: "1 de 3" },
+    { title: "Probado con gente real", text: "Antes de lanzarse.", position: "2 de 3" },
+    { title: "Criterio antes que tendencia", text: "Para durar.", position: "3 de 3" },
   ],
   labels: { carousel: "carrusel", previous: "Anterior", next: "Siguiente", picker: "Elegir valor", drag: "Arrastra" },
   titleId: "valores",

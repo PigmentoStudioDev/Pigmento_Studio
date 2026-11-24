@@ -1,4 +1,3 @@
-import type { HalftoneShapeName } from "@/design-system/motion/halftone/shapes";
 import type { ValueCardsProps } from "@/design-system/components/organisms/ValueCards/ValueCards";
 import type { TeamMemberData } from "@/cms/team";
 
@@ -16,13 +15,6 @@ const KEYS = ["direct", "tested", "sameTable", "criteria", "measured"] as const;
 
 // El solido de cada valor: dos personas que se hablan, la esfera que se pone a prueba,
 // la mesa comun, el sello que dura y los escalones que se miden.
-const SHAPES: Record<(typeof KEYS)[number], HalftoneShapeName> = {
-  direct: "pair",
-  tested: "sphere",
-  sameTable: "slab",
-  criteria: "seal",
-  measured: "steps",
-};
 
 /** Las caras que caben antes de que la fila deje de leerse de un vistazo; el resto va en la cuenta. */
 const MAX_FACES = 8;
@@ -38,7 +30,6 @@ export function getValues(t: Translate, members: TeamMemberData[] = []): ValueCa
     cards: KEYS.map((key, index) => ({
       title: t(`cards.${key}.title`),
       text: t(`cards.${key}.text`),
-      shape: SHAPES[key],
       position: t("position", { current: index + 1, total: KEYS.length }),
     })),
     ...(faces.length > 0

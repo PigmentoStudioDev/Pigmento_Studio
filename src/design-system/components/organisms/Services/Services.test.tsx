@@ -8,8 +8,8 @@ const PROPS: ServicesProps = {
   title: "Cuatro disciplinas que trabajan juntas.",
   intro: "Una marca no vive en una sola pieza.",
   services: [
-    { key: "branding", name: "Branding", text: "Nombre y sistema.", shape: "seal", family: "pink" },
-    { key: "motion", name: "Motion", text: "Animacion y video.", shape: "sphere", family: "periwinkle" },
+    { key: "branding", name: "Branding", text: "Nombre y sistema.", family: "pink" },
+    { key: "motion", name: "Motion", text: "Animacion y video.", family: "periwinkle" },
   ],
   titleId: "servicios",
 };
@@ -38,11 +38,10 @@ describe("Services", () => {
     expect(screen.getByRole("list").tagName).toBe("OL");
   });
 
-  it("los solidos son decoracion y no repite imagenes del portafolio", () => {
+  it("cada disciplina se distingue por su color, sin iconografia ni imagenes", () => {
     const { container } = render(<Services {...PROPS} />);
 
-    expect(container.querySelectorAll("img")).toHaveLength(0);
-    container.querySelectorAll("canvas").forEach((canvas) => expect(canvas).toHaveAttribute("aria-hidden", "true"));
+    expect(container.querySelectorAll("img, canvas")).toHaveLength(0);
   });
 
   it("sin servicios no se monta", () => {

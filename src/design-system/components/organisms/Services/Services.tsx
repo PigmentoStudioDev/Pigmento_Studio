@@ -1,4 +1,3 @@
-import type { HalftoneShapeName } from "../../../motion/halftone/shapes";
 import type { CycledCandyFamily } from "../../../theme/candy";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import { FeatureCard } from "../../molecules/FeatureCard/FeatureCard";
@@ -6,15 +5,15 @@ import { StripHeader } from "../../molecules/StripHeader/StripHeader";
 import styles from "./Services.module.scss";
 
 /**
- * Las cuatro disciplinas en cuatro tarjetas de la casa: su solido en una baldosa del
- * color del servicio, el nombre y lo que hace. La forma distingue y el color nombra.
+ * Las cuatro disciplinas en cuatro recuadros del color de su servicio, sin icono: el
+ * color es el que cada disciplina lleva en todo el sitio, y basta para nombrarla
+ * (ronda 2 de Pigmento, 2026-11-23).
  * La cabecera es la de todas las secciones de la home.
  */
 export interface ServiceItem {
   key: string;
   name: string;
   text: string;
-  shape: HalftoneShapeName;
   /** El color del servicio. */
   family: CycledCandyFamily;
 }
@@ -41,8 +40,7 @@ export function Services({ label, title, intro, services, titleId }: ServicesPro
               <FeatureCard
                 label={service.name}
                 text={service.text}
-                shape={service.shape}
-                accent={service.family}
+                family={service.family}
               />
             </li>
           ))}

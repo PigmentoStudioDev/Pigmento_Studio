@@ -79,6 +79,14 @@
   inline-size: 100%;
 }
 
+// El numero de paso: misma escala que la cifra de /nosotros, en el gris del tema para
+// que el orden se lea sin competir con el nombre.
+.step {
+  @include brandtype.style('figure');
+
+  color: theme.$text-secondary;
+}
+
 .name {
   @include brandtype.style('lead');
 
