@@ -279,10 +279,10 @@
         "projects": {
           "value": "120",
           "label": "Proyectos entregados",
-          "context": "Identidades, sitios, piezas de motion y campañas, desde 2018."
+          "context": "Identidades, sitios, piezas de motion y campañas."
         },
         "years": {
-          "value": "8",
+          "value": "11",
           "label": "Años de estudio",
           "context": "El mismo equipo pequeño desde el primer proyecto."
         },
@@ -733,6 +733,18 @@
       "services": "Servicios",
       "numbers": "Números",
       "team": "Equipo"
+    },
+    "intro": {
+      "title": "Four disciplines. One studio.",
+      "subtitle": "Especialistas en cada disciplina. Una misma ambición creativa.",
+      "p1": "Pigmento es un estudio creativo independiente con sede en Ciudad de México. Integramos branding, diseño digital, motion y marketing para construir marcas desde la estrategia hasta su expresión pública.",
+      "p2": "Más de once años de práctica nos han enseñado a mirar cada proyecto desde distintos ángulos. Reunimos la profundidad de cuatro especialidades con la claridad de una dirección creativa compartida.",
+      "p3": "Nuestro trabajo abarca identidades, empaques, experiencias digitales y campañas. Desarrollamos sistemas que dan a las marcas una voz reconocible y la capacidad de evolucionar sin perder su carácter.",
+      "p4": "Trabajamos de cerca con nuestros clientes y defendemos las ideas con argumentos. Nos mueve la curiosidad, el rigor y la ambición de hacer un trabajo que merezca existir."
+    },
+    "band": {
+      "title": "Diseño con criterio, hecho en equipo.",
+      "alt": "El equipo de Pigmento Studio"
     }
   },
   "project": {

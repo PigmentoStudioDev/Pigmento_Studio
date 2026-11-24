@@ -279,10 +279,10 @@
         "projects": {
           "value": "120",
           "label": "Projects delivered",
-          "context": "Identities, sites, motion pieces and campaigns, since 2018."
+          "context": "Identities, sites, motion pieces and campaigns."
         },
         "years": {
-          "value": "8",
+          "value": "11",
           "label": "Years as a studio",
           "context": "The same small team since the first project."
         },
@@ -733,6 +733,18 @@
       "services": "Services",
       "numbers": "Numbers",
       "team": "Team"
+    },
+    "intro": {
+      "title": "Four disciplines. One studio.",
+      "subtitle": "Specialists in every discipline. One creative ambition.",
+      "p1": "Pigmento is an independent creative studio based in Mexico City. We bring together branding, digital design, motion and marketing to build brands from strategy to public expression.",
+      "p2": "More than eleven years of practice have taught us to look at every project from different angles. We combine the depth of four specialties with the clarity of a shared creative direction.",
+      "p3": "Our work spans identities, packaging, digital experiences and campaigns. We build systems that give brands a recognisable voice and the ability to evolve without losing their character.",
+      "p4": "We work closely with our clients and defend ideas with arguments. We are driven by curiosity, rigour and the ambition to make work that deserves to exist."
+    },
+    "band": {
+      "title": "Design with judgement, made as a team.",
+      "alt": "The Pigmento Studio team"
     }
   },
   "project": {
