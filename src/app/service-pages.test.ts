@@ -1,40 +1,42 @@
 import { describe, expect, it } from "vitest";
 import en from "@/i18n/messages/en.json";
 import es from "@/i18n/messages/es.json";
-import { SERVICE_KEYS, SERVICE_PHASES, SERVICE_QUESTIONS } from "./service-pages";
+import { getServiceForm, SERVICE_KEYS, type ServicePageContent } from "./service-pages";
 
 /**
- * Las fases y las preguntas se listan en TS y su texto vive en dos diccionarios. Una
- * clave que falte no falla al compilar: next-intl devuelve la clave cruda y la pagina
- * publicada ensena "servicePages.web.faq.items.edit.answer".
+ * El copy de servicio vive en arrays que la pagina lee con `t.raw`, asi que una clave o
+ * una entrada que falte en un idioma no falla al compilar: sale una seccion vacia o un
+ * servicio de menos. Lo que se exige es que es y en tengan la MISMA forma.
  */
-const DICCIONARIOS = { es, en } as const;
+const pages = (dict: typeof es) => dict.servicePages as unknown as Record<string, ServicePageContent>;
 
-type Page = {
-  title: string;
-  process: { title: string; titleHighlight: string; phases: Record<string, { title: string; text: string; deliverable: string }> };
-  faq: { items: Record<string, { question: string; answer: string }> };
-  cta: { title: string; titleHighlight: string };
-};
+/** La forma de un valor: claves y largo de cada array, sin el texto. */
+function shape(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(shape);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, inner]) => [key, shape(inner)]));
+  }
+  return typeof value;
+}
 
 describe("paginas de servicio", () => {
-  it.each(Object.keys(DICCIONARIOS) as (keyof typeof DICCIONARIOS)[])(
-    "cada fase y cada pregunta tienen texto en %s",
-    (idioma) => {
-      const pages = DICCIONARIOS[idioma].servicePages as unknown as Record<string, Page>;
+  it.each(SERVICE_KEYS)("%s tiene la misma forma en es y en", (key) => {
+    expect(shape(pages(en)[key])).toEqual(shape(pages(es)[key]));
+  });
 
-      for (const key of SERVICE_KEYS) {
-        const page = pages[key];
-        for (const phase of SERVICE_PHASES[key]) {
-          expect(page?.process.phases[phase]?.deliverable, `${key}.${phase} en ${idioma}`).toBeTruthy();
-        }
-        for (const question of SERVICE_QUESTIONS[key]) {
-          expect(page?.faq.items[question]?.answer, `${key}.${question} en ${idioma}`).toBeTruthy();
-        }
-        // El resaltado es un trozo del titular: si no esta dentro, no se pinta nada.
-        expect(page?.cta.title).toContain(page?.cta.titleHighlight);
-        expect(page?.process.title).toContain(page?.process.titleHighlight);
-      }
-    },
-  );
+  it.each(SERVICE_KEYS)("%s trae hero, proceso, preguntas y llamada, y el resalte cabe en su titular", (key) => {
+    for (const page of [pages(es)[key]!, pages(en)[key]!]) {
+      expect(page.hero.title).toBeTruthy();
+      expect(page.process.phases.length).toBeGreaterThan(0);
+      expect(page.faq.items.length).toBeGreaterThan(0);
+      if (page.cta.titleHighlight) expect(page.cta.title).toContain(page.cta.titleHighlight);
+    }
+  });
+
+  it("los temas del formulario tienen el mismo identificador en los dos idiomas", () => {
+    const ids = (dict: typeof es) => getServiceForm(pages(dict).marketing!, "marketing")?.topics.map((topic) => topic.value);
+
+    expect(ids(en)).toEqual(ids(es));
+    expect(ids(es)?.[0]).toBe("marketing-1");
+  });
 });

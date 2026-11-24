@@ -139,4 +139,29 @@ describe("ContactForm", () => {
     const { container } = render(<ContactForm {...PROPS} onSubmit={vi.fn()} />);
     expect(await axe(container)).toHaveNoViolations();
   });
+  it("los campos de servicio se piden y viajan en el mensaje; sin telefono no se pregunta", async () => {
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <ContactForm
+        {...PROPS}
+        onSubmit={onSubmit}
+        fields={{
+          phone: false,
+          company: "Empresa",
+          website: "Sitio web",
+          goal: { label: "Objetivo", options: [{ value: "ventas", label: "Ventas" }, { value: "otro", label: "Otro" }] },
+        }}
+      />,
+    );
+
+    expect(screen.queryByLabelText(/Telefono/)).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/Nombre/), { target: { value: "Ana Torres" } });
+    fireEvent.change(screen.getByLabelText(/Correo/), { target: { value: "ana@empresa.com" } });
+    fireEvent.change(screen.getByLabelText(/Empresa/), { target: { value: "Empresa SA" } });
+    fireEvent.change(screen.getByLabelText(/Mensaje/), { target: { value: "Queremos crecer en redes este trimestre." } });
+    fireEvent.click(screen.getByRole("button", { name: /Empezar/ }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+    expect(onSubmit.mock.calls[0]![0]).toMatchObject({ company: "Empresa SA", website: "", goal: "ventas", phone: "" });
+  });
 });

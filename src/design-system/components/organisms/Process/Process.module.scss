@@ -136,6 +136,22 @@ $dot-size: 0.625rem;
   color: theme.$text-secondary;
 }
 
+.lead {
+  @include brandtype.style('body');
+
+  margin: 0;
+  max-inline-size: 52ch;
+  color: theme.$text-primary;
+}
+
+.note {
+  @include brandtype.style('body');
+
+  margin: spacing.$spacing-09 0 0;
+  max-inline-size: 72ch;
+  color: theme.$text-secondary;
+}
+
 // El entregable es un apunte al margen y se lee como tal: rotulo arriba en la voz de
 // metadato y el valor debajo a tinta plena, que es lo unico que hay que recordar.
 .deliverable {

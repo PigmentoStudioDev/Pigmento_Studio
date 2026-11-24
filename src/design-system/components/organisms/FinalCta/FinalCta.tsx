@@ -49,7 +49,7 @@ export interface FinalCtaProps {
   /** El trozo del titular que se resalta con el scroll. */
   titleHighlight?: string;
   titleId?: string;
-  form: Pick<ContactFormProps, "copy" | "locale" | "topics">;
+  form: Pick<ContactFormProps, "copy" | "locale" | "topics" | "fields">;
   onSubmit?: ContactFormProps["onSubmit"];
   /**
    * La placa en el gradiente de un servicio, en su pagina: el formulario lleva el color
@@ -104,7 +104,7 @@ export function FinalCta({ label, title, intro, titleHighlight, titleId, form, o
           las dos columnas porque cada fila repite por dentro la banda de la cabecera:
           la pregunta cae bajo la etiqueta y lo escrito bajo la entradilla. */}
       <ScrollReveal by="block">
-        <ContactForm copy={form.copy} locale={form.locale} topics={form.topics} onSubmit={onSubmit} />
+        <ContactForm copy={form.copy} locale={form.locale} topics={form.topics} fields={form.fields} onSubmit={onSubmit} />
       </ScrollReveal>
     </div>
   );
