@@ -73,6 +73,13 @@ interface MarqueeBase {
    * Solo lo leen las resenas: un logo no es una superficie, es una imagen.
    */
   itemTheme?: ThemeAssignment;
+  /**
+   * Como llegan los logos. "ink" (por defecto): en blanco de kit de marcas, y se
+   * invierten sobre zona clara. "color": a todo color, a veces con su propia placa
+   * blanca; invertirlos los volveria negativos, asi que se pintan tal cual y algo mas
+   * grandes, porque el detalle de una marca a color no se lee a 24px.
+   */
+  logoTone?: "ink" | "color";
 }
 
 export type MarqueeProps = MarqueeBase &
@@ -92,6 +99,7 @@ export function Marquee({
   copies: minCopies = MIN_COPIES,
   theme,
   itemTheme,
+  logoTone = "ink",
   ...content
 }: MarqueeProps) {
   const { rootRef, scrollRef, copies } = useMarquee<HTMLDivElement, HTMLDivElement>({
@@ -113,7 +121,8 @@ export function Marquee({
     // Los logos vienen en blanco, que es lo habitual en un kit de marcas: sobre una
     // zona clara son invisibles. Se invierten, y la decision de QUE zonas son claras
     // la toma theme/zone.ts, que es quien conoce la convencion de Carbon.
-    isLightZone(zone) ? styles.onLight : undefined,
+    logoTone === "ink" && isLightZone(zone) ? styles.onLight : undefined,
+    logoTone === "color" ? styles.colorLogos : undefined,
   ]
     .filter(Boolean)
     .join(" ");

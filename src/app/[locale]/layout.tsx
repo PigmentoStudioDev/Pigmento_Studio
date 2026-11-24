@@ -9,7 +9,6 @@ import { PageTransition } from "@/design-system/components/layout/PageTransition
 import { SmoothScroll } from "@/design-system/components/layout/SmoothScroll/SmoothScroll";
 import { SiteFooter } from "@/design-system/components/organisms/SiteFooter/SiteFooter";
 import { SiteHeader } from "@/design-system/components/organisms/SiteHeader/SiteHeader";
-import { TopBar } from "@/design-system/components/organisms/TopBar/TopBar";
 import { Preloader } from "@/design-system/components/organisms/Preloader/Preloader";
 import { pageStatusScript } from "@/design-system/motion/pageReady";
 import { themeModeScript } from "@/design-system/theme/mode";
@@ -19,7 +18,6 @@ import { TRANSITION_PIGMENTS } from "../pigment";
 import { getLegalLinks } from "@/cms/legal";
 import { getFeaturedPieces } from "@/cms/projects";
 import { getNavigation } from "../navigation";
-import { getTopBar } from "../topbar";
 import { JsonLd } from "../json-ld";
 import { siteJsonLd } from "../seo";
 import { SITE_URL } from "../site-url";
@@ -125,7 +123,6 @@ export default async function RootLayout({
   // vacia, fila sin enlaces legales: no hay forma de enlazar a un 404.
   const legals = await getLegalLinks(locale);
   const tFooter = await getTranslations("footer");
-  const tTopBar = await getTranslations("topbar");
   const tMeta = await getTranslations("metadata");
 
   return (
@@ -190,10 +187,6 @@ export default async function RootLayout({
               propio sobre un hero de video. Detras de ella tambien por z-index
               (90 contra 100) — encima la difuminaria a ella. */}
           <ProgressiveBlur />
-          {/* Encima de la cabecera y fija: promos y avisos del estudio. La cabecera y
-              el hero bajan lo que ella mide por --pg-topbar-offset, que vale cero si
-              esta linea se quita. */}
-          <TopBar {...getTopBar(tTopBar)} />
           <SiteHeader {...getNavigation(t, pieces)} />
           {children}
           {/* Chrome de pagina, como la cabecera: va aqui y no envuelto en un

@@ -19,6 +19,13 @@ describe("FeatureCard", () => {
     expect(screen.getByText("Sin intermediarios.")).toBeInTheDocument();
   });
 
+  it("el numero de paso se ve pero no se lee como parte del nombre", () => {
+    render(<FeatureCard label="Diagnostico" text="Primero escuchamos." step="01" />);
+
+    expect(screen.getByText("01")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent(/^Diagnostico$/);
+  });
+
   it("no tiene violaciones de accesibilidad en ninguna de las dos pieles", async () => {
     const { container } = render(
       <>

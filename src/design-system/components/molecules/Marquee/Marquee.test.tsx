@@ -81,6 +81,12 @@ describe("Marquee", () => {
    * El snapshot de servidor del modo es claro, asi que este es el caso por defecto y
    * el que se rompe primero.
    */
+  it("los logos a color no se invierten aunque la zona sea clara", () => {
+    const { container } = render(<Marquee kind="logos" items={LOGOS} theme={{ light: "light" }} logoTone="color" />);
+
+    expect(container.firstElementChild?.className).not.toMatch(/onLight/);
+  });
+
   it("invierte los logos sobre una zona clara", () => {
     const { container } = render(<Marquee kind="logos" items={LOGOS} theme={{ light: "light" }} />);
 

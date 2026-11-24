@@ -6,19 +6,16 @@ import { routing } from "@/i18n/routing";
 import { Section } from "@/design-system/components/layout/Section/Section";
 import { FinalCta } from "@/design-system/components/organisms/FinalCta/FinalCta";
 import { Manifesto } from "@/design-system/components/organisms/Manifesto/Manifesto";
-import { ImageBand } from "@/design-system/components/organisms/ImageBand/ImageBand";
 import { Services } from "@/design-system/components/organisms/Services/Services";
 import { Testimonials } from "@/design-system/components/organisms/Testimonials/Testimonials";
 import { ValueCards } from "@/design-system/components/organisms/ValueCards/ValueCards";
 import { Marquee } from "@/design-system/components/molecules/Marquee/Marquee";
 import { WorkRows } from "@/design-system/components/organisms/WorkRows/WorkRows";
 import { HeroStatement } from "@/design-system/components/organisms/HeroStatement/HeroStatement";
-import { BAND_IMAGE_FILENAME } from "../band";
 import { getHero } from "../hero";
 import { getFinalCta } from "../cta";
 import { sendContact } from "../contact-action";
 import { getFeaturedPieces, getWorkProjects } from "@/cms/projects";
-import { getSiteImage } from "@/cms/media";
 import { getTeamMembers } from "@/cms/team";
 import { getManifesto } from "../manifesto";
 import { getTestimonials } from "../testimonials";
@@ -26,6 +23,7 @@ import { getServices } from "../services";
 import { getValues } from "../values";
 import { getWork } from "../work";
 import { alternatesFor } from "../seo";
+import { CLIENT_LOGOS } from "../client-logos";
 
 /**
  * El hero va en la RUTA y no en `app/layout.tsx`: en el layout raiz saldria tambien
@@ -85,17 +83,15 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   // Las mismas piezas que el escaparate del menu, y ahi esta la gracia: el
   // manifiesto ensena trabajo dos strips antes del portafolio sin duplicarlo.
   // Consultas independientes: en serie sumarian sus tiempos al primer byte.
-  const [pieces, projects, bandImage, members] = await Promise.all([
+  const [pieces, projects, members] = await Promise.all([
     getFeaturedPieces(locale),
     getWorkProjects(locale),
-    getSiteImage(BAND_IMAGE_FILENAME, locale),
     getTeamMembers(locale),
   ]);
   const tHero = await getTranslations("home.hero");
   const tValues = await getTranslations("home.values");
   const tWork = await getTranslations("home.work");
   const tServices = await getTranslations("home.services");
-  const tBand = await getTranslations("home.band");
   const tTestimonials = await getTranslations("home.testimonials");
   const tCta = await getTranslations("home.cta");
   const testimonials = getTestimonials(tTestimonials);
@@ -148,33 +144,12 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <Services {...getServices(tServices)} titleId={SERVICES_TITLE_ID} />
       </Section>
 
-      {/* El respiro, y la unica seccion de la pagina sin nada que leer. Entrega a las
-          resenas, que van pegadas a ella: la banda es la unica superficie que no pide
-          nada a cambio, y justo despues una fila de citas se lee como su respaldo.
+      {/* La banda con la foto del equipo se fue a /nosotros (ronda 2 de Pigmento,
+          2026-11-23): la foto es del estudio, no de la oferta. */}
 
-          Sin aire propio por ningun lado: con fondo distinto ella ES la separacion, y
-          un margen alrededor la convertiria en una caja puesta encima. Sin imagen no se
-          pinta: medio viewport de hueco vacio es peor que no tener respiro. */}
-      {bandImage ? (
-        <Section width="full" spacing="none">
-          <ImageBand {...bandImage} title={tBand("title")} />
-        </Section>
-      ) : null}
-
-      {/* Quien lo dice, PEGADO a la banda y sin cabecera.
-
-          Estaba al final, entre los valores y los casos, con titular, rotulo y
-          entradilla como las otras ocho strips — una pantalla entera para presentar
-          seis frases que se presentan solas. Aqui hace un trabajo que alli no hacia:
-          la banda es la unica superficie de la pagina que no pide nada a cambio, y
-          justo despues de ella una fila de resenas se lee como el respaldo de lo que
-          se acaba de ver, no como otra seccion que argumenta.
-
-          Sin aire arriba, por lo mismo que la banda no lo lleva: las dos superficies
-          se tocan y ese contacto ES la separacion. Sin citas no se pinta, asi que el
-          hueco tampoco queda. */}
+      {/* Quien lo dice, sin cabecera: seis frases firmadas se presentan solas. */}
       {testimonials.testimonials.length > 0 ? (
-        <Section width="full" spacing="loose" spacingStart="none">
+        <Section width="full" spacing="loose">
           <Testimonials {...testimonials} />
         </Section>
       ) : null}
@@ -193,24 +168,16 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <ValueCards {...getValues(tValues, members)} titleId={VALUES_TITLE_ID} highlightFamily="pink" />
       </Section>
 
-      {/* La tira de logos vuelve debajo de los valores, a sangre y oscura en los dos
-          modos (decision de Karen, 2026-10-26). Los logos llegan en blanco, listos para
-          ese fondo. */}
+      {/* La tira de logos, ahora con los clientes reales (ronda 2 de Pigmento,
+          2026-11-23). Llegan a color y varios con placa blanca, asi que la tira va
+          clara en los dos modos: sobre negro las placas se leerian como cajas. */}
       <Section width="full" spacing="none">
         <Marquee
           kind="logos"
           direction="left"
-          theme={{ light: "dark", dark: "dark" }}
-          items={[
-            { src: "/logos/twitter.svg", alt: "Twitter", width: 100, height: 81 },
-            { src: "/logos/behance.svg", alt: "Behance", width: 201, height: 38 },
-            { src: "/logos/medium.svg", alt: "Medium", width: 200, height: 32 },
-            { src: "/logos/eventbrite.svg", alt: "Eventbrite", width: 200, height: 37 },
-            { src: "/logos/android.svg", alt: "Android", width: 200, height: 44 },
-            { src: "/logos/bluesky.svg", alt: "Bluesky", width: 126, height: 111 },
-            { src: "/logos/chatgpt.svg", alt: "ChatGPT", width: 100, height: 100 },
-            { src: "/logos/apple.svg", alt: "Apple", width: 74, height: 91 },
-          ]}
+          theme={{ light: "light", dark: "light" }}
+          logoTone="color"
+          items={[...CLIENT_LOGOS]}
         />
       </Section>
 

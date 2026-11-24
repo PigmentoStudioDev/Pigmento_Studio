@@ -32,6 +32,8 @@ export interface FeatureCardProps {
    * nombra. Sin ella, la baldosa es una capa mas del tema.
    */
   accent?: CycledCandyFamily;
+  /** Numero de paso ("01"). Ocupa el sitio de la baldosa cuando la tarjeta es un paso de una secuencia. */
+  step?: string;
 }
 
 /**
@@ -46,11 +48,16 @@ const FAMILY_CLASS: Record<CycledCandyFamily, string> = {
   lime: styles.familyLime,
 };
 
-export function FeatureCard({ label, text, shape, family, accent }: FeatureCardProps) {
+export function FeatureCard({ label, text, shape, family, accent, step }: FeatureCardProps) {
   const skin = family === undefined ? styles.surface : FAMILY_CLASS[family];
 
   return (
     <div className={`${styles.root} ${skin}`}>
+      {step ? (
+        <span className={styles.step} aria-hidden="true">
+          {step}
+        </span>
+      ) : null}
       {shape ? (
         <span className={family === undefined && accent ? `${styles.tile} ${FAMILY_CLASS[accent]}` : styles.tile}>
           <Halftone shape={shape} className={styles.tileShape} hostSelector={`.${styles.root}`} />
