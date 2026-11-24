@@ -108,8 +108,12 @@
   filter: invert(brand.$marquee-logo-invert);
 }
 
+// Con la altura sola, un logotipo apaisado (un nombre largo en versalitas) ocupa
+// cuatro veces lo que un sello cuadrado. El tope de ancho lo encoge dentro de su caja
+// y la tira pesa parejo de punta a punta.
 .colorLogos .logo {
   block-size: brand.$marquee-logo-color-block-size;
+  max-inline-size: brand.$marquee-logo-color-max-inline-size;
 }
 
 // Sin reduced-motion no hay nada que apagar aqui: el movimiento entero lo pone
