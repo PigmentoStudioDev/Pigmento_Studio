@@ -111,6 +111,13 @@
 // Con la altura sola, un logotipo apaisado (un nombre largo en versalitas) ocupa
 // cuatro veces lo que un sello cuadrado. El tope de ancho lo encoge dentro de su caja
 // y la tira pesa parejo de punta a punta.
+// Blanco liso y sin grano: el grano se multiplica sobre el fondo y lo devolveria al
+// gris del papel, que es justo lo que hacia visibles las placas de los logos.
+.colorLogos {
+  background-color: brand.$surface-logo-strip;
+  background-image: none;
+}
+
 .colorLogos .logo {
   block-size: brand.$marquee-logo-color-block-size;
   max-inline-size: brand.$marquee-logo-color-max-inline-size;
