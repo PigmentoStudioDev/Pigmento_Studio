@@ -3,6 +3,7 @@ import { Heading } from "../../atoms/Heading/Heading";
 import { ScrollHighlight } from "../../layout/ScrollHighlight/ScrollHighlight";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import { SectionHead } from "../../layout/SectionHead/SectionHead";
+import { Prose } from "../../atoms/Prose/Prose";
 import styles from "./StripHeader.module.scss";
 
 /**
@@ -90,7 +91,9 @@ export function StripHeader({
         {intro ? (
           <div className={styles.quietIntro}>
             <ScrollReveal>
-              <p className={styles.intro}>{intro}</p>
+              <div className={styles.introGroup}>
+              <Prose text={intro} className={styles.intro} />
+            </div>
             </ScrollReveal>
           </div>
         ) : null}
@@ -120,7 +123,9 @@ export function StripHeader({
 
         {intro ? (
           <ScrollReveal>
-            <p className={styles.intro}>{intro}</p>
+            <div className={styles.introGroup}>
+              <Prose text={intro} className={styles.intro} />
+            </div>
           </ScrollReveal>
         ) : null}
       </div>

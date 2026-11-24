@@ -56,11 +56,12 @@ export function HeroVideo({
           </Reveal>
         ) : null}
 
-        {/* Un cuerpo por debajo del display: a media pantalla, un nombre de tres palabras
-            en display ("Branding y diseño") ocupa tres renglones y se mete bajo la
-            cabecera. Sigue siendo el h1 de la pagina. */}
+        {/* Dos cuerpos por debajo del display: desde la ronda 2 el titular es una frase
+            del cliente ("Marcas que tienen algo que decir. Disenos que dejan huella."),
+            y a media pantalla en `heading` se salia por arriba del video. El nombre de
+            la disciplina va en el distintivo. Sigue siendo el h1 de la pagina. */}
         <Reveal step={1}>
-          <Heading level={1} size="heading">
+          <Heading level={1} size="title">
             {title}
           </Heading>
         </Reveal>

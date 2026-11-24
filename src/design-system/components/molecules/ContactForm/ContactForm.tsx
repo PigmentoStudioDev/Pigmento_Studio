@@ -8,6 +8,7 @@ import { TextField } from "../../atoms/TextField/TextField";
 import { PhoneField, type PhoneFieldCopy } from "../PhoneField/PhoneField";
 import styles from "./ContactForm.module.scss";
 import {
+  MAX_EXTRA,
   MAX_MESSAGE,
   validateContact,
   type ContactErrorCode,
@@ -67,11 +68,28 @@ const BOX_FAMILY: Record<CycledCandyFamily, string> = {
   lime: styles.boxLime,
 };
 
+/**
+ * Lo que cambia de un formulario a otro entre paginas de servicio (ronda 2 de
+ * Pigmento): web no pide telefono, marketing pide empresa, sitio y objetivo. Lo que
+ * no se nombra aqui se queda como en la home.
+ */
+export interface ContactFormFields {
+  /** false quita el telefono. */
+  phone?: boolean;
+  /** Rotulo del campo de empresa; sin valor no se pide. */
+  company?: string;
+  /** Rotulo del campo de sitio o redes; sin valor no se pide. */
+  website?: string;
+  /** Una segunda pregunta de opcion unica ("Cual es tu principal objetivo?"). */
+  goal?: { label: string; options: ContactTopic[] };
+}
+
 export interface ContactFormProps {
   copy: ContactFormCopy;
   /** El idioma de los nombres de pais en el telefono. */
   locale: string;
   topics: ContactTopic[];
+  fields?: ContactFormFields;
   /** Resuelve y se ve la confirmacion; rechaza y el formulario se queda con un aviso. */
   onSubmit?: (message: ContactMessage) => Promise<void>;
 }
@@ -86,9 +104,12 @@ const EMPTY: ContactValues = { name: "", email: "", phone: "", message: "" };
  */
 const REMAINING_HINT = 100;
 
-export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps) {
+export function ContactForm({ copy, locale, topics, fields = {}, onSubmit }: ContactFormProps) {
   const [values, setValues] = useState(EMPTY);
   const [topic, setTopic] = useState(topics[0]?.value ?? "");
+  const [extra, setExtra] = useState({ company: "", website: "" });
+  const [goal, setGoal] = useState(fields.goal?.options[0]?.value ?? "");
+  const withPhone = fields.phone !== false;
   const [errors, setErrors] = useState<ContactErrors>({});
   const [tried, setTried] = useState(false);
   const [phase, setPhase] = useState<Phase>("editing");
@@ -127,7 +148,7 @@ export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps
 
     setTried(true);
     setFailed(false);
-    const found = validateContact(values);
+    const found = validateContact(withPhone ? values : { ...values, phone: "" });
     setErrors(found);
 
     // El foco va al PRIMER campo con error, en orden de lectura.
@@ -142,6 +163,9 @@ export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps
       phone: values.phone.trim(),
       topic,
       message: values.message.trim(),
+      ...(fields.company ? { company: extra.company.trim() } : {}),
+      ...(fields.website ? { website: extra.website.trim() } : {}),
+      ...(fields.goal ? { goal } : {}),
     };
 
     setPhase("sending");
@@ -166,7 +190,13 @@ export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps
   }
 
   const errorText = (code?: ContactErrorCode) => (code ? copy.errors[code] : undefined);
-  const markers = numberRows(topics.length > 0);
+  const markers = numberRows({
+    topic: topics.length > 0,
+    company: Boolean(fields.company),
+    website: Boolean(fields.website),
+    phone: withPhone,
+    goal: Boolean(fields.goal),
+  });
   const sending = phase === "sending";
 
   return (
@@ -229,16 +259,52 @@ export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps
             readOnly={sending}
           />
 
-          <PhoneField
-            ref={phoneRef}
-            marker={markers.phone}
-            copy={copy.phone}
-            locale={locale}
-            name="phone"
-            onChange={update("phone")}
-            error={errorText(errors.phone)}
-            readOnly={sending}
-          />
+          {fields.company ? (
+            <TextField
+              marker={markers.company}
+              label={fields.company}
+              name="company"
+              autoComplete="organization"
+              maxLength={MAX_EXTRA}
+              value={extra.company}
+              onChange={(value) => setExtra({ ...extra, company: value })}
+              readOnly={sending}
+            />
+          ) : null}
+          {withPhone ? (
+            <PhoneField
+              ref={phoneRef}
+              marker={markers.phone}
+              copy={copy.phone}
+              locale={locale}
+              name="phone"
+              onChange={update("phone")}
+              error={errorText(errors.phone)}
+              readOnly={sending}
+            />
+          ) : null}
+          {fields.website ? (
+            <TextField
+              marker={markers.website}
+              label={fields.website}
+              name="website"
+              autoComplete="url"
+              maxLength={MAX_EXTRA}
+              value={extra.website}
+              onChange={(value) => setExtra({ ...extra, website: value })}
+              readOnly={sending}
+            />
+          ) : null}
+          {fields.goal ? (
+            <TopicPicker
+              marker={markers.goal}
+              label={fields.goal.label}
+              topics={fields.goal.options}
+              value={goal}
+              onChange={setGoal}
+              disabled={sending}
+            />
+          ) : null}
 
           <TextField
             ref={messageRef}
@@ -282,12 +348,14 @@ export function ContactForm({ copy, locale, topics, onSubmit }: ContactFormProps
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /** El numero de cada fila. Sin temas la cuenta empieza en el nombre: un "02" de entrada lee como una fila perdida. */
-function numberRows(withTopics: boolean) {
-  const order = withTopics ? ["topic", "name", "email", "phone", "message"] : ["name", "email", "phone", "message"];
-  return Object.fromEntries(order.map((row, i) => [row, pad(i + 1)])) as Record<
-    "topic" | "name" | "email" | "phone" | "message",
-    string
-  >;
+type Row = "topic" | "name" | "email" | "company" | "phone" | "website" | "goal" | "message";
+const ROW_ORDER: readonly Row[] = ["topic", "name", "email", "company", "phone", "website", "goal", "message"];
+
+// El numero de cada fila depende de cuales se piden: sin telefono, el mensaje es el 04
+// y no el 05, o la secuencia saltaria un numero que nadie ve.
+function numberRows(present: Partial<Record<Row, boolean>>) {
+  const order = ROW_ORDER.filter((row) => present[row] ?? true);
+  return Object.fromEntries(order.map((row, i) => [row, pad(i + 1)])) as Record<Row, string>;
 }
 
 /**

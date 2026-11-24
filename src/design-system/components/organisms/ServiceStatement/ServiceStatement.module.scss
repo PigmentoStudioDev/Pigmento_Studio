@@ -1,0 +1,80 @@
+@use '../../../styles/carbon-config';
+
+@use '../../../styles/brand' as brand;
+@use '../../../styles/type' as brandtype;
+@use '@carbon/react/scss/breakpoint';
+@use '@carbon/react/scss/spacing';
+@use '@carbon/react/scss/theme';
+
+// El mismo margen interior que las tarjetas vecinas (Faq, Process): sin el, el texto
+// toca el borde de la tira mientras el resto de la pagina respira.
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-09;
+  padding-inline: spacing.$spacing-06;
+}
+
+// Sin titular el texto va solo y grande: es lo primero que se lee despues del video.
+.lone {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+  max-inline-size: 48ch;
+}
+
+.loneText {
+  @include brandtype.style('lead');
+
+  margin: 0;
+  color: theme.$text-primary;
+}
+
+.items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(brand.$track-card, 1fr));
+  gap: spacing.$spacing-07 spacing.$spacing-06;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-04;
+  padding-block-start: spacing.$spacing-05;
+  border-block-start: 1px solid theme.$border-subtle;
+}
+
+.ordinal {
+  @include brandtype.style('label');
+
+  color: theme.$text-secondary;
+}
+
+.itemTitle {
+  @include brandtype.style('lead');
+
+  margin: 0;
+  color: theme.$text-primary;
+}
+
+.itemText {
+  @include brandtype.style('body');
+
+  margin: 0;
+  color: theme.$text-secondary;
+}
+
+.tagline {
+  @include brandtype.style('title');
+
+  margin: 0;
+  max-inline-size: 28ch;
+  color: theme.$text-primary;
+}
+
+.cta {
+  display: flex;
+}

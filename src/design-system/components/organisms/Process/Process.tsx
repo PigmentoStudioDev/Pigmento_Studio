@@ -4,6 +4,7 @@ import { Heading } from "../../atoms/Heading/Heading";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import { ScrollTrace } from "../../layout/ScrollTrace/ScrollTrace";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
+import { Prose } from "../../atoms/Prose/Prose";
 import styles from "./Process.module.scss";
 
 /**
@@ -44,9 +45,15 @@ import styles from "./Process.module.scss";
  */
 export interface ProcessPhase {
   title: string;
+  /** La frase que abre la fase ("Todo comienza con una conversacion."), a tinta plena. */
+  lead?: string;
+  /** Uno o varios parrafos, separados por linea en blanco. */
   text: string;
-  /** Lo que la fase deja en las manos del cliente. Sin esto, es una reunion. */
-  deliverable: string;
+  /**
+   * Lo que la fase deja en las manos del cliente. Opcional desde la ronda 2: el
+   * proceso de web que escribio Pigmento son cuatro frases sin entregable por fase.
+   */
+  deliverable?: string;
 }
 
 export interface ProcessProps {
@@ -58,6 +65,8 @@ export interface ProcessProps {
   /** Rotulo de lo que produce cada fase, en la voz de metadato: "Entregable". */
   deliverableLabel: string;
   phases: ProcessPhase[];
+  /** Una nota al pie de la lista ("Cada proyecto es unico..."). */
+  note?: string;
   titleId?: string;
   /**
    * De que familia candy es el resalte del titular. Sin valor, el azul del tema.
@@ -81,6 +90,7 @@ export function Process({
   intro,
   deliverableLabel,
   phases,
+  note,
   titleId,
   highlightFamily,
   quietHeader,
@@ -123,18 +133,23 @@ export function Process({
                   <Heading level={3} size="title">
                     {phase.title}
                   </Heading>
-                  <p className={styles.text}>{phase.text}</p>
+                  {phase.lead ? <p className={styles.lead}>{phase.lead}</p> : null}
+                  <Prose text={phase.text} className={styles.text} />
                 </div>
 
-                <p className={styles.deliverable}>
-                  <span className={styles.deliverableLabel}>{deliverableLabel}</span>
-                  <span className={styles.deliverableValue}>{phase.deliverable}</span>
-                </p>
+                {phase.deliverable ? (
+                  <p className={styles.deliverable}>
+                    <span className={styles.deliverableLabel}>{deliverableLabel}</span>
+                    <span className={styles.deliverableValue}>{phase.deliverable}</span>
+                  </p>
+                ) : null}
               </li>
             ))}
           </ol>
         </ScrollReveal>
       </ScrollTrace>
+
+      {note ? <p className={styles.note}>{note}</p> : null}
     </div>
   );
 }

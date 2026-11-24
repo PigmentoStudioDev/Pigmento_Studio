@@ -117,6 +117,9 @@ $answer-delay: brand.$duration-quarter;
 .answer {
   @include brandtype.style('body');
 
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
   margin: 0;
   max-inline-size: $answer-inline-size;
   padding-block-end: spacing.$spacing-07;
@@ -131,6 +134,36 @@ $answer-delay: brand.$duration-quarter;
 // repeticion: una transicion se aplica al estado hacia el que se va, asi que la de
 // esta regla es la de ABRIR y la del reposo la de cerrar. Es como se consigue que los
 // dos sentidos no duren lo mismo sin una linea de JS.
+.paragraph,
+.lead,
+.listLabel {
+  margin: 0;
+}
+
+.lead {
+  color: theme.$text-primary;
+}
+
+.listLabel {
+  @include brandtype.style('label');
+
+  margin-block-start: spacing.$spacing-03;
+  color: theme.$text-primary;
+}
+
+// Dos columnas en ancho: las listas de servicios llegan a quince entradas y en una
+// sola columna el panel se vuelve mas alto que la pantalla.
+.list {
+  columns: 2 brand.$track-aside;
+  column-gap: spacing.$spacing-07;
+  margin: 0;
+  padding-inline-start: spacing.$spacing-05;
+}
+
+.list li {
+  break-inside: avoid;
+}
+
 .row[data-faq-open='true'] .panel {
   grid-template-rows: 1fr;
   transition: grid-template-rows brand.$duration-base brand.$ease-default;

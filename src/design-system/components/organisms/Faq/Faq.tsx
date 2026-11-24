@@ -1,8 +1,9 @@
 "use client";
 
 import type { CycledCandyFamily } from "../../../theme/candy";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { Icon } from "../../atoms/Icon/Icon";
+import { Prose } from "../../atoms/Prose/Prose";
 import { ScrollReveal } from "../../layout/ScrollReveal/ScrollReveal";
 import { StripHeader } from "../../molecules/StripHeader/StripHeader";
 import styles from "./Faq.module.scss";
@@ -32,7 +33,17 @@ import styles from "./Faq.module.scss";
  */
 export interface FaqItem {
   question: string;
+  /** Uno o varios parrafos, separados por linea en blanco. */
   answer: string;
+  /** Frase de apertura a tinta plena, antes de la respuesta. */
+  lead?: string;
+  /**
+   * Una lista dentro del panel. Con ella el acordeon sirve tambien de catalogo: cada
+   * servicio abre y deja ver lo que incluye (paginas de servicio, ronda 2 de Pigmento).
+   */
+  list?: string[];
+  /** El rotulo de la lista ("Nuestros servicios:"). */
+  listLabel?: string;
 }
 
 export interface FaqProps {
@@ -75,6 +86,9 @@ export function Faq({
   quietHeader,
 }: FaqProps) {
   const [open, setOpen] = useState<number[]>([]);
+  // Dos acordeones en la misma pagina (servicios y preguntas) repetirian los ids de
+  // panel y boton, y aria-controls apuntaria al del otro.
+  const idPrefix = useId();
   const triggersRef = useRef<(HTMLButtonElement | null)[]>([]);
 
   const toggle = useCallback(
@@ -127,8 +141,8 @@ export function Faq({
       <ScrollReveal by="block">
         {items.map((item, index) => {
           const isOpen = open.includes(index);
-          const panelId = `faq-panel-${index}`;
-          const triggerId = `faq-trigger-${index}`;
+          const panelId = `${idPrefix}-panel-${index}`;
+          const triggerId = `${idPrefix}-trigger-${index}`;
 
           return (
             <div
@@ -173,7 +187,20 @@ export function Faq({
                 inert={!isOpen}
               >
                 <div className={styles.panelInner}>
-                  <p className={styles.answer}>{item.answer}</p>
+                  <div className={styles.answer}>
+                    {item.lead ? <p className={styles.lead}>{item.lead}</p> : null}
+                    <Prose text={item.answer} className={styles.paragraph} />
+                    {item.list && item.list.length > 0 ? (
+                      <>
+                        {item.listLabel ? <p className={styles.listLabel}>{item.listLabel}</p> : null}
+                        <ul className={styles.list}>
+                          {item.list.map((entry) => (
+                            <li key={entry}>{entry}</li>
+                          ))}
+                        </ul>
+                      </>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </div>

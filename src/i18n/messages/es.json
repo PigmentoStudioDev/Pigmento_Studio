@@ -501,110 +501,408 @@
     },
     "branding": {
       "title": "Branding y diseño",
-      "description": "Identidad, naming y sistema visual para marcas que necesitan verse como lo que ya son.",
-      "process": {
-        "title": "Qué incluye una identidad",
-        "titleHighlight": "identidad",
-        "intro": "Cuatro fases, y cada una cierra con algo que recibes. Una identidad completa toma entre seis y diez semanas.",
-        "phases": {
-          "diagnosis": {
-            "title": "Diagnóstico",
-            "text": "Hablamos con quien dirige el negocio y vemos cómo se lee hoy tu marca junto a su competencia.",
-            "deliverable": "Brief firmado por los dos"
+      "description": "Estrategia, identidad, empaques, diseño editorial y señalética para marcas que tienen algo que decir.",
+      "hero": {
+        "eyebrow": "Branding y diseño",
+        "title": "Marcas que tienen algo que decir. Diseños que dejan huella."
+      },
+      "intro": {
+        "paragraphs": [
+          "Creamos identidades, construimos conceptos y transformamos ideas en experiencias visuales que conectan.",
+          "Desde la estrategia detrás de una marca hasta el último detalle de su ejecución, desarrollamos soluciones creativas que combinan intención, estética y funcionalidad.",
+          "Porque una gran marca no solo se reconoce. Se recuerda."
+        ],
+        "cta": "Explora nuestros servicios"
+      },
+      "offer": {
+        "label": "01. Lo que hacemos",
+        "title": "Cada detalle construye una marca.",
+        "paragraphs": [
+          "Una marca es mucho más que un logotipo. Es una historia, una personalidad y un universo visual que cobra vida en cada punto de contacto.",
+          "En Pigmento combinamos estrategia, creatividad y diseño para desarrollar marcas desde cero, transformar identidades existentes y crear las piezas que necesitan para crecer.",
+          "Cada proyecto es diferente. Por eso, nuestros servicios pueden desarrollarse de manera independiente o integrarse para construir una experiencia de marca completa."
+        ],
+        "listLabel": "Nuestros servicios:",
+        "items": [
+          {
+            "name": "Estrategia de marca",
+            "title": "Las grandes marcas comienzan con una idea clara.",
+            "paragraphs": [
+              "Antes de diseñar, buscamos entender. Investigamos el mercado, descubrimos oportunidades y construimos los fundamentos que dan dirección, personalidad y propósito a cada marca."
+            ],
+            "services": [
+              "Investigación y análisis de marca",
+              "Estrategia y conceptualización de marca",
+              "Naming y creación de nombres",
+              "Posicionamiento de marca",
+              "Definición de personalidad y valores",
+              "Tono de voz y comunicación",
+              "Arquitectura de marca",
+              "Desarrollo de conceptos creativos"
+            ]
           },
-          "strategy": {
-            "title": "Estrategia",
-            "text": "Qué promete la marca, a quién le habla y con qué voz. Si hace falta un nombre, se decide aquí.",
-            "deliverable": "Plataforma de marca"
+          {
+            "name": "Identidad de marca",
+            "title": "Diseñamos identidades que hablan por sí solas.",
+            "paragraphs": [
+              "Creamos universos visuales que expresan la esencia de cada marca. Identidades con personalidad, coherencia y la capacidad de adaptarse a diferentes formatos, espacios y experiencias.",
+              "Desde una marca que está por nacer hasta una que busca reinventarse, desarrollamos sistemas visuales pensados para evolucionar."
+            ],
+            "services": [
+              "Diseño de logotipos",
+              "Desarrollo de identidad visual",
+              "Branding integral",
+              "Rebranding y rediseño de marca",
+              "Actualización de identidad visual",
+              "Sistemas gráficos",
+              "Selección tipográfica y paleta cromática",
+              "Manuales de identidad y brandbooks",
+              "Desarrollo de submarcas",
+              "Aplicaciones de identidad corporativa"
+            ]
           },
-          "identity": {
-            "title": "Identidad",
-            "text": "Logotipo, tipografía, color y las reglas que los unen. Lo revisas sobre piezas reales, no sobre láminas sueltas.",
-            "deliverable": "Sistema visual"
+          {
+            "name": "Diseño de empaques",
+            "title": "El diseño también se experimenta.",
+            "paragraphs": [
+              "Un empaque es mucho más que la presentación de un producto. Es una oportunidad para comunicar, despertar interés y crear una conexión desde el primer encuentro.",
+              "Diseñamos empaques que equilibran estética, funcionalidad y estrategia, convirtiendo productos en experiencias que destacan dentro y fuera del punto de venta."
+            ],
+            "services": [
+              "Diseño de empaques",
+              "Diseño de etiquetas",
+              "Desarrollo de líneas y familias de productos",
+              "Sistemas gráficos para colecciones",
+              "Ediciones especiales y de temporada",
+              "Diseño de cajas y empaques para comercio electrónico",
+              "Kits promocionales y cajas de relaciones públicas",
+              "Adaptaciones gráficas para producción",
+              "Diseño de presentaciones para productos"
+            ]
           },
-          "rollout": {
-            "title": "Aplicaciones",
-            "text": "Empaque, papelería, señalización o redes: lo que tu marca necesita para salir a la calle.",
-            "deliverable": "Manual de marca y archivos editables"
+          {
+            "name": "Diseño gráfico y editorial",
+            "title": "Ideas que toman forma.",
+            "paragraphs": [
+              "Transformamos información, conceptos y mensajes en piezas visuales que comunican con claridad y personalidad.",
+              "Desde materiales corporativos hasta publicaciones editoriales, cuidamos cada composición, tipografía y detalle para crear diseños que reflejen el carácter de cada marca."
+            ],
+            "services": [
+              "Diseño editorial",
+              "Catálogos de productos",
+              "Revistas y publicaciones",
+              "Folletos y materiales informativos",
+              "Presentaciones corporativas",
+              "Presentaciones comerciales y para inversionistas",
+              "Papelería corporativa",
+              "Diseño de materiales publicitarios",
+              "Infografías",
+              "Ilustración",
+              "Materiales impresos y digitales",
+              "Diseño de menús y cartas"
+            ]
+          },
+          {
+            "name": "Diseño de espacios y señalética",
+            "title": "Las marcas también se viven.",
+            "paragraphs": [
+              "Llevamos la identidad visual más allá de las pantallas y los formatos tradicionales para convertir espacios físicos en experiencias de marca.",
+              "Diseñamos elementos gráficos que orientan, comunican y generan una conexión visual entre las personas y su entorno."
+            ],
+            "services": [
+              "Diseño de señalética",
+              "Identidad gráfica para espacios comerciales",
+              "Gráficos ambientales",
+              "Aplicaciones de marca en interiores",
+              "Diseño gráfico para escaparates",
+              "Gráficos para stands y exhibiciones",
+              "Materiales para puntos de venta",
+              "Rotulación",
+              "Diseño de gráficos para oficinas y espacios corporativos",
+              "Aplicaciones visuales para eventos"
+            ]
+          },
+          {
+            "name": "Aplicaciones de marca",
+            "title": "Una identidad. Infinitas posibilidades.",
+            "paragraphs": [
+              "Una marca cobra fuerza cuando mantiene su esencia en cada expresión.",
+              "Desarrollamos aplicaciones que trasladan su identidad a distintos formatos, materiales y experiencias, cuidando la coherencia visual sin perder creatividad."
+            ],
+            "services": [
+              "Diseño de artículos promocionales",
+              "Merchandising",
+              "Diseño gráfico para uniformes",
+              "Papelería personalizada",
+              "Materiales para eventos",
+              "Regalos corporativos",
+              "Plantillas de marca",
+              "Recursos gráficos digitales",
+              "Adaptaciones de identidad visual",
+              "Materiales de comunicación corporativa"
+            ]
           }
+        ],
+        "closing": {
+          "title": "¿No encuentras exactamente lo que necesitas?",
+          "text": "Cuéntanos tu idea. Podemos desarrollar soluciones de diseño a la medida de tu proyecto.",
+          "cta": "Hablemos de tu proyecto"
         }
+      },
+      "philosophy": {
+        "label": "02. Nuestra filosofía",
+        "title": "Más que diseñar, nos involucramos.",
+        "paragraphs": [
+          "Creemos que las mejores ideas nacen de entender lo que hay detrás de cada proyecto.",
+          "Por eso, antes de crear, escuchamos. Nos acercamos a cada marca para conocer su historia, entender sus objetivos y descubrir aquello que la hace diferente.",
+          "Nos gusta cuestionar, explorar y encontrar nuevas maneras de comunicar. Combinamos pensamiento estratégico con sensibilidad creativa para desarrollar soluciones que no solo se vean bien, sino que tengan sentido.",
+          "Trabajamos de cerca con nuestros clientes, convirtiéndonos en aliados creativos durante cada etapa del proceso."
+        ],
+        "tagline": "Estrategia que da dirección. Creatividad que transforma. Diseño que conecta."
+      },
+      "process": {
+        "label": "03. Nuestro proceso",
+        "title": "De las primeras ideas a los grandes resultados.",
+        "paragraphs": [
+          "Cada proyecto tiene su propia historia, pero todos comparten algo: un proceso creativo donde la estrategia, la colaboración y la atención al detalle hacen la diferencia.",
+          "Nuestra metodología nos permite transformar necesidades en soluciones visuales, manteniendo una comunicación cercana y una dirección clara de principio a fin."
+        ],
+        "resultLabel": "El resultado",
+        "phases": [
+          {
+            "name": "Descubrir",
+            "title": "Todo comienza con una conversación.",
+            "paragraphs": [
+              "Nos sumergimos en tu proyecto para conocer tu negocio, entender tus objetivos y descubrir qué necesitas comunicar.",
+              "Analizamos el contexto, las referencias y las oportunidades para construir un punto de partida sólido."
+            ],
+            "result": "Una visión compartida sobre los objetivos, necesidades y alcance del proyecto."
+          },
+          {
+            "name": "Definir",
+            "title": "Encontramos la dirección correcta.",
+            "paragraphs": [
+              "Transformamos lo aprendido en una propuesta conceptual y creativa que dará sentido al desarrollo del proyecto.",
+              "Establecemos los criterios estratégicos y visuales que guiarán nuestras decisiones de diseño."
+            ],
+            "result": "Una dirección creativa alineada con los objetivos de tu marca."
+          },
+          {
+            "name": "Crear",
+            "title": "Las ideas comienzan a tomar forma.",
+            "paragraphs": [
+              "Nuestro equipo explora conceptos, desarrolla propuestas y transforma la estrategia en soluciones visuales.",
+              "Cada elemento se diseña con intención, buscando el equilibrio entre creatividad, funcionalidad y personalidad."
+            ],
+            "result": "Propuestas de diseño que responden a las necesidades del proyecto."
+          },
+          {
+            "name": "Perfeccionar",
+            "title": "Los detalles hacen la diferencia.",
+            "paragraphs": [
+              "Presentamos nuestras propuestas, escuchamos tus comentarios y trabajamos en los ajustes necesarios para perfeccionar el resultado.",
+              "Nos aseguramos de que cada decisión visual mantenga coherencia con el concepto y los objetivos establecidos."
+            ],
+            "result": "Una propuesta final cuidada hasta el último detalle."
+          },
+          {
+            "name": "Entregar",
+            "title": "Listo para salir al mundo.",
+            "paragraphs": [
+              "Preparamos y organizamos los materiales finales para que cada diseño pueda implementarse correctamente.",
+              "Dependiendo del servicio, entregamos los archivos, aplicaciones y lineamientos correspondientes, acompañándote en el cierre del proyecto."
+            ],
+            "result": "Soluciones creativas listas para cobrar vida."
+          }
+        ],
+        "note": "Cada proyecto es único. Los tiempos, etapas y entregables se adaptan al alcance y las necesidades de cada servicio."
+      },
+      "featured": {
+        "label": "04. Proyectos destacados",
+        "title": "Ideas que se convirtieron en marcas.",
+        "paragraphs": [
+          "Cada proyecto es una oportunidad para explorar nuevas perspectivas, resolver desafíos y crear algo diferente.",
+          "Conoce algunas de las marcas con las que hemos colaborado y descubre cómo transformamos conceptos en identidades y experiencias visuales."
+        ]
       },
       "faq": {
-        "intro": "Lo que nos preguntan antes de empezar una identidad.",
-        "items": {
-          "price": {
-            "question": "¿Cuánto cuesta una identidad?",
-            "answer": "Depende de lo que incluya: no cuesta lo mismo un logotipo con su manual que un sistema con naming, empaque y señalización. Trabajamos con presupuesto cerrado, así que sabes el número antes de empezar."
+        "label": "05. Preguntas frecuentes",
+        "title": "Antes de comenzar, resolvamos tus dudas.",
+        "paragraphs": [
+          "Sabemos que cada proyecto es diferente y que dar el primer paso puede generar preguntas. Aquí encontrarás algunas respuestas sobre nuestros servicios, procesos y forma de trabajar."
+        ],
+        "items": [
+          {
+            "question": "¿Puedo contratar un servicio de diseño sin desarrollar toda mi identidad de marca?",
+            "answer": "¡Claro! No necesitas contratar un proyecto integral de branding para trabajar con nosotros.\n\nPodemos ayudarte con servicios específicos como diseño de empaques, catálogos, presentaciones, señalética, materiales gráficos o cualquier otra aplicación que necesite tu marca.\n\nCada servicio se cotiza de manera independiente según sus características y alcance."
           },
-          "naming": {
-            "question": "¿También hacen el nombre?",
-            "answer": "Sí, cuando la marca lo necesita. Va en la fase de estrategia, antes del diseño, porque el nombre cambia lo que el logotipo tiene que resolver."
+          {
+            "question": "¿Cuál es la diferencia entre branding e identidad visual?",
+            "answer": "El branding es el proceso estratégico de construir una marca, definiendo su posicionamiento, personalidad, valores y la manera en que conecta con su audiencia.\n\nLa identidad visual es la expresión gráfica de esa estrategia, incluyendo elementos como logotipo, tipografías, colores y sistemas visuales.\n\nAmbos trabajan juntos para construir marcas coherentes, reconocibles y relevantes."
           },
-          "rebrand": {
-            "question": "¿Pueden evolucionar una marca que ya existe?",
-            "answer": "Sí, y es buena parte de lo que hacemos. Primero vemos qué reconoce ya tu gente para no tirarlo, y a partir de ahí decidimos qué cambia."
+          {
+            "question": "¿Pueden trabajar con una marca que ya tiene identidad?",
+            "answer": "Sí. Podemos desarrollar nuevas aplicaciones respetando tu identidad actual o ayudarte a evolucionarla.\n\nDependiendo de las necesidades de tu negocio, podemos realizar desde ajustes específicos hasta un rediseño completo de marca.\n\nNuestro objetivo es conservar aquello que hace valiosa a tu identidad y fortalecer lo que necesita evolucionar."
           },
-          "ownership": {
-            "question": "¿De quién son los archivos?",
-            "answer": "Tuyos. Al cerrar entregamos los editables, las tipografías con su licencia y el manual, sin nada que dependa de nosotros."
+          {
+            "question": "¿Qué pasa si todavía no tengo claro qué servicio necesito?",
+            "answer": "No te preocupes. Parte de nuestro trabajo es ayudarte a identificar la mejor solución para tu proyecto.\n\nDurante nuestra primera conversación conoceremos tus necesidades, objetivos e ideas para recomendarte los servicios que realmente aporten valor a tu marca."
+          },
+          {
+            "question": "¿Cuánto cuesta un proyecto de branding o diseño?",
+            "answer": "Cada proyecto tiene necesidades diferentes, por lo que nuestros presupuestos se desarrollan de manera personalizada.\n\nEl costo depende del tipo de servicio, la complejidad, la cantidad de aplicaciones y los entregables necesarios.\n\nAntes de comenzar, recibirás una propuesta comercial con el alcance, la inversión y las condiciones del proyecto."
+          },
+          {
+            "question": "¿Cuánto tiempo toma desarrollar un proyecto?",
+            "answer": "Los tiempos varían dependiendo del servicio y su complejidad.\n\nUn proyecto integral de identidad puede tomar aproximadamente entre seis y diez semanas, mientras que servicios específicos de diseño pueden requerir tiempos diferentes.\n\nAl iniciar, establecemos un calendario de trabajo con las etapas y fechas estimadas de entrega."
+          },
+          {
+            "question": "¿Cuántas propuestas de diseño presentan?",
+            "answer": "La cantidad de propuestas depende del servicio y el alcance contratado.\n\nNuestra metodología prioriza el desarrollo de conceptos bien fundamentados, por lo que cada propuesta responde a una dirección estratégica y creativa previamente definida.\n\nEl número de propuestas se establece desde el inicio en la cotización."
+          },
+          {
+            "question": "¿Cuántas rondas de cambios están incluidas?",
+            "answer": "Cada proyecto contempla un número determinado de rondas de ajustes, especificadas en la propuesta comercial.\n\nDurante estas etapas trabajamos contigo para perfeccionar el diseño y asegurarnos de que el resultado esté alineado con los objetivos establecidos."
+          },
+          {
+            "question": "¿Qué archivos recibiré al finalizar mi proyecto?",
+            "answer": "Recibirás los materiales finales correspondientes al servicio contratado, preparados para su correcta implementación.\n\nDependiendo del proyecto, estos pueden incluir archivos editables, formatos para impresión, recursos digitales, aplicaciones gráficas y manuales de identidad.\n\nLos entregables específicos se detallan en la propuesta comercial."
+          },
+          {
+            "question": "¿También se encargan de la impresión o producción?",
+            "answer": "Podemos acompañarte en el proceso de producción, preparando los archivos necesarios y coordinando aspectos técnicos con proveedores cuando el proyecto lo requiera.\n\nLos costos de impresión, fabricación o instalación se cotizan de manera independiente, salvo que estén expresamente incluidos en la propuesta."
+          },
+          {
+            "question": "¿Pueden desarrollar diferentes servicios para mi marca?",
+            "answer": "Por supuesto. En Pigmento contamos con un equipo multidisciplinario que nos permite acompañar a las marcas en diferentes etapas de su crecimiento.\n\nAdemás de branding y diseño, desarrollamos proyectos de marketing digital, desarrollo web y animación gráfica.\n\nEsto nos permite crear soluciones integrales y mantener una comunicación visual coherente en diferentes plataformas y puntos de contacto."
+          },
+          {
+            "question": "¿Trabajan con clientes fuera de la Ciudad de México?",
+            "answer": "Sí. Aunque nuestro estudio se encuentra en la Ciudad de México, colaboramos con marcas y empresas de diferentes ciudades y países.\n\nNuestra metodología nos permite desarrollar proyectos de manera remota, manteniendo una comunicación cercana y un seguimiento constante durante todo el proceso."
           }
-        }
+        ]
       },
       "cta": {
-        "title": "Cuéntanos de tu marca y vemos por dónde empezar.",
-        "titleHighlight": "por dónde empezar"
+        "label": "06. Comencemos un proyecto",
+        "title": "Las grandes ideas comienzan con una conversación.",
+        "titleHighlight": "con una conversación",
+        "paragraphs": [
+          "¿Estás creando una nueva marca? ¿Buscas transformar tu identidad? ¿Necesitas desarrollar una pieza de diseño?",
+          "No importa en qué etapa se encuentre tu proyecto. Nos encantará conocer tu idea, entender lo que necesitas y descubrir todo lo que podemos crear juntos.",
+          "Cuéntanos qué tienes en mente. Nosotros te ayudamos a darle forma."
+        ],
+        "topic": "¿En qué podemos ayudarte? Selecciona el servicio que mejor describa tu proyecto",
+        "topics": [
+          "Estrategia de marca y naming",
+          "Branding e identidad visual",
+          "Rebranding",
+          "Diseño de empaques",
+          "Diseño gráfico y editorial",
+          "Señalética y diseño de espacios",
+          "Aplicaciones de marca",
+          "Varios servicios",
+          "Aún no estoy seguro"
+        ],
+        "message": "Cuéntanos sobre tu proyecto",
+        "submit": "Enviar mi proyecto"
       }
     },
     "motion": {
       "title": "Motion",
       "description": "Animación de marca, video e interfaz, hecha por el mismo equipo que diseña la identidad.",
-      "process": {
-        "title": "De la idea a la pieza final",
-        "titleHighlight": "pieza final",
-        "intro": "Cada fase se aprueba antes de pasar a la siguiente, para que los cambios lleguen cuando todavía son baratos.",
-        "phases": {
-          "script": {
-            "title": "Guion",
-            "text": "Definimos qué tiene que pasar en los primeros segundos y qué se lleva quien lo ve.",
-            "deliverable": "Guion y referencias aprobados"
+      "hero": {
+        "eyebrow": "Motion",
+        "title": "Turning the impossible into reality"
+      },
+      "offer": {
+        "label": "01. Lo que hacemos",
+        "paragraphs": [],
+        "items": [
+          {
+            "name": "Motion Branding",
+            "paragraphs": [
+              "Creamos sistemas visuales en movimiento que amplifican la identidad de marca. Desde animación de logotipo hasta universos gráficos dinámicos, diseñamos piezas que consolidan reconocimiento, coherencia y diferenciación en cada punto de contacto digital."
+            ]
           },
-          "storyboard": {
-            "title": "Storyboard",
-            "text": "Cuadro a cuadro, antes de animar nada. Es el momento en que cambiar algo cuesta poco.",
-            "deliverable": "Storyboard y estilo de cuadro"
+          {
+            "name": "Motion Graphics Estratégico",
+            "paragraphs": [
+              "Transformamos conceptos en piezas visuales que comunican con claridad y precisión. Animaciones explicativas, contenidos para campañas, lanzamientos y redes sociales diseñados para captar atención, generar recordación y elevar la percepción de marca."
+            ]
           },
-          "animation": {
-            "title": "Animación",
-            "text": "Movimiento, ritmo y sonido sobre el estilo que ya aprobaste.",
-            "deliverable": "Corte para revisión"
-          },
-          "delivery": {
-            "title": "Entrega",
-            "text": "Exportamos cada pieza en el formato y la medida del canal donde va a vivir.",
-            "deliverable": "Archivos finales por canal"
+          {
+            "name": "Experiencias en Movimiento",
+            "paragraphs": [
+              "Integramos narrativa, diseño y ritmo para construir experiencias memorables. Videos corporativos, reels, visuales para eventos y contenido digital que no solo se ve bien, sino que impulsa posicionamiento y resultados medibles."
+            ]
           }
-        }
+        ]
+      },
+      "process": {
+        "label": "El proceso",
+        "title": "De la idea a la pieza final",
+        "paragraphs": [
+          "Cada fase se aprueba antes de pasar a la siguiente, para que los cambios lleguen cuando todavía son baratos."
+        ],
+        "resultLabel": "Entregable",
+        "phases": [
+          {
+            "name": "Guion",
+            "paragraphs": [
+              "Definimos qué tiene que pasar en los primeros segundos y qué se lleva quien lo ve."
+            ],
+            "result": "Guion y referencias aprobados"
+          },
+          {
+            "name": "Storyboard",
+            "paragraphs": [
+              "Cuadro a cuadro, antes de animar nada. Es el momento en que cambiar algo cuesta poco."
+            ],
+            "result": "Storyboard y estilo de cuadro"
+          },
+          {
+            "name": "Animación",
+            "paragraphs": [
+              "Movimiento, ritmo y sonido sobre el estilo que ya aprobaste."
+            ],
+            "result": "Corte para revisión"
+          },
+          {
+            "name": "Entrega",
+            "paragraphs": [
+              "Exportamos cada pieza en el formato y la medida del canal donde va a vivir."
+            ],
+            "result": "Archivos finales por canal"
+          }
+        ]
+      },
+      "featured": {
+        "label": "Proyectos destacados"
       },
       "faq": {
-        "intro": "Lo que conviene saber antes de pedir una pieza animada.",
-        "items": {
-          "price": {
+        "label": "Preguntas frecuentes",
+        "title": "Preguntas",
+        "paragraphs": [
+          "Lo que conviene saber antes de pedir una pieza animada."
+        ],
+        "items": [
+          {
             "question": "¿Cuánto cuesta una pieza?",
             "answer": "Lo mueven tres cosas: cuánto dura, qué tan complejo es el estilo y en cuántos formatos se entrega. Con el guion en la mano te damos un presupuesto cerrado."
           },
-          "time": {
+          {
             "question": "¿Cuánto tarda?",
             "answer": "Depende de la duración y del estilo. La fecha de entrega se acuerda antes de empezar, junto con el guion."
           },
-          "what": {
+          {
             "question": "¿Qué tipo de piezas hacen?",
             "answer": "Logotipos animados, el movimiento de una identidad, piezas para redes, video para eventos y animación de interfaz para sitios y productos."
           },
-          "brand": {
+          {
             "question": "¿Lo pueden hacer sobre una marca que no diseñaron?",
             "answer": "Sí. Partimos de tu manual y, si falta, definimos cómo se mueve la marca antes de animar la primera pieza."
           }
-        }
+        ]
       },
       "cta": {
         "title": "Cuéntanos qué pieza necesitas y para cuándo.",
@@ -612,115 +910,632 @@
       }
     },
     "marketing": {
-      "title": "Marketing",
-      "description": "Campañas, contenido y pauta diseñados por el mismo equipo que hace la marca.",
-      "process": {
-        "title": "Cómo armamos una estrategia",
-        "titleHighlight": "estrategia",
-        "intro": "Antes de proponer canales vemos qué ya te funciona. Cada fase deja un documento que puedes leer sin nosotros.",
-        "phases": {
-          "diagnosis": {
-            "title": "Diagnóstico",
-            "text": "Revisamos tus canales, tu contenido y los números que ya tienes.",
-            "deliverable": "Diagnóstico con prioridades"
+      "title": "Marketing digital",
+      "description": "Estrategia, redes sociales, publicidad, contenido, SEO y automatización para marcas que quieren crecer.",
+      "hero": {
+        "eyebrow": "Marketing digital",
+        "title": "Estrategias que conectan. Ideas que generan resultados."
+      },
+      "intro": {
+        "paragraphs": [
+          "Transformamos ideas en estrategias digitales que impulsan marcas, crean conexiones y generan oportunidades de crecimiento.",
+          "Combinamos creatividad, análisis de datos y tecnología para desarrollar experiencias que conectan con las audiencias correctas, en los canales adecuados y en el momento indicado.",
+          "Porque una buena estrategia no se trata solamente de estar presente. Se trata de generar impacto."
+        ],
+        "cta": "Explora nuestros servicios"
+      },
+      "offer": {
+        "label": "01. Lo que hacemos",
+        "title": "Creatividad con estrategia. Resultados con intención.",
+        "paragraphs": [
+          "El marketing digital va mucho más allá de publicar contenido o lanzar anuncios. Se trata de entender a las personas, identificar oportunidades y construir estrategias que generen valor para las marcas.",
+          "En Pigmento combinamos pensamiento estratégico, dirección creativa y herramientas digitales para desarrollar soluciones que fortalecen la presencia de nuestros clientes, conectan con sus audiencias y contribuyen al crecimiento de sus negocios.",
+          "Desde la construcción de una comunidad hasta la implementación de campañas publicitarias, cada acción responde a un objetivo.",
+          "Nuestros servicios pueden contratarse de manera independiente o integrarse en una estrategia digital completa."
+        ],
+        "listLabel": "Nuestros servicios:",
+        "items": [
+          {
+            "name": "Estrategia de marketing digital",
+            "title": "Cada gran resultado comienza con una buena estrategia.",
+            "paragraphs": [
+              "Antes de comunicar, analizamos. Estudiamos el mercado, identificamos oportunidades y diseñamos estrategias que conectan los objetivos de cada negocio con las necesidades de su audiencia.",
+              "Creamos planes de acción personalizados que combinan creatividad, datos y una visión clara de crecimiento."
+            ],
+            "services": [
+              "Consultoría de marketing digital",
+              "Desarrollo de estrategias digitales",
+              "Auditorías de presencia digital",
+              "Investigación de mercado y competencia",
+              "Análisis de audiencias",
+              "Definición de objetivos e indicadores de desempeño",
+              "Planeación de campañas digitales",
+              "Estrategias de posicionamiento",
+              "Desarrollo de embudos de conversión",
+              "Estrategias de captación de clientes potenciales",
+              "Planeación de contenidos y canales digitales",
+              "Análisis y optimización de estrategias"
+            ]
           },
-          "plan": {
-            "title": "Plan",
-            "text": "Qué canales, con qué mensaje y con qué presupuesto. Sin paquetes cerrados: el plan sale de tu negocio.",
-            "deliverable": "Plan de canales y calendario"
+          {
+            "name": "Gestión de redes sociales",
+            "title": "Contenido que conecta. Marcas que se hacen escuchar.",
+            "paragraphs": [
+              "Las redes sociales son mucho más que una vitrina. Son espacios donde las marcas construyen relaciones, expresan su personalidad y se convierten en parte de la conversación.",
+              "Desarrollamos estrategias de contenido que combinan creatividad, tendencias y objetivos comerciales para construir una presencia digital auténtica, relevante y consistente."
+            ],
+            "services": [
+              "Estrategia de redes sociales",
+              "Planeación de contenido mensual",
+              "Desarrollo de calendarios editoriales",
+              "Dirección creativa de contenido",
+              "Diseño de publicaciones",
+              "Diseño de carruseles",
+              "Creación de reels y videos cortos",
+              "Redacción de textos publicitarios",
+              "Programación y publicación de contenido",
+              "Estrategias de contenido para Instagram, Facebook, TikTok y LinkedIn",
+              "Análisis de desempeño",
+              "Reportes mensuales de resultados"
+            ]
           },
-          "execution": {
-            "title": "Ejecución",
-            "text": "Campañas, contenido y pauta hechos por quien diseña la marca, así que todo dice lo mismo.",
-            "deliverable": "Campañas en circulación"
+          {
+            "name": "Publicidad digital",
+            "title": "Hacemos que las ideas lleguen más lejos.",
+            "paragraphs": [
+              "Una buena campaña no se trata de alcanzar a más personas, sino de conectar con las correctas.",
+              "Diseñamos, implementamos y optimizamos campañas publicitarias que combinan creatividad, segmentación y análisis de datos para atraer clientes potenciales, generar conversiones y aprovechar mejor cada inversión."
+            ],
+            "services": [
+              "Estrategia de publicidad digital",
+              "Campañas en Meta Ads",
+              "Campañas en Google Ads",
+              "Campañas en TikTok Ads",
+              "Campañas en LinkedIn Ads",
+              "Campañas de reconocimiento de marca",
+              "Campañas de generación de clientes potenciales",
+              "Campañas de tráfico y conversiones",
+              "Campañas de remarketing",
+              "Desarrollo de anuncios creativos",
+              "Pruebas A/B",
+              "Optimización de presupuestos publicitarios",
+              "Implementación y revisión de medición de conversiones",
+              "Análisis de resultados y rendimiento de inversión"
+            ]
           },
-          "measurement": {
-            "title": "Medición",
-            "text": "Leemos los números contigo y ajustamos lo que no está funcionando.",
-            "deliverable": "Informe mensual con los números"
+          {
+            "name": "Creación de contenido",
+            "title": "Historias que capturan la atención.",
+            "paragraphs": [
+              "En un mundo lleno de contenido, destacar requiere mucho más que una buena imagen.",
+              "Creamos contenido visual y audiovisual que transmite la esencia de cada marca, despierta interés y genera conexiones auténticas con su audiencia.",
+              "Combinamos dirección creativa, producción y narrativa para desarrollar piezas diseñadas específicamente para los canales donde serán utilizadas."
+            ],
+            "services": [
+              "Conceptualización de contenido creativo",
+              "Dirección de arte",
+              "Producción de fotografía",
+              "Fotografía de producto",
+              "Fotografía lifestyle",
+              "Producción de video",
+              "Creación de reels",
+              "Contenido para TikTok",
+              "Videos publicitarios",
+              "Animación gráfica",
+              "Edición y postproducción",
+              "Desarrollo de contenido generado por usuarios (UGC)",
+              "Contenido con creadores digitales",
+              "Producción de contenido con inteligencia artificial",
+              "Adaptaciones de contenido para diferentes plataformas"
+            ]
+          },
+          {
+            "name": "Marketing de influencers y creadores",
+            "title": "Conexiones reales. Conversaciones que importan.",
+            "paragraphs": [
+              "Las recomendaciones tienen poder cuando nacen de conexiones auténticas.",
+              "Desarrollamos colaboraciones estratégicas con creadores de contenido que comparten los valores y la personalidad de cada marca, generando experiencias que amplifican su mensaje y acercan sus productos a nuevas audiencias."
+            ],
+            "services": [
+              "Estrategias de influencer marketing",
+              "Investigación y selección de creadores",
+              "Colaboraciones con microinfluencers",
+              "Campañas con creadores de contenido",
+              "Estrategias de contenido UGC",
+              "Desarrollo de briefs creativos",
+              "Coordinación de colaboraciones",
+              "Seguimiento de entregables",
+              "Campañas de lanzamiento con creadores",
+              "Medición y análisis de resultados"
+            ]
+          },
+          {
+            "name": "Email y WhatsApp marketing",
+            "title": "El mensaje correcto, en el momento indicado.",
+            "paragraphs": [
+              "Creamos estrategias de comunicación directa que convierten contactos en oportunidades y ayudan a construir relaciones duraderas con los clientes.",
+              "A través de mensajes personalizados, automatizaciones y contenido relevante, desarrollamos experiencias que acompañan a las personas durante las diferentes etapas de su relación con una marca."
+            ],
+            "services": [
+              "Estrategias de email marketing",
+              "Diseño de campañas de correo electrónico",
+              "Newsletters",
+              "Automatizaciones de email",
+              "Segmentación de bases de datos",
+              "Flujos de bienvenida",
+              "Campañas de recuperación de carritos",
+              "Estrategias de fidelización",
+              "Campañas de WhatsApp marketing",
+              "Automatización de mensajes",
+              "Integración de formularios y captación de contactos",
+              "Análisis de apertura, interacción y conversión"
+            ]
+          },
+          {
+            "name": "Posicionamiento SEO y contenido",
+            "title": "Que te encuentren cuando te están buscando.",
+            "paragraphs": [
+              "Una buena presencia digital también significa aparecer frente a las personas que necesitan lo que tu marca ofrece.",
+              "Desarrollamos estrategias de posicionamiento orgánico y contenido que ayudan a mejorar la visibilidad de los negocios en buscadores y atraer tráfico relevante a sus plataformas digitales."
+            ],
+            "services": [
+              "Auditorías SEO",
+              "Investigación de palabras clave",
+              "Estrategias de posicionamiento orgánico",
+              "Optimización de contenido web",
+              "SEO on-page",
+              "Estrategias de contenido para buscadores",
+              "Redacción de artículos y blogs",
+              "Optimización de títulos y metadescripciones",
+              "SEO para tiendas en línea",
+              "Análisis de tráfico orgánico",
+              "Estrategias de contenido orientadas a búsquedas",
+              "Seguimiento de posicionamiento"
+            ]
+          },
+          {
+            "name": "Automatización y marketing inteligente",
+            "title": "Menos procesos manuales. Más oportunidades de crecer.",
+            "paragraphs": [
+              "La tecnología transforma la manera en que las marcas se relacionan con sus clientes.",
+              "Diseñamos soluciones que conectan herramientas, automatizan procesos y mejoran la experiencia digital, permitiendo que los negocios aprovechen mejor sus recursos y oportunidades comerciales."
+            ],
+            "services": [
+              "Consultoría de automatización de marketing",
+              "Diseño de flujos automatizados",
+              "Automatizaciones con ManyChat",
+              "Integraciones con Zapier",
+              "Chatbots para atención y captación",
+              "Automatizaciones de Instagram y Facebook",
+              "Flujos de respuesta automatizada",
+              "Captación y clasificación de clientes potenciales",
+              "Integración de formularios y herramientas comerciales",
+              "Automatizaciones de seguimiento",
+              "Estrategias de personalización",
+              "Implementación de herramientas de inteligencia artificial"
+            ]
+          },
+          {
+            "name": "E-commerce marketing",
+            "title": "Convertimos visitas en oportunidades de venta.",
+            "paragraphs": [
+              "Una tienda en línea necesita mucho más que productos atractivos. Necesita una estrategia que atraiga compradores, facilite sus decisiones y genere nuevas oportunidades de venta.",
+              "Desarrollamos acciones de marketing enfocadas en impulsar el crecimiento de negocios digitales, combinando publicidad, contenido, automatización y análisis de comportamiento."
+            ],
+            "services": [
+              "Estrategias de marketing para comercio electrónico",
+              "Campañas de ventas digitales",
+              "Publicidad para catálogos de productos",
+              "Estrategias de recuperación de carritos",
+              "Email marketing para tiendas en línea",
+              "Campañas de remarketing",
+              "Estrategias de lanzamientos y promociones",
+              "Optimización de embudos de conversión",
+              "Análisis de comportamiento de usuarios",
+              "Estrategias de recompra y fidelización",
+              "Marketing para Shopify y WooCommerce",
+              "Análisis de ventas y rendimiento de campañas"
+            ]
           }
+        ],
+        "closing": {
+          "title": "¿Buscas una solución más específica?",
+          "text": "Cada negocio tiene desafíos diferentes. Cuéntanos tus objetivos y diseñaremos una estrategia que responda a lo que realmente necesitas.",
+          "cta": "Hablemos de tu proyecto"
         }
+      },
+      "philosophy": {
+        "label": "02. Nuestra filosofía",
+        "title": "No hacemos marketing por hacer marketing.",
+        "paragraphs": [
+          "Creemos que cada publicación, campaña y estrategia debe tener una razón de ser.",
+          "Por eso, antes de proponer soluciones, nos involucramos en cada negocio. Buscamos entender sus objetivos, conocer a su audiencia e identificar las oportunidades que pueden impulsar su crecimiento.",
+          "Combinamos creatividad con pensamiento analítico para desarrollar estrategias que no solo generan visibilidad, sino que contribuyen a construir marcas más fuertes y negocios más competitivos.",
+          "Nos mantenemos en constante evolución, explorando nuevas tendencias, plataformas y tecnologías para ofrecer soluciones relevantes en un entorno digital que nunca deja de cambiar."
+        ],
+        "tagline": "Pensamos estratégicamente. Creamos con intención. Medimos para evolucionar."
+      },
+      "process": {
+        "label": "03. Nuestro proceso",
+        "title": "De los objetivos a los resultados.",
+        "paragraphs": [
+          "Cada marca tiene necesidades diferentes, pero todas necesitan una dirección clara.",
+          "Nuestra metodología combina análisis, estrategia, creatividad y optimización continua para desarrollar acciones de marketing alineadas con los objetivos de cada negocio."
+        ],
+        "resultLabel": "El resultado",
+        "phases": [
+          {
+            "name": "Descubrir",
+            "title": "Primero entendemos tu negocio.",
+            "paragraphs": [
+              "Comenzamos conociendo tu marca, tus productos, tu mercado y tus objetivos comerciales.",
+              "Analizamos tu presencia digital, identificamos oportunidades y revisamos los canales que pueden aportar mayor valor a tu estrategia."
+            ],
+            "result": "Un diagnóstico inicial que nos permite entender dónde estamos y hacia dónde queremos llegar."
+          },
+          {
+            "name": "Planear",
+            "title": "Convertimos objetivos en estrategias.",
+            "paragraphs": [
+              "Definimos los canales, mensajes, acciones e indicadores que guiarán el proyecto.",
+              "Desarrollamos un plan de trabajo que combina creatividad y análisis, priorizando las oportunidades con mayor potencial para tu negocio."
+            ],
+            "result": "Una estrategia de marketing con objetivos, acciones y métricas de seguimiento."
+          },
+          {
+            "name": "Crear",
+            "title": "Las estrategias toman forma.",
+            "paragraphs": [
+              "Nuestro equipo transforma la planeación en contenido, campañas y experiencias digitales.",
+              "Desarrollamos propuestas creativas alineadas con la personalidad de tu marca y adaptadas a los formatos y plataformas donde serán utilizadas."
+            ],
+            "result": "Materiales y campañas preparados para su implementación."
+          },
+          {
+            "name": "Implementar",
+            "title": "Ponemos las ideas en movimiento.",
+            "paragraphs": [
+              "Activamos las campañas, publicamos contenido e implementamos las herramientas necesarias para ejecutar la estrategia.",
+              "Supervisamos su funcionamiento y damos seguimiento al desempeño de las acciones realizadas."
+            ],
+            "result": "Una estrategia activa, organizada y alineada con los objetivos establecidos."
+          },
+          {
+            "name": "Optimizar",
+            "title": "Los datos nos ayudan a llegar más lejos.",
+            "paragraphs": [
+              "Analizamos los resultados, identificamos patrones y detectamos oportunidades de mejora.",
+              "A partir de la información obtenida, ajustamos nuestras acciones para mejorar continuamente el desempeño de la estrategia."
+            ],
+            "result": "Decisiones fundamentadas en datos y una estrategia que evoluciona con tu negocio."
+          }
+        ],
+        "note": "El alcance, los tiempos de implementación y los indicadores de desempeño se definen de acuerdo con los servicios contratados y los objetivos de cada proyecto."
+      },
+      "ways": {
+        "label": "04. Nuestra forma de trabajar",
+        "title": "Creatividad y datos. El equilibrio perfecto.",
+        "paragraphs": [
+          "Una buena idea puede llamar la atención. Una buena estrategia puede convertir esa atención en una oportunidad.",
+          "En Pigmento creemos que los mejores resultados surgen cuando la creatividad y el análisis trabajan juntos."
+        ],
+        "items": [
+          {
+            "title": "Estrategia antes que ejecución",
+            "text": "Cada decisión parte de un objetivo. No seguimos tendencias simplemente porque están de moda; identificamos cuáles tienen sentido para cada marca."
+          },
+          {
+            "title": "Creatividad con propósito",
+            "text": "Desarrollamos contenido y campañas que combinan una dirección visual sólida con mensajes relevantes para las personas a las que queremos llegar."
+          },
+          {
+            "title": "Decisiones basadas en datos",
+            "text": "Analizamos el desempeño de nuestras acciones para entender qué funciona, detectar oportunidades y tomar decisiones más inteligentes."
+          },
+          {
+            "title": "Evolución constante",
+            "text": "El entorno digital cambia todos los días. Nos mantenemos actualizados para incorporar nuevas herramientas, formatos y tecnologías que aporten valor a nuestros clientes."
+          },
+          {
+            "title": "Trabajo en equipo",
+            "text": "Nos involucramos en cada proyecto como aliados estratégicos. Mantenemos una comunicación cercana y trabajamos en conjunto para construir relaciones de largo plazo."
+          }
+        ]
+      },
+      "featured": {
+        "label": "05. Proyectos destacados"
       },
       "faq": {
-        "intro": "Lo que nos preguntan antes de mover una marca en canales.",
-        "items": {
-          "price": {
-            "question": "¿Cuánto cuesta?",
-            "answer": "Depende de los canales y del presupuesto de pauta, que se separa de nuestros honorarios para que sepas qué paga cada cosa. El número sale del diagnóstico."
+        "label": "06. Preguntas frecuentes",
+        "title": "Todo lo que necesitas saber antes de comenzar.",
+        "paragraphs": [
+          "Sabemos que elegir una agencia de marketing es una decisión importante. Aquí resolvemos algunas de las preguntas más frecuentes sobre nuestros servicios y nuestra forma de trabajar."
+        ],
+        "items": [
+          {
+            "question": "¿Qué servicios de marketing digital puedo contratar?",
+            "answer": "En Pigmento ofrecemos servicios de estrategia digital, gestión de redes sociales, publicidad, creación de contenido, influencer marketing, email marketing, posicionamiento SEO, automatización y marketing para comercio electrónico.\n\nPuedes contratar servicios específicos o desarrollar una estrategia integral que combine diferentes soluciones."
           },
-          "results": {
-            "question": "¿Cuándo se ven resultados?",
-            "answer": "Depende del canal: la pauta da señales pronto y el contenido tarda más en acumular. En el plan te decimos qué esperar de cada uno y cuándo revisarlo."
+          {
+            "question": "¿Necesito contratar todos los servicios de marketing?",
+            "answer": "No. Cada negocio tiene objetivos y necesidades diferentes.\n\nPodemos trabajar en una estrategia integral o enfocarnos en servicios específicos, como la gestión de redes sociales, campañas publicitarias o producción de contenido.\n\nDurante nuestra primera conversación te ayudaremos a identificar qué soluciones tienen mayor sentido para tu marca."
           },
-          "accounts": {
-            "question": "¿De quién son las cuentas?",
-            "answer": "Tuyas. Las cuentas de anuncios, redes y analítica van a nombre de tu empresa; nosotros entramos con acceso."
+          {
+            "question": "¿Cómo sé qué estrategia necesita mi negocio?",
+            "answer": "Comenzamos analizando tu negocio, tus objetivos y tu presencia digital actual.\n\nA partir de esta información, identificamos oportunidades y recomendamos los canales y acciones que pueden ayudarte a alcanzar tus metas.\n\nNo creemos en estrategias idénticas para todos. Cada marca necesita su propio camino."
           },
-          "brand": {
-            "question": "¿Necesito tener la marca hecha?",
-            "answer": "No, pero ayuda. Si la marca todavía no está clara, empezamos por ahí, porque una campaña no arregla una marca que no sabe qué decir."
+          {
+            "question": "¿Cuánto cuestan los servicios de marketing digital?",
+            "answer": "Nuestros servicios se cotizan de acuerdo con el alcance, los canales, la complejidad y las necesidades de cada proyecto.\n\nContamos con diferentes modalidades de trabajo, desde servicios específicos hasta estrategias de marketing mensuales.\n\nAntes de comenzar, recibirás una propuesta personalizada con los servicios incluidos y la inversión correspondiente."
+          },
+          {
+            "question": "¿Existe un tiempo mínimo de contratación?",
+            "answer": "Para los servicios de marketing digital de ejecución continua, como la gestión de redes sociales y las campañas publicitarias, generalmente trabajamos con un periodo mínimo de tres meses.\n\nEste tiempo nos permite implementar la estrategia, recopilar información y realizar optimizaciones.\n\nLos proyectos específicos pueden tener condiciones y tiempos diferentes."
+          },
+          {
+            "question": "¿En cuánto tiempo comenzaré a ver resultados?",
+            "answer": "Los resultados dependen de factores como los objetivos, la industria, el presupuesto, la competencia y los canales utilizados.\n\nAlgunas campañas pueden generar actividad desde sus primeras semanas, mientras que estrategias de posicionamiento, reconocimiento de marca o crecimiento orgánico requieren más tiempo.\n\nNuestro enfoque es establecer objetivos realistas, medir el desempeño y optimizar continuamente."
+          },
+          {
+            "question": "¿Garantizan un número específico de ventas o clientes?",
+            "answer": "No es posible garantizar resultados comerciales específicos, ya que estos dependen de múltiples factores, incluyendo el mercado, la oferta, el presupuesto y el proceso de ventas de cada negocio.\n\nLo que sí hacemos es desarrollar estrategias fundamentadas, establecer indicadores claros y trabajar constantemente para mejorar el desempeño de las acciones implementadas."
+          },
+          {
+            "question": "¿La inversión publicitaria está incluida en sus honorarios?",
+            "answer": "No. La inversión destinada a plataformas publicitarias, como Meta, Google o TikTok, se maneja de manera independiente de nuestros honorarios de gestión.\n\nEsto permite tener mayor transparencia sobre cuánto se invierte directamente en publicidad y cuánto corresponde a los servicios de estrategia, implementación y optimización."
+          },
+          {
+            "question": "¿Cuál es el presupuesto recomendado para publicidad digital?",
+            "answer": "La inversión ideal depende de los objetivos comerciales, el mercado, la competencia y los resultados que se buscan alcanzar.\n\nAnalizamos cada proyecto para recomendar un presupuesto alineado con sus necesidades y posibilidades.\n\nNuestro objetivo es construir una estrategia que aproveche los recursos disponibles de la manera más eficiente posible."
+          },
+          {
+            "question": "¿Qué incluye el servicio de gestión de redes sociales?",
+            "answer": "Dependiendo del plan contratado, puede incluir estrategia de contenido, planeación mensual, dirección creativa, diseño de publicaciones, creación de reels, redacción de textos, programación de contenido y reportes de desempeño.\n\nLa producción de fotografía y video en locación, las colaboraciones con creadores y otros servicios adicionales se contemplan según el alcance de cada propuesta."
+          },
+          {
+            "question": "¿También responden mensajes y comentarios en redes sociales?",
+            "answer": "Nuestro servicio estándar de gestión de redes sociales se enfoca en estrategia, creación, planeación y publicación de contenido.\n\nLa atención de mensajes, comentarios y consultas de clientes no está incluida dentro del servicio estándar.\n\nPodemos ayudarte a explorar soluciones de automatización que faciliten algunos de estos procesos."
+          },
+          {
+            "question": "¿Necesito proporcionar las fotografías y videos?",
+            "answer": "Depende del proyecto.\n\nPodemos trabajar con materiales existentes de tu marca o desarrollar una propuesta de producción de contenido que incluya fotografía, video y dirección creativa.\n\nTambién podemos integrar contenido generado por creadores o herramientas de inteligencia artificial cuando resulte adecuado para la estrategia."
+          },
+          {
+            "question": "¿Trabajan con influencers y creadores de contenido?",
+            "answer": "Sí. Desarrollamos estrategias de colaboración con creadores de contenido, incluyendo investigación de perfiles, desarrollo de conceptos, coordinación de entregables y seguimiento de campañas.\n\nLas colaboraciones se diseñan de acuerdo con los objetivos, la audiencia y el presupuesto de cada marca."
+          },
+          {
+            "question": "¿Cómo puedo saber si las campañas están funcionando?",
+            "answer": "Establecemos indicadores de desempeño de acuerdo con los objetivos de cada estrategia.\n\nDependiendo del servicio, analizamos métricas como alcance, interacción, tráfico, clientes potenciales, conversiones y resultados comerciales atribuibles.\n\nCompartimos reportes que permiten entender el desempeño de las acciones realizadas e identificar oportunidades de mejora."
+          },
+          {
+            "question": "¿Qué pasa si mi marca ya tiene redes sociales o campañas activas?",
+            "answer": "Podemos trabajar con cuentas existentes.\n\nComenzamos revisando su situación actual para identificar qué está funcionando, qué puede mejorarse y qué oportunidades podemos aprovechar.\n\nNo siempre es necesario comenzar desde cero. En muchos casos, una estrategia bien enfocada puede ayudar a optimizar los esfuerzos existentes."
+          },
+          {
+            "question": "¿Pueden trabajar con mi equipo interno de marketing?",
+            "answer": "Por supuesto.\n\nPodemos complementar el trabajo de tu equipo mediante servicios específicos de estrategia, diseño, producción de contenido, publicidad o consultoría.\n\nNos adaptamos a la estructura de cada empresa para construir una colaboración eficiente."
+          },
+          {
+            "question": "¿Trabajan con marcas fuera de la Ciudad de México?",
+            "answer": "Sí. Aunque nuestro estudio se encuentra en la Ciudad de México, colaboramos con empresas de diferentes ciudades y países.\n\nNuestra metodología nos permite desarrollar estrategias y gestionar proyectos de manera remota, manteniendo una comunicación cercana y un seguimiento constante."
           }
-        }
+        ]
       },
       "cta": {
-        "title": "Cuéntanos dónde está tu marca hoy y adónde quieres llevarla.",
-        "titleHighlight": "adónde quieres llevarla"
+        "label": "07. Comencemos un proyecto",
+        "title": "Tu próximo gran resultado comienza aquí.",
+        "titleHighlight": "comienza aquí",
+        "paragraphs": [
+          "¿Quieres llevar tu marca más lejos? ¿Buscas conectar con nuevas audiencias? ¿Necesitas una estrategia digital que acompañe el crecimiento de tu negocio?",
+          "Nos encantará conocer tu proyecto, entender tus objetivos y descubrir cómo podemos ayudarte a alcanzarlos.",
+          "Cuéntanos qué quieres lograr. Nosotros te ayudamos a construir el camino."
+        ],
+        "topic": "¿En qué podemos ayudarte? Selecciona el servicio que mejor describa lo que necesitas",
+        "topics": [
+          "Estrategia de marketing digital",
+          "Gestión de redes sociales",
+          "Publicidad digital",
+          "Creación de contenido",
+          "Influencer marketing y UGC",
+          "Email y WhatsApp marketing",
+          "SEO y posicionamiento",
+          "Automatización de marketing",
+          "Marketing para comercio electrónico",
+          "Estrategia integral de marketing",
+          "Aún no estoy seguro"
+        ],
+        "company": "Nombre de tu empresa",
+        "website": "Sitio web o redes sociales",
+        "goal": {
+          "label": "¿Cuál es tu principal objetivo?",
+          "options": [
+            "Dar a conocer mi marca",
+            "Incrementar mis ventas",
+            "Conseguir nuevos clientes",
+            "Mejorar mis redes sociales",
+            "Lanzar un producto o servicio",
+            "Mejorar mis resultados actuales",
+            "Otro"
+          ]
+        },
+        "message": "Cuéntanos sobre tu proyecto",
+        "submit": "Enviar mi proyecto"
+      },
+      "closing": {
+        "label": "08. Cierre de marca",
+        "title": "Grandes ideas. Resultados que trascienden.",
+        "paragraphs": [
+          "Somos Pigmento Studio, una agencia creativa donde la estrategia, el diseño y la tecnología trabajan juntos para impulsar marcas.",
+          "Nos apasiona descubrir oportunidades, transformar ideas y construir experiencias que conectan a los negocios con las personas."
+        ],
+        "tagline": "Creamos con intención. Conectamos con creatividad. Crecemos con estrategia."
       }
     },
     "web": {
       "title": "Desarrollo web",
-      "description": "Sitios a la medida, rápidos y editables, diseñados y construidos por el mismo equipo.",
-      "process": {
-        "title": "Cómo hacemos un sitio",
-        "titleHighlight": "un sitio",
-        "intro": "Diseño y código en el mismo equipo, así que lo que apruebas en pantalla es lo que se publica. Un sitio toma entre cuatro y ocho semanas.",
-        "phases": {
-          "architecture": {
-            "title": "Arquitectura",
-            "text": "Qué páginas, qué contenido y qué tiene que poder hacer quien llega.",
-            "deliverable": "Mapa del sitio y contenidos"
+      "description": "Sitios web, tiendas en línea y plataformas digitales que combinan diseño, tecnología y funcionalidad.",
+      "hero": {
+        "eyebrow": "Desarrollo web",
+        "title": "Diseñamos experiencias digitales que funcionan."
+      },
+      "intro": {
+        "paragraphs": [
+          "Creamos sitios web, tiendas en línea y plataformas digitales que combinan diseño, tecnología y funcionalidad para impulsar tu negocio."
+        ],
+        "cta": "Comienza tu proyecto",
+        "ctaTarget": "contacto"
+      },
+      "offer": {
+        "label": "01. Nuestros servicios",
+        "title": "Soluciones digitales a tu medida.",
+        "paragraphs": [],
+        "items": [
+          {
+            "name": "Diseño y desarrollo web",
+            "paragraphs": [
+              "Sitios web corporativos, páginas informativas, portafolios y landing pages diseñados para comunicar, conectar y convertir."
+            ]
           },
-          "design": {
-            "title": "Diseño",
-            "text": "Pantallas en escritorio y móvil, revisadas contigo antes de escribir una línea de código.",
-            "deliverable": "Diseño aprobado"
+          {
+            "name": "Tiendas en línea",
+            "paragraphs": [
+              "Desarrollamos experiencias de compra intuitivas y funcionales en Shopify y WooCommerce."
+            ]
           },
-          "build": {
-            "title": "Desarrollo",
-            "text": "Lo construimos con un gestor de contenido para que tu equipo cambie textos e imágenes sin pedírnoslo.",
-            "deliverable": "Sitio en un entorno de prueba"
+          {
+            "name": "Diseño UX/UI",
+            "paragraphs": [
+              "Diseñamos interfaces atractivas y fáciles de usar, poniendo la experiencia del usuario en el centro."
+            ]
           },
-          "launch": {
-            "title": "Lanzamiento",
-            "text": "Publicamos, revisamos velocidad, buscadores y accesibilidad, y te enseñamos a usar el gestor.",
-            "deliverable": "Sitio publicado y accesos"
+          {
+            "name": "Aplicaciones y desarrollos personalizados",
+            "paragraphs": [
+              "Creamos aplicaciones, plataformas y funcionalidades digitales adaptadas a las necesidades de tu negocio."
+            ]
+          },
+          {
+            "name": "Rediseño y optimización web",
+            "paragraphs": [
+              "Transformamos sitios existentes para mejorar su diseño, velocidad, navegación y rendimiento."
+            ]
+          },
+          {
+            "name": "Integraciones y automatizaciones",
+            "paragraphs": [
+              "Conectamos tu sitio con herramientas de pago, CRM, WhatsApp y otras plataformas para simplificar procesos."
+            ]
+          },
+          {
+            "name": "Mantenimiento y soporte",
+            "paragraphs": [
+              "Mantenemos tu sitio actualizado, funcional y preparado para seguir creciendo."
+            ]
           }
-        }
+        ]
+      },
+      "process": {
+        "label": "02. Nuestro proceso",
+        "title": "De la idea al lanzamiento.",
+        "paragraphs": [],
+        "phases": [
+          {
+            "name": "Estrategia",
+            "paragraphs": [
+              "Entendemos tu negocio, definimos los objetivos y estructuramos la navegación de tu sitio."
+            ]
+          },
+          {
+            "name": "Diseño",
+            "paragraphs": [
+              "Creamos una experiencia visual intuitiva, atractiva y alineada con tu marca."
+            ]
+          },
+          {
+            "name": "Desarrollo",
+            "paragraphs": [
+              "Convertimos el diseño en una plataforma funcional, adaptable a diferentes dispositivos."
+            ]
+          },
+          {
+            "name": "Lanzamiento",
+            "paragraphs": [
+              "Realizamos pruebas, publicamos tu sitio y te enseñamos a administrarlo."
+            ]
+          }
+        ]
+      },
+      "tech": {
+        "label": "03. Tecnología",
+        "title": "Las herramientas correctas para cada proyecto.",
+        "paragraphs": [
+          "Trabajamos con plataformas como WordPress, Elementor, Shopify y WooCommerce, seleccionando la mejor solución según las necesidades de tu negocio."
+        ]
+      },
+      "featured": {
+        "label": "Proyectos destacados"
       },
       "faq": {
-        "intro": "Lo que conviene saber antes de rehacer un sitio.",
-        "items": {
-          "price": {
-            "question": "¿Cuánto cuesta un sitio?",
-            "answer": "Depende de cuántas páginas, cuántos idiomas y qué tiene que conectar, como una tienda o un CRM. Con el mapa del sitio te damos un presupuesto cerrado."
+        "label": "04. Preguntas frecuentes",
+        "title": "Preguntas frecuentes",
+        "paragraphs": [],
+        "items": [
+          {
+            "question": "¿Cuánto cuesta desarrollar una página web?",
+            "answer": "Cada proyecto se cotiza según sus funcionalidades, número de secciones y nivel de personalización."
           },
-          "time": {
-            "question": "¿Cuánto tarda?",
-            "answer": "Entre cuatro y ocho semanas. Lo que más lo mueve es cuándo llega el contenido: textos, fotos y decisiones."
+          {
+            "question": "¿Cuánto tiempo toma?",
+            "answer": "Generalmente entre 4 y 8 semanas, dependiendo de la complejidad y del contenido disponible. Los desarrollos personalizados pueden requerir más tiempo."
           },
-          "edit": {
-            "question": "¿Lo podré editar yo?",
-            "answer": "Sí. Todo lo que cambia seguido, como textos, imágenes o proyectos, se edita desde un gestor, sin tocar código."
+          {
+            "question": "¿Podré administrar mi sitio?",
+            "answer": "Sí. Desarrollamos plataformas que te permiten actualizar textos, imágenes y productos fácilmente."
           },
-          "ownership": {
-            "question": "¿De quién es el sitio?",
-            "answer": "Tuyo: el código, el dominio y los accesos quedan a nombre de tu empresa."
+          {
+            "question": "¿Pueden rediseñar mi página actual?",
+            "answer": "Sí. Podemos mejorar su diseño y funcionalidad o migrarla a una plataforma más adecuada."
+          },
+          {
+            "question": "¿Mi página funcionará en celulares?",
+            "answer": "Sí. Todos nuestros sitios están diseñados para adaptarse a computadoras, tabletas y dispositivos móviles."
+          },
+          {
+            "question": "¿Incluyen dominio y hosting?",
+            "answer": "Podemos ayudarte a configurarlos. Sus costos se cotizan por separado según las necesidades del proyecto."
+          },
+          {
+            "question": "¿Ofrecen mantenimiento?",
+            "answer": "Sí. Incluimos un mes de soporte inicial conforme al alcance contratado y ofrecemos planes de mantenimiento adicionales."
+          },
+          {
+            "question": "¿Cuántos cambios puedo solicitar?",
+            "answer": "Cada proyecto contempla rondas de revisión durante las etapas de diseño y desarrollo, definidas previamente en la propuesta comercial."
           }
-        }
+        ]
       },
       "cta": {
-        "title": "Cuéntanos qué sitio necesitas y para cuándo.",
-        "titleHighlight": "para cuándo"
+        "label": "05. Comencemos",
+        "title": "Tu próxima gran idea comienza aquí.",
+        "titleHighlight": "comienza aquí",
+        "paragraphs": [
+          "Cuéntanos qué necesitas y creemos juntos una experiencia digital que lleve tu marca más lejos."
+        ],
+        "topic": "¿Qué estás buscando?",
+        "topics": [
+          "Página web",
+          "Tienda en línea",
+          "Diseño UX/UI",
+          "Rediseño web",
+          "Desarrollo personalizado",
+          "Mantenimiento",
+          "Otro"
+        ],
+        "hidePhone": true,
+        "name": "Nombre",
+        "message": "Cuéntanos sobre tu proyecto",
+        "submit": "Enviar proyecto"
       }
     }
   },

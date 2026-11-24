@@ -42,6 +42,14 @@ $centered-measure: 60ch;
   color: theme.$text-secondary;
 }
 
+// Varios parrafos de entradilla (los textos del cliente traen dos o tres): el aire
+// entre ellos es el de una linea en blanco, no el de un bloque nuevo.
+.introGroup {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$spacing-05;
+}
+
 // Cabecera `quiet`: el filete ya lo pone SectionHead, asi que la entradilla va sola en la
 // columna derecha, sin la banda (que traeria un segundo filete).
 .quietIntro {

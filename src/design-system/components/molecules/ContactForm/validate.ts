@@ -15,6 +15,10 @@ export interface ContactValues {
 
 export interface ContactMessage extends ContactValues {
   topic: string;
+  /** Campos que solo piden algunas paginas de servicio (marketing). Opcionales siempre. */
+  company?: string;
+  website?: string;
+  goal?: string;
 }
 
 export type ContactErrorCode = "nameRequired" | "emailRequired" | "emailInvalid" | "phoneInvalid" | "messageRequired" | "messageShort";
@@ -28,6 +32,8 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 /** Por debajo de esto no hay mensaje que contestar, solo un "hola". */
 export const MIN_MESSAGE = 20;
 export const MAX_MESSAGE = 1000;
+/** Tope de empresa y sitio: un nombre o una URL, no un texto. */
+export const MAX_EXTRA = 200;
 
 export function validateContact(values: ContactValues): ContactErrors {
   const name = values.name.trim();
