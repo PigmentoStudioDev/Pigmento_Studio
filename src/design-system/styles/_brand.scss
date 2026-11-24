@@ -657,6 +657,10 @@ $marquee-logo-block-size: 1.5rem;
 $marquee-logo-color-block-size: 3.5rem;
 $marquee-logo-color-max-inline-size: 9rem;
 
+/// Fondo de la tira de logos a color: blanco puro en los dos modos. Varios logos de
+/// cliente traen su placa blanca, y sobre el gris del papel se leian como cajas.
+$surface-logo-strip: colors.$white;
+
 /// Lo que mide una tarjeta de resena en la tira.
 ///
 /// Fija y en rem, no una fraccion: la tira es un carril infinito sin columnas, asi
